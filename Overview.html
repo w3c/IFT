@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version b94c7e755, updated Fri Feb 19 16:28:59 2021 -0800" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="fff929313dadbf412bb298cc86fc50e907f556f6" name="document-revision">
+  <meta content="ea7f3dbe4fbe54c5fb2cdd57073e67c754899a1b" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -566,12 +566,13 @@ the root node and <i>c<sub>i</sub></i>.</p>
  Start(<i>p</i>) + <i>i</i> * 8<sup><i>N</i> - D(<i>c<sub>i</sub></i>)</sup></p>
     <li data-md>
      <p>End(<i>c<sub>i</sub></i>) is the end (exclusive) of the interval  covered by <i>c<sub>i</sub></i> :<br> End(<i>c<sub>i</sub></i>) =
- End(<i>p</i>) + (<i>i</i> + 1) * 8<sup><i>N</i> - D(<i>c<sub>i</sub></i>)</sup></p>
+ Start(<i>p</i>) + (<i>i</i> + 1) * 8<sup><i>N</i> - D(<i>c<sub>i</sub></i>)</sup></p>
     <li data-md>
      <p>The value of node <i>p</i> is as a single byte (8 bits). If it’s bits are numbered from 0
 (most significant bit) to 7 (least significant bit) then bit <i>i</i> will be 1 if the
 set <i>S</i> contains at least one member in the interval
-[Start(<i>c<sub>i</sub></i>), End(<i>c<sub>i</sub></i>)), otherwise bit <i>i</i> will be 0.</p>
+[Start(<i>c<sub>i</sub></i>), End(<i>c<sub>i</sub></i>)), otherwise bit <i>i</i> will be 0.
+Leaf node’s have a value of 0.</p>
    </ul>
    <p>Set <i>S</i> is encoded into a ByteString by traversing the nodes of the tree <i>T</i> in level order
 and appending value byte for each node to the ByteString if the value byte has a non-zero value.</p>
