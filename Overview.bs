@@ -116,12 +116,7 @@ Finally, tree <i>T</i> is encoded into a ByteString by traversing the nodes of t
 order and appending the value byte for each node to the ByteString if the value byte has a non-zero
 value.
 
-Any implementation which produces the same final ByteString for all sets as the process described here
-is valid.
-
-<details class=note>
-  <summary>Example</summary>
-  
+<div class=example>
   The set {2, 33, 323} is encoded as the byte string:
   
   ```
@@ -153,7 +148,7 @@ is valid.
   * 0b00000010 is child 4 of n<sub>1</sub>, bit 1 is set for the interval [33, 34) or 33.
   * 0b00001000 is child 0 of n<sub>2</sub>, bit 3 is set for the interval [323, 324) or 323.
 
-</details>
+</div>
 
 ### Objects ### {#objects}
 
@@ -194,10 +189,9 @@ if len(value_deltas) > 0:
     value_deltas[i] = L[i] - L[i-1]
 ```
 
-<details class=note>
-  <summary>Example</summary>
+<div class=example>
   The list [2, 2, 5, 1, 3, 7] would be encoded as [2, 0, 3, -4, 2, 4].
-</details>
+</div>
 
 #### CompressedSet #### {#CompressedSet}
 
