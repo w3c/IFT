@@ -76,8 +76,8 @@ should be encoded by CBOR are given in the definition of those data types.
 ### SparseBitSet ### {#sparsebitset}
 
 A data structure which stores a set of distinct unsigned integers. The set is represented as an
-oct-tree where each node has 8 children and recursively partitions an interval into 8 equal partitions.
-A tree of with height <i>N</i> can store set membership for integers in the interval [0 and
+oct-tree where each node has 8 children that recursively sub-divides an interval into 8 equal
+partitions. A tree of height <i>N</i> can store set membership for integers in the interval [0 and
 8<sup><i>N</i></sup>-1] inclusive.
 
 Given a node <i>p</i> which has 8 children: <i>c<sub>0</sub></i> ... <i>c<sub>7</sub></i> and is
@@ -96,14 +96,16 @@ in a tree, <i>T</i>, of height <i>N</i>, then:
      End(<i>c<sub>i</sub></i>) =
      Start(<i>p</i>) + (<i>i</i> + 1) * 8<sup><i>N</i> - D(<i>c<sub>i</sub></i>)</sup>
      
-*  The value of node <i>p</i> is as a single byte (8 bits). If it's bits are numbered from 0
+*  The value of node <i>p</i> is as a single byte (8 bits). If its bits are numbered from 0
     (most significant bit) to 7 (least significant bit) then bit <i>i</i> will be 1 if the
     set <i>S</i> contains at least one member in the interval
     [Start(<i>c<sub>i</sub></i>), End(<i>c<sub>i</sub></i>)), otherwise bit <i>i</i> will be 0.
-    Leaf node's have a value of 0.
+
+*  If for node <i>p</i>, End(<i>p</i>) - Start(<i>p</i>) = 1, then <i>p</i> will have no children
+    and its value byte is 0.
 
 Set <i>S</i> is encoded into a ByteString by traversing the nodes of the tree <i>T</i> in level order
-and appending value byte for each node to the ByteString if the value byte has a non-zero value.
+and appending the value byte for each node to the ByteString if the value byte has a non-zero value.
 
 ### Objects ### {#objects}
 
