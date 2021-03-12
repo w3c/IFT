@@ -50,6 +50,9 @@ TODO(garretrieger): Describe the high level version of how this version operates
 Data Types {#data-types}
 ------------------------
 
+This section lists all of the data types that are used to form the request and response messages
+sent between the client and server.
+
 ### Encoding ### {#encoding}
 
 All data types defined here are encoded into a byte representation for transport using CBOR
@@ -153,13 +156,13 @@ value.
 ### Objects ### {#objects}
 
 Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
-(major type 5). Each key value pair is encoded as a map entry. Keys are always unsigned integers and
-are encoded using major type 0. Values are encoded using the encoding specified by the type of the
-value.
+(major type 5). Each key and value pair is encoded as a single map entry. Keys are always unsigned
+integers and are encoded using major type 0. Values are encoded using the encoding specified by the
+type of the value.
 
 All fields in an object are optional and do not need to have an associated value. Conversely when
-decoding fields may be present which are not specified in the schema. The decoder MUST ignore
-without error any key value pairs where the key is not recognized.
+decoding and object fields may be present which are not specified in the schema. The decoder must
+ignore without error any key and value pairs where the key is not recognized.
 
 There are several types of object used, each type is defined by a schema in [[#schemas]]. The schema
 for a type specifies for each field:

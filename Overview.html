@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version b94c7e755, updated Fri Feb 19 16:28:59 2021 -0800" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="b9580d5dccd2b6dd9a75ad43b66c8641865c0c70" name="document-revision">
+  <meta content="a83bdc1941817c3566d78c13fdeecaf266ef6b62" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -533,6 +533,8 @@ dfn > a.self-link::before      { content: "#"; }
    <h2 class="heading settled" data-level="2" id="patch-incxfer"><span class="secno">2. </span><span class="content">Patch Based Incremental Transfer</span><a class="self-link" href="#patch-incxfer"></a></h2>
    <p>TODO(garretrieger): Describe the high level version of how this version operates.</p>
    <h3 class="heading settled" data-level="2.1" id="data-types"><span class="secno">2.1. </span><span class="content">Data Types</span><a class="self-link" href="#data-types"></a></h3>
+   <p>This section lists all of the data types that are used to form the request and response messages
+sent between the client and server.</p>
    <h4 class="heading settled" data-level="2.1.1" id="encoding"><span class="secno">2.1.1. </span><span class="content">Encoding</span><a class="self-link" href="#encoding"></a></h4>
    <p>All data types defined here are encoded into a byte representation for transport using CBOR
 (Concise Binary Object Representation) <a data-link-type="biblio" href="#biblio-rfc8949">[rfc8949]</a>. More information on how each data types
@@ -624,12 +626,12 @@ value.</p>
    </div>
    <h4 class="heading settled" data-level="2.1.4" id="objects"><span class="secno">2.1.4. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
    <p>Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
-(major type 5). Each key value pair is encoded as a map entry. Keys are always unsigned integers and
-are encoded using major type 0. Values are encoded using the encoding specified by the type of the
-value.</p>
+(major type 5). Each key and value pair is encoded as a single map entry. Keys are always unsigned
+integers and are encoded using major type 0. Values are encoded using the encoding specified by the
+type of the value.</p>
    <p>All fields in an object are optional and do not need to have an associated value. Conversely when
-decoding fields may be present which are not specified in the schema. The decoder MUST ignore
-without error any key value pairs where the key is not recognized.</p>
+decoding and object fields may be present which are not specified in the schema. The decoder must
+ignore without error any key and value pairs where the key is not recognized.</p>
    <p>There are several types of object used, each type is defined by a schema in <a href="#schemas">§ 2.1.5 Object Schemas</a>. The schema
 for a type specifies for each field:</p>
    <ul>
