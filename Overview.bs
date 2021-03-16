@@ -1,5 +1,5 @@
 <pre class='metadata'>
-Title: Progressive Font Enrichment, or whatever we call it
+Title: Incremental Font Transfer
 Shortname: PFE
 Status: w3c/ED
 Group: webfontswg
@@ -8,7 +8,7 @@ TR: https://www.w3.org/TR/example/
 ED: https://w3c.github.io/PFE/Overview.html
 Editor: Chris Lilley, W3C, https://svgees.us/, w3cid 1438
 Editor: Myles C. Maxfield, Apple Inc., mmaxfield@apple.com, w3cid 77180
-Editor: Garret Rieger, Google Inc., http://example.com/contact
+Editor: Garret Rieger, Google Inc., grieger@google.com
 Abstract: Example example
 Status Text: This is a largely empty document because we have just started working on it.
 </pre>
@@ -79,18 +79,27 @@ should be encoded by CBOR are given in the definition of those data types.
 ### SparseBitSet ### {#sparsebitset}
 
 A data structure which compactly stores a set of distinct unsigned integers. The set is represented as
-an oct-tree where each node has 8 children that recursively sub-divides an interval into 8 equal
-partitions. A tree of height <i>H</i> can store set membership for integers in the interval [0 to
-8<sup><i>H</i></sup>-1] inclusive. The tree is encoded into a ByteString for transport.
+an tree where each node has a fixed number of children that recursively sub-divides an interval into
+equal partitions. A tree of height <i>H</i> with branching factor <i>B</i> can store set membership
+for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree is encoded into
+a ByteString for transport.
 
-To construct the tree <i>T</i> which encodes set <i>S</i> first determine the height, <i>H</i>, of the
-tree:
+To construct the tree <i>T</i> which encodes set <i>S</i> first select the branching factor <i>B</i>
+(how many children each node has). <i>B</i> can be 4, 8, 16, or 32.
 
-<i>H</i> = ceil(log<sub>8</sub>(max(</i>S</i>) + 1))
+Note: the encoder is free to use any of the possible branching factors, but should try to pick one
+that will give this smallest encoding. It's likely that a heuristic based on the set size and/or
+maximum value will generally select a good branching factor. Alternatively, the encoder could test
+encoding with the various branching factors and keep the encoding which is the smallest.
 
-Next create a tree of height H where all non-leaf nodes have 8 children. Each node in the tree has
-a single byte value. Given a node <i>p</i> which has 8 children:
-<i>c<sub>0</sub></i> ... <i>c<sub>7</sub></i> and is in a tree, <i>T</i>, of height <i>H</i>, then:
+Next, determine the height, <i>H</i>, of the tree:
+
+<i>H</i> = ceil(log<sub><i>B</i></sub>(max(</i>S</i>) + 1))
+
+Next create a tree of height H where all non-leaf nodes have <i>B</i> children. Each node in the tree
+has a single value composed of <i>B</i> bits. Given a node <i>p</i> which has <i>B</i> children:
+<i>c<sub>0</sub></i> ... <i>c<sub><i>B</i> - 1</sub></i> and is in a tree, <i>T</i>, of height
+<i>H</i>, then:
 
 *  D(<i>c<sub>i</sub></i>) is depth of node <i>c<sub>i</sub></i>, that is the number of edges between
     the root node and <i>c<sub>i</sub></i>.
@@ -98,29 +107,32 @@ a single byte value. Given a node <i>p</i> which has 8 children:
 *  Start(<i>c<sub>i</sub></i>) is the start (inclusive) of the interval  covered by
      <i>c<sub>i</sub></i> :<br/>
      Start(<i>c<sub>i</sub></i>) =
-     Start(<i>p</i>) + <i>i</i> * 8<sup><i>H</i> - D(<i>c<sub>i</sub></i>)</sup>
+     Start(<i>p</i>) + <i>i</i> * <i>B</i><sup><i>H</i> - D(<i>c<sub>i</sub></i>)</sup>
      
 *  End(<i>c<sub>i</sub></i>) is the end (exclusive) of the interval  covered by
      <i>c<sub>i</sub></i> :<br/>
      End(<i>c<sub>i</sub></i>) =
-     Start(<i>p</i>) + (<i>i</i> + 1) * 8<sup><i>H</i> - D(<i>c<sub>i</sub></i>)</sup>
+     Start(<i>p</i>) + (<i>i</i> + 1) * <i>B</i><sup><i>H</i> - D(<i>c<sub>i</sub></i>)</sup>
 
 *  Start(root node) = 0
      
-*  The value of node <i>p</i> is as a single byte (8 bits). If its bits are numbered from 0
-    (least significant bit) to 7 (most significant bit) then bit <i>i</i> will be 1 if the
+*  The value of node <i>p</i> is composted of <i>B</i> bits. If its bits are numbered from 0
+    (least significant bit) to <i>B</i> - 1 (most significant bit) then bit <i>i</i> will be 1 if the
     set <i>S</i> contains at least one member in the interval
     [Start(<i>c<sub>i</sub></i>), End(<i>c<sub>i</sub></i>)), otherwise bit <i>i</i> will be 0.
 
 *  If for node <i>p</i>, End(<i>p</i>) - Start(<i>p</i>) = 1, then <i>p</i> will have no children
-    and its value byte is 0.
+    and its value is 0.
 
 Finally, tree <i>T</i> is encoded into a ByteString by traversing the nodes of the <i>T</i> in level
-order and appending the value byte for each node to the ByteString if the value byte has a non-zero
+order and appending the value for each node to the ByteString if the value has a non-zero
 value.
 
+TODO(garretrieger): add info on the first byte which encodes BF and depth.
+TODO(garretrieger): add info on replacing a fully filled sub-tree with a 0 value.
+
 <div class=example>
-  The set {2, 33, 323} is encoded as the byte string:
+  The set {2, 33, 323} in a tree with a branching factor of 8 is encoded as the byte string:
   
   ```
   |- level 0 -|------ level 1 --------|----------- level 2 ----------------|
@@ -151,6 +163,15 @@ value.
   * 0b00000010 is child 4 of n<sub>1</sub>, bit 1 is set for the interval [33, 34) or 33.
   * 0b00001000 is child 0 of n<sub>2</sub>, bit 3 is set for the interval [323, 324) or 323.
 
+
+</div>
+
+<div class=example>
+  The set {2, 33, 323} in a tree with a branching factor of 4 is encoded as the byte string:
+
+  ```
+  TODO(garretrieger): update this example for BF4.
+  ```
 </div>
 
 ### Objects ### {#objects}
