@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version b94c7e755, updated Fri Feb 19 16:28:59 2021 -0800" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="d18487261d63a92e8fbdb7ad77187972cd8fa4c5" name="document-revision">
+  <meta content="12c8ba39ec8f6f6e10ed5481a7a797abd5bfdd50" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-03-15">15 March 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-03-19">19 March 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -566,10 +566,8 @@ equal partitions. A tree of height <i>H</i> with branching factor <i>B</i> can s
 for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree is encoded into
 a ByteString for transport.</p>
    <p>To construct the tree <i>T</i> which encodes set <i>S</i> first select the branching factor <i>B</i> (how many children each node has). <i>B</i> can be 4, 8, 16, or 32.</p>
-   <p class="note" role="note"><span>Note:</span> the encoder is free to use any of the possible branching factors, but should try to pick one
-that will give this smallest encoding. It’s likely that a heuristic based on the set size and/or
-maximum value will generally select a good branching factor. Alternatively, the encoder could test
-encoding with the various branching factors and keep the encoding which is the smallest.</p>
+   <p class="note" role="note"><span>Note:</span> that while the encoder can use any of the possible branching factors, but it is recommended to
+use 4 as that has been shown to give the smallest encodings for most sets typically encountered.</p>
    <p>Next, determine the height, <i>H</i>, of the tree:</p>
    <p><i>H</i> = ceil(log<sub><i>B</i></sub>(max(S) + 1))</p>
    <p>Next create a tree of height H where all non-leaf nodes have <i>B</i> children. Each node in the tree
@@ -587,54 +585,130 @@ the root node and <i>c<sub>i</sub></i>.</p>
     <li data-md>
      <p>Start(root node) = 0</p>
     <li data-md>
-     <p>The value of node <i>p</i> is composted of <i>B</i> bits. If its bits are numbered from 0
-(least significant bit) to <i>B</i> - 1 (most significant bit) then bit <i>i</i> will be 1 if the
-set <i>S</i> contains at least one member in the interval
-[Start(<i>c<sub>i</sub></i>), End(<i>c<sub>i</sub></i>)), otherwise bit <i>i</i> will be 0.</p>
+     <p>The value of node <i>p</i> is a string of <i>B</i> bits. If its bits are numbered from 0 (least
+significant) to <i>B</i> - 1 (most significant) then bit <i>i</i> will be 1 if the set <i>S</i> contains at least one member in the interval [Start(<i>c<sub>i</sub></i>),
+End(<i>c<sub>i</sub></i>)), otherwise bit <i>i</i> will be 0.</p>
     <li data-md>
      <p>If for node <i>p</i>, End(<i>p</i>) - Start(<i>p</i>) = 1, then <i>p</i> will have no children
 and its value is 0.</p>
    </ul>
-   <p>Finally, tree <i>T</i> is encoded into a ByteString by traversing the nodes of the <i>T</i> in level
-order and appending the value for each node to the ByteString if the value has a non-zero
-value.</p>
-   <p>TODO(garretrieger): add info on the first byte which encodes BF and depth.
-TODO(garretrieger): add info on replacing a fully filled sub-tree with a 0 value.</p>
-   <div class="example" id="example-a03bf883">
-    <a class="self-link" href="#example-a03bf883"></a> The set {2, 33, 323} in a tree with a branching factor of 8 is encoded as the byte string: 
-<pre>  |- level 0 -|------ level 1 --------|----------- level 2 ----------------|
-  |     n0    |     n1          n2    |      n3         n4          n5     |
-  [ 0b00100001, 0b00010001, 0b00000001, 0b00000100, 0b00000010, 0b00001000 ]
+   <p>The tree is encoded into a bit string. The bits of the bit string are numbered from 0 to M. When
+appending multi bit values to the bit string, bits are added in order from least significant bit to
+most significant bit.</p>
+   <p>To encode tree <i>T</i> into a bit string first append 2 bits which encode the branching factor:</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>Bits
+      <th>Branching Factor
+     <tr>
+      <td>00
+      <td>4
+     <tr>
+      <td>01
+      <td>8
+     <tr>
+      <td>10
+      <td>16
+     <tr>
+      <td>11
+      <td>32
+   </table>
+   <p>Then append the value <i>H</i> - 1 as a 6 bit unsigned integer.</p>
+   <p>Next the nodes are encoded into the bit string by traversing the nodes of the <i>T</i> in level
+order and appending the value for each node to the bit string. If all set values covered by a node’s
+interval are present within set <i>S</i> that node can instead be encoded in the ByteString as <i>B</i> bits all set to zero. Additionally all children of that node must not be encoded.</p>
+   <p>Lastly the bit string is converted into a ByteString by converting each subsequent group of 8 bits
+into a byte. The lower bit index is the least significant bit and the highest bit index is the
+most significant bit.</p>
+   <div class="example" id="example-2e57550e">
+    <a class="self-link" href="#example-2e57550e"></a> The set {2, 33, 323} in a tree with a branching factor of 8 is encoded as the bit string: 
+<pre>  BitString:
+  |- header |- lvl 0 |---- level 1 ----|------- level 2 -----------|
+  |         |   n0   |   n1       n2   |   n3       n4       n5    |
+  [ 10010000 10000100 10001000 10000000 00100000 01000000 00010000 ]
+
+  ByteString = [
+    0b00001001,
+    0b00100001,
+    0b00010001,
+    0b00000001,
+    0b00000100,
+    0b00000010,
+    0b00001000
+  ]
 </pre>
     <p>First determine the height of the tree:</p>
     <p><i>H</i> = ceil(log<sub>8</sub>(323 + 1)) = 3</p>
-    <p>The value of the root node, n<sub>0</sub>, is 0b00100001 since there are set members in the intervals
+    <p>Then append</p>
+    <ul>
+     <li data-md>
+      <p>branching factor = 8 = 01</p>
+     <li data-md>
+      <p><i>H</i> - 1 = 2 = 000010</p>
+    </ul>
+    <p>The value of the root node, n<sub>0</sub>, is 00100001 since there are set members in the intervals
   [0, 64) for bit 0 and [320, 384) for bit 5.</p>
     <p>In the next level of the tree there will be two non-zero children corresponding to bit 0
   and bit 5 in n<sub>0</sub>:</p>
     <ul>
      <li data-md>
-      <p>0b00010001 is child 0 of n<sub>0</sub> it subdivides the interval [0, 64). Bit 0 is set
+      <p>00010001 is child 0 of n<sub>0</sub> it subdivides the interval [0, 64). Bit 0 is set
  since there are set members in [0, 8) and bit 4 for [32, 40).</p>
      <li data-md>
-      <p>0b10000000 is child 5 of n<sub>0</sub> it subdivides the interval [320, 384). Bit 0 is
+      <p>10000000 is child 5 of n<sub>0</sub> it subdivides the interval [320, 384). Bit 0 is
  set since there are set members in [320 - 328).</p>
     </ul>
-    <p>Finally the last 3 bytes 0b00100000, 0b01000000, 0b00010000 represent
+    <p>Finally the last nodes are 00100000, 01000000, 00010000 which represent
   the non-zero children in the third level of the tree:</p>
     <ul>
      <li data-md>
-      <p>0b00000100 is child 0 of n<sub>1</sub>, bit 2 is set for the interval [2, 3) or 2.</p>
+      <p>00000100 is child 0 of n<sub>1</sub>, bit 2 is set for the interval [2, 3) or 2.</p>
      <li data-md>
-      <p>0b00000010 is child 4 of n<sub>1</sub>, bit 1 is set for the interval [33, 34) or 33.</p>
+      <p>00000010 is child 4 of n<sub>1</sub>, bit 1 is set for the interval [33, 34) or 33.</p>
      <li data-md>
-      <p>0b00001000 is child 0 of n<sub>2</sub>, bit 3 is set for the interval [323, 324) or 323.</p>
+      <p>00001000 is child 0 of n<sub>2</sub>, bit 3 is set for the interval [323, 324) or 323.</p>
     </ul>
    </div>
-   <div class="example" id="example-b3fa4470">
-    <a class="self-link" href="#example-b3fa4470"></a> The set {2, 33, 323} in a tree with a branching factor of 4 is encoded as the byte string: 
-<pre>  TODO(garretrieger): update this example for BF4.
+   <div class="example" id="example-ccb34548">
+    <a class="self-link" href="#example-ccb34548"></a> The set {0, 1, 2, ..., 17} can be encoded with a branching factor of 4 as: 
+<pre>  BitString:
+  |- header | l0 |- lvl 1 -| l2  |
+  |         | n0 | n1 | n2 | n3  |
+  [ 00010000 1100 0000 1000 1100 ]
+
+  ByteString = [
+    0b00001000,
+    0b00000011,
+    0b00110001
+  ]
 </pre>
+    <p>First determine the height of the tree:</p>
+    <p><i>H</i> = ceil(log<sub>4</sub>(17 + 1)) = 3</p>
+    <p>Then append</p>
+    <ul>
+     <li data-md>
+      <p>branching factor = 4 = 00</p>
+     <li data-md>
+      <p><i>H</i> - 1 = 2 = 000010</p>
+    </ul>
+    <p>Level 0:</p>
+    <ul>
+     <li data-md>
+      <p>n0 = bit 0 set for [0, 16), bit 1 set for [16, 32)</p>
+    </ul>
+    <p>Level 1:</p>
+    <ul>
+     <li data-md>
+      <p>n1 = all bits zero to indicate interval [0, 16) is fully filled.</p>
+     <li data-md>
+      <p>n2 = bit 0 set for [16, 20)</p>
+    </ul>
+    <p>Level 2:</p>
+    <ul>
+     <li data-md>
+      <p>n3 = bit 0 set for value 16, bit 1 set for value 17.</p>
+    </ul>
    </div>
    <h4 class="heading settled" data-level="2.1.4" id="objects"><span class="secno">2.1.4. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
    <p>Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
