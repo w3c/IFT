@@ -94,8 +94,6 @@ Next, determine the height, <i>H</i>, of the tree:
 
 <i>H</i> = ceil(log<sub><i>B</i></sub>(max(</i>S</i>) + 1))
 
-TODO(garretrieger): tree height needs update.
-
 Next create a tree of height H where all non-leaf nodes have <i>B</i> children. Each node in the tree
 has a single value composed of <i>B</i> bits. Given a node <i>p</i> which has <i>B</i> children:
 <i>c<sub>0</sub></i> ... <i>c<sub><i>B</i> - 1</sub></i> and is in a tree, <i>T</i>, of height
@@ -121,9 +119,8 @@ has a single value composed of <i>B</i> bits. Given a node <i>p</i> which has <i
     contains at least one member in the interval [Start(<i>c<sub>i</sub></i>),
     End(<i>c<sub>i</sub></i>)), otherwise bit <i>i</i> will be 0.
 
-*  If for node <i>p</i>, End(<i>p</i>) - Start(<i>p</i>) = 1, then <i>p</i> will have no children
-    and its value is 0.
-
+*  If for node <i>p</i>, End(<i>p</i>) - Start(<i>p</i>) = <i>B</i>, then <i>p</i> will have no
+    children.
 
 The tree is encoded into a bit string. The bits of the bit string are numbered from 0 to M. When
 appending multi bit values to the bit string, bits are added in order from least significant bit to
@@ -162,7 +159,8 @@ most significant bit.
   |         |   n0   |   n1       n2   |   n3       n4       n5    |
   [ 10010000 10000100 10001000 10000000 00100000 01000000 00010000 ]
 
-  ByteString = [
+  Which then becomes the ByteString:
+  [
     0b00001001,
     0b00100001,
     0b00010001,
@@ -182,25 +180,27 @@ most significant bit.
   *  branching factor = 8 = 01
   *  <i>H</i> - 1 = 2 = 000010
 
-  The value of the root node, n<sub>0</sub>, is 00100001 since there are set members in the intervals
-  [0, 64) for bit 0 and [320, 384) for bit 5.
-
-  In the next level of the tree there will be two non-zero children corresponding to bit 0
-  and bit 5 in n<sub>0</sub>:
-
-  * 00010001 is child 0 of n<sub>0</sub> it subdivides the interval [0, 64). Bit 0 is set
-     since there are set members in [0, 8) and bit 4 for [32, 40).
+  Level 0:
   
-  * 10000000 is child 5 of n<sub>0</sub> it subdivides the interval [320, 384). Bit 0 is
-     set since there are set members in [320 - 328).
+  * root node, n<sub>0</sub> append 00100001. Since there are set members in the intervals
+     [0, 64) for bit 0 and [320, 384) for bit 5.
+
+  Level 1:
   
-  Finally the last nodes are 00100000, 01000000, 00010000 which represent
-  the non-zero children in the third level of the tree:
+  * There will be two non-zero children corresponding to bit 0 and bit 5 in n<sub>0</sub>:
+  * n<sub>1</sub> append 00010001. It is child 0 of n<sub>0</sub> and subdivides the interval
+     [0, 64). Bit 0 is set since there are set members in [0, 8) and bit 4 for [32, 40).
+  
+  * n<sub>2</sub> append 00000001. It is child 5 of n<sub>0</sub> it subdivides the interval
+     [320, 384). Bit 0 is set since there are set members in [320 - 328).
 
-  * 00000100 is child 0 of n<sub>1</sub>, bit 2 is set for the interval [2, 3) or 2.
-  * 00000010 is child 4 of n<sub>1</sub>, bit 1 is set for the interval [33, 34) or 33.
-  * 00001000 is child 0 of n<sub>2</sub>, bit 3 is set for the interval [323, 324) or 323.
+  Level 2:
 
+  * n<sub>3</sub> append 00000100. Child 0 of n<sub>1</sub>, bit 2 is set for the interval [2, 3) or 2.
+  * n<sub>4</sub> append 00000010. Child 4 of n<sub>1</sub>, bit 1 is set for the interval [33, 34) or 33.
+  * n<sub>5</sub> append 00001000. Child 0 of n<sub>2</sub>, bit 3 is set for the interval [323, 324)
+     or 323.
+     
 </div>
 
 <div class=example>
@@ -212,7 +212,8 @@ most significant bit.
   |         | n0 | n1 | n2 | n3  |
   [ 00010000 1100 0000 1000 1100 ]
 
-  ByteString = [
+  ByteString:
+  [
     0b00001000,
     0b00000011,
     0b00110001
@@ -229,14 +230,14 @@ most significant bit.
   *  <i>H</i> - 1 = 2 = 000010
 
   Level 0:
-  *  n0 = bit 0 set for [0, 16), bit 1 set for [16, 32)
+  *  n<sub>0</sub> append 0011. Bit 0 set for [0, 16), bit 1 set for [16, 32)
 
   Level 1:
-  *  n1 = all bits zero to indicate interval [0, 16) is fully filled.
-  *  n2 = bit 0 set for [16, 20)
+  *  n<sub>1</sub> append 0000. All bits zero to indicate interval [0, 16) is fully filled.
+  *  n<sub>2</sub> append 0001. Bit 0 set for [16, 20)
 
   Level 2:
-  *  n3 = bit 0 set for value 16, bit 1 set for value 17.
+  *  n<sub>3</sub> append 0011. Bit 0 set for value 16, bit 1 set for value 17.
 
 </div>
 
