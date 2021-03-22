@@ -79,15 +79,15 @@ should be encoded by CBOR are given in the definition of those data types.
 ### SparseBitSet ### {#sparsebitset}
 
 A data structure which compactly stores a set of distinct unsigned integers. The set is represented as
-an tree where each node has a fixed number of children that recursively sub-divides an interval into
+a tree where each node has a fixed number of children that recursively sub-divides an interval into
 equal partitions. A tree of height <i>H</i> with branching factor <i>B</i> can store set membership
 for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree is encoded into
 a ByteString for transport.
 
 To construct the tree <i>T</i> which encodes set <i>S</i> first select the branching factor <i>B</i>
-(how many children each node has). <i>B</i> can be 4, 8, 16, or 32.
+(how many children each node has). <i>B</i> can be 4, 8, 16, or 32. 
 
-Note: that while the encoder can use any of the possible branching factors, but it is recommended to
+Note: the encoder can use any of the possible branching factors, but it is recommended to
 use 4 as that has been shown to give the smallest encodings for most sets typically encountered.
 
 Next, determine the height, <i>H</i>, of the tree:
@@ -126,7 +126,7 @@ The tree is encoded into a bit string. The bits of the bit string are numbered f
 appending multi bit values to the bit string, bits are added in order from least significant bit to
 most significant bit.
 
-To encode tree <i>T</i> into a bit string first append 2 bits which encode the branching factor:
+First append 2 bits which encode the branching factor:
 
 <table>
   <tr>
@@ -141,13 +141,13 @@ To encode tree <i>T</i> into a bit string first append 2 bits which encode the b
 Then append the value <i>H</i> - 1 as a 6 bit unsigned integer.
 
 Next the nodes are encoded into the bit string by traversing the nodes of the <i>T</i> in level
-order and appending the value for each node to the bit string. If all set values covered by a node's
-interval are present within set <i>S</i> that node can instead be encoded in the ByteString as <i>B</i>
-bits all set to zero. Additionally all children of that node must not be encoded.
+order and appending the value for each non-zero node to the bit string.If all set values
+covered by a node's interval are present within set <i>S</i> that node can instead be encoded in the
+bit string as <i>B</i> bits all set to zero. All children of that node must not be encoded.
 
-Lastly the bit string is converted into a ByteString by converting each subsequent group of 8 bits
-into a byte. The lower bit index is the least significant bit and the highest bit index is the
-most significant bit.
+Lastly the bit string is converted into a ByteString by converting each consecutive group of 8 bits
+into the next byte of the string. The bit with the smallest index in the bit string is the least
+significant bit in the byte and the bit with the largest index is the most significant bit.
 
 
 <div class=example>
