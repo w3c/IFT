@@ -5,9 +5,9 @@
   <title>Incremental Font Transfer</title>
   <meta content="w3c/ED" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
-  <meta content="Bikeshed version b94c7e755, updated Fri Feb 19 16:28:59 2021 -0800" name="generator">
+  <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="5e92d9e4368fadd3075f2d6d5009ad682423f31e" name="document-revision">
+  <meta content="35deab0bd2f20b042902411d3e0748f8ba053804" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-03-22">22 March 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-04-08">8 April 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -465,8 +465,10 @@ dfn > a.self-link::before      { content: "#"; }
       <li>
        <a href="#rebase-request"><span class="secno">2.2</span> <span class="content">New Font Request</span></a>
        <ol class="toc">
-        <li><a href="#rebase-standard-response"><span class="secno">2.2.1</span> <span class="content">Standard Response</span></a>
-        <li><a href="#rebase-errors"><span class="secno">2.2.2</span> <span class="content">Errors</span></a>
+        <li><a href="#rebase-request-post"><span class="secno">2.2.1</span> <span class="content">POST</span></a>
+        <li><a href="#rebase-request-get"><span class="secno">2.2.2</span> <span class="content">GET</span></a>
+        <li><a href="#rebase-standard-response"><span class="secno">2.2.3</span> <span class="content">Standard Response</span></a>
+        <li><a href="#rebase-errors"><span class="secno">2.2.4</span> <span class="content">Errors</span></a>
        </ol>
       <li>
        <a href="#patch-request"><span class="secno">2.3</span> <span class="content">Patch Font Request</span></a>
@@ -482,7 +484,13 @@ dfn > a.self-link::before      { content: "#"; }
           <li><a href="#cmap4-overflow"><span class="secno">2.3.2.5</span> <span class="content">Cmap Format 4 Overflow</span></a>
           <li><a href="#offset-overflow"><span class="secno">2.3.2.6</span> <span class="content">Offset Overflow during Subsetting</span></a>
          </ol>
-        <li><a href="#errors"><span class="secno">2.3.3</span> <span class="content">Errors</span></a>
+        <li>
+         <a href="#errors"><span class="secno">2.3.3</span> <span class="content">Errors</span></a>
+         <ol class="toc">
+          <li><a href="#error-font-not-found"><span class="secno">2.3.3.1</span> <span class="content">Font Not Found</span></a>
+          <li><a href="#error-bad-request"><span class="secno">2.3.3.2</span> <span class="content">Bad Request</span></a>
+          <li><a href="#error-internal-error"><span class="secno">2.3.3.3</span> <span class="content">Internal Error</span></a>
+         </ol>
        </ol>
       <li><a href="#rebase-response"><span class="secno">2.4</span> <span class="content">New Font Response</span></a>
       <li><a href="#patch-response"><span class="secno">2.5</span> <span class="content">Patch Font Response</span></a>
@@ -764,11 +772,22 @@ allow duplicates. Members of the set are encoded into either a sparse bit
 set or a list of ranges. To obtain the final set the members of the sparse
 bit set and the list of ranges are unioned together.</p>
    <p>The list of ranges is encoded as a series of deltas. For example the ranges</p>
-   <p>\[3, 10\], \[13, 15\], \[17, 17\] would be encoded as \[3, 7, 3, 2, 2, 0\].</p>
-   <p>| ID | Field Name             | Type                   |
-  | -- | ---------------------- | ---------------------- |
-  | 0  | sparse_bit_set         | SparseBitSet           |
-  | 1  | range_deltas           | ArrayOf&lt;Integer> |</p>
+   <p>[3, 10], [13, 15], [17, 17] would be encoded as [3, 7, 3, 2, 2, 0].</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>ID
+      <th>Field Name
+      <th>Type
+     <tr>
+      <td>0
+      <td>sparse_bit_set
+      <td>SparseBitSet
+     <tr>
+      <td>1
+      <td>range_deltas
+      <td>ArrayOf&lt;Integer>
+   </table>
    <h5 class="heading settled" data-level="2.1.5.3" id="PatchRequest"><span class="secno">2.1.5.3. </span><span class="content">PatchRequest</span><a class="self-link" href="#PatchRequest"></a></h5>
    <table>
     <tbody>
@@ -867,10 +886,42 @@ bit set and the list of ranges are unioned together.</p>
       <td>REINDEX
    </table>
    <h3 class="heading settled" data-level="2.2" id="rebase-request"><span class="secno">2.2. </span><span class="content">New Font Request</span><a class="self-link" href="#rebase-request"></a></h3>
-   <h4 class="heading settled" data-level="2.2.1" id="rebase-standard-response"><span class="secno">2.2.1. </span><span class="content">Standard Response</span><a class="self-link" href="#rebase-standard-response"></a></h4>
-   <h4 class="heading settled" data-level="2.2.2" id="rebase-errors"><span class="secno">2.2.2. </span><span class="content">Errors</span><a class="self-link" href="#rebase-errors"></a></h4>
+   <p>A new font request is sent by the client to get data for a font that it has not previously requested.
+In response the server will give the client a subset of the requested font that covers the codepoints
+listed in the request. A new font request is made via HTTP and may use either the GET or POST method.</p>
+   <p>TODO(garretrieger): mention how the url identifies the specific font being requested.</p>
+   <h4 class="heading settled" data-level="2.2.1" id="rebase-request-post"><span class="secno">2.2.1. </span><span class="content">POST</span><a class="self-link" href="#rebase-request-post"></a></h4>
+   <p>If sent as a POST request the post body will be a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR. All fields of <a href="#PatchRequest"><code>PatchRequest</code></a> should be left unset except for:</p>
+   <ul>
+    <li data-md>
+     <p><a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>:<br> This field must be populated with the <a href="#CompressedSet">set</a> of
+unicode codepoints which the client requires data for.</p>
+    <li data-md>
+     <p><a href="#PatchRequest"><code>PatchRequest.patch_format</code></a>:<br> This field should be populated with the set of <a href="#patch-formats">patch formats</a> that this
+client is capable of decoding. At least one format must be provided.</p>
+   </ul>
+   <h4 class="heading settled" data-level="2.2.2" id="rebase-request-get"><span class="secno">2.2.2. </span><span class="content">GET</span><a class="self-link" href="#rebase-request-get"></a></h4>
+   <p>If sent as a GET request the client will include a single query parameter:</p>
+   <ul>
+    <li data-md>
+     <p><code>request</code>:<br> The value is a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR
+and then base64url encoding <a data-link-type="biblio" href="#biblio-rfc4648">[rfc4648]</a>. The <a href="#PatchRequest"><code>PatchRequest</code></a> object uses the same fields as specified for a <a href="#rebase-request-post">POST</a> request.</p>
+   </ul>
+   <h4 class="heading settled" data-level="2.2.3" id="rebase-standard-response"><span class="secno">2.2.3. </span><span class="content">Standard Response</span><a class="self-link" href="#rebase-standard-response"></a></h4>
+   <p>The server will response to a new font request with a <a href="#rebase-response">New Font Response</a>.</p>
+   <h4 class="heading settled" data-level="2.2.4" id="rebase-errors"><span class="secno">2.2.4. </span><span class="content">Errors</span><a class="self-link" href="#rebase-errors"></a></h4>
+   <p>The following errors may occur as a result of a new font request:</p>
+   <ul>
+    <li data-md>
+     <p><a href="#error-font-not-found">§ 2.3.3.1 Font Not Found</a></p>
+    <li data-md>
+     <p><a href="#error-bad-request">§ 2.3.3.2 Bad Request</a></p>
+    <li data-md>
+     <p><a href="#error-internal-error">§ 2.3.3.3 Internal Error</a></p>
+   </ul>
    <h3 class="heading settled" data-level="2.3" id="patch-request"><span class="secno">2.3. </span><span class="content">Patch Font Request</span><a class="self-link" href="#patch-request"></a></h3>
    <h4 class="heading settled" data-level="2.3.1" id="patch-standard-response"><span class="secno">2.3.1. </span><span class="content">Standard Response</span><a class="self-link" href="#patch-standard-response"></a></h4>
+   <p>TODO: this can reference out to the appropriate individual response sections.</p>
    <h4 class="heading settled" data-level="2.3.2" id="patch-recoverable-errors"><span class="secno">2.3.2. </span><span class="content">Recoverable Errors</span><a class="self-link" href="#patch-recoverable-errors"></a></h4>
    <h5 class="heading settled" data-level="2.3.2.1" id="client-font-mismatch"><span class="secno">2.3.2.1. </span><span class="content">Client’s Original Font does not Match Server’s</span><a class="self-link" href="#client-font-mismatch"></a></h5>
    <h5 class="heading settled" data-level="2.3.2.2" id="client-base-mismatch"><span class="secno">2.3.2.2. </span><span class="content">Client’s Base does not Match Server’s</span><a class="self-link" href="#client-base-mismatch"></a></h5>
@@ -879,6 +930,9 @@ bit set and the list of ranges are unioned together.</p>
    <h5 class="heading settled" data-level="2.3.2.5" id="cmap4-overflow"><span class="secno">2.3.2.5. </span><span class="content">Cmap Format 4 Overflow</span><a class="self-link" href="#cmap4-overflow"></a></h5>
    <h5 class="heading settled" data-level="2.3.2.6" id="offset-overflow"><span class="secno">2.3.2.6. </span><span class="content">Offset Overflow during Subsetting</span><a class="self-link" href="#offset-overflow"></a></h5>
    <h4 class="heading settled" data-level="2.3.3" id="errors"><span class="secno">2.3.3. </span><span class="content">Errors</span><a class="self-link" href="#errors"></a></h4>
+   <h5 class="heading settled" data-level="2.3.3.1" id="error-font-not-found"><span class="secno">2.3.3.1. </span><span class="content">Font Not Found</span><a class="self-link" href="#error-font-not-found"></a></h5>
+   <h5 class="heading settled" data-level="2.3.3.2" id="error-bad-request"><span class="secno">2.3.3.2. </span><span class="content">Bad Request</span><a class="self-link" href="#error-bad-request"></a></h5>
+   <h5 class="heading settled" data-level="2.3.3.3" id="error-internal-error"><span class="secno">2.3.3.3. </span><span class="content">Internal Error</span><a class="self-link" href="#error-internal-error"></a></h5>
    <h3 class="heading settled" data-level="2.4" id="rebase-response"><span class="secno">2.4. </span><span class="content">New Font Response</span><a class="self-link" href="#rebase-response"></a></h3>
    <h3 class="heading settled" data-level="2.5" id="patch-response"><span class="secno">2.5. </span><span class="content">Patch Font Response</span><a class="self-link" href="#patch-response"></a></h3>
    <h3 class="heading settled" data-level="2.6" id="reindex-response"><span class="secno">2.6. </span><span class="content">Update Codepoint Ordering Response</span><a class="self-link" href="#reindex-response"></a></h3>
@@ -953,12 +1007,14 @@ bit set and the list of ranges are unioned together.</p>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
    <dt id="biblio-rfc8949">[RFC8949]
-   <dd>C. Bormann; P. Hoffman. <a href="https://tools.ietf.org/html/rfc8949">Concise Binary Object Representation (CBOR)</a>. December 2020. Internet Standard. URL: <a href="https://tools.ietf.org/html/rfc8949">https://tools.ietf.org/html/rfc8949</a>
+   <dd>C. Bormann; P. Hoffman. <a href="https://datatracker.ietf.org/doc/html/rfc8949">Concise Binary Object Representation (CBOR)</a>. December 2020. Internet Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc8949">https://datatracker.ietf.org/doc/html/rfc8949</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
    <dt id="biblio-pfe-report">[PFE-report]
    <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/">Progressive Font Enrichment: Evaluation Report</a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
+   <dt id="biblio-rfc4648">[RFC4648]
+   <dd>S. Josefsson. <a href="https://datatracker.ietf.org/doc/html/rfc4648">The Base16, Base32, and Base64 Data Encodings</a>. October 2006. Proposed Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc4648">https://datatracker.ietf.org/doc/html/rfc4648</a>
    <dt id="biblio-woff2">[WOFF2]
    <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/">WOFF File Format 2.0</a>. 1 March 2018. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
   </dl>
