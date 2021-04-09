@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="130fd0ccbca83a86073d37c7ccad29b39e285291" name="document-revision">
+  <meta content="b116703658c497899ac02d470b633fa135ff3325" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -959,8 +959,29 @@ the font.</p>
    <p>The server will response to a new font request with a <a href="#patch-response">Patch Font Response</a>.</p>
    <h4 class="heading settled" data-level="2.3.2" id="patch-recoverable-errors"><span class="secno">2.3.2. </span><span class="content">Recoverable Errors</span><a class="self-link" href="#patch-recoverable-errors"></a></h4>
    <h5 class="heading settled" data-level="2.3.2.1" id="client-font-mismatch"><span class="secno">2.3.2.1. </span><span class="content">Client’s Original Font does not Match Server’s</span><a class="self-link" href="#client-font-mismatch"></a></h5>
+   <p>Over time servers may upgrade the original copies of a font with newer
+versions. After such an upgrade, clients who have subsets built from the
+previous versions may contact the server and request a patch against the
+previous version of the font.</p>
+   <p>The server will detect this case by checking that <a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a> matches the checksum of
+the current version of the font. If a mismatch is detected there are two possible resolutions:</p>
+   <ul>
+    <li data-md>
+     <p>Patch client to the new font. This is possible if the server has access to the font files for
+previous versions of the font, and the provided checksum matches a previous version. The server
+may then compute a patch between the old version of the font and the new version of the font with
+any additional codepoints requested by the client. In this case the server should respond with a <a href="#patch-response">§ 2.5 Patch Font Response</a>. The response should set <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> to the checksum of
+the new version of the original font. Additionally it may be necessary to send a new codepoint
+ordering if the set of codepoints covered by the original font has changed.</p>
+    <li data-md>
+     <p>Replace the clients copy of the font. If the server is unable to match the provided checksum to any
+version of the font it has, then a <a href="#rebase-response">§ 2.4 New Font Response</a> should be sent instead which will instruct
+the client to replace the version they have with the newer version. The replacement font must cover
+at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and <code>codepoints_needed/indices_needed</code> fields.</p>
+   </ul>
    <h5 class="heading settled" data-level="2.3.2.2" id="client-base-mismatch"><span class="secno">2.3.2.2. </span><span class="content">Client’s Base does not Match Server’s</span><a class="self-link" href="#client-base-mismatch"></a></h5>
    <h5 class="heading settled" data-level="2.3.2.3" id="codepoint-reordering-mismatch"><span class="secno">2.3.2.3. </span><span class="content">Client Codepoint Reordering does not Match Servers</span><a class="self-link" href="#codepoint-reordering-mismatch"></a></h5>
+   <p>TODO(garretrieger): note this must be resolved before any of the other errors.</p>
    <h5 class="heading settled" data-level="2.3.2.4" id="patch-mismatch"><span class="secno">2.3.2.4. </span><span class="content">Client Side Patched Base Checksum Mismatch</span><a class="self-link" href="#patch-mismatch"></a></h5>
    <h5 class="heading settled" data-level="2.3.2.5" id="cmap4-overflow"><span class="secno">2.3.2.5. </span><span class="content">Cmap Format 4 Overflow</span><a class="self-link" href="#cmap4-overflow"></a></h5>
    <h5 class="heading settled" data-level="2.3.2.6" id="offset-overflow"><span class="secno">2.3.2.6. </span><span class="content">Offset Overflow during Subsetting</span><a class="self-link" href="#offset-overflow"></a></h5>

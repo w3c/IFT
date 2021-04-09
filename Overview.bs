@@ -440,9 +440,35 @@ The server will response to a new font request with a
 
 #### Client’s Original Font does not Match Server’s #### {#client-font-mismatch}
 
+Over time servers may upgrade the original copies of a font with newer
+versions. After such an upgrade, clients who have subsets built from the
+previous versions may contact the server and request a patch against the
+previous version of the font.
+
+The server will detect this case by checking that
+<a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a> matches the checksum of
+the current version of the font. If a mismatch is detected there are two possible resolutions:
+
+*  Patch client to the new font. This is possible if the server has access to the font files for
+    previous versions of the font, and the provided checksum matches a previous version. The server
+    may then compute a patch between the old version of the font and the new version of the font with
+    any additional codepoints requested by the client. In this case the server should respond with a
+    [[#patch-response]]. The response should set
+    <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> to the checksum of
+    the new version of the original font. Additionally it may be necessary to send a new codepoint
+    ordering if the set of codepoints covered by the original font has changed.
+   
+*  Replace the clients copy of the font. If the server is unable to match the provided checksum to any
+    version of the font it has, then a [[#rebase-response]] should be sent instead which will instruct
+    the client to replace the version they have with the newer version. The replacement font must cover
+    at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and
+    <code>codepoints_needed/indices_needed</code> fields.
+
 #### Client’s Base does not Match Server’s #### {#client-base-mismatch}
 
 #### Client Codepoint Reordering does not Match Servers #### {#codepoint-reordering-mismatch}
+
+TODO(garretrieger): note this must be resolved before any of the other errors.
 
 #### Client Side Patched Base Checksum Mismatch #### {#patch-mismatch}
 
