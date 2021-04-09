@@ -387,9 +387,54 @@ The following errors may occur as a result of a new font request:
 Patch Font Request {#patch-request}
 -----------------------------------
 
+A patch font request is sent by a client to add data for additional codepoints to its font. Patch font
+requests are sent via HTTP and can only use the POST method. The request body is a single
+<a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR. The fields of
+should be set as follows:
+
+*  <a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a>:<br/>
+    Set to the last saved value of original_font_checksum provided by a
+    previous response from the server for this particular font.
+   
+*  <a href="#PatchRequest"><code>PatchRequest.base_checksum</code></a>:<br/>
+    Set to the checksum [[#computing-checksums]] of the client’s most recent
+    copy of the font.
+   
+*  <a href="#PatchRequest"><code>PatchRequest.patch_format</code></a>:<br/>
+    This field should be populated with the set of <a href="#patch-formats">patch formats</a> that this
+    client is capable of decoding. At least one format must be provided.
+
+If the server has previously provided a <code>codepoint_ordering</code> for this
+font the client should set:
+
+*  <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a>:<br/>
+    Set to the most recent value of <code>ordering_checksum</code> provided by a
+    response from the server for this particular font.
+   
+*  <a href="#PatchRequest"><code>PatchRequest.indices_have</code></a>:<br/>
+    The set of codepoints that are covered by the client’s current copy of the font.
+    Specified using indices obtained by applying <code>codepoint ordering</code>
+    [[#codepoint-reordering]] to the set of codepoints.
+   
+*  <a href="#PatchRequest"><code>PatchRequest.indices_needed</code></a>:<br/>
+    The set of codepoints that the clients would like added to it’s copy of
+    the font. Specified using indices obtained by applying <code>codepoint ordering</code>
+    [[#codepoint-reordering]] to the set of codepoints.
+
+If the server has not previously provided a <code>codepoint_ordering</code> for this font then the
+<code>codepoints_have</code> and <code>codepoints_needed</code> fields must be used instead:
+
+*  <a href="#PatchRequest"><code>PatchRequest.codepoints_have</code></a>:<br/>
+    The set of codepoints that are covered by the client’s copy of the font.
+   
+* <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>:<br/>
+    The set of codepoints that the clients would like added to it’s copy of
+    the font.
+
 ### Standard Response ### {#patch-standard-response}
 
-TODO: this can reference out to the appropriate individual response sections.
+The server will response to a new font request with a
+<a href="#patch-response">Patch Font Response</a>.
 
 ### Recoverable Errors ### {#patch-recoverable-errors}
 

@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="3a305c839d8dddd3619fd8e2ac0a781183e0f338" name="document-revision">
+  <meta content="130fd0ccbca83a86073d37c7ccad29b39e285291" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -920,8 +920,43 @@ and then base64url encoding <a data-link-type="biblio" href="#biblio-rfc4648">[r
      <p><a href="#error-internal-error">§ 2.7.3 Internal Error</a></p>
    </ul>
    <h3 class="heading settled" data-level="2.3" id="patch-request"><span class="secno">2.3. </span><span class="content">Patch Font Request</span><a class="self-link" href="#patch-request"></a></h3>
+   <p>A patch font request is sent by a client to add data for additional codepoints to its font. Patch font
+requests are sent via HTTP and can only use the POST method. The request body is a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR. The fields of
+should be set as follows:</p>
+   <ul>
+    <li data-md>
+     <p><a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a>:<br> Set to the last saved value of original_font_checksum provided by a
+previous response from the server for this particular font.</p>
+    <li data-md>
+     <p><a href="#PatchRequest"><code>PatchRequest.base_checksum</code></a>:<br> Set to the checksum <a href="#computing-checksums">§ 2.8.1 Computing Checksums</a> of the client’s most recent
+copy of the font.</p>
+    <li data-md>
+     <p><a href="#PatchRequest"><code>PatchRequest.patch_format</code></a>:<br> This field should be populated with the set of <a href="#patch-formats">patch formats</a> that this
+client is capable of decoding. At least one format must be provided.</p>
+   </ul>
+   <p>If the server has previously provided a <code>codepoint_ordering</code> for this
+font the client should set:</p>
+   <ul>
+    <li data-md>
+     <p><a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a>:<br> Set to the most recent value of <code>ordering_checksum</code> provided by a
+response from the server for this particular font.</p>
+    <li data-md>
+     <p><a href="#PatchRequest"><code>PatchRequest.indices_have</code></a>:<br> The set of codepoints that are covered by the client’s current copy of the font.
+Specified using indices obtained by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.8.2 Codepoint reodering</a> to the set of codepoints.</p>
+    <li data-md>
+     <p><a href="#PatchRequest"><code>PatchRequest.indices_needed</code></a>:<br> The set of codepoints that the clients would like added to it’s copy of
+the font. Specified using indices obtained by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.8.2 Codepoint reodering</a> to the set of codepoints.</p>
+   </ul>
+   <p>If the server has not previously provided a <code>codepoint_ordering</code> for this font then the <code>codepoints_have</code> and <code>codepoints_needed</code> fields must be used instead:</p>
+   <ul>
+    <li data-md>
+     <p><a href="#PatchRequest"><code>PatchRequest.codepoints_have</code></a>:<br> The set of codepoints that are covered by the client’s copy of the font.</p>
+    <li data-md>
+     <p><a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>:<br> The set of codepoints that the clients would like added to it’s copy of
+the font.</p>
+   </ul>
    <h4 class="heading settled" data-level="2.3.1" id="patch-standard-response"><span class="secno">2.3.1. </span><span class="content">Standard Response</span><a class="self-link" href="#patch-standard-response"></a></h4>
-   <p>TODO: this can reference out to the appropriate individual response sections.</p>
+   <p>The server will response to a new font request with a <a href="#patch-response">Patch Font Response</a>.</p>
    <h4 class="heading settled" data-level="2.3.2" id="patch-recoverable-errors"><span class="secno">2.3.2. </span><span class="content">Recoverable Errors</span><a class="self-link" href="#patch-recoverable-errors"></a></h4>
    <h5 class="heading settled" data-level="2.3.2.1" id="client-font-mismatch"><span class="secno">2.3.2.1. </span><span class="content">Client’s Original Font does not Match Server’s</span><a class="self-link" href="#client-font-mismatch"></a></h5>
    <h5 class="heading settled" data-level="2.3.2.2" id="client-base-mismatch"><span class="secno">2.3.2.2. </span><span class="content">Client’s Base does not Match Server’s</span><a class="self-link" href="#client-base-mismatch"></a></h5>
