@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="b116703658c497899ac02d470b633fa135ff3325" name="document-revision">
+  <meta content="16910a11f27457a5471a80b609e38f35fd272061" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -980,8 +980,18 @@ the client to replace the version they have with the newer version. The replacem
 at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and <code>codepoints_needed/indices_needed</code> fields.</p>
    </ul>
    <h5 class="heading settled" data-level="2.3.2.2" id="client-base-mismatch"><span class="secno">2.3.2.2. </span><span class="content">Client’s Base does not Match Server’s</span><a class="self-link" href="#client-base-mismatch"></a></h5>
+   <p>Over time servers may upgrade or change the way they compute subsets of fonts. This could result in
+the base font that a server computes not matching the base font that a client has. This case can be
+detected by the server by comparing <a href="#PatchRequest"><code>PatchRequest.base_checksum</code></a> to the checksum for the base that the server computed. If there is a mismatch the server should respond
+with a <a href="#rebase-response">§ 2.4 New Font Response</a> instead of the usual <a href="#patch-response">§ 2.5 Patch Font Response</a>. The replacement font must cover
+at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and <code>codepoints_needed/indices_needed</code> fields.</p>
    <h5 class="heading settled" data-level="2.3.2.3" id="codepoint-reordering-mismatch"><span class="secno">2.3.2.3. </span><span class="content">Client Codepoint Reordering does not Match Servers</span><a class="self-link" href="#codepoint-reordering-mismatch"></a></h5>
-   <p>TODO(garretrieger): note this must be resolved before any of the other errors.</p>
+   <p>The codepoint mapping used by the client may not be recognized by the server. This case can be
+detected by comparing <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a> to a
+checksum of the server’s codepoint reordering. If there is a mismatch the server should respond with
+a <a href="#reindex-response">§ 2.6 Update Codepoint Ordering Response</a>. After receiving a <a href="#reindex-response">§ 2.6 Update Codepoint Ordering Response</a> the client should resend their <a href="#patch-request">§ 2.3 Patch Font Request</a> using the new code point reordering.</p>
+   <p>If a reordering mismatch is detected it must be resolved prior to attempting to resolve any of
+the other recoverable error scenarios.</p>
    <h5 class="heading settled" data-level="2.3.2.4" id="patch-mismatch"><span class="secno">2.3.2.4. </span><span class="content">Client Side Patched Base Checksum Mismatch</span><a class="self-link" href="#patch-mismatch"></a></h5>
    <h5 class="heading settled" data-level="2.3.2.5" id="cmap4-overflow"><span class="secno">2.3.2.5. </span><span class="content">Cmap Format 4 Overflow</span><a class="self-link" href="#cmap4-overflow"></a></h5>
    <h5 class="heading settled" data-level="2.3.2.6" id="offset-overflow"><span class="secno">2.3.2.6. </span><span class="content">Offset Overflow during Subsetting</span><a class="self-link" href="#offset-overflow"></a></h5>

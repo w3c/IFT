@@ -466,9 +466,24 @@ the current version of the font. If a mismatch is detected there are two possibl
 
 #### Client’s Base does not Match Server’s #### {#client-base-mismatch}
 
+Over time servers may upgrade or change the way they compute subsets of fonts. This could result in
+the base font that a server computes not matching the base font that a client has. This case can be
+detected by the server by comparing <a href="#PatchRequest"><code>PatchRequest.base_checksum</code></a>
+to the checksum for the base that the server computed. If there is a mismatch the server should respond
+with a [[#rebase-response]] instead of the usual [[#patch-response]]. The replacement font must cover
+at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and
+<code>codepoints_needed/indices_needed</code> fields.
+
 #### Client Codepoint Reordering does not Match Servers #### {#codepoint-reordering-mismatch}
 
-TODO(garretrieger): note this must be resolved before any of the other errors.
+The codepoint mapping used by the client may not be recognized by the server. This case can be
+detected by comparing <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a> to a
+checksum of the server’s codepoint reordering. If there is a mismatch the server should respond with
+a [[#reindex-response]]. After receiving a [[#reindex-response]] the client should resend their
+[[#patch-request]] using the new code point reordering.
+
+If a reordering mismatch is detected it must be resolved prior to attempting to resolve any of
+the other recoverable error scenarios.
 
 #### Client Side Patched Base Checksum Mismatch #### {#patch-mismatch}
 
