@@ -407,12 +407,55 @@ TODO: this can reference out to the appropriate individual response sections.
 
 ### Errors ### {#errors}
 
-#### Font Not Found #### {#error-font-not-found}
-#### Bad Request #### {#error-bad-request}
-#### Internal Error #### {#error-internal-error}
+The following errors may occur as a result of a patch font request:
+
+*  [[#error-font-not-found]]
+*  [[#error-bad-request]]
+*  [[#error-internal-error]]
 
 New Font Response {#rebase-response}
 ---------------------------------------------
+
+If the client asks for a new font the server will respond with a single
+<a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via COBR:
+
+*  <a href="#PatchResponse"><code>PatchResponse.response_type</code></a>:<br/>
+    Must be set to REBASE.
+   
+*  <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a>:<br/>
+    The checksum ([[#computing-checksums]]) computed for the full unmodified original font.
+
+*  <a href="#PatchResponse"><code>PatchResponse.patch_format</code></a>:<br/>
+    The compression format used to encode
+    <a href="#PatchResponse"><code>PatchResponse.patch</code></a>.
+   
+*  <a href="#PatchResponse"><code>PatchResponse.patch</code></a>:<br/>
+    A subset of the original font that contains data for at least the codepoints requested by the
+    client in the <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a> field. The
+    server may opt to expand the subset requested by the client to include additional characters that
+    may be needed for future content. The font subset is compressed by the format specified in
+    <a href="#PatchResponse"><code>PatchResponse.patch_format</code></a>.
+  
+*  <a href="#PatchResponse"><code>PatchResponse.patched_checksum</code></a>:<br/>
+    The checksum ([[#computing-checksums]]) computed for the subsetted font,
+    prior to compression.
+    
+*  <a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a>:<br/>
+    The server must provide a codepoint reordering which the client will use to
+    communicate codepoint sets back to the server. See [[#codepoint-reordering]] for details. The
+    server is free to chose the mapping, but the mapping must use only code points in
+    the original font and must map all codepoints in the original font.
+   
+*  <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a>:<br/>
+     Checksum for the codepoint ordering [[#reordering-checksum]].
+
+If the client receives a new font response it should replace any version of the font it currently has
+with the decompressed contents of the <a href="#PatchResponse"><code>PatchResponse.patch</code></a>
+Also <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a>, 
+<a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a>, and
+<a href="#PatchResponse"><code>PatchResponse.codepoint_ordering_checksum</code></a> should be saved as
+they are needed for future requests.
+
 
 Patch Font Response {#patch-response}
 ---------------------------------------------
@@ -423,18 +466,21 @@ Update Codepoint Ordering Response {#reindex-response}
 Error Response {#error-response}
 ----------------------------------------
 
-*  font not found.
-*  bad request.
-*  internal error.
+### Font Not Found ### {#error-font-not-found}
+
+### Bad Request ### {#error-bad-request}
+
+### Internal Error ### {#error-internal-error}
+
 
 Procedures {#procedures}
 ------------------------
 
 ### Computing Checksums ### {#computing-checksums}
 
-### Codepoint reodering ### {#codepoint-reodering}
+### Codepoint reodering ### {#codepoint-reordering}
 
-#### Computing Checksum #### {#reodering-checksum}
+#### Computing Checksum #### {#reordering-checksum}
 
 #### Recommended algorithm #### {#reordering-algorithm}
 
