@@ -358,12 +358,12 @@ transferred:
 *  Codepoint Reordering Map: The most recent [[#codepoint-reordering]] received from the server
     for this font.
 
-
 ### New Font Request ### {#rebase-request}
 
-A new font request is sent by the client to get data for a font that it has not previously requested.
-In response the server will give the client a subset of the requested font that covers the codepoints
-listed in the request. A new font request is made via HTTP and may use either the GET or POST method.
+A new font request is sent by the client to begin incrementally transferring a font. The request
+specifies a set of codepoints that the client needs to render with the font and in return the server
+will provide a copy of the font that supports at least those codepoints. A new font request is made
+via HTTP and may use either the GET or POST method.
 
 TODO(garretrieger): mention how the url identifies the specific font being requested.
 
@@ -436,11 +436,26 @@ If the server has not previously provided a <code>codepoint_ordering</code> for 
     The set of codepoints that the clients would like added to it’s copy of
     the font.
 
-
 ### Handling New Font Response ### {#handling-rebase-response}
 
-TODO(garretrieger): write this. Include info on handling client side
-                    error scenarios (ie. checksum mismatches).
+If in response to a request made for a font a client receives a [[#rebase-response]] it must:
+
+1.  Decode the contents of <a href="#PatchResponse"><code>PatchResponse.patch</code></a> using
+     the decoder specified in <a href="#PatchResponse"><code>PatchResponse.patch_format</code></a>
+     
+2. Compute a checksum ([[#computing-checksums]]) of the decoded value of
+    <a href="#PatchResponse"><code>PatchResponse.patch</code></a>
+
+3. Check that <a href="#PatchResponse"><code>PatchResponse.patched_checksum</code></a> matches
+    the computed checksum in step 2. If they do not match this is an unrecoverable error. Do not
+    proceed to step 4.
+
+4. Replace the saved state for this font or create new saved state if none yet exists:
+    The decoded value of <a href="#PatchResponse"><code>PatchResponse.patch</code></a> is the font
+    subset, <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> is the
+    original font checksum, and
+    <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> is the
+    codepoint reordering map.
 
 ### Handling Patch Font Response ### {#handling-patch-response}
 

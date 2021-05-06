@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="a965058fb5f54c3ed8df0bd866d5d0f56ae06fbc" name="document-revision">
+  <meta content="181d77a1915f5f9c92401b69acccec9801ebbe76" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -909,9 +909,10 @@ from the server for this font.</p>
 for this font.</p>
    </ul>
    <h4 class="heading settled" data-level="2.2.2" id="rebase-request"><span class="secno">2.2.2. </span><span class="content">New Font Request</span><a class="self-link" href="#rebase-request"></a></h4>
-   <p>A new font request is sent by the client to get data for a font that it has not previously requested.
-In response the server will give the client a subset of the requested font that covers the codepoints
-listed in the request. A new font request is made via HTTP and may use either the GET or POST method.</p>
+   <p>A new font request is sent by the client to begin incrementally transferring a font. The request
+specifies a set of codepoints that the client needs to render with the font and in return the server
+will provide a copy of the font that supports at least those codepoints. A new font request is made
+via HTTP and may use either the GET or POST method.</p>
    <p>TODO(garretrieger): mention how the url identifies the specific font being requested.</p>
    <h5 class="heading settled" data-level="2.2.2.1" id="rebase-request-post"><span class="secno">2.2.2.1. </span><span class="content">POST</span><a class="self-link" href="#rebase-request-post"></a></h5>
    <p>If sent as a POST request the post body will be a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR. All fields of <a href="#PatchRequest"><code>PatchRequest</code></a> should be left unset except for:</p>
@@ -967,8 +968,24 @@ The codepoint values are transformed to indices by applying <code>codepoint orde
 the font.</p>
    </ul>
    <h4 class="heading settled" data-level="2.2.4" id="handling-rebase-response"><span class="secno">2.2.4. </span><span class="content">Handling New Font Response</span><a class="self-link" href="#handling-rebase-response"></a></h4>
-   <p>TODO(garretrieger): write this. Include info on handling client side
-                    error scenarios (ie. checksum mismatches).</p>
+   <p>If in response to a request made for a font a client receives a <a href="#rebase-response">§ 2.3.3 New Font Response</a> it must:</p>
+   <ol>
+    <li data-md>
+     <p>Decode the contents of <a href="#PatchResponse"><code>PatchResponse.patch</code></a> using
+ the decoder specified in <a href="#PatchResponse"><code>PatchResponse.patch_format</code></a></p>
+    <li data-md>
+     <p>Compute a checksum (<a href="#computing-checksums">§ 2.4.1 Computing Checksums</a>) of the decoded value of <a href="#PatchResponse"><code>PatchResponse.patch</code></a></p>
+    <li data-md>
+     <p>Check that <a href="#PatchResponse"><code>PatchResponse.patched_checksum</code></a> matches
+the computed checksum in step 2. If they do not match this is an unrecoverable error. Do not
+proceed to step 4.</p>
+    <li data-md>
+     <p>Replace the saved state for this font or create new saved state if none yet exists:
+The decoded value of <a href="#PatchResponse"><code>PatchResponse.patch</code></a> is the font
+subset, <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> is the
+original font checksum, and <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> is the
+codepoint reordering map.</p>
+   </ol>
    <h4 class="heading settled" data-level="2.2.5" id="handling-patch-response"><span class="secno">2.2.5. </span><span class="content">Handling Patch Font Response</span><a class="self-link" href="#handling-patch-response"></a></h4>
    <p>TODO(garretrieger): write this.</p>
    <h5 class="heading settled" data-level="2.2.5.1" id="patch-mismatch"><span class="secno">2.2.5.1. </span><span class="content">Client Side Patched Base Checksum Mismatch</span><a class="self-link" href="#patch-mismatch"></a></h5>
