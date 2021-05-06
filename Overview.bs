@@ -340,8 +340,15 @@ response_type can be one of the following values:
   <tr><td>2</td><td>REINDEX</td>
 </table>
 
-New Font Request {#rebase-request}
-----------------------------------
+
+Client {#client}
+----------------
+
+### Client State ### {#client-state}
+
+TODO(garretrieger): document the state a client needs to maintain.
+
+### New Font Request ### {#rebase-request}
 
 A new font request is sent by the client to get data for a font that it has not previously requested.
 In response the server will give the client a subset of the requested font that covers the codepoints
@@ -349,7 +356,7 @@ listed in the request. A new font request is made via HTTP and may use either th
 
 TODO(garretrieger): mention how the url identifies the specific font being requested.
 
-### POST ### {#rebase-request-post}
+#### POST #### {#rebase-request-post}
 
 If sent as a POST request the post body will be a single
 <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR. All fields of
@@ -363,7 +370,7 @@ If sent as a POST request the post body will be a single
     This field should be populated with the set of <a href="#patch-formats">patch formats</a> that this
     client is capable of decoding. At least one format must be provided.
 
-### GET ### {#rebase-request-get}
+#### GET #### {#rebase-request-get}
 
 If sent as a GET request the client will include a single query parameter:
 
@@ -372,20 +379,7 @@ If sent as a GET request the client will include a single query parameter:
     and then base64url encoding [[rfc4648]]. The <a href="#PatchRequest"><code>PatchRequest</code></a>
     object uses the same fields as specified for a <a href="#rebase-request-post">POST</a> request.
 
-### Standard Response ### {#rebase-standard-response}
-
-The server will respond to a new font request with a <a href="#rebase-response">New Font Response</a>.
-
-### Errors ### {#rebase-errors}
-
-The following errors may occur as a result of a new font request:
-
-*  [[#error-font-not-found]]
-*  [[#error-bad-request]]
-*  [[#error-internal-error]]
-
-Patch Font Request {#patch-request}
------------------------------------
+### Patch Font Request ### {#patch-request}
 
 A patch font request is sent by a client to add data for additional codepoints to its font. Patch font
 requests are sent via HTTP and can only use the POST method. The request body is a single
@@ -431,12 +425,41 @@ If the server has not previously provided a <code>codepoint_ordering</code> for 
     The set of codepoints that the clients would like added to it’s copy of
     the font.
 
-### Standard Response ### {#patch-standard-response}
 
-The server will respond to a new font request with a
-<a href="#patch-response">Patch Font Response</a>.
+### Handling New Font Response ### {#handling-rebase-response}
 
-### Recoverable Errors ### {#patch-recoverable-errors}
+TODO(garretrieger): write this. Include info on handling client side
+                    error scenarios (ie. checksum mismatches).
+
+### Handling Patch Font Response ### {#handling-patch-response}
+
+TODO(garretrieger): write this.
+
+#### Client Side Patched Base Checksum Mismatch #### {#patch-mismatch}
+
+After a client receives a [[#patch-response]] and computes a new version of the font the client must
+compare the checksum [[#computing-checksums]] of the new font to
+<a href="#PatchResponse"><code>PatchResponse.patch.patched_checksum</code></a>. If they differ, the
+client must discard the response and should resend the request as a [[#rebase-request]]. Upon receiving
+a new copy of the font the client can replace any existing data it has for that font.
+
+
+### Handling Update Codepoint Ordering Response ### {#handling-reindex-response}
+
+TODO(garretrieger): write this.
+
+TODO reorganize sections below here
+
+Server {#server}
+----------------
+
+### Handling New Font Request ### {#handling-rebase-request}
+
+TODO(garretrieger): write this.
+
+### Handling Patch Font Request ### {#handling-patch-request}
+
+TODO(garretrieger): write this.
 
 #### Client’s Original Font does not Match Server’s #### {#client-font-mismatch}
 
@@ -485,30 +508,11 @@ a [[#reindex-response]]. After receiving a [[#reindex-response]] the client shou
 If a reordering mismatch is detected it must be resolved prior to attempting to resolve any of
 the other recoverable error scenarios.
 
-#### Client Side Patched Base Checksum Mismatch #### {#patch-mismatch}
+#### Subsetting Failures #### {#subsetting-failures}
 
-TODO(garretrieger): this belongs with info about client handling of the response
+### New Font Response ### {#rebase-response}
 
-After a client receives a [[#patch-response]] and computes a new version of the font the client must
-compare the checksum [[#computing-checksums]] of the new font to
-<a href="#PatchResponse"><code>PatchResponse.patch.patched_checksum</code></a>. If they differ, the
-client must discard the response and should resend the request as a [[#rebase-request]]. Upon receiving
-a new copy of the font the client can replace any existing data it has for that font.
-
-#### Cmap Format 4 Overflow #### {#cmap4-overflow}
-
-#### Offset Overflow during Subsetting #### {#offset-overflow}
-
-### Errors ### {#errors}
-
-The following errors may occur as a result of a patch font request:
-
-*  [[#error-font-not-found]]
-*  [[#error-bad-request]]
-*  [[#error-internal-error]]
-
-New Font Response {#rebase-response}
----------------------------------------------
+TODO(garretrieger): update wording here to match new organization.
 
 If the client asks for a new font the server will respond with a single
 <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via COBR:
@@ -550,35 +554,52 @@ Also <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code><
 <a href="#PatchResponse"><code>PatchResponse.codepoint_ordering_checksum</code></a> should be saved as
 they are needed for future requests.
 
+### Patch Font Response ### {#patch-response}
 
-Patch Font Response {#patch-response}
----------------------------------------------
+TODO(garretrieger): write this.
 
-Update Codepoint Ordering Response {#reindex-response}
-----------------------------------------------------------------
+### Update Codepoint Ordering Response ###  {#reindex-response}
 
-Error Response {#error-response}
-----------------------------------------
+TODO(garretrieger): write this.
 
-### Font Not Found ### {#error-font-not-found}
+### Error Response ### {#error-response}
 
-### Bad Request ### {#error-bad-request}
+TODO(garretrieger): write this.
 
-### Internal Error ### {#error-internal-error}
+#### Font Not Found #### {#error-font-not-found}
 
+TODO(garretrieger): write this.
+
+#### Bad Request #### {#error-bad-request}
+
+TODO(garretrieger): write this.
+
+#### Internal Error #### {#error-internal-error}
+
+TODO(garretrieger): write this.
 
 Procedures {#procedures}
 ------------------------
 
 ### Computing Checksums ### {#computing-checksums}
 
+TODO(garretrieger): write this.
+
 ### Codepoint reodering ### {#codepoint-reordering}
+
+TODO(garretrieger): write this.
 
 #### Computing Checksum #### {#reordering-checksum}
 
+TODO(garretrieger): write this.
+
 #### Recommended algorithm #### {#reordering-algorithm}
 
+TODO(garretrieger): write this.
+
 ### Patch and Compression Formats ### {#patch-formats}
+
+TODO(garretrieger): write this.
 
 Range Request Incremental Transfer {#range-request-incxfer}
 ===========================================================
