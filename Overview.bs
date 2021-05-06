@@ -374,7 +374,7 @@ If sent as a GET request the client will include a single query parameter:
 
 ### Standard Response ### {#rebase-standard-response}
 
-The server will response to a new font request with a <a href="#rebase-response">New Font Response</a>.
+The server will respond to a new font request with a <a href="#rebase-response">New Font Response</a>.
 
 ### Errors ### {#rebase-errors}
 
@@ -433,7 +433,7 @@ If the server has not previously provided a <code>codepoint_ordering</code> for 
 
 ### Standard Response ### {#patch-standard-response}
 
-The server will response to a new font request with a
+The server will respond to a new font request with a
 <a href="#patch-response">Patch Font Response</a>.
 
 ### Recoverable Errors ### {#patch-recoverable-errors}
@@ -486,6 +486,14 @@ If a reordering mismatch is detected it must be resolved prior to attempting to 
 the other recoverable error scenarios.
 
 #### Client Side Patched Base Checksum Mismatch #### {#patch-mismatch}
+
+TODO(garretrieger): this belongs with info about client handling of the response
+
+After a client receives a [[#patch-response]] and computes a new version of the font the client must
+compare the checksum [[#computing-checksums]] of the new font to
+<a href="#PatchResponse"><code>PatchResponse.patch.patched_checksum</code></a>. If they differ, the
+client must discard the response and should resend the request as a [[#rebase-request]]. Upon receiving
+a new copy of the font the client can replace any existing data it has for that font.
 
 #### Cmap Format 4 Overflow #### {#cmap4-overflow}
 
