@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="6ebf275627bfa960df0fe5253a15120921ff3c42" name="document-revision">
+  <meta content="a965058fb5f54c3ed8df0bd866d5d0f56ae06fbc" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -509,7 +509,7 @@ dfn > a.self-link::before      { content: "#"; }
        <ol class="toc">
         <li><a href="#computing-checksums"><span class="secno">2.4.1</span> <span class="content">Computing Checksums</span></a>
         <li>
-         <a href="#codepoint-reordering"><span class="secno">2.4.2</span> <span class="content">Codepoint reodering</span></a>
+         <a href="#codepoint-reordering"><span class="secno">2.4.2</span> <span class="content">Codepoint Reodering</span></a>
          <ol class="toc">
           <li><a href="#reordering-checksum"><span class="secno">2.4.2.1</span> <span class="content">Computing Checksum</span></a>
           <li><a href="#reordering-algorithm"><span class="secno">2.4.2.2</span> <span class="content">Recommended algorithm</span></a>
@@ -895,7 +895,19 @@ bit set and the list of ranges are unioned together.</p>
    </table>
    <h3 class="heading settled" data-level="2.2" id="client"><span class="secno">2.2. </span><span class="content">Client</span><a class="self-link" href="#client"></a></h3>
    <h4 class="heading settled" data-level="2.2.1" id="client-state"><span class="secno">2.2.1. </span><span class="content">Client State</span><a class="self-link" href="#client-state"></a></h4>
-   <p>TODO(garretrieger): document the state a client needs to maintain.</p>
+   <p>The client will need to maintain at minimum the following state for each font file being incrementally
+transferred:</p>
+   <ul>
+    <li data-md>
+     <p>Font subset: the binary data for the most recent version of the subset of the font being
+incrementally transferred.</p>
+    <li data-md>
+     <p>Original font checksum: the most recent value of <a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a> received
+from the server for this font.</p>
+    <li data-md>
+     <p>Codepoint Reordering Map: The most recent <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reodering</a> received from the server
+for this font.</p>
+   </ul>
    <h4 class="heading settled" data-level="2.2.2" id="rebase-request"><span class="secno">2.2.2. </span><span class="content">New Font Request</span><a class="self-link" href="#rebase-request"></a></h4>
    <p>A new font request is sent by the client to get data for a font that it has not previously requested.
 In response the server will give the client a subset of the requested font that covers the codepoints
@@ -941,10 +953,10 @@ font the client should set:</p>
 response from the server for this particular font.</p>
     <li data-md>
      <p><a href="#PatchRequest"><code>PatchRequest.indices_have</code></a>:<br> Encodes the set of codepoints that are covered by the client’s current copy of the font.
-The codepoint values are transformed to indices by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.4.2 Codepoint reodering</a> to each codepoint value.</p>
+The codepoint values are transformed to indices by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reodering</a> to each codepoint value.</p>
     <li data-md>
      <p><a href="#PatchRequest"><code>PatchRequest.indices_needed</code></a>:<br> Encodes the set of codepoints that the clients would like added to it’s copy of the font.
-The codepoint values are transformed to indices by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.4.2 Codepoint reodering</a> to each codepoint value.</p>
+The codepoint values are transformed to indices by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reodering</a> to each codepoint value.</p>
    </ul>
    <p>If the server has not previously provided a <code>codepoint_ordering</code> for this font then the <code>codepoints_have</code> and <code>codepoints_needed</code> fields should be used instead:</p>
    <ul>
@@ -1027,7 +1039,7 @@ may be needed for future content. The font subset is compressed by the format sp
 prior to compression.</p>
     <li data-md>
      <p><a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a>:<br> The server should provide a codepoint reordering which the client will use to
-communicate codepoint sets back to the server. See <a href="#codepoint-reordering">§ 2.4.2 Codepoint reodering</a> for details. The
+communicate codepoint sets back to the server. See <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reodering</a> for details. The
 server is free to chose the mapping, but the mapping must use only code points in
 the original font and must map all codepoints in the original font.</p>
     <li data-md>
@@ -1051,7 +1063,7 @@ they are needed for future requests.</p>
    <h3 class="heading settled" data-level="2.4" id="procedures"><span class="secno">2.4. </span><span class="content">Procedures</span><a class="self-link" href="#procedures"></a></h3>
    <h4 class="heading settled" data-level="2.4.1" id="computing-checksums"><span class="secno">2.4.1. </span><span class="content">Computing Checksums</span><a class="self-link" href="#computing-checksums"></a></h4>
    <p>TODO(garretrieger): write this.</p>
-   <h4 class="heading settled" data-level="2.4.2" id="codepoint-reordering"><span class="secno">2.4.2. </span><span class="content">Codepoint reodering</span><a class="self-link" href="#codepoint-reordering"></a></h4>
+   <h4 class="heading settled" data-level="2.4.2" id="codepoint-reordering"><span class="secno">2.4.2. </span><span class="content">Codepoint Reodering</span><a class="self-link" href="#codepoint-reordering"></a></h4>
    <p>TODO(garretrieger): write this.</p>
    <h5 class="heading settled" data-level="2.4.2.1" id="reordering-checksum"><span class="secno">2.4.2.1. </span><span class="content">Computing Checksum</span><a class="self-link" href="#reordering-checksum"></a></h5>
    <p>TODO(garretrieger): write this.</p>

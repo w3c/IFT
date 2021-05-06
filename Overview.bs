@@ -346,7 +346,18 @@ Client {#client}
 
 ### Client State ### {#client-state}
 
-TODO(garretrieger): document the state a client needs to maintain.
+The client will need to maintain at minimum the following state for each font file being incrementally
+transferred:
+
+
+*  Font subset: the binary data for the most recent version of the subset of the font being
+    incrementally transferred.
+*  Original font checksum: the most recent value of
+    <a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a> received
+    from the server for this font.
+*  Codepoint Reordering Map: The most recent [[#codepoint-reordering]] received from the server
+    for this font.
+
 
 ### New Font Request ### {#rebase-request}
 
@@ -585,7 +596,7 @@ Procedures {#procedures}
 
 TODO(garretrieger): write this.
 
-### Codepoint reodering ### {#codepoint-reordering}
+### Codepoint Reodering ### {#codepoint-reordering}
 
 TODO(garretrieger): write this.
 
