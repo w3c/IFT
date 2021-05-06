@@ -356,7 +356,7 @@ If sent as a POST request the post body will be a single
 <a href="#PatchRequest"><code>PatchRequest</code></a> should be left unset except for:
 
 *  <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>:<br/>
-    This field must be populated with the <a href="#CompressedSet">set</a> of
+    This field is be populated with the <a href="#CompressedSet">set</a> of
     unicode codepoints which the client requires data for.
    
 *  <a href="#PatchRequest"><code>PatchRequest.patch_format</code></a>:<br/>
@@ -422,7 +422,7 @@ font the client should set:
     [[#codepoint-reordering]] to the set of codepoints.
 
 If the server has not previously provided a <code>codepoint_ordering</code> for this font then the
-<code>codepoints_have</code> and <code>codepoints_needed</code> fields must be used instead:
+<code>codepoints_have</code> and <code>codepoints_needed</code> fields should be used instead:
 
 *  <a href="#PatchRequest"><code>PatchRequest.codepoints_have</code></a>:<br/>
     The set of codepoints that are covered by the client’s copy of the font.
@@ -506,7 +506,7 @@ If the client asks for a new font the server will respond with a single
 <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via COBR:
 
 *  <a href="#PatchResponse"><code>PatchResponse.response_type</code></a>:<br/>
-    Must be set to REBASE.
+    is set to REBASE.
    
 *  <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a>:<br/>
     The checksum ([[#computing-checksums]]) computed for the full unmodified original font.
@@ -527,7 +527,7 @@ If the client asks for a new font the server will respond with a single
     prior to compression.
     
 *  <a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a>:<br/>
-    The server must provide a codepoint reordering which the client will use to
+    The server should provide a codepoint reordering which the client will use to
     communicate codepoint sets back to the server. See [[#codepoint-reordering]] for details. The
     server is free to chose the mapping, but the mapping must use only code points in
     the original font and must map all codepoints in the original font.
