@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="16910a11f27457a5471a80b609e38f35fd272061" name="document-revision">
+  <meta content="2b9b80275cb30206d1d9084bad9c6d06c4ac40a2" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-04-09">9 April 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-05-06">6 May 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -894,7 +894,7 @@ listed in the request. A new font request is made via HTTP and may use either th
    <p>If sent as a POST request the post body will be a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR. All fields of <a href="#PatchRequest"><code>PatchRequest</code></a> should be left unset except for:</p>
    <ul>
     <li data-md>
-     <p><a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>:<br> This field must be populated with the <a href="#CompressedSet">set</a> of
+     <p><a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>:<br> This field is be populated with the <a href="#CompressedSet">set</a> of
 unicode codepoints which the client requires data for.</p>
     <li data-md>
      <p><a href="#PatchRequest"><code>PatchRequest.patch_format</code></a>:<br> This field should be populated with the set of <a href="#patch-formats">patch formats</a> that this
@@ -941,13 +941,13 @@ font the client should set:</p>
      <p><a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a>:<br> Set to the most recent value of <code>ordering_checksum</code> provided by a
 response from the server for this particular font.</p>
     <li data-md>
-     <p><a href="#PatchRequest"><code>PatchRequest.indices_have</code></a>:<br> The set of codepoints that are covered by the client’s current copy of the font.
-Specified using indices obtained by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.8.2 Codepoint reodering</a> to the set of codepoints.</p>
+     <p><a href="#PatchRequest"><code>PatchRequest.indices_have</code></a>:<br> Encodes the set of codepoints that are covered by the client’s current copy of the font.
+The codepoint values are transformed to indices by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.8.2 Codepoint reodering</a> to each codepoint value.</p>
     <li data-md>
-     <p><a href="#PatchRequest"><code>PatchRequest.indices_needed</code></a>:<br> The set of codepoints that the clients would like added to it’s copy of
-the font. Specified using indices obtained by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.8.2 Codepoint reodering</a> to the set of codepoints.</p>
+     <p><a href="#PatchRequest"><code>PatchRequest.indices_needed</code></a>:<br> Encodes the set of codepoints that the clients would like added to it’s copy of the font.
+The codepoint values are transformed to indices by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.8.2 Codepoint reodering</a> to each codepoint value.</p>
    </ul>
-   <p>If the server has not previously provided a <code>codepoint_ordering</code> for this font then the <code>codepoints_have</code> and <code>codepoints_needed</code> fields must be used instead:</p>
+   <p>If the server has not previously provided a <code>codepoint_ordering</code> for this font then the <code>codepoints_have</code> and <code>codepoints_needed</code> fields should be used instead:</p>
    <ul>
     <li data-md>
      <p><a href="#PatchRequest"><code>PatchRequest.codepoints_have</code></a>:<br> The set of codepoints that are covered by the client’s copy of the font.</p>
@@ -1009,7 +1009,7 @@ the other recoverable error scenarios.</p>
    <p>If the client asks for a new font the server will respond with a single <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via COBR:</p>
    <ul>
     <li data-md>
-     <p><a href="#PatchResponse"><code>PatchResponse.response_type</code></a>:<br> Must be set to REBASE.</p>
+     <p><a href="#PatchResponse"><code>PatchResponse.response_type</code></a>:<br> is set to REBASE.</p>
     <li data-md>
      <p><a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a>:<br> The checksum (<a href="#computing-checksums">§ 2.8.1 Computing Checksums</a>) computed for the full unmodified original font.</p>
     <li data-md>
@@ -1023,7 +1023,7 @@ may be needed for future content. The font subset is compressed by the format sp
      <p><a href="#PatchResponse"><code>PatchResponse.patched_checksum</code></a>:<br> The checksum (<a href="#computing-checksums">§ 2.8.1 Computing Checksums</a>) computed for the subsetted font,
 prior to compression.</p>
     <li data-md>
-     <p><a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a>:<br> The server must provide a codepoint reordering which the client will use to
+     <p><a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a>:<br> The server should provide a codepoint reordering which the client will use to
 communicate codepoint sets back to the server. See <a href="#codepoint-reordering">§ 2.8.2 Codepoint reodering</a> for details. The
 server is free to chose the mapping, but the mapping must use only code points in
 the original font and must map all codepoints in the original font.</p>
