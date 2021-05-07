@@ -438,7 +438,8 @@ If the server has not previously provided a <code>codepoint_ordering</code> for 
 
 ### Handling New Font Response ### {#handling-rebase-response}
 
-If in response to a request made for a font a client receives a [[#rebase-response]] it must:
+If a response is received where <a href="#PatchResponse"><code>PatchResponse.response_type</code></a>
+is equal to REBASE, then the client must:
 
 1.  Decode the contents of <a href="#PatchResponse"><code>PatchResponse.patch</code></a> using
      the decoder specified in <a href="#PatchResponse"><code>PatchResponse.patch_format</code></a>
@@ -459,25 +460,48 @@ If in response to a request made for a font a client receives a [[#rebase-respon
 
 ### Handling Patch Font Response ### {#handling-patch-response}
 
-TODO(garretrieger): write this.
+If a response is received where <a href="#PatchResponse"><code>PatchResponse.response_type</code></a>
+is equal to PATCH, then the client must:
 
-#### Client Side Patched Base Checksum Mismatch #### {#patch-mismatch}
+1.  Check that <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a>
+     matches the original font checksum stored in the clients state. If they do not match
+     this is a recoverable error, follow the procedure in [[#client-side-checksum-mismatch]].
 
-After a client receives a [[#patch-response]] and computes a new version of the font the client must
-compare the checksum [[#computing-checksums]] of the new font to
-<a href="#PatchResponse"><code>PatchResponse.patch.patched_checksum</code></a>. If they differ, the
-client must discard the response and should resend the request as a [[#rebase-request]]. Upon receiving
-a new copy of the font the client can replace any existing data it has for that font.
+2.  Apply the decoded patch to the client's font subset. The format of the patch is specified
+     by the <a href="#PatchResponse"><code>PatchResponse.patch_format</code></a> field. This
+     produces a extended font subset. Replace the previous font subset stored in the client's
+     state with this the new one.
 
+3.  Compute the checksum ([[#computing-checksums]]) of the extended font subset.
+
+4.  Check that <a href="#PatchResponse"><code>PatchResponse.patched_checksum</code></a> matches
+     the computed checksum in step 3. If they do not match this is a recoverable error, follow
+     the procedure in [[#client-side-checksum-mismatch]].
+
+5.  If <a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a> and
+     <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a> have been set
+     then replace the codepoint ordering and checksum saved in the clients state with the new one
+     specified in the response.
+     
 
 ### Handling Update Codepoint Ordering Response ### {#handling-reindex-response}
 
 TODO(garretrieger): write this.
 
-TODO reorganize sections below here
+### Client Side Checksum Mismatch ### {#client-side-checksum-mismatch}
+
+If either the clients saved original font checksum or the checksum of the patched font subset
+do not match the checksums provided in a response from the server then the client should:
+
+1. Discard all currently saved state for this font.
+
+2. Resend the request as a [[#rebase-request]] with the codepoints that are currently needed.
+
 
 Server {#server}
 ----------------
+
+TODO reorganize sections below here
 
 ### Handling New Font Request ### {#handling-rebase-request}
 
