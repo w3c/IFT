@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="552c983b5cc8933a9a72ac1f79a5966314eea1db" name="document-revision">
+  <meta content="21ccb7ae8d3198288cbfbf0dd8f7a8e0b27394ca" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-05-07">7 May 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-05-10">10 May 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -485,8 +485,8 @@ dfn > a.self-link::before      { content: "#"; }
         <li>
          <a href="#handling-patch-request"><span class="secno">2.3.2</span> <span class="content">Handling Patch Font Request</span></a>
          <ol class="toc">
-          <li><a href="#client-base-mismatch"><span class="secno">2.3.2.1</span> <span class="content">Client’s Base does not Match Server’s</span></a>
-          <li><a href="#client-font-mismatch"><span class="secno">2.3.2.2</span> <span class="content">Client’s Original Font does not Match Server’s</span></a>
+          <li><a href="#client-font-mismatch"><span class="secno">2.3.2.1</span> <span class="content">Client’s Original Font does not Match Server’s</span></a>
+          <li><a href="#client-base-mismatch"><span class="secno">2.3.2.2</span> <span class="content">Client’s Base does not Match Server’s</span></a>
           <li><a href="#codepoint-reordering-mismatch"><span class="secno">2.3.2.3</span> <span class="content">Client Codepoint Reordering does not Match Servers</span></a>
           <li><a href="#subsetting-failures"><span class="secno">2.3.2.4</span> <span class="content">Subsetting Failures</span></a>
          </ol>
@@ -899,11 +899,13 @@ transferred:</p>
      <p>Font subset: the binary data for the most recent version of the subset of the font being
 incrementally transferred.</p>
     <li data-md>
-     <p>Original font checksum: the most recent value of <a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a> received
+     <p>Original font checksum: the most recent value of <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> received
 from the server for this font.</p>
     <li data-md>
      <p>Codepoint Reordering Map: The most recent <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reodering</a> received from the server
 for this font.</p>
+    <li data-md>
+     <p>Codepoint Reordering Checksum: The most recent <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a> for this font.</p>
    </ul>
    <h4 class="heading settled" data-level="2.2.2" id="rebase-request"><span class="secno">2.2.2. </span><span class="content">New Font Request</span><a class="self-link" href="#rebase-request"></a></h4>
    <p>A new font request is sent by the client to begin incrementally transferring a font. The request
@@ -1006,7 +1008,18 @@ codepoint reordering map.</p>
  specified in the response.</p>
    </ol>
    <h4 class="heading settled" data-level="2.2.6" id="handling-reindex-response"><span class="secno">2.2.6. </span><span class="content">Handling Update Codepoint Ordering Response</span><a class="self-link" href="#handling-reindex-response"></a></h4>
-   <p>TODO(garretrieger): write this.</p>
+   <p>If a response is received where <a href="#PatchResponse"><code>PatchResponse.response_type</code></a> is equal to REINDEX, then the client must:</p>
+   <ol>
+    <li data-md>
+     <p>Check that <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> matches the original font checksum stored in the clients state. If they do not match
+ this is a recoverable error, follow the procedure in <a href="#client-side-checksum-mismatch">§ 2.2.7 Client Side Checksum Mismatch</a>.</p>
+    <li data-md>
+     <p>If <a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a> and <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a> have been set
+ then replace the codepoint ordering and checksum saved in the clients state with the new one
+ specified in the response.</p>
+    <li data-md>
+     <p>Resend the request which triggered this response using the new codepoint ordering.</p>
+   </ol>
    <h4 class="heading settled" data-level="2.2.7" id="client-side-checksum-mismatch"><span class="secno">2.2.7. </span><span class="content">Client Side Checksum Mismatch</span><a class="self-link" href="#client-side-checksum-mismatch"></a></h4>
    <p>If either the clients saved original font checksum or the checksum of the patched font subset
 do not match the checksums provided in a response from the server then the client should:</p>
@@ -1022,13 +1035,7 @@ do not match the checksums provided in a response from the server then the clien
    <p>TODO(garretrieger): write this.</p>
    <h4 class="heading settled" data-level="2.3.2" id="handling-patch-request"><span class="secno">2.3.2. </span><span class="content">Handling Patch Font Request</span><a class="self-link" href="#handling-patch-request"></a></h4>
    <p>TODO(garretrieger): write this.</p>
-   <h5 class="heading settled" data-level="2.3.2.1" id="client-base-mismatch"><span class="secno">2.3.2.1. </span><span class="content">Client’s Base does not Match Server’s</span><a class="self-link" href="#client-base-mismatch"></a></h5>
-   <p>Over time servers may upgrade or change the way they compute subsets of fonts. This could result in
-the base font that a server computes not matching the base font that a client has. This case can be
-detected by the server by comparing <a href="#PatchRequest"><code>PatchRequest.base_checksum</code></a> to the checksum for the base that the server computed. If there is a mismatch the server should respond
-with a <a href="#rebase-response">§ 2.3.3 New Font Response</a> instead of the usual <a href="#patch-response">§ 2.3.4 Patch Font Response</a>. The replacement font must cover
-at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and <code>codepoints_needed/indices_needed</code> fields.</p>
-   <h5 class="heading settled" data-level="2.3.2.2" id="client-font-mismatch"><span class="secno">2.3.2.2. </span><span class="content">Client’s Original Font does not Match Server’s</span><a class="self-link" href="#client-font-mismatch"></a></h5>
+   <h5 class="heading settled" data-level="2.3.2.1" id="client-font-mismatch"><span class="secno">2.3.2.1. </span><span class="content">Client’s Original Font does not Match Server’s</span><a class="self-link" href="#client-font-mismatch"></a></h5>
    <p>Over time servers may upgrade the original copies of a font with newer
 versions. After such an upgrade, clients who have subsets built from the
 previous versions may contact the server and request a patch against the
@@ -1049,6 +1056,12 @@ version of the font it has, then a <a href="#rebase-response">§ 2.3.3 New Fon
 the client to replace the version they have with the newer version. The replacement font must cover
 at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and <code>codepoints_needed/indices_needed</code> fields.</p>
    </ul>
+   <h5 class="heading settled" data-level="2.3.2.2" id="client-base-mismatch"><span class="secno">2.3.2.2. </span><span class="content">Client’s Base does not Match Server’s</span><a class="self-link" href="#client-base-mismatch"></a></h5>
+   <p>Over time servers may upgrade or change the way they compute subsets of fonts. This could result in
+the base font that a server computes not matching the base font that a client has. This case can be
+detected by the server by comparing <a href="#PatchRequest"><code>PatchRequest.base_checksum</code></a> to the checksum for the base that the server computed. If there is a mismatch the server should respond
+with a <a href="#rebase-response">§ 2.3.3 New Font Response</a> instead of the usual <a href="#patch-response">§ 2.3.4 Patch Font Response</a>. The replacement font must cover
+at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and <code>codepoints_needed/indices_needed</code> fields.</p>
    <h5 class="heading settled" data-level="2.3.2.3" id="codepoint-reordering-mismatch"><span class="secno">2.3.2.3. </span><span class="content">Client Codepoint Reordering does not Match Servers</span><a class="self-link" href="#codepoint-reordering-mismatch"></a></h5>
    <p>The codepoint mapping used by the client may not be recognized by the server. This case can be
 detected by comparing <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a> to a

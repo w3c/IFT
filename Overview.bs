@@ -353,9 +353,12 @@ transferred:
 *  Font subset: the binary data for the most recent version of the subset of the font being
     incrementally transferred.
 *  Original font checksum: the most recent value of
-    <a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a> received
+    <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> received
     from the server for this font.
 *  Codepoint Reordering Map: The most recent [[#codepoint-reordering]] received from the server
+    for this font.
+*  Codepoint Reordering Checksum: The most recent
+    <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a>
     for this font.
 
 ### New Font Request ### {#rebase-request}
@@ -486,7 +489,20 @@ is equal to PATCH, then the client must:
 
 ### Handling Update Codepoint Ordering Response ### {#handling-reindex-response}
 
-TODO(garretrieger): write this.
+If a response is received where <a href="#PatchResponse"><code>PatchResponse.response_type</code></a>
+is equal to REINDEX, then the client must:
+
+1.  Check that <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a>
+     matches the original font checksum stored in the clients state. If they do not match
+     this is a recoverable error, follow the procedure in [[#client-side-checksum-mismatch]].
+
+2.  If <a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a> and
+     <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a> have been set
+     then replace the codepoint ordering and checksum saved in the clients state with the new one
+     specified in the response.
+
+3.  Resend the request which triggered this response using the new codepoint ordering.
+
 
 ### Client Side Checksum Mismatch ### {#client-side-checksum-mismatch}
 
