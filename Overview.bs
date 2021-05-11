@@ -541,9 +541,10 @@ then the server must:
 1. Generate a subset of the requested font that contains at least the code points
     in <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>.
 
-TODO(garretrieger): apply format encoding.
+2. Encode the subset with one of the formats listed in
+    <a href="#PatchRequest"><code>PatchRequest.patch_format</code></a>.
 
-2. Respond with a [[#rebase-response]].
+3. Respond with a [[#rebase-response]].
 
 ### Handling Patch Font Request ### {#handling-patch-request}
 
@@ -591,6 +592,29 @@ then the server must:
 
 9. Respond with a [[#patch-response]].
 
+### Client Codepoint Reordering does not Match Servers ### {#codepoint-reordering-mismatch}
+
+TODO(garretrieger): case where codepoint reodering differs because of a upgraded original font.
+
+The codepoint mapping used by the client may not be recognized by the server. This case can be
+detected by comparing <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a> to a
+checksum of the server’s codepoint reordering. In some cases the mismatch is caused by the server
+having updated the requested font with a new version which in turn can change the reordering.
+If the server still has access 
+
+*  If the codepoint ordering has changed because the requested font has been updated with a newer
+     version and the server still has the previous
+
+
+
+If there is a mismatch the server should respond with
+a [[#reindex-response]]. After receiving a [[#reindex-response]] the client should resend their
+[[#patch-request]] using the new code point reordering.
+
+If a reordering mismatch is detected it must be resolved prior to attempting to resolve any of
+the other recoverable error scenarios.
+
+
 ### Client’s Original Font does not Match Server’s ### {#client-font-mismatch}
 
 Over time servers may upgrade the original copies of a font with newer
@@ -598,18 +622,15 @@ versions. After such an upgrade, clients who have subsets built from the
 previous versions may contact the server and request a patch against the
 previous version of the font.
 
-The server will detect this case by checking that
+The server can detect this case by checking that
 <a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a> matches the checksum of
 the current version of the font. If a mismatch is detected there are two possible resolutions:
 
 *  Patch client to the new font. This is possible if the server has access to the font files for
-    previous versions of the font, and the provided checksum matches a previous version. The server
-    may then compute a patch between the old version of the font and the new version of the font with
-    any additional codepoints requested by the client. In this case the server should respond with a
-    [[#patch-response]]. The response should set
-    <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> to the checksum of
-    the new version of the original font. Additionally it may be necessary to send a new codepoint
-    ordering if the set of codepoints covered by the original font has changed.
+    previous versions of the font, and the provided checksum matches a previous version. Follow
+    the remaining steps in [[#handling-patch-request]] but replace the font used to generate
+    the base subset with the previous version that has a checksum matching
+    <a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a>.
    
 *  Replace the clients copy of the font. If the server is unable to match the provided checksum to any
     version of the font it has, then a [[#rebase-response]] should be sent instead which will instruct
@@ -627,16 +648,6 @@ with a [[#rebase-response]] instead of the usual [[#patch-response]]. The replac
 at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and
 <code>codepoints_needed/indices_needed</code> fields.
 
-### Client Codepoint Reordering does not Match Servers ### {#codepoint-reordering-mismatch}
-
-The codepoint mapping used by the client may not be recognized by the server. This case can be
-detected by comparing <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a> to a
-checksum of the server’s codepoint reordering. If there is a mismatch the server should respond with
-a [[#reindex-response]]. After receiving a [[#reindex-response]] the client should resend their
-[[#patch-request]] using the new code point reordering.
-
-If a reordering mismatch is detected it must be resolved prior to attempting to resolve any of
-the other recoverable error scenarios.
 
 ### Subsetting Failures ### {#subsetting-failures}
 
