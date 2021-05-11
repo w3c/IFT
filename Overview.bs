@@ -46,6 +46,8 @@ Patch Based Incremental Transfer {#patch-incxfer}
 
 TODO(garretrieger): Describe the high level version of how this version operates.
 
+TODO(garretrieger): Describe font subsetting.
+
 
 Data Types {#data-types}
 ------------------------
@@ -517,17 +519,79 @@ do not match the checksums provided in a response from the server then the clien
 Server {#server}
 ----------------
 
-TODO reorganize sections below here
+### Handling Requests ### {#handling-requests}
+
+TODO(garretrieger):
+- url identifies the font being operated on ('the requested font')
+- where to find the message.
+- CBOR decoding
+- Accepted http methods.
+- Identify at least one patch format which all client/servers must support.
 
 ### Handling New Font Request ### {#handling-rebase-request}
 
-TODO(garretrieger): write this.
+If a request is received where:
+
+* <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a> is a non-empty set,
+* <a href="#PatchRequest"><code>PatchRequest.codepoints_have</code></a> is not set or is an empty set,
+* and <a href="#PatchRequest"><code>PatchRequest.indices_have</code></a> is not set or is an empty set;
+
+then the server must:
+
+1. Generate a subset of the requested font that contains at least the code points
+    in <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>.
+
+TODO(garretrieger): apply format encoding.
+
+2. Respond with a [[#rebase-response]].
 
 ### Handling Patch Font Request ### {#handling-patch-request}
 
-TODO(garretrieger): write this.
+If a request is received where:
 
-#### Client’s Original Font does not Match Server’s #### {#client-font-mismatch}
+*  At least one of <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>
+    and <a href="#PatchRequest"><code>PatchRequest.indices_needed</code></a> is a non-empty set.
+
+*  At least one of <a href="#PatchRequest"><code>PatchRequest.codepoints_have</code></a>
+    and <a href="#PatchRequest"><code>PatchRequest.indices_have</code></a> is a non-empty set.
+
+then the server must:
+
+1.  Determine the codepoint reordering of the requested font. See [[#codepoint-reordering]].
+
+2.  Compute the codepoint [[#reordering-checksum]] of the reordering generated in step 1.
+     If it is not equal to <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a>
+     this is a recoverable error, follow the procedure in [[#codepoint-reordering-mismatch]].
+
+3.  Compute the checksum of the requested font. If it is not equal to
+     <a href="#PatchRequest"><code>PatchRequest.original_font_checsum</code></a>
+     this is a recoverable error, follow the procedure in [[#client-font-mismatch]].
+
+3.  Transform the indices_have and indices_needed sets into codepoints by applying the codepoint
+     reordering from step 1.
+   
+4.  Union the transformed indices_have and codepoints_have sets to form the base codepoint set.
+
+5.  Union the transformed indices_needed, codepoints_needed, and  base set to form the extended
+     codepoint set.
+
+6.  Generate:
+     *  The base font subset, by subsetting the requested font to exactly thecodepoints in the base
+         set.
+     *  The extended font subset, by subsetting the requested font to at least the codepoints in the
+         extended set.
+
+7.  Compute the checksum of the base font subset. If it is not equal to
+     <a href="#PatchRequest"><code>PatchRequest.base_checksum</code></a> this is a recoverable
+     error, follow the procedure in [[#client-base-mismatch]].
+
+8.  Generate a binary difference between the extended font subset and the base font subset using
+     one of the patch formats listed in
+     <a href="#PatchRequest"><code>PatchRequest.patch_format</code></a>.
+
+9. Respond with a [[#patch-response]].
+
+### Client’s Original Font does not Match Server’s ### {#client-font-mismatch}
 
 Over time servers may upgrade the original copies of a font with newer
 versions. After such an upgrade, clients who have subsets built from the
@@ -553,7 +617,7 @@ the current version of the font. If a mismatch is detected there are two possibl
     at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and
     <code>codepoints_needed/indices_needed</code> fields.
 
-#### Client’s Base does not Match Server’s #### {#client-base-mismatch}
+### Client’s Base does not Match Server’s ### {#client-base-mismatch}
 
 Over time servers may upgrade or change the way they compute subsets of fonts. This could result in
 the base font that a server computes not matching the base font that a client has. This case can be
@@ -563,7 +627,7 @@ with a [[#rebase-response]] instead of the usual [[#patch-response]]. The replac
 at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and
 <code>codepoints_needed/indices_needed</code> fields.
 
-#### Client Codepoint Reordering does not Match Servers #### {#codepoint-reordering-mismatch}
+### Client Codepoint Reordering does not Match Servers ### {#codepoint-reordering-mismatch}
 
 The codepoint mapping used by the client may not be recognized by the server. This case can be
 detected by comparing <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a> to a
@@ -574,7 +638,7 @@ a [[#reindex-response]]. After receiving a [[#reindex-response]] the client shou
 If a reordering mismatch is detected it must be resolved prior to attempting to resolve any of
 the other recoverable error scenarios.
 
-#### Subsetting Failures #### {#subsetting-failures}
+### Subsetting Failures ### {#subsetting-failures}
 
 ### New Font Response ### {#rebase-response}
 
@@ -592,6 +656,7 @@ If the client asks for a new font the server will respond with a single
 *  <a href="#PatchResponse"><code>PatchResponse.patch_format</code></a>:<br/>
     The compression format used to encode
     <a href="#PatchResponse"><code>PatchResponse.patch</code></a>.
+    TODO(garretrieger): needs to be one of the formats specified by the client.
    
 *  <a href="#PatchResponse"><code>PatchResponse.patch</code></a>:<br/>
     A subset of the original font that contains data for at least the codepoints requested by the
@@ -651,7 +716,7 @@ Procedures {#procedures}
 
 TODO(garretrieger): write this.
 
-### Codepoint Reodering ### {#codepoint-reordering}
+### Codepoint Reordering ### {#codepoint-reordering}
 
 TODO(garretrieger): write this.
 

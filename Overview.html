@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="21ccb7ae8d3198288cbfbf0dd8f7a8e0b27394ca" name="document-revision">
+  <meta content="be7bd2c2f25ae03ca6169db107bd8fc7cf4278b1" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-05-10">10 May 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-05-11">11 May 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -481,24 +481,22 @@ dfn > a.self-link::before      { content: "#"; }
       <li>
        <a href="#server"><span class="secno">2.3</span> <span class="content">Server</span></a>
        <ol class="toc">
-        <li><a href="#handling-rebase-request"><span class="secno">2.3.1</span> <span class="content">Handling New Font Request</span></a>
+        <li><a href="#handling-requests"><span class="secno">2.3.1</span> <span class="content">Handling Requests</span></a>
+        <li><a href="#handling-rebase-request"><span class="secno">2.3.2</span> <span class="content">Handling New Font Request</span></a>
+        <li><a href="#handling-patch-request"><span class="secno">2.3.3</span> <span class="content">Handling Patch Font Request</span></a>
+        <li><a href="#client-font-mismatch"><span class="secno">2.3.4</span> <span class="content">Client’s Original Font does not Match Server’s</span></a>
+        <li><a href="#client-base-mismatch"><span class="secno">2.3.5</span> <span class="content">Client’s Base does not Match Server’s</span></a>
+        <li><a href="#codepoint-reordering-mismatch"><span class="secno">2.3.6</span> <span class="content">Client Codepoint Reordering does not Match Servers</span></a>
+        <li><a href="#subsetting-failures"><span class="secno">2.3.7</span> <span class="content">Subsetting Failures</span></a>
+        <li><a href="#rebase-response"><span class="secno">2.3.8</span> <span class="content">New Font Response</span></a>
+        <li><a href="#patch-response"><span class="secno">2.3.9</span> <span class="content">Patch Font Response</span></a>
+        <li><a href="#reindex-response"><span class="secno">2.3.10</span> <span class="content">Update Codepoint Ordering Response</span></a>
         <li>
-         <a href="#handling-patch-request"><span class="secno">2.3.2</span> <span class="content">Handling Patch Font Request</span></a>
+         <a href="#error-response"><span class="secno">2.3.11</span> <span class="content">Error Response</span></a>
          <ol class="toc">
-          <li><a href="#client-font-mismatch"><span class="secno">2.3.2.1</span> <span class="content">Client’s Original Font does not Match Server’s</span></a>
-          <li><a href="#client-base-mismatch"><span class="secno">2.3.2.2</span> <span class="content">Client’s Base does not Match Server’s</span></a>
-          <li><a href="#codepoint-reordering-mismatch"><span class="secno">2.3.2.3</span> <span class="content">Client Codepoint Reordering does not Match Servers</span></a>
-          <li><a href="#subsetting-failures"><span class="secno">2.3.2.4</span> <span class="content">Subsetting Failures</span></a>
-         </ol>
-        <li><a href="#rebase-response"><span class="secno">2.3.3</span> <span class="content">New Font Response</span></a>
-        <li><a href="#patch-response"><span class="secno">2.3.4</span> <span class="content">Patch Font Response</span></a>
-        <li><a href="#reindex-response"><span class="secno">2.3.5</span> <span class="content">Update Codepoint Ordering Response</span></a>
-        <li>
-         <a href="#error-response"><span class="secno">2.3.6</span> <span class="content">Error Response</span></a>
-         <ol class="toc">
-          <li><a href="#error-font-not-found"><span class="secno">2.3.6.1</span> <span class="content">Font Not Found</span></a>
-          <li><a href="#error-bad-request"><span class="secno">2.3.6.2</span> <span class="content">Bad Request</span></a>
-          <li><a href="#error-internal-error"><span class="secno">2.3.6.3</span> <span class="content">Internal Error</span></a>
+          <li><a href="#error-font-not-found"><span class="secno">2.3.11.1</span> <span class="content">Font Not Found</span></a>
+          <li><a href="#error-bad-request"><span class="secno">2.3.11.2</span> <span class="content">Bad Request</span></a>
+          <li><a href="#error-internal-error"><span class="secno">2.3.11.3</span> <span class="content">Internal Error</span></a>
          </ol>
        </ol>
       <li>
@@ -506,7 +504,7 @@ dfn > a.self-link::before      { content: "#"; }
        <ol class="toc">
         <li><a href="#computing-checksums"><span class="secno">2.4.1</span> <span class="content">Computing Checksums</span></a>
         <li>
-         <a href="#codepoint-reordering"><span class="secno">2.4.2</span> <span class="content">Codepoint Reodering</span></a>
+         <a href="#codepoint-reordering"><span class="secno">2.4.2</span> <span class="content">Codepoint Reordering</span></a>
          <ol class="toc">
           <li><a href="#reordering-checksum"><span class="secno">2.4.2.1</span> <span class="content">Computing Checksum</span></a>
           <li><a href="#reordering-algorithm"><span class="secno">2.4.2.2</span> <span class="content">Recommended algorithm</span></a>
@@ -545,6 +543,7 @@ dfn > a.self-link::before      { content: "#"; }
    <p>See the Progressive Font Enrichment: Evaluation Report <a data-link-type="biblio" href="#biblio-pfe-report">[PFE-report]</a> for the investigation which led to this specification.</p>
    <h2 class="heading settled" data-level="2" id="patch-incxfer"><span class="secno">2. </span><span class="content">Patch Based Incremental Transfer</span><a class="self-link" href="#patch-incxfer"></a></h2>
    <p>TODO(garretrieger): Describe the high level version of how this version operates.</p>
+   <p>TODO(garretrieger): Describe font subsetting.</p>
    <h3 class="heading settled" data-level="2.1" id="data-types"><span class="secno">2.1. </span><span class="content">Data Types</span><a class="self-link" href="#data-types"></a></h3>
    <p>This section lists all of the data types that are used to form the request and response messages
 sent between the client and server.</p>
@@ -902,7 +901,7 @@ incrementally transferred.</p>
      <p>Original font checksum: the most recent value of <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> received
 from the server for this font.</p>
     <li data-md>
-     <p>Codepoint Reordering Map: The most recent <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reodering</a> received from the server
+     <p>Codepoint Reordering Map: The most recent <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reordering</a> received from the server
 for this font.</p>
     <li data-md>
      <p>Codepoint Reordering Checksum: The most recent <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a> for this font.</p>
@@ -953,10 +952,10 @@ font the client should set:</p>
 response from the server for this particular font.</p>
     <li data-md>
      <p><a href="#PatchRequest"><code>PatchRequest.indices_have</code></a>:<br> Encodes the set of codepoints that are covered by the client’s current copy of the font.
-The codepoint values are transformed to indices by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reodering</a> to each codepoint value.</p>
+The codepoint values are transformed to indices by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reordering</a> to each codepoint value.</p>
     <li data-md>
      <p><a href="#PatchRequest"><code>PatchRequest.indices_needed</code></a>:<br> Encodes the set of codepoints that the clients would like added to it’s copy of the font.
-The codepoint values are transformed to indices by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reodering</a> to each codepoint value.</p>
+The codepoint values are transformed to indices by applying <code>codepoint ordering</code> <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reordering</a> to each codepoint value.</p>
    </ul>
    <p>If the server has not previously provided a <code>codepoint_ordering</code> for this font then the <code>codepoints_have</code> and <code>codepoints_needed</code> fields should be used instead:</p>
    <ul>
@@ -1030,12 +1029,86 @@ do not match the checksums provided in a response from the server then the clien
      <p>Resend the request as a <a href="#rebase-request">§ 2.2.2 New Font Request</a> with the codepoints that are currently needed.</p>
    </ol>
    <h3 class="heading settled" data-level="2.3" id="server"><span class="secno">2.3. </span><span class="content">Server</span><a class="self-link" href="#server"></a></h3>
-   <p>TODO reorganize sections below here</p>
-   <h4 class="heading settled" data-level="2.3.1" id="handling-rebase-request"><span class="secno">2.3.1. </span><span class="content">Handling New Font Request</span><a class="self-link" href="#handling-rebase-request"></a></h4>
-   <p>TODO(garretrieger): write this.</p>
-   <h4 class="heading settled" data-level="2.3.2" id="handling-patch-request"><span class="secno">2.3.2. </span><span class="content">Handling Patch Font Request</span><a class="self-link" href="#handling-patch-request"></a></h4>
-   <p>TODO(garretrieger): write this.</p>
-   <h5 class="heading settled" data-level="2.3.2.1" id="client-font-mismatch"><span class="secno">2.3.2.1. </span><span class="content">Client’s Original Font does not Match Server’s</span><a class="self-link" href="#client-font-mismatch"></a></h5>
+   <h4 class="heading settled" data-level="2.3.1" id="handling-requests"><span class="secno">2.3.1. </span><span class="content">Handling Requests</span><a class="self-link" href="#handling-requests"></a></h4>
+   <p>TODO(garretrieger):</p>
+   <ul>
+    <li data-md>
+     <p>url identifies the font being operated on ('the requested font')</p>
+    <li data-md>
+     <p>where to find the message.</p>
+    <li data-md>
+     <p>CBOR decoding</p>
+    <li data-md>
+     <p>Accepted http methods.</p>
+    <li data-md>
+     <p>Identify at least one patch format which all client/servers must support.</p>
+   </ul>
+   <h4 class="heading settled" data-level="2.3.2" id="handling-rebase-request"><span class="secno">2.3.2. </span><span class="content">Handling New Font Request</span><a class="self-link" href="#handling-rebase-request"></a></h4>
+   <p>If a request is received where:</p>
+   <ul>
+    <li data-md>
+     <p><a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a> is a non-empty set,</p>
+    <li data-md>
+     <p><a href="#PatchRequest"><code>PatchRequest.codepoints_have</code></a> is not set or is an empty set,</p>
+    <li data-md>
+     <p>and <a href="#PatchRequest"><code>PatchRequest.indices_have</code></a> is not set or is an empty set;</p>
+   </ul>
+   <p>then the server must:</p>
+   <ol>
+    <li data-md>
+     <p>Generate a subset of the requested font that contains at least the code points
+in <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>.</p>
+   </ol>
+   <p>TODO(garretrieger): apply format encoding.</p>
+   <ol start="2">
+    <li data-md>
+     <p>Respond with a <a href="#rebase-response">§ 2.3.8 New Font Response</a>.</p>
+   </ol>
+   <h4 class="heading settled" data-level="2.3.3" id="handling-patch-request"><span class="secno">2.3.3. </span><span class="content">Handling Patch Font Request</span><a class="self-link" href="#handling-patch-request"></a></h4>
+   <p>If a request is received where:</p>
+   <ul>
+    <li data-md>
+     <p>At least one of <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a> and <a href="#PatchRequest"><code>PatchRequest.indices_needed</code></a> is a non-empty set.</p>
+    <li data-md>
+     <p>At least one of <a href="#PatchRequest"><code>PatchRequest.codepoints_have</code></a> and <a href="#PatchRequest"><code>PatchRequest.indices_have</code></a> is a non-empty set.</p>
+   </ul>
+   <p>then the server must:</p>
+   <ol>
+    <li data-md>
+     <p>Determine the codepoint reordering of the requested font. See <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reordering</a>.</p>
+    <li data-md>
+     <p>Compute the codepoint <a href="#reordering-checksum">§ 2.4.2.1 Computing Checksum</a> of the reordering generated in step 1.
+ If it is not equal to <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a> this is a recoverable error, follow the procedure in <a href="#codepoint-reordering-mismatch">§ 2.3.6 Client Codepoint Reordering does not Match Servers</a>.</p>
+    <li data-md>
+     <p>Compute the checksum of the requested font. If it is not equal to <a href="#PatchRequest"><code>PatchRequest.original_font_checsum</code></a> this is a recoverable error, follow the procedure in <a href="#client-font-mismatch">§ 2.3.4 Client’s Original Font does not Match Server’s</a>.</p>
+    <li data-md>
+     <p>Transform the indices_have and indices_needed sets into codepoints by applying the codepoint
+ reordering from step 1.</p>
+    <li data-md>
+     <p>Union the transformed indices_have and codepoints_have sets to form the base codepoint set.</p>
+    <li data-md>
+     <p>Union the transformed indices_needed, codepoints_needed, and  base set to form the extended
+ codepoint set.</p>
+    <li data-md>
+     <p>Generate:</p>
+     <ul>
+      <li data-md>
+       <p>The base font subset, by subsetting the requested font to exactly thecodepoints in the base
+ set.</p>
+      <li data-md>
+       <p>The extended font subset, by subsetting the requested font to at least the codepoints in the
+ extended set.</p>
+     </ul>
+    <li data-md>
+     <p>Compute the checksum of the base font subset. If it is not equal to <a href="#PatchRequest"><code>PatchRequest.base_checksum</code></a> this is a recoverable
+ error, follow the procedure in <a href="#client-base-mismatch">§ 2.3.5 Client’s Base does not Match Server’s</a>.</p>
+    <li data-md>
+     <p>Generate a binary difference between the extended font subset and the base font subset using
+ one of the patch formats listed in <a href="#PatchRequest"><code>PatchRequest.patch_format</code></a>.</p>
+    <li data-md>
+     <p>Respond with a <a href="#patch-response">§ 2.3.9 Patch Font Response</a>.</p>
+   </ol>
+   <h4 class="heading settled" data-level="2.3.4" id="client-font-mismatch"><span class="secno">2.3.4. </span><span class="content">Client’s Original Font does not Match Server’s</span><a class="self-link" href="#client-font-mismatch"></a></h4>
    <p>Over time servers may upgrade the original copies of a font with newer
 versions. After such an upgrade, clients who have subsets built from the
 previous versions may contact the server and request a patch against the
@@ -1047,30 +1120,30 @@ the current version of the font. If a mismatch is detected there are two possibl
      <p>Patch client to the new font. This is possible if the server has access to the font files for
 previous versions of the font, and the provided checksum matches a previous version. The server
 may then compute a patch between the old version of the font and the new version of the font with
-any additional codepoints requested by the client. In this case the server should respond with a <a href="#patch-response">§ 2.3.4 Patch Font Response</a>. The response should set <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> to the checksum of
+any additional codepoints requested by the client. In this case the server should respond with a <a href="#patch-response">§ 2.3.9 Patch Font Response</a>. The response should set <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> to the checksum of
 the new version of the original font. Additionally it may be necessary to send a new codepoint
 ordering if the set of codepoints covered by the original font has changed.</p>
     <li data-md>
      <p>Replace the clients copy of the font. If the server is unable to match the provided checksum to any
-version of the font it has, then a <a href="#rebase-response">§ 2.3.3 New Font Response</a> should be sent instead which will instruct
+version of the font it has, then a <a href="#rebase-response">§ 2.3.8 New Font Response</a> should be sent instead which will instruct
 the client to replace the version they have with the newer version. The replacement font must cover
 at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and <code>codepoints_needed/indices_needed</code> fields.</p>
    </ul>
-   <h5 class="heading settled" data-level="2.3.2.2" id="client-base-mismatch"><span class="secno">2.3.2.2. </span><span class="content">Client’s Base does not Match Server’s</span><a class="self-link" href="#client-base-mismatch"></a></h5>
+   <h4 class="heading settled" data-level="2.3.5" id="client-base-mismatch"><span class="secno">2.3.5. </span><span class="content">Client’s Base does not Match Server’s</span><a class="self-link" href="#client-base-mismatch"></a></h4>
    <p>Over time servers may upgrade or change the way they compute subsets of fonts. This could result in
 the base font that a server computes not matching the base font that a client has. This case can be
 detected by the server by comparing <a href="#PatchRequest"><code>PatchRequest.base_checksum</code></a> to the checksum for the base that the server computed. If there is a mismatch the server should respond
-with a <a href="#rebase-response">§ 2.3.3 New Font Response</a> instead of the usual <a href="#patch-response">§ 2.3.4 Patch Font Response</a>. The replacement font must cover
+with a <a href="#rebase-response">§ 2.3.8 New Font Response</a> instead of the usual <a href="#patch-response">§ 2.3.9 Patch Font Response</a>. The replacement font must cover
 at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and <code>codepoints_needed/indices_needed</code> fields.</p>
-   <h5 class="heading settled" data-level="2.3.2.3" id="codepoint-reordering-mismatch"><span class="secno">2.3.2.3. </span><span class="content">Client Codepoint Reordering does not Match Servers</span><a class="self-link" href="#codepoint-reordering-mismatch"></a></h5>
+   <h4 class="heading settled" data-level="2.3.6" id="codepoint-reordering-mismatch"><span class="secno">2.3.6. </span><span class="content">Client Codepoint Reordering does not Match Servers</span><a class="self-link" href="#codepoint-reordering-mismatch"></a></h4>
    <p>The codepoint mapping used by the client may not be recognized by the server. This case can be
 detected by comparing <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a> to a
 checksum of the server’s codepoint reordering. If there is a mismatch the server should respond with
-a <a href="#reindex-response">§ 2.3.5 Update Codepoint Ordering Response</a>. After receiving a <a href="#reindex-response">§ 2.3.5 Update Codepoint Ordering Response</a> the client should resend their <a href="#patch-request">§ 2.2.3 Patch Font Request</a> using the new code point reordering.</p>
+a <a href="#reindex-response">§ 2.3.10 Update Codepoint Ordering Response</a>. After receiving a <a href="#reindex-response">§ 2.3.10 Update Codepoint Ordering Response</a> the client should resend their <a href="#patch-request">§ 2.2.3 Patch Font Request</a> using the new code point reordering.</p>
    <p>If a reordering mismatch is detected it must be resolved prior to attempting to resolve any of
 the other recoverable error scenarios.</p>
-   <h5 class="heading settled" data-level="2.3.2.4" id="subsetting-failures"><span class="secno">2.3.2.4. </span><span class="content">Subsetting Failures</span><a class="self-link" href="#subsetting-failures"></a></h5>
-   <h4 class="heading settled" data-level="2.3.3" id="rebase-response"><span class="secno">2.3.3. </span><span class="content">New Font Response</span><a class="self-link" href="#rebase-response"></a></h4>
+   <h4 class="heading settled" data-level="2.3.7" id="subsetting-failures"><span class="secno">2.3.7. </span><span class="content">Subsetting Failures</span><a class="self-link" href="#subsetting-failures"></a></h4>
+   <h4 class="heading settled" data-level="2.3.8" id="rebase-response"><span class="secno">2.3.8. </span><span class="content">New Font Response</span><a class="self-link" href="#rebase-response"></a></h4>
    <p>TODO(garretrieger): update wording here to match new organization.</p>
    <p>If the client asks for a new font the server will respond with a single <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via COBR:</p>
    <ul>
@@ -1079,7 +1152,8 @@ the other recoverable error scenarios.</p>
     <li data-md>
      <p><a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a>:<br> The checksum (<a href="#computing-checksums">§ 2.4.1 Computing Checksums</a>) computed for the full unmodified original font.</p>
     <li data-md>
-     <p><a href="#PatchResponse"><code>PatchResponse.patch_format</code></a>:<br> The compression format used to encode <a href="#PatchResponse"><code>PatchResponse.patch</code></a>.</p>
+     <p><a href="#PatchResponse"><code>PatchResponse.patch_format</code></a>:<br> The compression format used to encode <a href="#PatchResponse"><code>PatchResponse.patch</code></a>.
+TODO(garretrieger): needs to be one of the formats specified by the client.</p>
     <li data-md>
      <p><a href="#PatchResponse"><code>PatchResponse.patch</code></a>:<br> A subset of the original font that contains data for at least the codepoints requested by the
 client in the <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a> field. The
@@ -1090,7 +1164,7 @@ may be needed for future content. The font subset is compressed by the format sp
 prior to compression.</p>
     <li data-md>
      <p><a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a>:<br> The server should provide a codepoint reordering which the client will use to
-communicate codepoint sets back to the server. See <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reodering</a> for details. The
+communicate codepoint sets back to the server. See <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reordering</a> for details. The
 server is free to chose the mapping, but the mapping must use only code points in
 the original font and must map all codepoints in the original font.</p>
     <li data-md>
@@ -1099,22 +1173,22 @@ the original font and must map all codepoints in the original font.</p>
    <p>If the client receives a new font response it should replace any version of the font it currently has
 with the decompressed contents of the <a href="#PatchResponse"><code>PatchResponse.patch</code></a> Also <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a>, <a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a>, and <a href="#PatchResponse"><code>PatchResponse.codepoint_ordering_checksum</code></a> should be saved as
 they are needed for future requests.</p>
-   <h4 class="heading settled" data-level="2.3.4" id="patch-response"><span class="secno">2.3.4. </span><span class="content">Patch Font Response</span><a class="self-link" href="#patch-response"></a></h4>
+   <h4 class="heading settled" data-level="2.3.9" id="patch-response"><span class="secno">2.3.9. </span><span class="content">Patch Font Response</span><a class="self-link" href="#patch-response"></a></h4>
    <p>TODO(garretrieger): write this.</p>
-   <h4 class="heading settled" data-level="2.3.5" id="reindex-response"><span class="secno">2.3.5. </span><span class="content">Update Codepoint Ordering Response</span><a class="self-link" href="#reindex-response"></a></h4>
+   <h4 class="heading settled" data-level="2.3.10" id="reindex-response"><span class="secno">2.3.10. </span><span class="content">Update Codepoint Ordering Response</span><a class="self-link" href="#reindex-response"></a></h4>
    <p>TODO(garretrieger): write this.</p>
-   <h4 class="heading settled" data-level="2.3.6" id="error-response"><span class="secno">2.3.6. </span><span class="content">Error Response</span><a class="self-link" href="#error-response"></a></h4>
+   <h4 class="heading settled" data-level="2.3.11" id="error-response"><span class="secno">2.3.11. </span><span class="content">Error Response</span><a class="self-link" href="#error-response"></a></h4>
    <p>TODO(garretrieger): write this.</p>
-   <h5 class="heading settled" data-level="2.3.6.1" id="error-font-not-found"><span class="secno">2.3.6.1. </span><span class="content">Font Not Found</span><a class="self-link" href="#error-font-not-found"></a></h5>
+   <h5 class="heading settled" data-level="2.3.11.1" id="error-font-not-found"><span class="secno">2.3.11.1. </span><span class="content">Font Not Found</span><a class="self-link" href="#error-font-not-found"></a></h5>
    <p>TODO(garretrieger): write this.</p>
-   <h5 class="heading settled" data-level="2.3.6.2" id="error-bad-request"><span class="secno">2.3.6.2. </span><span class="content">Bad Request</span><a class="self-link" href="#error-bad-request"></a></h5>
+   <h5 class="heading settled" data-level="2.3.11.2" id="error-bad-request"><span class="secno">2.3.11.2. </span><span class="content">Bad Request</span><a class="self-link" href="#error-bad-request"></a></h5>
    <p>TODO(garretrieger): write this.</p>
-   <h5 class="heading settled" data-level="2.3.6.3" id="error-internal-error"><span class="secno">2.3.6.3. </span><span class="content">Internal Error</span><a class="self-link" href="#error-internal-error"></a></h5>
+   <h5 class="heading settled" data-level="2.3.11.3" id="error-internal-error"><span class="secno">2.3.11.3. </span><span class="content">Internal Error</span><a class="self-link" href="#error-internal-error"></a></h5>
    <p>TODO(garretrieger): write this.</p>
    <h3 class="heading settled" data-level="2.4" id="procedures"><span class="secno">2.4. </span><span class="content">Procedures</span><a class="self-link" href="#procedures"></a></h3>
    <h4 class="heading settled" data-level="2.4.1" id="computing-checksums"><span class="secno">2.4.1. </span><span class="content">Computing Checksums</span><a class="self-link" href="#computing-checksums"></a></h4>
    <p>TODO(garretrieger): write this.</p>
-   <h4 class="heading settled" data-level="2.4.2" id="codepoint-reordering"><span class="secno">2.4.2. </span><span class="content">Codepoint Reodering</span><a class="self-link" href="#codepoint-reordering"></a></h4>
+   <h4 class="heading settled" data-level="2.4.2" id="codepoint-reordering"><span class="secno">2.4.2. </span><span class="content">Codepoint Reordering</span><a class="self-link" href="#codepoint-reordering"></a></h4>
    <p>TODO(garretrieger): write this.</p>
    <h5 class="heading settled" data-level="2.4.2.1" id="reordering-checksum"><span class="secno">2.4.2.1. </span><span class="content">Computing Checksum</span><a class="self-link" href="#reordering-checksum"></a></h5>
    <p>TODO(garretrieger): write this.</p>
