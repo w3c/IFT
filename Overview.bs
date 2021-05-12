@@ -466,238 +466,50 @@ If the the checksum of the font subset computed by the client does not match the
 Server {#server}
 ----------------
 
-### Responding to PatchRequest's ### {#handling-patch-request}
+### Responding to a PatchRequest ### {#handling-patch-request}
+
+TODO(garretrieger): url identifies the font being operated on ('the requested font')
+TODO(garretrieger): https only.
+TODO(garretrieger): Identify at least one patch format which all client/servers must support.
 
 If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> that
 was populated according to the requirements in [[#extend-subset]] then it should respond with HTTP
 status code 200. The body of the response should be a single
 <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.
 
-TODO(garretrieger): describe producing two codepoint sets - codepoints needed, codepoints have
-TODO(garretrieger): say something about original font checksum? it doesn't need to match...
-TODO(garretrieger): note the server should try and produce a patch instead of a replacement
-                    where possible.         
-
-The response object must:
-
-*  when processed by the client according to [[#handling-patch-response]] result in a font subset
-    that contains data for at least the union of the set of codepoints needed and the sets of
-    codepoints the client already has. The format of the used patch in the response must be one of
-    those listed in <code>accept_patch_format</code>.
-
-* OR, ... TODO(garretrieger): alternately can respond just with an updated codepoint ordering.
-
-
-The fields should
-be set as follows
-
-### PatchResponse ### {#patch-response}
-
-### Error Responses ###
-
-
-///////////////// OLD
-
-### Handling Requests ### {#handling-requests}
-
-TODO(garretrieger):
-- url identifies the font being operated on ('the requested font')
-- where to find the message.
-- CBOR decoding
-- Accepted http methods.
-- Identify at least one patch format which all client/servers must support.
-
-### Handling New Font Request ### {#handling-rebase-request}
-
-If a request is received where:
-
-* <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a> is a non-empty set,
-* <a href="#PatchRequest"><code>PatchRequest.codepoints_have</code></a> is not set or is an empty set,
-* and <a href="#PatchRequest"><code>PatchRequest.indices_have</code></a> is not set or is an empty set;
-
-then the server must:
-
-1. Generate a subset of the requested font that contains at least the code points
-    in <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>.
-
-2. Encode the subset with one of the formats listed in
-    <a href="#PatchRequest"><code>PatchRequest.patch_format</code></a>.
-
-3. Respond with a [[#rebase-response]].
-
-### Handling Patch Font Request ### {#handling-patch-request}
-
-If a request is received where:
-
-*  At least one of <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>
-    and <a href="#PatchRequest"><code>PatchRequest.indices_needed</code></a> is a non-empty set.
-
-*  At least one of <a href="#PatchRequest"><code>PatchRequest.codepoints_have</code></a>
-    and <a href="#PatchRequest"><code>PatchRequest.indices_have</code></a> is a non-empty set.
-
-then the server must:
-
-1.  Determine the codepoint reordering of the requested font. See [[#codepoint-reordering]].
-
-2.  Compute the codepoint [[#reordering-checksum]] of the reordering generated in step 1.
-     If it is not equal to <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a>
-     this is a recoverable error, follow the procedure in [[#codepoint-reordering-mismatch]].
-
-3.  Compute the checksum of the requested font. If it is not equal to
-     <a href="#PatchRequest"><code>PatchRequest.original_font_checsum</code></a>
-     this is a recoverable error, follow the procedure in [[#client-font-mismatch]].
-
-3.  Transform the indices_have and indices_needed sets into codepoints by applying the codepoint
-     reordering from step 1.
-   
-4.  Union the transformed indices_have and codepoints_have sets to form the base codepoint set.
-
-5.  Union the transformed indices_needed, codepoints_needed, and  base set to form the extended
-     codepoint set.
-
-6.  Generate:
-     *  The base font subset, by subsetting the requested font to exactly thecodepoints in the base
-         set.
-     *  The extended font subset, by subsetting the requested font to at least the codepoints in the
-         extended set.
-
-7.  Compute the checksum of the base font subset. If it is not equal to
-     <a href="#PatchRequest"><code>PatchRequest.base_checksum</code></a> this is a recoverable
-     error, follow the procedure in [[#client-base-mismatch]].
-
-8.  Generate a binary difference between the extended font subset and the base font subset using
-     one of the patch formats listed in
-     <a href="#PatchRequest"><code>PatchRequest.patch_format</code></a>.
-
-9. Respond with a [[#patch-response]].
-
-### Client Codepoint Reordering does not Match Servers ### {#codepoint-reordering-mismatch}
-
-TODO(garretrieger): case where codepoint reodering differs because of a upgraded original font.
-
-The codepoint mapping used by the client may not be recognized by the server. This case can be
-detected by comparing <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a> to a
-checksum of the server’s codepoint reordering. In some cases the mismatch is caused by the server
-having updated the requested font with a new version which in turn can change the reordering.
-If the server still has access 
-
-*  If the codepoint ordering has changed because the requested font has been updated with a newer
-     version and the server still has the previous
-
-
-
-If there is a mismatch the server should respond with
-a [[#reindex-response]]. After receiving a [[#reindex-response]] the client should resend their
-#patch-request (TODO) using the new code point reordering.
-
-If a reordering mismatch is detected it must be resolved prior to attempting to resolve any of
-the other recoverable error scenarios.
-
-
-### Client’s Original Font does not Match Server’s ### {#client-font-mismatch}
-
-Over time servers may upgrade the original copies of a font with newer
-versions. After such an upgrade, clients who have subsets built from the
-previous versions may contact the server and request a patch against the
-previous version of the font.
-
-The server can detect this case by checking that
-<a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a> matches the checksum of
-the current version of the font. If a mismatch is detected there are two possible resolutions:
-
-*  Patch client to the new font. This is possible if the server has access to the font files for
-    previous versions of the font, and the provided checksum matches a previous version. Follow
-    the remaining steps in [[#handling-patch-request]] but replace the font used to generate
-    the base subset with the previous version that has a checksum matching
-    <a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a>.
-   
-*  Replace the clients copy of the font. If the server is unable to match the provided checksum to any
-    version of the font it has, then a [[#rebase-response]] should be sent instead which will instruct
-    the client to replace the version they have with the newer version. The replacement font must cover
-    at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and
-    <code>codepoints_needed/indices_needed</code> fields.
-
-### Client’s Base does not Match Server’s ### {#client-base-mismatch}
-
-Over time servers may upgrade or change the way they compute subsets of fonts. This could result in
-the base font that a server computes not matching the base font that a client has. This case can be
-detected by the server by comparing <a href="#PatchRequest"><code>PatchRequest.base_checksum</code></a>
-to the checksum for the base that the server computed. If there is a mismatch the server should respond
-with a [[#rebase-response]] instead of the usual [[#patch-response]]. The replacement font must cover
-at minimum the codepoints specified in the <code>codepoints_have/indices_have</code> and
-<code>codepoints_needed/indices_needed</code> fields.
-
-
-### Subsetting Failures ### {#subsetting-failures}
-
-### New Font Response ### {#rebase-response}
-
-TODO(garretrieger): update wording here to match new organization.
-
-If the client asks for a new font the server will respond with a single
-<a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via COBR:
-
-*  <a href="#PatchResponse"><code>PatchResponse.response_type</code></a>:<br/>
-    is set to REBASE.
-   
-*  <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a>:<br/>
-    The checksum ([[#computing-checksums]]) computed for the full unmodified original font.
-
-*  <a href="#PatchResponse"><code>PatchResponse.patch_format</code></a>:<br/>
-    The compression format used to encode
-    <a href="#PatchResponse"><code>PatchResponse.patch</code></a>.
-    TODO(garretrieger): needs to be one of the formats specified by the client.
-   
-*  <a href="#PatchResponse"><code>PatchResponse.patch</code></a>:<br/>
-    A subset of the original font that contains data for at least the codepoints requested by the
-    client in the <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a> field. The
-    server may opt to expand the subset requested by the client to include additional characters that
-    may be needed for future content. The font subset is compressed by the format specified in
-    <a href="#PatchResponse"><code>PatchResponse.patch_format</code></a>.
-  
-*  <a href="#PatchResponse"><code>PatchResponse.patched_checksum</code></a>:<br/>
-    The checksum ([[#computing-checksums]]) computed for the subsetted font,
-    prior to compression.
-    
-*  <a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a>:<br/>
-    The server should provide a codepoint reordering which the client will use to
-    communicate codepoint sets back to the server. See [[#codepoint-reordering]] for details. The
-    server is free to chose the mapping, but the mapping must use only code points in
-    the original font and must map all codepoints in the original font.
-   
-*  <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a>:<br/>
-     Checksum for the codepoint ordering [[#reordering-checksum]].
-
-If the client receives a new font response it should replace any version of the font it currently has
-with the decompressed contents of the <a href="#PatchResponse"><code>PatchResponse.patch</code></a>
-Also <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a>, 
-<a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a>, and
-<a href="#PatchResponse"><code>PatchResponse.codepoint_ordering_checksum</code></a> should be saved as
-they are needed for future requests.
-
-### Patch Font Response ### {#patch-response}
-
-TODO(garretrieger): write this.
-
-### Update Codepoint Ordering Response ###  {#reindex-response}
-
-TODO(garretrieger): write this.
-
-### Error Response ### {#error-response}
-
-TODO(garretrieger): write this.
-
-#### Font Not Found #### {#error-font-not-found}
-
-TODO(garretrieger): write this.
-
-#### Bad Request #### {#error-bad-request}
-
-TODO(garretrieger): write this.
-
-#### Internal Error #### {#error-internal-error}
-
-TODO(garretrieger): write this.
+From the request object the server can produce two codepoint sets:
+
+1.  Codepoints the client has: formed by the union of the codepoint sets specified by
+     <code>codepoints_have</code> and <code>indices_have</code>. The indices in
+     <code>indices_have</code> must be mapped to codepoints by the application of the
+     codepoint reordering with a checksum matching <code>ordering_checksum</code>.
+
+2.  Codepoints the client needs: formed by the union of the codepoint sets specified by
+     <code>codepoints_needed</code> and <code>indices_needed</code>. The indices in
+     <code>indices_have</code> must be mapped to codepoints by the application of the
+     codepoint reordering with a checksum matching <code>ordering_checksum</code>.
+
+If the server does not recognize the codepoint ordering used by the client, it must respond
+with a response that will cause the client to update it's codepoint ordering to one the server
+will recognize via the process described in [[#handling-patch-response]] and not include any patch.
+That is the <code>patch</code> and <code>replacement</code> fields must not be set.
+
+Otherwise when the response is applied by the client following the process in [[#handling-patch-response]]
+to a font subset with checksum <code>base_checksum</code> it must result in an extended font subset that contains
+data for at least the union of the set of codepoints needed and the sets of codepoints the client already
+has. The format of patch in the either the <code>patch</code> or <code>replace</code> field must be one of
+those listed in <code>accept_patch_format</code>.
+
+Note: the server can respond with either a patch or a replacement but should try to produce a patch where possible.
+      replacement's should only be used in situations where the server is unable to recreate the clients state
+      in order to generate a patch against it.
+
+Possible error responses:
+
+*  If the request is malformed the server may instead respond with http status code 400 to indicate an error.
+
+*  If the requested font is not recognized by the server it may respond with http status code 404 to indicate
+    a not found error.
 
 Procedures {#procedures}
 ------------------------
