@@ -449,6 +449,8 @@ should interpret and process the fields of the object as follows:
     resend the request that triggered this response but use the new codepoint ordering provided in
     this response.
 
+TODO(garretrieger): how to handle error status codes (ie. 4xx, 5xx).
+
 ### Client Side Checksum Mismatch ### {#client-side-checksum-mismatch}
 
 If the the checksum of the font subset computed by the client does not match the
@@ -463,6 +465,38 @@ If the the checksum of the font subset computed by the client does not match the
 
 Server {#server}
 ----------------
+
+### Responding to PatchRequest's ### {#handling-patch-request}
+
+If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> that
+was populated according to the requirements in [[#extend-subset]] then it should respond with HTTP
+status code 200. The body of the response should be a single
+<a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.
+
+TODO(garretrieger): describe producing two codepoint sets - codepoints needed, codepoints have
+TODO(garretrieger): say something about original font checksum? it doesn't need to match...
+TODO(garretrieger): note the server should try and produce a patch instead of a replacement
+                    where possible.         
+
+The response object must:
+
+*  when processed by the client according to [[#handling-patch-response]] result in a font subset
+    that contains data for at least the union of the set of codepoints needed and the sets of
+    codepoints the client already has. The format of the used patch in the response must be one of
+    those listed in <code>accept_patch_format</code>.
+
+* OR, ... TODO(garretrieger): alternately can respond just with an updated codepoint ordering.
+
+
+The fields should
+be set as follows
+
+### PatchResponse ### {#patch-response}
+
+### Error Responses ###
+
+
+///////////////// OLD
 
 ### Handling Requests ### {#handling-requests}
 
