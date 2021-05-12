@@ -308,40 +308,47 @@ The list of ranges is encoded as a series of deltas. For example the ranges
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
   <tr><td>0</td><td>protocol_version</td><td>Integer</td></tr>
-  <tr><td>1</td><td>original_font_checksum</td><td>Integer</td></tr>
-  <tr><td>2</td><td>base_checksum</td><td>Integer</td></tr>
-  <tr><td>3</td><td>patch_format</td><td>ArrayOf&lt;Integer&gt;</td></tr>
-  <tr><td>4</td><td>codepoints_have</td><td>CompressedSet</td></tr>
-  <tr><td>5</td><td>codepoints_needed</td><td>CompressedSet</td></tr>
+  <tr><td>1</td><td>accept_patch_format</td><td>ArrayOf&lt;Integer&gt;</td></tr>
+  <tr><td>2</td><td>codepoints_have</td><td>CompressedSet</td></tr>
+  <tr><td>3</td><td>codepoints_needed</td><td>CompressedSet</td></tr>
+  <tr><td>4</td><td>indices_have</td><td>CompressedSet</td></tr>
+  <tr><td>5</td><td>indices_needed</td><td>CompressedSet</td></tr>
   <tr><td>6</td><td>ordering_checksum</td><td>Integer</td></tr>
-  <tr><td>7</td><td>indices_have</td><td>CompressedSet</td></tr>
-  <tr><td>8</td><td>indices_needed</td><td>CompressedSet</td></tr>
+  <tr><td>7</td><td>original_font_checksum</td><td>Integer</td></tr>
+  <tr><td>8</td><td>base_checksum</td><td>Integer</td></tr>
 </table>
 
-patch_format can include be any of the values specified in [[#patch-formats]].
+For a PatchRequest object to be well formed:
+
+*  <code>protocol_version</code> must be set to 0.
+*  <code>accept_patch_format</code> can include any of the values listed in [[#patch-formats]].
+*  If either of <code>indices_have</code> or <code>indices_needed</code> is set to a non-empty set
+    then <code>ordering_checksum</code> must be set.
+*  If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then
+    <code>original_font_checksum</code> and <code>base_checksum</code> must be set.
 
 #### PatchResponse #### {#PatchResponse}
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
-  <tr><td>0</td><td>response_type</td><td>Integer</td></tr>
-  <tr><td>1</td><td>original_font_checksum</td><td>Integer</td></tr>
-  <tr><td>2</td><td>patch_format</td><td>Integer</td></tr>  
-  <tr><td>3</td><td>patch</td><td>ByteString</td></tr>  
-  <tr><td>4</td><td>patched_checksum</td><td>Integer</td></tr>  
-  <tr><td>4</td><td>codepoint_ordering</td><td>CompressedList</td></tr>  
-  <tr><td>5</td><td>ordering_checksum</td><td>Integer</td></tr>  
+
+  <tr><td>0</td><td>patch_format</td><td>Integer</td></tr>  
+  <tr><td>1</td><td>patch</td><td>ByteString</td></tr>
+  <tr><td>2</td><td>replacement</td><td>ByteString</td></tr>  
+
+  <tr><td>3</td><td>original_font_checksum</td><td>Integer</td></tr>
+  <tr><td>4</td><td>patched_checksum</td><td>Integer</td></tr>
+  
+  <tr><td>5</td><td>codepoint_ordering</td><td>CompressedList</td></tr>  
+  <tr><td>6</td><td>ordering_checksum</td><td>Integer</td></tr>  
 </table>
 
-response_type can be one of the following values:
-
-<table>
-  <tr><th>Value</th><th>Response Type</th></tr>
-  <tr><td>0</td><td>PATCH</td>
-  <tr><td>1</td><td>REBASE</td>
-  <tr><td>2</td><td>REINDEX</td>
-</table>
-
+For a PatchRequest object to be well formed:
+*  <code>patch_format</code> can be any of the values listed [[#patch-formats]]
+*  Only one of <code>patch</code> and <code>replacement</code> may be set.
+*  If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>,
+     <code>patched_checksum</code>, and <code>original_font_checksum</code> must be set.
+*  If <code>codepoint_ordering</code> is set then <code>ordering_checksum</code> must be set.
 
 Client {#client}
 ----------------
@@ -351,9 +358,8 @@ Client {#client}
 The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:
 
-
-*  Font subset: the binary data for the most recent version of the subset of the font being
-    incrementally transferred.
+*  Font subset: a byte array containing the binary data for the most recent version of the subset of
+    the font being incrementally transferred. For a new font this is initialized to empty byte array.
 *  Original font checksum: the most recent value of
     <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> received
     from the server for this font.
@@ -363,157 +369,96 @@ transferred:
     <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a>
     for this font.
 
-### New Font Request ### {#rebase-request}
-
-A new font request is sent by the client to begin incrementally transferring a font. The request
-specifies a set of codepoints that the client needs to render with the font and in return the server
-will provide a copy of the font that supports at least those codepoints. A new font request is made
-via HTTP and may use either the GET or POST method.
+### Extending the Font Subset ### {#extend-subset}
 
 TODO(garretrieger): mention how the url identifies the specific font being requested.
 
-#### POST #### {#rebase-request-post}
+A client extends its font subset to cover additional codepoints by making HTTP requests to
+a Patch Subset server. The HTTP request must use either the GET or POST method:
 
-If sent as a POST request the post body will be a single
-<a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR. All fields of
-<a href="#PatchRequest"><code>PatchRequest</code></a> should be left unset except for:
+*  If sent as a POST request the post body will be a single
+    <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR.
 
-*  <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>:<br/>
-    This field is be populated with the <a href="#CompressedSet">set</a> of
-    unicode codepoints which the client requires data for.
+*  If sent as a GET request the client will include a single query parameter,
+    <code>request</code>:<br/> the value is a single
+    <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then base64url
+    encoding [[rfc4648]].
+
+The fields of the <a href="#PatchRequest"><code>PatchRequest</code></a> object should be set
+as follows:
+
+*  <code>protocol_version</code>: set to 0.
+
+*  <code>accept_patch_format</code>: set to the list of [[#patch-formats]] that this client is
+    capable of decoding. Must contain at least one format.
+
+*  <code>codepoints_have</code>: set to exactly the set of codepoints that the current font subset
+    contains data for. If the current font subset is an empty byte array this field is left unset.
+    If the client has a codepoint ordering for this font then this field should not be set.
+
+*  <code>codepoints_needed</code>: set to the set of codepoints that the client wants to
+    add to its font subset. If the client has a codepoint ordering for this font then this
+    field should not be set.
+
+*  <code>indices_have</code>: encodes the set of codepoints that the current
+    font subset contains data for. The codepoint values are transformed to indices by applying
+    [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
+    ordering for this font then this field should not be set.
+
+*  <code>indices_needed</code>: encodes the set of codepoints that the client wants to add to its
+    font subset. The codepoint values are transformed to indices by applying
+    [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
+    ordering for this font then this field should not be set.
+
+*  <code>ordering_checksum</code>: If either of <code>indices_have</code> or
+    <code>indices_needed</code> is set then this must be set to the current value of
+    <code>ordering_checksum</code> saved in the state for this font.
+
+*  <code>original_font_checksum</code>:
+    Set to saved value for <code>original_font_checksum</code> in the state for this font. If
+    there is no saved value leave this field unset.
    
-*  <a href="#PatchRequest"><code>PatchRequest.patch_format</code></a>:<br/>
-    This field should be populated with the set of <a href="#patch-formats">patch formats</a> that this
-    client is capable of decoding. At least one format must be provided.
+*  <code>base_checksum</code>:
+    Set to the checksum of the font subset byte array saved in the state for this font. See:
+    [[#computing-checksums]].
 
-#### GET #### {#rebase-request-get}
+### Handling PatchResponse ### {#handling-patch-response}
 
-If sent as a GET request the client will include a single query parameter:
+If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a>
+if will respond with HTTP status code 200 and the body of the response will be a
+<a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
+should interpret and process the fields of the object as follows:
 
-*  <code>request</code>:<br/>
-    The value is a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR
-    and then base64url encoding [[rfc4648]]. The <a href="#PatchRequest"><code>PatchRequest</code></a>
-    object uses the same fields as specified for a <a href="#rebase-request-post">POST</a> request.
+1.  If field <code>replacement</code> is set then: the byte array in this field is a binary patch
+     in the format specified by <code>patch_format</code>. Apply the binary patch to a base which
+     is a empty byte array. Replace the saved font subset with the result of the patch application.
 
-### Patch Font Request ### {#patch-request}
+2. If field <code>patch</code> is set then:  the byte array in this field is a binary patch
+    in the format specified by <code>patch_format</code>. Apply the binary patch to the saved font
+    subset. Replace the saved font subset with the result of the patch application.
 
-A patch font request is sent by a client to add data for additional codepoints to its font. Patch font
-requests are sent via HTTP and can only use the POST method. The request body is a single
-<a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR. The fields of
-should be set as follows:
+3. If either <code>replacement</code> or <code>patch</code> is set then:
+    <a href="#computing-checksums">compute the checksum</a> of the font subset produced by the patch
+    application in steps 1 or 2. If the computed checksum is not equal to <code>patched_checksum</code>
+    this is a recoverable error. Follow the procedure in [[#client-side-checksum-mismatch]]. Otherwise
+    update the saved original font checksum with the value in <code>original_font_checksum</code>.
 
-*  <a href="#PatchRequest"><code>PatchRequest.original_font_checksum</code></a>:<br/>
-    Set to the last saved value of original_font_checksum provided by a
-    previous response from the server for this particular font.
-   
-*  <a href="#PatchRequest"><code>PatchRequest.base_checksum</code></a>:<br/>
-    Set to the checksum [[#computing-checksums]] of the client’s most recent
-    copy of the font.
-   
-*  <a href="#PatchRequest"><code>PatchRequest.patch_format</code></a>:<br/>
-    This field should be populated with the set of <a href="#patch-formats">patch formats</a> that this
-    client is capable of decoding. At least one format must be provided.
-
-If the server has previously provided a <code>codepoint_ordering</code> for this
-font the client should set:
-
-*  <a href="#PatchRequest"><code>PatchRequest.ordering_checksum</code></a>:<br/>
-    Set to the most recent value of <code>ordering_checksum</code> provided by a
-    response from the server for this particular font.
-   
-*  <a href="#PatchRequest"><code>PatchRequest.indices_have</code></a>:<br/>
-    Encodes the set of codepoints that are covered by the client’s current copy of the font.
-    The codepoint values are transformed to indices by applying <code>codepoint ordering</code>
-    [[#codepoint-reordering]] to each codepoint value.
-   
-*  <a href="#PatchRequest"><code>PatchRequest.indices_needed</code></a>:<br/>
-    Encodes the set of codepoints that the clients would like added to it’s copy of the font.
-    The codepoint values are transformed to indices by applying <code>codepoint ordering</code>
-    [[#codepoint-reordering]] to each codepoint value.
-
-If the server has not previously provided a <code>codepoint_ordering</code> for this font then the
-<code>codepoints_have</code> and <code>codepoints_needed</code> fields should be used instead:
-
-*  <a href="#PatchRequest"><code>PatchRequest.codepoints_have</code></a>:<br/>
-    The set of codepoints that are covered by the client’s copy of the font.
-   
-* <a href="#PatchRequest"><code>PatchRequest.codepoints_needed</code></a>:<br/>
-    The set of codepoints that the clients would like added to it’s copy of
-    the font.
-
-### Handling New Font Response ### {#handling-rebase-response}
-
-If a response is received where <a href="#PatchResponse"><code>PatchResponse.response_type</code></a>
-is equal to REBASE, then the client must:
-
-1.  Decode the contents of <a href="#PatchResponse"><code>PatchResponse.patch</code></a> using
-     the decoder specified in <a href="#PatchResponse"><code>PatchResponse.patch_format</code></a>
-     
-2. Compute a checksum ([[#computing-checksums]]) of the decoded value of
-    <a href="#PatchResponse"><code>PatchResponse.patch</code></a>
-
-3. Check that <a href="#PatchResponse"><code>PatchResponse.patched_checksum</code></a> matches
-    the computed checksum in step 2. If they do not match this is an unrecoverable error. Do not
-    proceed to step 4.
-
-4. Replace the saved state for this font or create new saved state if none yet exists:
-    The decoded value of <a href="#PatchResponse"><code>PatchResponse.patch</code></a> is the font
-    subset, <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> is the
-    original font checksum, and
-    <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> is the
-    codepoint reordering map.
-
-### Handling Patch Font Response ### {#handling-patch-response}
-
-If a response is received where <a href="#PatchResponse"><code>PatchResponse.response_type</code></a>
-is equal to PATCH, then the client must:
-
-1.  Check that <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a>
-     matches the original font checksum stored in the clients state. If they do not match
-     this is a recoverable error, follow the procedure in [[#client-side-checksum-mismatch]].
-
-2.  Apply the decoded patch to the client's font subset. The format of the patch is specified
-     by the <a href="#PatchResponse"><code>PatchResponse.patch_format</code></a> field. This
-     produces a extended font subset. Replace the previous font subset stored in the client's
-     state with this the new one.
-
-3.  Compute the checksum ([[#computing-checksums]]) of the extended font subset.
-
-4.  Check that <a href="#PatchResponse"><code>PatchResponse.patched_checksum</code></a> matches
-     the computed checksum in step 3. If they do not match this is a recoverable error, follow
-     the procedure in [[#client-side-checksum-mismatch]].
-
-5.  If <a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a> and
-     <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a> have been set
-     then replace the codepoint ordering and checksum saved in the clients state with the new one
-     specified in the response.
-     
-
-### Handling Update Codepoint Ordering Response ### {#handling-reindex-response}
-
-If a response is received where <a href="#PatchResponse"><code>PatchResponse.response_type</code></a>
-is equal to REINDEX, then the client must:
-
-1.  Check that <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a>
-     matches the original font checksum stored in the clients state. If they do not match
-     this is a recoverable error, follow the procedure in [[#client-side-checksum-mismatch]].
-
-2.  If <a href="#PatchResponse"><code>PatchResponse.codepoint_ordering</code></a> and
-     <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a> have been set
-     then replace the codepoint ordering and checksum saved in the clients state with the new one
-     specified in the response.
-
-3.  Resend the request which triggered this response using the new codepoint ordering.
-
+4. If fields <code>codepoint_ordering</code> and <code>ordering_checksum</code> are set then update
+    the saved codepoint ordering and checksum with the new values specified by these two fields.
+    If neither <code>replacement</code> or <code>patch</code> are set, then the client should
+    resend the request that triggered this response but use the new codepoint ordering provided in
+    this response.
 
 ### Client Side Checksum Mismatch ### {#client-side-checksum-mismatch}
 
-If either the clients saved original font checksum or the checksum of the patched font subset
-do not match the checksums provided in a response from the server then the client should:
+If the the checksum of the font subset computed by the client does not match the
+<code>patched_checksum</code> in the server's response then the client should:
 
 1. Discard all currently saved state for this font.
 
-2. Resend the request as a [[#rebase-request]] with the codepoints that are currently needed.
+2. <a href="#extend-subset">Resend the request</a>. Set the <code>codepoints_needed</code> field
+    to the union of the codepoints in the discarded font subset and the set of code points
+    the the previous request was trying to add.
 
 
 Server {#server}
@@ -609,7 +554,7 @@ If the server still has access
 
 If there is a mismatch the server should respond with
 a [[#reindex-response]]. After receiving a [[#reindex-response]] the client should resend their
-[[#patch-request]] using the new code point reordering.
+#patch-request (TODO) using the new code point reordering.
 
 If a reordering mismatch is detected it must be resolved prior to attempting to resolve any of
 the other recoverable error scenarios.
