@@ -44,10 +44,25 @@ Introduction {#intro}
 Patch Based Incremental Transfer {#patch-incxfer}
 =================================================
 
-TODO(garretrieger): Describe the high level version of how this version operates.
+Overview {#patch-overview}
+--------------------------
 
-TODO(garretrieger): Describe font subsetting.
+In the patch subset approach to incremental font transfer a server generates binary patches which a
+client applies to a subset of the font in order to extend the coverage of that font subset. The server
+is stateless, it does not maintain any session data for clients between requests. Thus when a client
+requests the generation of a patch from the server it must fully describe the current subset of the
+font that it has in a way which allows the server to recreate it.
 
+Generic binary patch algorithms are used which do not need to be aware of the specifics of the font
+format. Typically a server will produce a patch by generating two font subsets: one which matches what
+the client currently has and one which matches the extended subset the client desires. A binary patch
+is then produced between the two subsets.
+
+### Font Subset ### {#font-subset}
+
+A subset of a font file is a modified version of the font that contains only the data needed to
+render a subset of the codepoints in the original font. A subsetted font should be able to render
+any permutation of the codepoints in the subset identically to the original font.
 
 Data Types {#data-types}
 ------------------------
@@ -371,8 +386,6 @@ transferred:
 
 ### Extending the Font Subset ### {#extend-subset}
 
-TODO(garretrieger): mention how the url identifies the specific font being requested.
-
 A client extends its font subset to cover additional codepoints by making HTTP requests to
 a Patch Subset server. The HTTP request must use either the GET or POST method:
 
@@ -383,6 +396,9 @@ a Patch Subset server. The HTTP request must use either the GET or POST method:
     <code>request</code>:<br/> the value is a single
     <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then base64url
     encoding [[rfc4648]].
+
+For both POST and GET requests the path of the request identifies the specific font. All requests
+must be made over HTTPS.
 
 The fields of the <a href="#PatchRequest"><code>PatchRequest</code></a> object should be set
 as follows:
@@ -449,8 +465,6 @@ should interpret and process the fields of the object as follows:
     resend the request that triggered this response but use the new codepoint ordering provided in
     this response.
 
-TODO(garretrieger): how to handle error status codes (ie. 4xx, 5xx).
-
 ### Client Side Checksum Mismatch ### {#client-side-checksum-mismatch}
 
 If the the checksum of the font subset computed by the client does not match the
@@ -462,22 +476,18 @@ If the the checksum of the font subset computed by the client does not match the
     to the union of the codepoints in the discarded font subset and the set of code points
     the the previous request was trying to add.
 
-
 Server {#server}
 ----------------
 
 ### Responding to a PatchRequest ### {#handling-patch-request}
 
-TODO(garretrieger): url identifies the font being operated on ('the requested font')
-TODO(garretrieger): https only.
-TODO(garretrieger): Identify at least one patch format which all client/servers must support.
-
-If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> that
-was populated according to the requirements in [[#extend-subset]] then it should respond with HTTP
-status code 200. The body of the response should be a single
+If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
+HTTPS that was populated according to the requirements in [[#extend-subset]] then it should
+respond with HTTP status code 200. The body of the response should be a single
 <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.
 
-From the request object the server can produce two codepoint sets:
+The path in the request identifies the specific font that a patch is desired for. From the request
+object the server can produce two codepoint sets:
 
 1.  Codepoints the client has: formed by the union of the codepoint sets specified by
      <code>codepoints_have</code> and <code>indices_have</code>. The indices in
@@ -494,22 +504,24 @@ with a response that will cause the client to update it's codepoint ordering to 
 will recognize via the process described in [[#handling-patch-response]] and not include any patch.
 That is the <code>patch</code> and <code>replacement</code> fields must not be set.
 
-Otherwise when the response is applied by the client following the process in [[#handling-patch-response]]
-to a font subset with checksum <code>base_checksum</code> it must result in an extended font subset that contains
-data for at least the union of the set of codepoints needed and the sets of codepoints the client already
-has. The format of patch in the either the <code>patch</code> or <code>replace</code> field must be one of
-those listed in <code>accept_patch_format</code>.
+Otherwise when the response is applied by the client following the process in
+[[#handling-patch-response]] to a font subset with checksum <code>base_checksum</code> it must result
+in an extended font subset that contains data for at least the union of the set of codepoints needed
+and the sets of codepoints the client already has. The format of patch in the either the
+<code>patch</code> or <code>replace</code> field must be one of those listed in
+<code>accept_patch_format</code>.
 
-Note: the server can respond with either a patch or a replacement but should try to produce a patch where possible.
-      replacement's should only be used in situations where the server is unable to recreate the clients state
-      in order to generate a patch against it.
+Note: the server can respond with either a patch or a replacement but should try to produce a patch
+where possible. Replacement's should only be used in situations where the server is unable to recreate
+the clients state in order to generate a patch against it.
 
 Possible error responses:
 
-*  If the request is malformed the server may instead respond with http status code 400 to indicate an error.
+*  If the request is malformed the server may instead respond with http status code 400 to indicate an
+    error.
 
-*  If the requested font is not recognized by the server it may respond with http status code 404 to indicate
-    a not found error.
+*  If the requested font is not recognized by the server it may respond with http status code 404 to
+    indicate a not found error.
 
 Procedures {#procedures}
 ------------------------
@@ -533,6 +545,7 @@ TODO(garretrieger): write this.
 ### Patch and Compression Formats ### {#patch-formats}
 
 TODO(garretrieger): write this.
+TODO(garretrieger): Identify at least one patch format which all client/servers must support.
 
 Range Request Incremental Transfer {#range-request-incxfer}
 ===========================================================

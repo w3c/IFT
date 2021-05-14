@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="4323928b479dae1c5be34b739a2ccaeca167320f" name="document-revision">
+  <meta content="21286e05b9a955760cc25546fa2b4ffe19c8c29d" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-05-12">12 May 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-05-14">14 May 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -447,45 +447,50 @@ dfn > a.self-link::before      { content: "#"; }
      <a href="#patch-incxfer"><span class="secno">2</span> <span class="content">Patch Based Incremental Transfer</span></a>
      <ol class="toc">
       <li>
-       <a href="#data-types"><span class="secno">2.1</span> <span class="content">Data Types</span></a>
+       <a href="#patch-overview"><span class="secno">2.1</span> <span class="content">Overview</span></a>
        <ol class="toc">
-        <li><a href="#encoding"><span class="secno">2.1.1</span> <span class="content">Encoding</span></a>
-        <li><a href="#primitives"><span class="secno">2.1.2</span> <span class="content">Primitives</span></a>
-        <li><a href="#sparsebitset"><span class="secno">2.1.3</span> <span class="content">SparseBitSet</span></a>
-        <li><a href="#objects"><span class="secno">2.1.4</span> <span class="content">Objects</span></a>
+        <li><a href="#font-subset"><span class="secno">2.1.1</span> <span class="content">Font Subset</span></a>
+       </ol>
+      <li>
+       <a href="#data-types"><span class="secno">2.2</span> <span class="content">Data Types</span></a>
+       <ol class="toc">
+        <li><a href="#encoding"><span class="secno">2.2.1</span> <span class="content">Encoding</span></a>
+        <li><a href="#primitives"><span class="secno">2.2.2</span> <span class="content">Primitives</span></a>
+        <li><a href="#sparsebitset"><span class="secno">2.2.3</span> <span class="content">SparseBitSet</span></a>
+        <li><a href="#objects"><span class="secno">2.2.4</span> <span class="content">Objects</span></a>
         <li>
-         <a href="#schemas"><span class="secno">2.1.5</span> <span class="content">Object Schemas</span></a>
+         <a href="#schemas"><span class="secno">2.2.5</span> <span class="content">Object Schemas</span></a>
          <ol class="toc">
-          <li><a href="#CompressedList"><span class="secno">2.1.5.1</span> <span class="content">CompressedList</span></a>
-          <li><a href="#CompressedSet"><span class="secno">2.1.5.2</span> <span class="content">CompressedSet</span></a>
-          <li><a href="#PatchRequest"><span class="secno">2.1.5.3</span> <span class="content">PatchRequest</span></a>
-          <li><a href="#PatchResponse"><span class="secno">2.1.5.4</span> <span class="content">PatchResponse</span></a>
+          <li><a href="#CompressedList"><span class="secno">2.2.5.1</span> <span class="content">CompressedList</span></a>
+          <li><a href="#CompressedSet"><span class="secno">2.2.5.2</span> <span class="content">CompressedSet</span></a>
+          <li><a href="#PatchRequest"><span class="secno">2.2.5.3</span> <span class="content">PatchRequest</span></a>
+          <li><a href="#PatchResponse"><span class="secno">2.2.5.4</span> <span class="content">PatchResponse</span></a>
          </ol>
        </ol>
       <li>
-       <a href="#client"><span class="secno">2.2</span> <span class="content">Client</span></a>
+       <a href="#client"><span class="secno">2.3</span> <span class="content">Client</span></a>
        <ol class="toc">
-        <li><a href="#client-state"><span class="secno">2.2.1</span> <span class="content">Client State</span></a>
-        <li><a href="#extend-subset"><span class="secno">2.2.2</span> <span class="content">Extending the Font Subset</span></a>
-        <li><a href="#handling-patch-response"><span class="secno">2.2.3</span> <span class="content">Handling PatchResponse</span></a>
-        <li><a href="#client-side-checksum-mismatch"><span class="secno">2.2.4</span> <span class="content">Client Side Checksum Mismatch</span></a>
+        <li><a href="#client-state"><span class="secno">2.3.1</span> <span class="content">Client State</span></a>
+        <li><a href="#extend-subset"><span class="secno">2.3.2</span> <span class="content">Extending the Font Subset</span></a>
+        <li><a href="#handling-patch-response"><span class="secno">2.3.3</span> <span class="content">Handling PatchResponse</span></a>
+        <li><a href="#client-side-checksum-mismatch"><span class="secno">2.3.4</span> <span class="content">Client Side Checksum Mismatch</span></a>
        </ol>
       <li>
-       <a href="#server"><span class="secno">2.3</span> <span class="content">Server</span></a>
+       <a href="#server"><span class="secno">2.4</span> <span class="content">Server</span></a>
        <ol class="toc">
-        <li><a href="#handling-patch-request"><span class="secno">2.3.1</span> <span class="content">Responding to a PatchRequest</span></a>
+        <li><a href="#handling-patch-request"><span class="secno">2.4.1</span> <span class="content">Responding to a PatchRequest</span></a>
        </ol>
       <li>
-       <a href="#procedures"><span class="secno">2.4</span> <span class="content">Procedures</span></a>
+       <a href="#procedures"><span class="secno">2.5</span> <span class="content">Procedures</span></a>
        <ol class="toc">
-        <li><a href="#computing-checksums"><span class="secno">2.4.1</span> <span class="content">Computing Checksums</span></a>
+        <li><a href="#computing-checksums"><span class="secno">2.5.1</span> <span class="content">Computing Checksums</span></a>
         <li>
-         <a href="#codepoint-reordering"><span class="secno">2.4.2</span> <span class="content">Codepoint Reordering</span></a>
+         <a href="#codepoint-reordering"><span class="secno">2.5.2</span> <span class="content">Codepoint Reordering</span></a>
          <ol class="toc">
-          <li><a href="#reordering-checksum"><span class="secno">2.4.2.1</span> <span class="content">Computing Checksum</span></a>
-          <li><a href="#reordering-algorithm"><span class="secno">2.4.2.2</span> <span class="content">Recommended algorithm</span></a>
+          <li><a href="#reordering-checksum"><span class="secno">2.5.2.1</span> <span class="content">Computing Checksum</span></a>
+          <li><a href="#reordering-algorithm"><span class="secno">2.5.2.2</span> <span class="content">Recommended algorithm</span></a>
          </ol>
-        <li><a href="#patch-formats"><span class="secno">2.4.3</span> <span class="content">Patch and Compression Formats</span></a>
+        <li><a href="#patch-formats"><span class="secno">2.5.3</span> <span class="content">Patch and Compression Formats</span></a>
        </ol>
      </ol>
     <li><a href="#range-request-incxfer"><span class="secno">3</span> <span class="content">Range Request Incremental Transfer</span></a>
@@ -518,16 +523,28 @@ dfn > a.self-link::before      { content: "#"; }
    <p>The success of WebFonts is unevenly distributed. This specification allows WebFonts to be used where slow networks, very large fonts, or complex subsetting requirements currently preclude their use. For example, even using WOFF 2 <a data-link-type="biblio" href="#biblio-woff2">[WOFF2]</a>, fonts for CJK languages are too large to be practical.</p>
    <p>See the Progressive Font Enrichment: Evaluation Report <a data-link-type="biblio" href="#biblio-pfe-report">[PFE-report]</a> for the investigation which led to this specification.</p>
    <h2 class="heading settled" data-level="2" id="patch-incxfer"><span class="secno">2. </span><span class="content">Patch Based Incremental Transfer</span><a class="self-link" href="#patch-incxfer"></a></h2>
-   <p>TODO(garretrieger): Describe the high level version of how this version operates.</p>
-   <p>TODO(garretrieger): Describe font subsetting.</p>
-   <h3 class="heading settled" data-level="2.1" id="data-types"><span class="secno">2.1. </span><span class="content">Data Types</span><a class="self-link" href="#data-types"></a></h3>
+   <h3 class="heading settled" data-level="2.1" id="patch-overview"><span class="secno">2.1. </span><span class="content">Overview</span><a class="self-link" href="#patch-overview"></a></h3>
+   <p>In the patch subset approach to incremental font transfer a server generates binary patches which a
+client applies to a subset of the font in order to extend the coverage of that font subset. The server
+is stateless, it does not maintain any session data for clients between requests. Thus when a client
+requests the generation of a patch from the server it must fully describe the current subset of the
+font that it has in a way which allows the server to recreate it.</p>
+   <p>Generic binary patch algorithms are used which do not need to be aware of the specifics of the font
+format. Typically a server will produce a patch by generating two font subsets: one which matches what
+the client currently has and one which matches the extended subset the client desires. A binary patch
+is then produced between the two subsets.</p>
+   <h4 class="heading settled" data-level="2.1.1" id="font-subset"><span class="secno">2.1.1. </span><span class="content">Font Subset</span><a class="self-link" href="#font-subset"></a></h4>
+   <p>A subset of a font file is a modified version of the font that contains only the data needed to
+render a subset of the codepoints in the original font. A subsetted font should be able to render
+any permutation of the codepoints in the subset identically to the original font.</p>
+   <h3 class="heading settled" data-level="2.2" id="data-types"><span class="secno">2.2. </span><span class="content">Data Types</span><a class="self-link" href="#data-types"></a></h3>
    <p>This section lists all of the data types that are used to form the request and response messages
 sent between the client and server.</p>
-   <h4 class="heading settled" data-level="2.1.1" id="encoding"><span class="secno">2.1.1. </span><span class="content">Encoding</span><a class="self-link" href="#encoding"></a></h4>
+   <h4 class="heading settled" data-level="2.2.1" id="encoding"><span class="secno">2.2.1. </span><span class="content">Encoding</span><a class="self-link" href="#encoding"></a></h4>
    <p>All data types defined here are encoded into a byte representation for transport using CBOR
 (Concise Binary Object Representation) <a data-link-type="biblio" href="#biblio-rfc8949">[rfc8949]</a>. More information on how each data types
 should be encoded by CBOR are given in the definition of those data types.</p>
-   <h4 class="heading settled" data-level="2.1.2" id="primitives"><span class="secno">2.1.2. </span><span class="content">Primitives</span><a class="self-link" href="#primitives"></a></h4>
+   <h4 class="heading settled" data-level="2.2.2" id="primitives"><span class="secno">2.2.2. </span><span class="content">Primitives</span><a class="self-link" href="#primitives"></a></h4>
    <table>
     <tbody>
      <tr>
@@ -547,7 +564,7 @@ should be encoded by CBOR are given in the definition of those data types.</p>
       <td>Array of a variable number of items of Type
       <td>4
    </table>
-   <h4 class="heading settled" data-level="2.1.3" id="sparsebitset"><span class="secno">2.1.3. </span><span class="content">SparseBitSet</span><a class="self-link" href="#sparsebitset"></a></h4>
+   <h4 class="heading settled" data-level="2.2.3" id="sparsebitset"><span class="secno">2.2.3. </span><span class="content">SparseBitSet</span><a class="self-link" href="#sparsebitset"></a></h4>
    <p>A data structure which compactly stores a set of distinct unsigned integers. The set is represented as
 a tree where each node has a fixed number of children that recursively sub-divides an interval into
 equal partitions. A tree of height <i>H</i> with branching factor <i>B</i> can store set membership
@@ -706,7 +723,7 @@ significant bit in the byte and the bit with the largest index is the most signi
       <p>n<sub>3</sub> append 0011. Bit 0 set for value 16, bit 1 set for value 17.</p>
     </ul>
    </div>
-   <h4 class="heading settled" data-level="2.1.4" id="objects"><span class="secno">2.1.4. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
+   <h4 class="heading settled" data-level="2.2.4" id="objects"><span class="secno">2.2.4. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
    <p>Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
 (major type 5). Each key and value pair is encoded as a single map entry. Keys are always unsigned
 integers and are encoded using major type 0. Values are encoded using the encoding specified by the
@@ -714,7 +731,7 @@ type of the value.</p>
    <p>All fields in an object are optional and do not need to have an associated value. Conversely when
 decoding and object fields may be present which are not specified in the schema. The decoder must
 ignore without error any key and value pairs where the key is not recognized.</p>
-   <p>There are several types of object used, each type is defined by a schema in <a href="#schemas">§ 2.1.5 Object Schemas</a>. The schema
+   <p>There are several types of object used, each type is defined by a schema in <a href="#schemas">§ 2.2.5 Object Schemas</a>. The schema
 for a type specifies for each field:</p>
    <ul>
     <li data-md>
@@ -722,10 +739,10 @@ for a type specifies for each field:</p>
     <li data-md>
      <p>A unsigned integer id for the field. This is used as the key in the encoding.</p>
     <li data-md>
-     <p>The type of the value stored in this field. Can be any of the types defined in <a href="#data-types">§ 2.1 Data Types</a> including object types.</p>
+     <p>The type of the value stored in this field. Can be any of the types defined in <a href="#data-types">§ 2.2 Data Types</a> including object types.</p>
    </ul>
-   <h4 class="heading settled" data-level="2.1.5" id="schemas"><span class="secno">2.1.5. </span><span class="content">Object Schemas</span><a class="self-link" href="#schemas"></a></h4>
-   <h5 class="heading settled" data-level="2.1.5.1" id="CompressedList"><span class="secno">2.1.5.1. </span><span class="content">CompressedList</span><a class="self-link" href="#CompressedList"></a></h5>
+   <h4 class="heading settled" data-level="2.2.5" id="schemas"><span class="secno">2.2.5. </span><span class="content">Object Schemas</span><a class="self-link" href="#schemas"></a></h4>
+   <h5 class="heading settled" data-level="2.2.5.1" id="CompressedList"><span class="secno">2.2.5.1. </span><span class="content">CompressedList</span><a class="self-link" href="#CompressedList"></a></h5>
    <table>
     <tbody>
      <tr>
@@ -746,7 +763,7 @@ if len(value_deltas) > 0:
     value_deltas[i] = L[i] - L[i-1]
 </pre>
    <div class="example" id="example-6e146a01"><a class="self-link" href="#example-6e146a01"></a> The list [2, 2, 5, 1, 3, 7] would be encoded as [2, 0, 3, -4, 2, 4]. </div>
-   <h5 class="heading settled" data-level="2.1.5.2" id="CompressedSet"><span class="secno">2.1.5.2. </span><span class="content">CompressedSet</span><a class="self-link" href="#CompressedSet"></a></h5>
+   <h5 class="heading settled" data-level="2.2.5.2" id="CompressedSet"><span class="secno">2.2.5.2. </span><span class="content">CompressedSet</span><a class="self-link" href="#CompressedSet"></a></h5>
    <p>Encodes a set of unsigned integers. The set is not ordered and does not
 allow duplicates. Members of the set are encoded into either a sparse bit
 set or a list of ranges. To obtain the final set the members of the sparse
@@ -768,7 +785,7 @@ bit set and the list of ranges are unioned together.</p>
       <td>range_deltas
       <td>ArrayOf&lt;Integer>
    </table>
-   <h5 class="heading settled" data-level="2.1.5.3" id="PatchRequest"><span class="secno">2.1.5.3. </span><span class="content">PatchRequest</span><a class="self-link" href="#PatchRequest"></a></h5>
+   <h5 class="heading settled" data-level="2.2.5.3" id="PatchRequest"><span class="secno">2.2.5.3. </span><span class="content">PatchRequest</span><a class="self-link" href="#PatchRequest"></a></h5>
    <table>
     <tbody>
      <tr>
@@ -817,14 +834,14 @@ bit set and the list of ranges are unioned together.</p>
     <li data-md>
      <p><code>protocol_version</code> must be set to 0.</p>
     <li data-md>
-     <p><code>accept_patch_format</code> can include any of the values listed in <a href="#patch-formats">§ 2.4.3 Patch and Compression Formats</a>.</p>
+     <p><code>accept_patch_format</code> can include any of the values listed in <a href="#patch-formats">§ 2.5.3 Patch and Compression Formats</a>.</p>
     <li data-md>
      <p>If either of <code>indices_have</code> or <code>indices_needed</code> is set to a non-empty set
 then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p>If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then <code>original_font_checksum</code> and <code>base_checksum</code> must be set.</p>
    </ul>
-   <h5 class="heading settled" data-level="2.1.5.4" id="PatchResponse"><span class="secno">2.1.5.4. </span><span class="content">PatchResponse</span><a class="self-link" href="#PatchResponse"></a></h5>
+   <h5 class="heading settled" data-level="2.2.5.4" id="PatchResponse"><span class="secno">2.2.5.4. </span><span class="content">PatchResponse</span><a class="self-link" href="#PatchResponse"></a></h5>
    <table>
     <tbody>
      <tr>
@@ -863,7 +880,7 @@ then <code>ordering_checksum</code> must be set.</p>
    <p>For a PatchRequest object to be well formed:</p>
    <ul>
     <li data-md>
-     <p><code>patch_format</code> can be any of the values listed <a href="#patch-formats">§ 2.4.3 Patch and Compression Formats</a></p>
+     <p><code>patch_format</code> can be any of the values listed <a href="#patch-formats">§ 2.5.3 Patch and Compression Formats</a></p>
     <li data-md>
      <p>Only one of <code>patch</code> and <code>replacement</code> may be set.</p>
     <li data-md>
@@ -871,8 +888,8 @@ then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p>If <code>codepoint_ordering</code> is set then <code>ordering_checksum</code> must be set.</p>
    </ul>
-   <h3 class="heading settled" data-level="2.2" id="client"><span class="secno">2.2. </span><span class="content">Client</span><a class="self-link" href="#client"></a></h3>
-   <h4 class="heading settled" data-level="2.2.1" id="client-state"><span class="secno">2.2.1. </span><span class="content">Client State</span><a class="self-link" href="#client-state"></a></h4>
+   <h3 class="heading settled" data-level="2.3" id="client"><span class="secno">2.3. </span><span class="content">Client</span><a class="self-link" href="#client"></a></h3>
+   <h4 class="heading settled" data-level="2.3.1" id="client-state"><span class="secno">2.3.1. </span><span class="content">Client State</span><a class="self-link" href="#client-state"></a></h4>
    <p>The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:</p>
    <ul>
@@ -883,13 +900,12 @@ the font being incrementally transferred. For a new font this is initialized to 
      <p>Original font checksum: the most recent value of <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> received
 from the server for this font.</p>
     <li data-md>
-     <p>Codepoint Reordering Map: The most recent <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reordering</a> received from the server
+     <p>Codepoint Reordering Map: The most recent <a href="#codepoint-reordering">§ 2.5.2 Codepoint Reordering</a> received from the server
 for this font.</p>
     <li data-md>
      <p>Codepoint Reordering Checksum: The most recent <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a> for this font.</p>
    </ul>
-   <h4 class="heading settled" data-level="2.2.2" id="extend-subset"><span class="secno">2.2.2. </span><span class="content">Extending the Font Subset</span><a class="self-link" href="#extend-subset"></a></h4>
-   <p>TODO(garretrieger): mention how the url identifies the specific font being requested.</p>
+   <h4 class="heading settled" data-level="2.3.2" id="extend-subset"><span class="secno">2.3.2. </span><span class="content">Extending the Font Subset</span><a class="self-link" href="#extend-subset"></a></h4>
    <p>A client extends its font subset to cover additional codepoints by making HTTP requests to
 a Patch Subset server. The HTTP request must use either the GET or POST method:</p>
    <ul>
@@ -899,13 +915,15 @@ a Patch Subset server. The HTTP request must use either the GET or POST method:<
      <p>If sent as a GET request the client will include a single query parameter, <code>request</code>:<br> the value is a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then base64url
 encoding <a data-link-type="biblio" href="#biblio-rfc4648">[rfc4648]</a>.</p>
    </ul>
+   <p>For both POST and GET requests the path of the request identifies the specific font. All requests
+must be made over HTTPS.</p>
    <p>The fields of the <a href="#PatchRequest"><code>PatchRequest</code></a> object should be set
 as follows:</p>
    <ul>
     <li data-md>
      <p><code>protocol_version</code>: set to 0.</p>
     <li data-md>
-     <p><code>accept_patch_format</code>: set to the list of <a href="#patch-formats">§ 2.4.3 Patch and Compression Formats</a> that this client is
+     <p><code>accept_patch_format</code>: set to the list of <a href="#patch-formats">§ 2.5.3 Patch and Compression Formats</a> that this client is
 capable of decoding. Must contain at least one format.</p>
     <li data-md>
      <p><code>codepoints_have</code>: set to exactly the set of codepoints that the current font subset
@@ -917,11 +935,11 @@ add to its font subset. If the client has a codepoint ordering for this font the
 field should not be set.</p>
     <li data-md>
      <p><code>indices_have</code>: encodes the set of codepoints that the current
-font subset contains data for. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
+font subset contains data for. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.5.2 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
 ordering for this font then this field should not be set.</p>
     <li data-md>
      <p><code>indices_needed</code>: encodes the set of codepoints that the client wants to add to its
-font subset. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.4.2 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
+font subset. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.5.2 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
 ordering for this font then this field should not be set.</p>
     <li data-md>
      <p><code>ordering_checksum</code>: If either of <code>indices_have</code> or <code>indices_needed</code> is set then this must be set to the current value of <code>ordering_checksum</code> saved in the state for this font.</p>
@@ -931,9 +949,9 @@ Set to saved value for <code>original_font_checksum</code> in the state for this
 there is no saved value leave this field unset.</p>
     <li data-md>
      <p><code>base_checksum</code>:
-Set to the checksum of the font subset byte array saved in the state for this font. See: <a href="#computing-checksums">§ 2.4.1 Computing Checksums</a>.</p>
+Set to the checksum of the font subset byte array saved in the state for this font. See: <a href="#computing-checksums">§ 2.5.1 Computing Checksums</a>.</p>
    </ul>
-   <h4 class="heading settled" data-level="2.2.3" id="handling-patch-response"><span class="secno">2.2.3. </span><span class="content">Handling PatchResponse</span><a class="self-link" href="#handling-patch-response"></a></h4>
+   <h4 class="heading settled" data-level="2.3.3" id="handling-patch-response"><span class="secno">2.3.3. </span><span class="content">Handling PatchResponse</span><a class="self-link" href="#handling-patch-response"></a></h4>
    <p>If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a> if will respond with HTTP status code 200 and the body of the response will be a <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
 should interpret and process the fields of the object as follows:</p>
    <ol>
@@ -947,7 +965,7 @@ in the format specified by <code>patch_format</code>. Apply the binary patch to 
 subset. Replace the saved font subset with the result of the patch application.</p>
     <li data-md>
      <p>If either <code>replacement</code> or <code>patch</code> is set then: <a href="#computing-checksums">compute the checksum</a> of the font subset produced by the patch
-application in steps 1 or 2. If the computed checksum is not equal to <code>patched_checksum</code> this is a recoverable error. Follow the procedure in <a href="#client-side-checksum-mismatch">§ 2.2.4 Client Side Checksum Mismatch</a>. Otherwise
+application in steps 1 or 2. If the computed checksum is not equal to <code>patched_checksum</code> this is a recoverable error. Follow the procedure in <a href="#client-side-checksum-mismatch">§ 2.3.4 Client Side Checksum Mismatch</a>. Otherwise
 update the saved original font checksum with the value in <code>original_font_checksum</code>.</p>
     <li data-md>
      <p>If fields <code>codepoint_ordering</code> and <code>ordering_checksum</code> are set then update
@@ -956,8 +974,7 @@ If neither <code>replacement</code> or <code>patch</code> are set, then the clie
 resend the request that triggered this response but use the new codepoint ordering provided in
 this response.</p>
    </ol>
-   <p>TODO(garretrieger): how to handle error status codes (ie. 4xx, 5xx).</p>
-   <h4 class="heading settled" data-level="2.2.4" id="client-side-checksum-mismatch"><span class="secno">2.2.4. </span><span class="content">Client Side Checksum Mismatch</span><a class="self-link" href="#client-side-checksum-mismatch"></a></h4>
+   <h4 class="heading settled" data-level="2.3.4" id="client-side-checksum-mismatch"><span class="secno">2.3.4. </span><span class="content">Client Side Checksum Mismatch</span><a class="self-link" href="#client-side-checksum-mismatch"></a></h4>
    <p>If the the checksum of the font subset computed by the client does not match the <code>patched_checksum</code> in the server’s response then the client should:</p>
    <ol>
     <li data-md>
@@ -967,15 +984,13 @@ this response.</p>
 to the union of the codepoints in the discarded font subset and the set of code points
 the the previous request was trying to add.</p>
    </ol>
-   <h3 class="heading settled" data-level="2.3" id="server"><span class="secno">2.3. </span><span class="content">Server</span><a class="self-link" href="#server"></a></h3>
-   <h4 class="heading settled" data-level="2.3.1" id="handling-patch-request"><span class="secno">2.3.1. </span><span class="content">Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h4>
-   <p>TODO(garretrieger): url identifies the font being operated on ('the requested font')
-TODO(garretrieger): https only.
-TODO(garretrieger): Identify at least one patch format which all client/servers must support.</p>
-   <p>If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> that
-was populated according to the requirements in <a href="#extend-subset">§ 2.2.2 Extending the Font Subset</a> then it should respond with HTTP
-status code 200. The body of the response should be a single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</p>
-   <p>From the request object the server can produce two codepoint sets:</p>
+   <h3 class="heading settled" data-level="2.4" id="server"><span class="secno">2.4. </span><span class="content">Server</span><a class="self-link" href="#server"></a></h3>
+   <h4 class="heading settled" data-level="2.4.1" id="handling-patch-request"><span class="secno">2.4.1. </span><span class="content">Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h4>
+   <p>If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
+HTTPS that was populated according to the requirements in <a href="#extend-subset">§ 2.3.2 Extending the Font Subset</a> then it should
+respond with HTTP status code 200. The body of the response should be a single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</p>
+   <p>The path in the request identifies the specific font that a patch is desired for. From the request
+object the server can produce two codepoint sets:</p>
    <ol>
     <li data-md>
      <p>Codepoints the client has: formed by the union of the codepoint sets specified by <code>codepoints_have</code> and <code>indices_have</code>. The indices in <code>indices_have</code> must be mapped to codepoints by the application of the
@@ -986,34 +1001,35 @@ status code 200. The body of the response should be a single <a href="#PatchRequ
    </ol>
    <p>If the server does not recognize the codepoint ordering used by the client, it must respond
 with a response that will cause the client to update it’s codepoint ordering to one the server
-will recognize via the process described in <a href="#handling-patch-response">§ 2.2.3 Handling PatchResponse</a> and not include any patch.
+will recognize via the process described in <a href="#handling-patch-response">§ 2.3.3 Handling PatchResponse</a> and not include any patch.
 That is the <code>patch</code> and <code>replacement</code> fields must not be set.</p>
-   <p>Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 2.2.3 Handling PatchResponse</a> to a font subset with checksum <code>base_checksum</code> it must result in an extended font subset that contains
-data for at least the union of the set of codepoints needed and the sets of codepoints the client already
-has. The format of patch in the either the <code>patch</code> or <code>replace</code> field must be one of
-those listed in <code>accept_patch_format</code>.</p>
-   <p class="note" role="note"><span>Note:</span> the server can respond with either a patch or a replacement but should try to produce a patch where possible.
-      replacement’s should only be used in situations where the server is unable to recreate the clients state
-      in order to generate a patch against it.</p>
+   <p>Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 2.3.3 Handling PatchResponse</a> to a font subset with checksum <code>base_checksum</code> it must result
+in an extended font subset that contains data for at least the union of the set of codepoints needed
+and the sets of codepoints the client already has. The format of patch in the either the <code>patch</code> or <code>replace</code> field must be one of those listed in <code>accept_patch_format</code>.</p>
+   <p class="note" role="note"><span>Note:</span> the server can respond with either a patch or a replacement but should try to produce a patch
+where possible. Replacement’s should only be used in situations where the server is unable to recreate
+the clients state in order to generate a patch against it.</p>
    <p>Possible error responses:</p>
    <ul>
     <li data-md>
-     <p>If the request is malformed the server may instead respond with http status code 400 to indicate an error.</p>
+     <p>If the request is malformed the server may instead respond with http status code 400 to indicate an
+error.</p>
     <li data-md>
-     <p>If the requested font is not recognized by the server it may respond with http status code 404 to indicate
-a not found error.</p>
+     <p>If the requested font is not recognized by the server it may respond with http status code 404 to
+indicate a not found error.</p>
    </ul>
-   <h3 class="heading settled" data-level="2.4" id="procedures"><span class="secno">2.4. </span><span class="content">Procedures</span><a class="self-link" href="#procedures"></a></h3>
-   <h4 class="heading settled" data-level="2.4.1" id="computing-checksums"><span class="secno">2.4.1. </span><span class="content">Computing Checksums</span><a class="self-link" href="#computing-checksums"></a></h4>
+   <h3 class="heading settled" data-level="2.5" id="procedures"><span class="secno">2.5. </span><span class="content">Procedures</span><a class="self-link" href="#procedures"></a></h3>
+   <h4 class="heading settled" data-level="2.5.1" id="computing-checksums"><span class="secno">2.5.1. </span><span class="content">Computing Checksums</span><a class="self-link" href="#computing-checksums"></a></h4>
    <p>TODO(garretrieger): write this.</p>
-   <h4 class="heading settled" data-level="2.4.2" id="codepoint-reordering"><span class="secno">2.4.2. </span><span class="content">Codepoint Reordering</span><a class="self-link" href="#codepoint-reordering"></a></h4>
+   <h4 class="heading settled" data-level="2.5.2" id="codepoint-reordering"><span class="secno">2.5.2. </span><span class="content">Codepoint Reordering</span><a class="self-link" href="#codepoint-reordering"></a></h4>
    <p>TODO(garretrieger): write this.</p>
-   <h5 class="heading settled" data-level="2.4.2.1" id="reordering-checksum"><span class="secno">2.4.2.1. </span><span class="content">Computing Checksum</span><a class="self-link" href="#reordering-checksum"></a></h5>
+   <h5 class="heading settled" data-level="2.5.2.1" id="reordering-checksum"><span class="secno">2.5.2.1. </span><span class="content">Computing Checksum</span><a class="self-link" href="#reordering-checksum"></a></h5>
    <p>TODO(garretrieger): write this.</p>
-   <h5 class="heading settled" data-level="2.4.2.2" id="reordering-algorithm"><span class="secno">2.4.2.2. </span><span class="content">Recommended algorithm</span><a class="self-link" href="#reordering-algorithm"></a></h5>
+   <h5 class="heading settled" data-level="2.5.2.2" id="reordering-algorithm"><span class="secno">2.5.2.2. </span><span class="content">Recommended algorithm</span><a class="self-link" href="#reordering-algorithm"></a></h5>
    <p>TODO(garretrieger): write this.</p>
-   <h4 class="heading settled" data-level="2.4.3" id="patch-formats"><span class="secno">2.4.3. </span><span class="content">Patch and Compression Formats</span><a class="self-link" href="#patch-formats"></a></h4>
-   <p>TODO(garretrieger): write this.</p>
+   <h4 class="heading settled" data-level="2.5.3" id="patch-formats"><span class="secno">2.5.3. </span><span class="content">Patch and Compression Formats</span><a class="self-link" href="#patch-formats"></a></h4>
+   <p>TODO(garretrieger): write this.
+TODO(garretrieger): Identify at least one patch format which all client/servers must support.</p>
    <h2 class="heading settled" data-level="3" id="range-request-incxfer"><span class="secno">3. </span><span class="content">Range Request Incremental Transfer</span><a class="self-link" href="#range-request-incxfer"></a></h2>
    <h2 class="heading settled" data-level="4" id="negotiating-transfer-type"><span class="secno">4. </span><span class="content">Negotiating Incremental Transfer Type</span><a class="self-link" href="#negotiating-transfer-type"></a></h2>
    <h2 class="no-num heading settled" id="priv-sec"><span class="content">Privacy and Security Considerations</span><a class="self-link" href="#priv-sec"></a></h2>
