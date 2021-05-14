@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="21286e05b9a955760cc25546fa2b4ffe19c8c29d" name="document-revision">
+  <meta content="a99db07bb595ee401026f40fe592193e25f676d1" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -490,7 +490,7 @@ dfn > a.self-link::before      { content: "#"; }
           <li><a href="#reordering-checksum"><span class="secno">2.5.2.1</span> <span class="content">Computing Checksum</span></a>
           <li><a href="#reordering-algorithm"><span class="secno">2.5.2.2</span> <span class="content">Recommended algorithm</span></a>
          </ol>
-        <li><a href="#patch-formats"><span class="secno">2.5.3</span> <span class="content">Patch and Compression Formats</span></a>
+        <li><a href="#patch-formats"><span class="secno">2.5.3</span> <span class="content">Patch Formats</span></a>
        </ol>
      </ol>
     <li><a href="#range-request-incxfer"><span class="secno">3</span> <span class="content">Range Request Incremental Transfer</span></a>
@@ -834,7 +834,7 @@ bit set and the list of ranges are unioned together.</p>
     <li data-md>
      <p><code>protocol_version</code> must be set to 0.</p>
     <li data-md>
-     <p><code>accept_patch_format</code> can include any of the values listed in <a href="#patch-formats">§ 2.5.3 Patch and Compression Formats</a>.</p>
+     <p><code>accept_patch_format</code> can include any of the values listed in <a href="#patch-formats">§ 2.5.3 Patch Formats</a>.</p>
     <li data-md>
      <p>If either of <code>indices_have</code> or <code>indices_needed</code> is set to a non-empty set
 then <code>ordering_checksum</code> must be set.</p>
@@ -880,7 +880,7 @@ then <code>ordering_checksum</code> must be set.</p>
    <p>For a PatchRequest object to be well formed:</p>
    <ul>
     <li data-md>
-     <p><code>patch_format</code> can be any of the values listed <a href="#patch-formats">§ 2.5.3 Patch and Compression Formats</a></p>
+     <p><code>patch_format</code> can be any of the values listed <a href="#patch-formats">§ 2.5.3 Patch Formats</a></p>
     <li data-md>
      <p>Only one of <code>patch</code> and <code>replacement</code> may be set.</p>
     <li data-md>
@@ -923,7 +923,7 @@ as follows:</p>
     <li data-md>
      <p><code>protocol_version</code>: set to 0.</p>
     <li data-md>
-     <p><code>accept_patch_format</code>: set to the list of <a href="#patch-formats">§ 2.5.3 Patch and Compression Formats</a> that this client is
+     <p><code>accept_patch_format</code>: set to the list of <a href="#patch-formats">§ 2.5.3 Patch Formats</a> that this client is
 capable of decoding. Must contain at least one format.</p>
     <li data-md>
      <p><code>codepoints_have</code>: set to exactly the set of codepoints that the current font subset
@@ -1027,9 +1027,27 @@ indicate a not found error.</p>
    <p>TODO(garretrieger): write this.</p>
    <h5 class="heading settled" data-level="2.5.2.2" id="reordering-algorithm"><span class="secno">2.5.2.2. </span><span class="content">Recommended algorithm</span><a class="self-link" href="#reordering-algorithm"></a></h5>
    <p>TODO(garretrieger): write this.</p>
-   <h4 class="heading settled" data-level="2.5.3" id="patch-formats"><span class="secno">2.5.3. </span><span class="content">Patch and Compression Formats</span><a class="self-link" href="#patch-formats"></a></h4>
-   <p>TODO(garretrieger): write this.
-TODO(garretrieger): Identify at least one patch format which all client/servers must support.</p>
+   <h4 class="heading settled" data-level="2.5.3" id="patch-formats"><span class="secno">2.5.3. </span><span class="content">Patch Formats</span><a class="self-link" href="#patch-formats"></a></h4>
+   <p>The following patch formats may be used by the server to create binary diffs between a source file
+and a target file:</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>Format
+      <th>Value
+      <th>Notes
+     <tr>
+      <td>VCDIFF
+      <td>0
+      <td>Uses VCDIFF format <a data-link-type="biblio" href="#biblio-rfc3284">[rfc3284]</a> to produce the patch. All client and server implementations
+    must support this format.
+     <tr>
+      <td>Brotli Shared Dictionary
+      <td>1
+      <td>Uses brotli compression <a data-link-type="biblio" href="#biblio-rfc7932">[rfc7932]</a> to produce the patch. The source file is used as a shared
+    dictionary given to the brotli compressor and decompressor.
+   </table>
+   <p>TODO(garretrieger): reference updated brotli spec which includes shared dictionary.</p>
    <h2 class="heading settled" data-level="3" id="range-request-incxfer"><span class="secno">3. </span><span class="content">Range Request Incremental Transfer</span><a class="self-link" href="#range-request-incxfer"></a></h2>
    <h2 class="heading settled" data-level="4" id="negotiating-transfer-type"><span class="secno">4. </span><span class="content">Negotiating Incremental Transfer Type</span><a class="self-link" href="#negotiating-transfer-type"></a></h2>
    <h2 class="no-num heading settled" id="priv-sec"><span class="content">Privacy and Security Considerations</span><a class="self-link" href="#priv-sec"></a></h2>
@@ -1085,6 +1103,10 @@ TODO(garretrieger): Identify at least one patch format which all client/servers 
   <dl>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
+   <dt id="biblio-rfc3284">[RFC3284]
+   <dd>D. Korn; et al. <a href="https://datatracker.ietf.org/doc/html/rfc3284">The VCDIFF Generic Differencing and Compression Data Format</a>. June 2002. Proposed Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc3284">https://datatracker.ietf.org/doc/html/rfc3284</a>
+   <dt id="biblio-rfc7932">[RFC7932]
+   <dd>J. Alakuijala; Z. Szabadka. <a href="https://datatracker.ietf.org/doc/html/rfc7932">Brotli Compressed Data Format</a>. July 2016. Informational. URL: <a href="https://datatracker.ietf.org/doc/html/rfc7932">https://datatracker.ietf.org/doc/html/rfc7932</a>
    <dt id="biblio-rfc8949">[RFC8949]
    <dd>C. Bormann; P. Hoffman. <a href="https://datatracker.ietf.org/doc/html/rfc8949">Concise Binary Object Representation (CBOR)</a>. December 2020. Internet Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc8949">https://datatracker.ietf.org/doc/html/rfc8949</a>
   </dl>

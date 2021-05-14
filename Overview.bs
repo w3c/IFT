@@ -542,10 +542,28 @@ TODO(garretrieger): write this.
 
 TODO(garretrieger): write this.
 
-### Patch and Compression Formats ### {#patch-formats}
+### Patch Formats ### {#patch-formats}
 
-TODO(garretrieger): write this.
-TODO(garretrieger): Identify at least one patch format which all client/servers must support.
+The following patch formats may be used by the server to create binary diffs between a source file
+and a target file:
+
+<table>
+  <tr>
+    <th>Format</th><th>Value</th><th>Notes</th>
+  </tr>
+  <tr>
+    <td>VCDIFF</td><td>0</td>
+    <td>Uses VCDIFF format [[!rfc3284]] to produce the patch. All client and server implementations
+    must support this format.</td>
+  </tr>
+  <tr>
+    <td>Brotli Shared Dictionary</td><td>1</td>
+    <td>Uses brotli compression [[!rfc7932]] to produce the patch. The source file is used as a shared
+    dictionary given to the brotli compressor and decompressor.</td>
+  </tr>
+</table>
+
+TODO(garretrieger): reference updated brotli spec which includes shared dictionary.
 
 Range Request Incremental Transfer {#range-request-incxfer}
 ===========================================================
