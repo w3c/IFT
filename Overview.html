@@ -5,9 +5,9 @@
   <title>Incremental Font Transfer</title>
   <meta content="w3c/ED" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
-  <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
+  <meta content="Bikeshed version 800b43329, updated Tue May 25 14:13:32 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="a99db07bb595ee401026f40fe592193e25f676d1" name="document-revision">
+  <meta content="fdd095bdaf66463f9b35647c32d2b22da8c30a03" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -114,9 +114,9 @@ pre .property::before, pre .property::after {
     --ins-bg: transparent;
 
     --a-normal-text: #034575;
-    --a-normal-underline: #707070;
+    --a-normal-underline: #bbb;
     --a-visited-text: var(--a-normal-text);
-    --a-visited-underline: #bbb;
+    --a-visited-underline: #707070;
     --a-hover-bg: rgba(75%, 75%, 75%, .25);
     --a-active-text: #c00;
     --a-active-underline: #c00;
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-05-14">14 May 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-06-02">2 June 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -536,7 +536,7 @@ is then produced between the two subsets.</p>
    <h4 class="heading settled" data-level="2.1.1" id="font-subset"><span class="secno">2.1.1. </span><span class="content">Font Subset</span><a class="self-link" href="#font-subset"></a></h4>
    <p>A subset of a font file is a modified version of the font that contains only the data needed to
 render a subset of the codepoints in the original font. A subsetted font should be able to render
-any permutation of the codepoints in the subset identically to the original font.</p>
+any combination of the codepoints in the subset identically to the original font.</p>
    <h3 class="heading settled" data-level="2.2" id="data-types"><span class="secno">2.2. </span><span class="content">Data Types</span><a class="self-link" href="#data-types"></a></h3>
    <p>This section lists all of the data types that are used to form the request and response messages
 sent between the client and server.</p>
@@ -553,15 +553,15 @@ should be encoded by CBOR are given in the definition of those data types.</p>
       <th>CBOR Major Type
      <tr>
       <td>Integer
-      <td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive
+      <td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive. 
       <td>0 or 1
      <tr>
       <td>ByteString
-      <td>Variable number of bytes
+      <td>Variable number of bytes.
       <td>2
      <tr>
       <td>ArrayOf&lt;Type>
-      <td>Array of a variable number of items of Type
+      <td>Array of a variable number of items of Type.
       <td>4
    </table>
    <h4 class="heading settled" data-level="2.2.3" id="sparsebitset"><span class="secno">2.2.3. </span><span class="content">SparseBitSet</span><a class="self-link" href="#sparsebitset"></a></h4>
@@ -579,8 +579,8 @@ use 4 as that has been shown to give the smallest encodings for most sets typica
 has a single value composed of <i>B</i> bits. Given a node <i>p</i> which has <i>B</i> children: <i>c<sub>0</sub></i> ... <i>c<sub><i>B</i> - 1</sub></i> and is in a tree, <i>T</i>, of height <i>H</i>, then:</p>
    <ul>
     <li data-md>
-     <p>D(<i>c<sub>i</sub></i>) is depth of node <i>c<sub>i</sub></i>, that is the number of edges between
-the root node and <i>c<sub>i</sub></i>.</p>
+     <p>D(<i>n</i>) is depth of node <i>n</i>: the number of edges between
+the root node and <i>n</i>.</p>
     <li data-md>
      <p>Start(<i>c<sub>i</sub></i>) is the start (inclusive) of the interval  covered by <i>c<sub>i</sub></i> :<br> Start(<i>c<sub>i</sub></i>) =
  Start(<i>p</i>) + <i>i</i> * <i>B</i><sup><i>H</i> - D(<i>c<sub>i</sub></i>)</sup></p>
@@ -597,14 +597,13 @@ End(<i>c<sub>i</sub></i>)), otherwise bit <i>i</i> will be 0.</p>
      <p>If for node <i>p</i>, End(<i>p</i>) - Start(<i>p</i>) = <i>B</i>, then <i>p</i> will have no
 children.</p>
    </ul>
-   <p>The tree is encoded into a bit string. The bits of the bit string are numbered from 0 to M. When
-appending multi bit values to the bit string, bits are added in order from least significant bit to
-most significant bit.</p>
+   <p>The tree is encoded into a bit string. When appending multiple-bit values to the bit string, bits
+are added in order from least significant bit to most significant bit.</p>
    <p>First append 2 bits which encode the branching factor:</p>
    <table>
     <tbody>
      <tr>
-      <th>Bits
+      <th>Bits 
       <th>Branching Factor
      <tr>
       <td>00
@@ -621,14 +620,17 @@ most significant bit.</p>
    </table>
    <p>Then append the value <i>H</i> - 1 as a 6 bit unsigned integer.</p>
    <p>Next the nodes are encoded into the bit string by traversing the nodes of the <i>T</i> in level
-order and appending the value for each non-zero node to the bit string.If all set values
-covered by a node’s interval are present within set <i>S</i> that node can instead be encoded in the
-bit string as <i>B</i> bits all set to zero. All children of that node must not be encoded.</p>
+order and appending the value for each non-zero node to the bit string. If all of the set values
+covered by a node’s interval are present within set <i>S</i>, then that node can instead be encoded
+in the bit string as <i>B</i> bits all set to zero. All children of that node must not be encoded.</p>
    <p>Lastly the bit string is converted into a ByteString by converting each consecutive group of 8 bits
-into the next byte of the string. The bit with the smallest index in the bit string is the least
+into the next byte of the string.
+If the number of bits in the bit string is not a multiple of 8, zero bits are appended to the
+next multiple of 8.
+The bit with the smallest index in the bit string is the least
 significant bit in the byte and the bit with the largest index is the most significant bit.</p>
-   <div class="example" id="example-76606ecb">
-    <a class="self-link" href="#example-76606ecb"></a> The set {2, 33, 323} in a tree with a branching factor of 8 is encoded as the bit string: 
+   <div class="example" id="example-f5bb74e7">
+    <a class="self-link" href="#example-f5bb74e7"></a> The set {2, 33, 323} in a tree with a branching factor of 8 is encoded as the bit string: 
 <pre>  BitString:
   |- header |- lvl 0 |---- level 1 ----|------- level 2 -----------|
   |         |   n0   |   n1       n2   |   n3       n4       n5    |
@@ -657,8 +659,8 @@ significant bit in the byte and the bit with the largest index is the most signi
     <p>Level 0:</p>
     <ul>
      <li data-md>
-      <p>root node, n<sub>0</sub> append 00100001. Since there are set members in the intervals
- [0, 64) for bit 0 and [320, 384) for bit 5.</p>
+      <p>root node, n<sub>0</sub> append 00100001. Bit 0 is set because there are set members in the interval
+ [0, 64), and bit 5 is set due to members in the interval [320, 384).</p>
     </ul>
     <p>Level 1:</p>
     <ul>
@@ -746,8 +748,8 @@ for a type specifies for each field:</p>
    <table>
     <tbody>
      <tr>
-      <th>ID
-      <th>Field Name
+      <th>ID 
+      <th>Field Name 
       <th>Value Type
      <tr>
       <td>0
@@ -757,9 +759,9 @@ for a type specifies for each field:</p>
    <p>Encodes a list of unsigned integers. The list is ordered and allows
 duplicate values. Given a list L to be encoded the array value_deltas is calculated:</p>
 <pre>value_deltas = []
-if len(value_deltas) > 0:
+if len(L) > 0:
   value_deltas[0] = L[0]
-  for i in range(1, len(value_deltas)):
+  for i in range(1, len(L)):
     value_deltas[i] = L[i] - L[i-1]
 </pre>
    <div class="example" id="example-6e146a01"><a class="self-link" href="#example-6e146a01"></a> The list [2, 2, 5, 1, 3, 7] would be encoded as [2, 0, 3, -4, 2, 4]. </div>
@@ -773,7 +775,7 @@ bit set and the list of ranges are unioned together.</p>
    <table>
     <tbody>
      <tr>
-      <th>ID
+      <th>ID 
       <th>Field Name
       <th>Type
      <tr>
@@ -849,6 +851,10 @@ then <code>ordering_checksum</code> must be set.</p>
       <th>Field Name
       <th>Value Type
      <tr>
+      <td>?
+      <td>protocol_version
+      <td>Integer ?????????????
+     <tr>
       <td>0
       <td>patch_format
       <td>Integer
@@ -882,7 +888,7 @@ then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p><code>patch_format</code> can be any of the values listed <a href="#patch-formats">§ 2.5.3 Patch Formats</a></p>
     <li data-md>
-     <p>Only one of <code>patch</code> and <code>replacement</code> may be set.</p>
+     <p>Only one of <code>patch</code> or <code>replacement</code> may be set.</p>
     <li data-md>
      <p>If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>, <code>patched_checksum</code>, and <code>original_font_checksum</code> must be set.</p>
     <li data-md>
@@ -934,7 +940,7 @@ If the client has a codepoint ordering for this font then this field should not 
 add to its font subset. If the client has a codepoint ordering for this font then this
 field should not be set.</p>
     <li data-md>
-     <p><code>indices_have</code>: encodes the set of codepoints that the current
+     <p><code>indices_have</code>: encodes the set of additional codepoints that the current
 font subset contains data for. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.5.2 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
 ordering for this font then this field should not be set.</p>
     <li data-md>
@@ -970,7 +976,7 @@ update the saved original font checksum with the value in <code>original_font_ch
     <li data-md>
      <p>If fields <code>codepoint_ordering</code> and <code>ordering_checksum</code> are set then update
 the saved codepoint ordering and checksum with the new values specified by these two fields.
-If neither <code>replacement</code> or <code>patch</code> are set, then the client should
+If neither <code>replacement</code> nor <code>patch</code> are set, then the client should
 resend the request that triggered this response but use the new codepoint ordering provided in
 this response.</p>
    </ol>
@@ -1005,7 +1011,7 @@ will recognize via the process described in <a href="#handling-patch-response">�
 That is the <code>patch</code> and <code>replacement</code> fields must not be set.</p>
    <p>Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 2.3.3 Handling PatchResponse</a> to a font subset with checksum <code>base_checksum</code> it must result
 in an extended font subset that contains data for at least the union of the set of codepoints needed
-and the sets of codepoints the client already has. The format of patch in the either the <code>patch</code> or <code>replace</code> field must be one of those listed in <code>accept_patch_format</code>.</p>
+and the sets of codepoints the client already has. The format of the patch in the either the <code>patch</code> or <code>replace</code> fields must be one of those listed in <code>accept_patch_format</code>.</p>
    <p class="note" role="note"><span>Note:</span> the server can respond with either a patch or a replacement but should try to produce a patch
 where possible. Replacement’s should only be used in situations where the server is unable to recreate
 the clients state in order to generate a patch against it.</p>

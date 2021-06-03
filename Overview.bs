@@ -62,7 +62,7 @@ is then produced between the two subsets.
 
 A subset of a font file is a modified version of the font that contains only the data needed to
 render a subset of the codepoints in the original font. A subsetted font should be able to render
-any permutation of the codepoints in the subset identically to the original font.
+any combination of the codepoints in the subset identically to the original font.
 
 Data Types {#data-types}
 ------------------------
@@ -83,13 +83,13 @@ should be encoded by CBOR are given in the definition of those data types.
     <th>Data Type</th><th>Description</th><th>CBOR Major Type</th>
   </tr>
   <tr>
-    <td>Integer</td><td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive</td><td>0 or 1</td>
+    <td>Integer</td><td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive.&nbsp;</td><td>0 or 1</td>
   </tr>
   <tr>
-    <td>ByteString</td><td>Variable number of bytes</td><td>2</td>
+    <td>ByteString</td><td>Variable number of bytes.</td><td>2</td>
   </tr>
   <tr>
-    <td>ArrayOf&lt;Type&gt;</td><td>Array of a variable number of items of Type</td><td>4</td>
+    <td>ArrayOf&lt;Type&gt;</td><td>Array of a variable number of items of Type.</td><td>4</td>
   </tr>
 </table>
 
@@ -102,7 +102,7 @@ for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The
 a ByteString for transport.
 
 To construct the tree <i>T</i> which encodes set <i>S</i> first select the branching factor <i>B</i>
-(how many children each node has). <i>B</i> can be 4, 8, 16, or 32. 
+(how many children each node has). <i>B</i> can be 4, 8, 16, or 32.
 
 Note: the encoder can use any of the possible branching factors, but it is recommended to
 use 4 as that has been shown to give the smallest encodings for most sets typically encountered.
@@ -116,21 +116,21 @@ has a single value composed of <i>B</i> bits. Given a node <i>p</i> which has <i
 <i>c<sub>0</sub></i> ... <i>c<sub><i>B</i> - 1</sub></i> and is in a tree, <i>T</i>, of height
 <i>H</i>, then:
 
-*  D(<i>c<sub>i</sub></i>) is depth of node <i>c<sub>i</sub></i>, that is the number of edges between
-    the root node and <i>c<sub>i</sub></i>.
-    
+*  D(<i>n</i>) is depth of node <i>n</i>: the number of edges between
+    the root node and <i>n</i>.
+
 *  Start(<i>c<sub>i</sub></i>) is the start (inclusive) of the interval  covered by
      <i>c<sub>i</sub></i> :<br/>
      Start(<i>c<sub>i</sub></i>) =
      Start(<i>p</i>) + <i>i</i> * <i>B</i><sup><i>H</i> - D(<i>c<sub>i</sub></i>)</sup>
-     
+
 *  End(<i>c<sub>i</sub></i>) is the end (exclusive) of the interval  covered by
      <i>c<sub>i</sub></i> :<br/>
      End(<i>c<sub>i</sub></i>) =
      Start(<i>p</i>) + (<i>i</i> + 1) * <i>B</i><sup><i>H</i> - D(<i>c<sub>i</sub></i>)</sup>
 
 *  Start(root node) = 0
-     
+
 *  The value of node <i>p</i> is a string of <i>B</i> bits. If its bits are numbered from 0 (least
     significant) to <i>B</i> - 1 (most significant) then bit <i>i</i> will be 1 if the set <i>S</i>
     contains at least one member in the interval [Start(<i>c<sub>i</sub></i>),
@@ -139,15 +139,14 @@ has a single value composed of <i>B</i> bits. Given a node <i>p</i> which has <i
 *  If for node <i>p</i>, End(<i>p</i>) - Start(<i>p</i>) = <i>B</i>, then <i>p</i> will have no
     children.
 
-The tree is encoded into a bit string. The bits of the bit string are numbered from 0 to M. When
-appending multi bit values to the bit string, bits are added in order from least significant bit to
-most significant bit.
+The tree is encoded into a bit string. When appending multiple-bit values to the bit string, bits
+are added in order from least significant bit to most significant bit.
 
 First append 2 bits which encode the branching factor:
 
 <table>
   <tr>
-    <th>Bits</th><th>Branching Factor</th>
+    <th>Bits&nbsp;</th><th>Branching Factor</th>
   </tr>
   <tr><td>00</td><td>4</td></tr>
   <tr><td>01</td><td>8</td></tr>
@@ -158,18 +157,21 @@ First append 2 bits which encode the branching factor:
 Then append the value <i>H</i> - 1 as a 6 bit unsigned integer.
 
 Next the nodes are encoded into the bit string by traversing the nodes of the <i>T</i> in level
-order and appending the value for each non-zero node to the bit string.If all set values
-covered by a node's interval are present within set <i>S</i> that node can instead be encoded in the
-bit string as <i>B</i> bits all set to zero. All children of that node must not be encoded.
+order and appending the value for each non-zero node to the bit string. If all of the set values
+covered by a node's interval are present within set <i>S</i>, then that node can instead be encoded
+in the bit string as <i>B</i> bits all set to zero. All children of that node must not be encoded.
 
 Lastly the bit string is converted into a ByteString by converting each consecutive group of 8 bits
-into the next byte of the string. The bit with the smallest index in the bit string is the least
+into the next byte of the string.
+If the number of bits in the bit string is not a multiple of 8, zero bits are appended to the
+next multiple of 8.
+The bit with the smallest index in the bit string is the least
 significant bit in the byte and the bit with the largest index is the most significant bit.
 
 
 <div class=example>
   The set {2, 33, 323} in a tree with a branching factor of 8 is encoded as the bit string:
-  
+
   ```
   BitString:
   |- header |- lvl 0 |---- level 1 ----|------- level 2 -----------|
@@ -187,9 +189,9 @@ significant bit in the byte and the bit with the largest index is the most signi
     0b00001000
   ]
   ```
-  
+
   First determine the height of the tree:
-  
+
   <i>H</i> = ceil(log<sub>8</sub>(323 + 1)) = 3
 
   Then append
@@ -198,16 +200,16 @@ significant bit in the byte and the bit with the largest index is the most signi
   *  <i>H</i> - 1 = 2 = 000010
 
   Level 0:
-  
-  * root node, n<sub>0</sub> append 00100001. Since there are set members in the intervals
-     [0, 64) for bit 0 and [320, 384) for bit 5.
+
+  * root node, n<sub>0</sub> append 00100001. Bit 0 is set because there are set members in the interval
+     [0, 64), and bit 5 is set due to members in the interval [320, 384).
 
   Level 1:
-  
+
   * There will be two non-zero children corresponding to bit 0 and bit 5 in n<sub>0</sub>:
   * n<sub>1</sub> append 00010001. It is child 0 of n<sub>0</sub> and subdivides the interval
      [0, 64). Bit 0 is set since there are set members in [0, 8) and bit 4 for [32, 40).
-  
+
   * n<sub>2</sub> append 00000001. It is child 5 of n<sub>0</sub> it subdivides the interval
      [320, 384). Bit 0 is set since there are set members in [320 - 328).
 
@@ -217,7 +219,7 @@ significant bit in the byte and the bit with the largest index is the most signi
   * n<sub>4</sub> append 00000010. Child 4 of n<sub>1</sub>, bit 1 is set for the interval [33, 34) or 33.
   * n<sub>5</sub> append 00001000. Child 0 of n<sub>2</sub>, bit 3 is set for the interval [323, 324)
      or 323.
-     
+
 </div>
 
 <div class=example>
@@ -238,11 +240,11 @@ significant bit in the byte and the bit with the largest index is the most signi
   ```
 
   First determine the height of the tree:
-  
+
   <i>H</i> = ceil(log<sub>4</sub>(17 + 1)) = 3
 
   Then append
-  
+
   *  branching factor = 4 = 00
   *  <i>H</i> - 1 = 2 = 000010
 
@@ -282,7 +284,7 @@ for a type specifies for each field:
 #### CompressedList #### {#CompressedList}
 
 <table>
-  <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
+  <tr><th>ID&nbsp;</th><th>Field Name&nbsp;</th><th>Value Type</th></tr>
   <tr><td>0</td><td>value_deltas</td><td>ArrayOf&lt;Integer&gt;</td></tr>
 </table>
 
@@ -291,9 +293,9 @@ duplicate values. Given a list L to be encoded the array value_deltas is calcula
 
 ```
 value_deltas = []
-if len(value_deltas) > 0:
+if len(L) > 0:
   value_deltas[0] = L[0]
-  for i in range(1, len(value_deltas)):
+  for i in range(1, len(L)):
     value_deltas[i] = L[i] - L[i-1]
 ```
 
@@ -313,7 +315,7 @@ The list of ranges is encoded as a series of deltas. For example the ranges
 [3, 10], [13, 15], [17, 17] would be encoded as [3, 7, 3, 2, 2, 0].
 
 <table>
-  <tr><th>ID</th><th>Field Name</th><th>Type</th></tr>
+  <tr><th>ID&nbsp;</th><th>Field Name</th><th>Type</th></tr>
   <tr><td>0</td><td>sparse_bit_set</td><td>SparseBitSet</td></tr>
   <tr><td>1</td><td>range_deltas</td><td>ArrayOf&lt;Integer&gt;</td></tr>
 </table>
@@ -346,21 +348,21 @@ For a PatchRequest object to be well formed:
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
-
-  <tr><td>0</td><td>patch_format</td><td>Integer</td></tr>  
+  <tr><td>?</td><td>protocol_version</td><td>Integer ?????????????</td>
+  <tr><td>0</td><td>patch_format</td><td>Integer</td></tr>
   <tr><td>1</td><td>patch</td><td>ByteString</td></tr>
-  <tr><td>2</td><td>replacement</td><td>ByteString</td></tr>  
+  <tr><td>2</td><td>replacement</td><td>ByteString</td></tr>
 
   <tr><td>3</td><td>original_font_checksum</td><td>Integer</td></tr>
   <tr><td>4</td><td>patched_checksum</td><td>Integer</td></tr>
-  
-  <tr><td>5</td><td>codepoint_ordering</td><td>CompressedList</td></tr>  
-  <tr><td>6</td><td>ordering_checksum</td><td>Integer</td></tr>  
+
+  <tr><td>5</td><td>codepoint_ordering</td><td>CompressedList</td></tr>
+  <tr><td>6</td><td>ordering_checksum</td><td>Integer</td></tr>
 </table>
 
 For a PatchRequest object to be well formed:
 *  <code>patch_format</code> can be any of the values listed [[#patch-formats]]
-*  Only one of <code>patch</code> and <code>replacement</code> may be set.
+*  Only one of <code>patch</code> or <code>replacement</code> may be set.
 *  If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>,
      <code>patched_checksum</code>, and <code>original_font_checksum</code> must be set.
 *  If <code>codepoint_ordering</code> is set then <code>ordering_checksum</code> must be set.
@@ -416,7 +418,7 @@ as follows:
     add to its font subset. If the client has a codepoint ordering for this font then this
     field should not be set.
 
-*  <code>indices_have</code>: encodes the set of codepoints that the current
+*  <code>indices_have</code>: encodes the set of additional codepoints that the current
     font subset contains data for. The codepoint values are transformed to indices by applying
     [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
     ordering for this font then this field should not be set.
@@ -433,7 +435,7 @@ as follows:
 *  <code>original_font_checksum</code>:
     Set to saved value for <code>original_font_checksum</code> in the state for this font. If
     there is no saved value leave this field unset.
-   
+
 *  <code>base_checksum</code>:
     Set to the checksum of the font subset byte array saved in the state for this font. See:
     [[#computing-checksums]].
@@ -461,7 +463,7 @@ should interpret and process the fields of the object as follows:
 
 4. If fields <code>codepoint_ordering</code> and <code>ordering_checksum</code> are set then update
     the saved codepoint ordering and checksum with the new values specified by these two fields.
-    If neither <code>replacement</code> or <code>patch</code> are set, then the client should
+    If neither <code>replacement</code> nor <code>patch</code> are set, then the client should
     resend the request that triggered this response but use the new codepoint ordering provided in
     this response.
 
@@ -507,8 +509,8 @@ That is the <code>patch</code> and <code>replacement</code> fields must not be s
 Otherwise when the response is applied by the client following the process in
 [[#handling-patch-response]] to a font subset with checksum <code>base_checksum</code> it must result
 in an extended font subset that contains data for at least the union of the set of codepoints needed
-and the sets of codepoints the client already has. The format of patch in the either the
-<code>patch</code> or <code>replace</code> field must be one of those listed in
+and the sets of codepoints the client already has. The format of the patch in the either the
+<code>patch</code> or <code>replace</code> fields must be one of those listed in
 <code>accept_patch_format</code>.
 
 Note: the server can respond with either a patch or a replacement but should try to produce a patch
