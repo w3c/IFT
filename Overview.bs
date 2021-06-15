@@ -348,19 +348,20 @@ For a PatchRequest object to be well formed:
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
-  <tr><td>?</td><td>protocol_version</td><td>Integer ?????????????</td>
-  <tr><td>0</td><td>patch_format</td><td>Integer</td></tr>
-  <tr><td>1</td><td>patch</td><td>ByteString</td></tr>
-  <tr><td>2</td><td>replacement</td><td>ByteString</td></tr>
+  <tr><td>0</td><td>protocol_version</td><td>Integer</td>
+  <tr><td>1</td><td>patch_format</td><td>Integer</td></tr>
+  <tr><td>2</td><td>patch</td><td>ByteString</td></tr>
+  <tr><td>3</td><td>replacement</td><td>ByteString</td></tr>
 
-  <tr><td>3</td><td>original_font_checksum</td><td>Integer</td></tr>
-  <tr><td>4</td><td>patched_checksum</td><td>Integer</td></tr>
+  <tr><td>4</td><td>original_font_checksum</td><td>Integer</td></tr>
+  <tr><td>5</td><td>patched_checksum</td><td>Integer</td></tr>
 
-  <tr><td>5</td><td>codepoint_ordering</td><td>CompressedList</td></tr>
-  <tr><td>6</td><td>ordering_checksum</td><td>Integer</td></tr>
+  <tr><td>6</td><td>codepoint_ordering</td><td>CompressedList</td></tr>
+  <tr><td>7</td><td>ordering_checksum</td><td>Integer</td></tr>
 </table>
 
 For a PatchRequest object to be well formed:
+*  <code>protocol_version</code> must be set to 0.
 *  <code>patch_format</code> can be any of the values listed [[#patch-formats]]
 *  Only one of <code>patch</code> or <code>replacement</code> may be set.
 *  If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>,

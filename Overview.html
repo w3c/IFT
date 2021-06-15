@@ -5,9 +5,9 @@
   <title>Incremental Font Transfer</title>
   <meta content="w3c/ED" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
-  <meta content="Bikeshed version 800b43329, updated Tue May 25 14:13:32 2021 -0700" name="generator">
+  <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="fdd095bdaf66463f9b35647c32d2b22da8c30a03" name="document-revision">
+  <meta content="15b10e18a82341a9587b8f486ebeef719ea2f309" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -114,9 +114,9 @@ pre .property::before, pre .property::after {
     --ins-bg: transparent;
 
     --a-normal-text: #034575;
-    --a-normal-underline: #bbb;
+    --a-normal-underline: #707070;
     --a-visited-text: var(--a-normal-text);
-    --a-visited-underline: #707070;
+    --a-visited-underline: #bbb;
     --a-hover-bg: rgba(75%, 75%, 75%, .25);
     --a-active-text: #c00;
     --a-active-underline: #c00;
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-06-02">2 June 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-06-15">15 June 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -851,40 +851,42 @@ then <code>ordering_checksum</code> must be set.</p>
       <th>Field Name
       <th>Value Type
      <tr>
-      <td>?
-      <td>protocol_version
-      <td>Integer ?????????????
-     <tr>
       <td>0
-      <td>patch_format
+      <td>protocol_version
       <td>Integer
      <tr>
       <td>1
+      <td>patch_format
+      <td>Integer
+     <tr>
+      <td>2
       <td>patch
       <td>ByteString
      <tr>
-      <td>2
+      <td>3
       <td>replacement
       <td>ByteString
      <tr>
-      <td>3
+      <td>4
       <td>original_font_checksum
       <td>Integer
      <tr>
-      <td>4
+      <td>5
       <td>patched_checksum
       <td>Integer
      <tr>
-      <td>5
+      <td>6
       <td>codepoint_ordering
       <td>CompressedList
      <tr>
-      <td>6
+      <td>7
       <td>ordering_checksum
       <td>Integer
    </table>
    <p>For a PatchRequest object to be well formed:</p>
    <ul>
+    <li data-md>
+     <p><code>protocol_version</code> must be set to 0.</p>
     <li data-md>
      <p><code>patch_format</code> can be any of the values listed <a href="#patch-formats">§ 2.5.3 Patch Formats</a></p>
     <li data-md>
