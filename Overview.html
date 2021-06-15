@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="15b10e18a82341a9587b8f486ebeef719ea2f309" name="document-revision">
+  <meta content="e38d06b56452c0cd6a33f640349af3465984b1bc" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -759,7 +759,7 @@ for a type specifies for each field:</p>
    <p>Encodes a list of unsigned integers. The list is ordered and allows
 duplicate values. Given a list L to be encoded the array value_deltas is calculated:</p>
 <pre>value_deltas = []
-if len(L) > 0:
+if length(L) > 0:
   value_deltas[0] = L[0]
   for i in range(1, len(L)):
     value_deltas[i] = L[i] - L[i-1]
@@ -1028,7 +1028,33 @@ indicate a not found error.</p>
    </ul>
    <h3 class="heading settled" data-level="2.5" id="procedures"><span class="secno">2.5. </span><span class="content">Procedures</span><a class="self-link" href="#procedures"></a></h3>
    <h4 class="heading settled" data-level="2.5.1" id="computing-checksums"><span class="secno">2.5.1. </span><span class="content">Computing Checksums</span><a class="self-link" href="#computing-checksums"></a></h4>
-   <p>TODO(garretrieger): write this.</p>
+   <p>64 bit checksums of byte strings are computed using the <a href="https://github.com/ztanml/fast-hash">fast hash</a> algorithm. A python like pseudo
+code version of the algorithm is presented below:</p>
+<pre>SEED = 0x11743e80f437ffe6
+M = 0x880355f21e6d1965
+
+mix(value):
+  value = value ^ (value >> 23)
+  value = value * 0x2127599bf4325c37
+  value = value ^ (value >> 47)
+  return value
+
+fast_hash(byte[] data):
+  # When casting byte arrays into unsigned 64 bit integers the bytes are in little
+  # endian order. That is the smallest index is the least significant byte.
+  uint64 hash = SEED ^ (length(data) * M)
+  for (i = 0; i &lt;= length(bytes) - 8; i += 8)
+    hash = (hash ^ mix((uint64) data[i:i+8])) * M
+
+  remaining = length(data) % 8
+  if not remaining:
+    return mix(hash)
+
+  uint64 last_value = (uint64) concat(data[length(data) - remaining:],
+                                      [0] * (8 - remaining))
+  return mix((hash ^ mix(last_value)) * M)
+</pre>
+   <p class="note" role="note"><span>Note:</span> a C implementation of fast hash can be found <a href="https://github.com/ztanml/fast-hash">here</a>.</p>
    <h4 class="heading settled" data-level="2.5.2" id="codepoint-reordering"><span class="secno">2.5.2. </span><span class="content">Codepoint Reordering</span><a class="self-link" href="#codepoint-reordering"></a></h4>
    <p>TODO(garretrieger): write this.</p>
    <h5 class="heading settled" data-level="2.5.2.1" id="reordering-checksum"><span class="secno">2.5.2.1. </span><span class="content">Computing Checksum</span><a class="self-link" href="#reordering-checksum"></a></h5>
