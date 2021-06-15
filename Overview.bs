@@ -293,7 +293,7 @@ duplicate values. Given a list L to be encoded the array value_deltas is calcula
 
 ```
 value_deltas = []
-if len(L) > 0:
+if length(L) > 0:
   value_deltas[0] = L[0]
   for i in range(1, len(L)):
     value_deltas[i] = L[i] - L[i-1]
@@ -531,7 +531,37 @@ Procedures {#procedures}
 
 ### Computing Checksums ### {#computing-checksums}
 
-TODO(garretrieger): write this.
+64 bit checksums of byte strings are computed using the
+<a href="https://github.com/ztanml/fast-hash">fast hash</a> algorithm. A python like pseudo
+code version of the algorithm is presented below:
+
+```
+SEED = 0x11743e80f437ffe6
+M = 0x880355f21e6d1965
+
+mix(value):
+  value = value ^ (value >> 23)
+  value = value * 0x2127599bf4325c37
+  value = value ^ (value >> 47)
+  return value
+
+fast_hash(byte[] data):
+  # When casting byte arrays into unsigned 64 bit integers the bytes are in little
+  # endian order. That is the smallest index is the least significant byte.
+  uint64 hash = SEED ^ (length(data) * M)
+  for (i = 0; i <= length(bytes) - 8; i += 8)
+    hash = (hash ^ mix((uint64) data[i:i+8])) * M
+
+  remaining = length(data) % 8
+  if not remaining:
+    return mix(hash)
+
+  uint64 last_value = (uint64) concat(data[length(data) - remaining:],
+                                      [0] * (8 - remaining))
+  return mix((hash ^ mix(last_value)) * M)
+```
+
+Note: a C implementation of fast hash can be found <a href="https://github.com/ztanml/fast-hash">here</a>.
 
 ### Codepoint Reordering ### {#codepoint-reordering}
 
