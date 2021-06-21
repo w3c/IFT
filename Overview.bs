@@ -561,19 +561,45 @@ fast_hash(byte[] data):
   return mix((hash ^ mix(last_value)) * M)
 ```
 
-Note: a C implementation of fast hash can be found <a href="https://github.com/ztanml/fast-hash">here</a>.
+Note: a C implementation of fast hash can be found
+<a href="https://github.com/ztanml/fast-hash">here</a>.
 
 ### Codepoint Reordering ### {#codepoint-reordering}
 
-TODO(garretrieger): write this.
+A codepoint reordering for a font defines a function which maps unicode codepoint values from the
+font to a continuous space of [0, number of codepoints in the font). This transformation is intended
+to reduce the cost of representing codepoint sets.
 
-#### Computing Checksum #### {#reordering-checksum}
+A codepoint ordering is encoded into a <code>CompressedList</code>. The list must contain all unicode
+codepoints that are supported by the font. The index of a particular unicode codepoint in the list is
+the new value for that codepoint.
 
-TODO(garretrieger): write this.
+A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
+size of encoded codepoint sets for that font.
 
-#### Recommended algorithm #### {#reordering-algorithm}
+#### Codepoint Reordering Checksum #### {#reordering-checksum}
 
-TODO(garretrieger): write this.
+A checksum of a codepoint reordering can be computed as follows:
+
+```
+SEED = 0x11743e80f437ffe6
+M = 0x880355f21e6d1965
+
+mix(value):
+  value = value ^ (value >> 23)
+  value = value * 0x2127599bf4325c37
+  value = value ^ (value >> 47)
+  return value
+
+fast_hash_ordering(uint64[] ordering):
+  uint64 hash = SEED ^ (length(ordering) * 8 * M)
+  for (i = 0; i < length(ordering); i++)
+    # to ensure checksums are consistent across all platforms, the integers must be in little
+    # endian order.
+    hash = (hash ^ mix(little_endian (ordering[i])) * M
+
+  return mix(hash)
+```
 
 ### Patch Formats ### {#patch-formats}
 

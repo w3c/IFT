@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="e38d06b56452c0cd6a33f640349af3465984b1bc" name="document-revision">
+  <meta content="0b56b8a5d1d9ec4152ac77c579ab06e1f12675d8" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-06-15">15 June 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-06-21">21 June 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -487,8 +487,7 @@ dfn > a.self-link::before      { content: "#"; }
         <li>
          <a href="#codepoint-reordering"><span class="secno">2.5.2</span> <span class="content">Codepoint Reordering</span></a>
          <ol class="toc">
-          <li><a href="#reordering-checksum"><span class="secno">2.5.2.1</span> <span class="content">Computing Checksum</span></a>
-          <li><a href="#reordering-algorithm"><span class="secno">2.5.2.2</span> <span class="content">Recommended algorithm</span></a>
+          <li><a href="#reordering-checksum"><span class="secno">2.5.2.1</span> <span class="content">Codepoint Reordering Checksum</span></a>
          </ol>
         <li><a href="#patch-formats"><span class="secno">2.5.3</span> <span class="content">Patch Formats</span></a>
        </ol>
@@ -1056,11 +1055,34 @@ fast_hash(byte[] data):
 </pre>
    <p class="note" role="note"><span>Note:</span> a C implementation of fast hash can be found <a href="https://github.com/ztanml/fast-hash">here</a>.</p>
    <h4 class="heading settled" data-level="2.5.2" id="codepoint-reordering"><span class="secno">2.5.2. </span><span class="content">Codepoint Reordering</span><a class="self-link" href="#codepoint-reordering"></a></h4>
-   <p>TODO(garretrieger): write this.</p>
-   <h5 class="heading settled" data-level="2.5.2.1" id="reordering-checksum"><span class="secno">2.5.2.1. </span><span class="content">Computing Checksum</span><a class="self-link" href="#reordering-checksum"></a></h5>
-   <p>TODO(garretrieger): write this.</p>
-   <h5 class="heading settled" data-level="2.5.2.2" id="reordering-algorithm"><span class="secno">2.5.2.2. </span><span class="content">Recommended algorithm</span><a class="self-link" href="#reordering-algorithm"></a></h5>
-   <p>TODO(garretrieger): write this.</p>
+   <p>A codepoint reordering for a font defines a function which maps unicode codepoint values from the
+font to a continuous space of [0, number of codepoints in the font). This transformation is intended
+to reduce the cost of representing codepoint sets.</p>
+   <p>A codepoint ordering is encoded into a <code>CompressedList</code>. The list must contain all unicode
+codepoints that are supported by the font. The index of a particular unicode codepoint in the list is
+the new value for that codepoint.</p>
+   <p>A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
+size of encoded codepoint sets for that font.</p>
+   <h5 class="heading settled" data-level="2.5.2.1" id="reordering-checksum"><span class="secno">2.5.2.1. </span><span class="content">Codepoint Reordering Checksum</span><a class="self-link" href="#reordering-checksum"></a></h5>
+   <p>A checksum of a codepoint reordering can be computed as follows:</p>
+<pre>SEED = 0x11743e80f437ffe6
+M = 0x880355f21e6d1965
+
+mix(value):
+  value = value ^ (value >> 23)
+  value = value * 0x2127599bf4325c37
+  value = value ^ (value >> 47)
+  return value
+
+fast_hash_ordering(uint64[] ordering):
+  uint64 hash = SEED ^ (length(ordering) * 8 * M)
+  for (i = 0; i &lt; length(ordering); i++)
+    # to ensure checksums are consistent across all platforms, the integers must be in little
+    # endian order.
+    hash = (hash ^ mix(little_endian (ordering[i])) * M
+
+  return mix(hash)
+</pre>
    <h4 class="heading settled" data-level="2.5.3" id="patch-formats"><span class="secno">2.5.3. </span><span class="content">Patch Formats</span><a class="self-link" href="#patch-formats"></a></h4>
    <p>The following patch formats may be used by the server to create binary diffs between a source file
 and a target file:</p>
