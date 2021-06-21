@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="c026d61d1346bddeddd3a787c47a76f0afc5f208" name="document-revision">
+  <meta content="ecc949c4b754935d99cd9e9945d2615fd8621935" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -490,6 +490,7 @@ dfn > a.self-link::before      { content: "#"; }
           <li><a href="#reordering-checksum"><span class="secno">2.5.2.1</span> <span class="content">Codepoint Reordering Checksum</span></a>
          </ol>
         <li><a href="#patch-formats"><span class="secno">2.5.3</span> <span class="content">Patch Formats</span></a>
+        <li><a href="#connection-speeds"><span class="secno">2.5.4</span> <span class="content">Connection Speeds</span></a>
        </ol>
      </ol>
     <li><a href="#range-request-incxfer"><span class="secno">3</span> <span class="content">Range Request Incremental Transfer</span></a>
@@ -829,6 +830,10 @@ bit set and the list of ranges are unioned together.</p>
       <td>8
       <td>base_checksum
       <td>Integer
+     <tr>
+      <td>9
+      <td>connection_speed
+      <td>Integer
    </table>
    <p>For a PatchRequest object to be well formed:</p>
    <ul>
@@ -841,6 +846,8 @@ bit set and the list of ranges are unioned together.</p>
 then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p>If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then <code>original_font_checksum</code> and <code>base_checksum</code> must be set.</p>
+    <li data-md>
+     <p><code>connection_speed</code> can be any of the values listed in <a href="#connection-speeds">§ 2.5.4 Connection Speeds</a>.</p>
    </ul>
    <h5 class="heading settled" data-level="2.2.5.4" id="PatchResponse"><span class="secno">2.2.5.4. </span><span class="content">PatchResponse</span><a class="self-link" href="#PatchResponse"></a></h5>
    <table>
@@ -957,6 +964,10 @@ there is no saved value leave this field unset.</p>
     <li data-md>
      <p><code>base_checksum</code>:
 Set to the checksum of the font subset byte array saved in the state for this font. See: <a href="#computing-checksums">§ 2.5.1 Computing Checksums</a>.</p>
+    <li data-md>
+     <p><code>connection_speed</code>:
+Can be optionally set by the client to a value from <a href="#connection-speeds">§ 2.5.4 Connection Speeds</a> by finding the value
+that corresponds to the client’s average round trip time.</p>
    </ul>
    <h4 class="heading settled" data-level="2.3.3" id="handling-patch-response"><span class="secno">2.3.3. </span><span class="content">Handling PatchResponse</span><a class="self-link" href="#handling-patch-response"></a></h4>
    <p>If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a> if will respond with HTTP status code 200 and the body of the response will be a <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
@@ -1013,9 +1024,12 @@ That is the <code>patch</code> and <code>replacement</code> fields must not be s
    <p>Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 2.3.3 Handling PatchResponse</a> to a font subset with checksum <code>base_checksum</code> it must result
 in an extended font subset that contains data for at least the union of the set of codepoints needed
 and the sets of codepoints the client already has. The format of the patch in the either the <code>patch</code> or <code>replace</code> fields must be one of those listed in <code>accept_patch_format</code>.</p>
+   <p class="note" role="note"><span>Note:</span> the server can optionally use the client’s provided connection speed to inform how many extra
+codepoints should be sent. For example on slower connections it may be more performant to send extra
+codepoints if they can prevent a future request from needing to be sent.</p>
    <p class="note" role="note"><span>Note:</span> the server can respond with either a patch or a replacement but should try to produce a patch
 where possible. Replacement’s should only be used in situations where the server is unable to recreate
-the clients state in order to generate a patch against it.</p>
+the client’s state in order to generate a patch against it.</p>
    <p>Possible error responses:</p>
    <ul>
     <li data-md>
@@ -1105,6 +1119,39 @@ and a target file:</p>
     dictionary given to the brotli compressor and decompressor.
    </table>
    <p>TODO(garretrieger): reference updated brotli spec which includes shared dictionary.</p>
+   <h4 class="heading settled" data-level="2.5.4" id="connection-speeds"><span class="secno">2.5.4. </span><span class="content">Connection Speeds</span><a class="self-link" href="#connection-speeds"></a></h4>
+   <p>The following connection speed values can be used:</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>Name
+      <th>Value
+      <th>Round Trip Times
+     <tr>
+      <td>Very Slow
+      <td>1
+      <td>> 1000 ms.
+     <tr>
+      <td>Slow
+      <td>2
+      <td>[300 ms, 1000 ms)
+     <tr>
+      <td>Average
+      <td>3
+      <td>[150 ms, 300 ms)
+     <tr>
+      <td>Fast
+      <td>4
+      <td>[80 ms, 150 ms)
+     <tr>
+      <td>Very Fast
+      <td>5
+      <td>[20 ms, 80 ms)
+     <tr>
+      <td>Extremely Fast
+      <td>6
+      <td>[0 ms, 20 ms)
+   </table>
    <h2 class="heading settled" data-level="3" id="range-request-incxfer"><span class="secno">3. </span><span class="content">Range Request Incremental Transfer</span><a class="self-link" href="#range-request-incxfer"></a></h2>
    <h2 class="heading settled" data-level="4" id="negotiating-transfer-type"><span class="secno">4. </span><span class="content">Negotiating Incremental Transfer Type</span><a class="self-link" href="#negotiating-transfer-type"></a></h2>
    <h2 class="no-num heading settled" id="priv-sec"><span class="content">Privacy and Security Considerations</span><a class="self-link" href="#priv-sec"></a></h2>
