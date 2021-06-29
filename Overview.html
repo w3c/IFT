@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="ecc949c4b754935d99cd9e9945d2615fd8621935" name="document-revision">
+  <meta content="3e60812e982dd44aa349e5bd9fb1a31ad9b6aaa0" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-06-24">24 June 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-06-28">28 June 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -520,8 +520,19 @@ dfn > a.self-link::before      { content: "#"; }
   <main>
    <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
    <p><em>This section is not normative.</em></p>
-   <p>The success of WebFonts is unevenly distributed. This specification allows WebFonts to be used where slow networks, very large fonts, or complex subsetting requirements currently preclude their use. For example, even using WOFF 2 <a data-link-type="biblio" href="#biblio-woff2">[WOFF2]</a>, fonts for CJK languages are too large to be practical.</p>
-   <p>See the Progressive Font Enrichment: Evaluation Report <a data-link-type="biblio" href="#biblio-pfe-report">[PFE-report]</a> for the investigation which led to this specification.</p>
+   <p>The success of WebFonts is unevenly distributed. This specification allows WebFonts to be used where
+slow networks, very large fonts, or complex subsetting requirements currently preclude their use. For
+example, even using WOFF 2 <a data-link-type="biblio" href="#biblio-woff2">[WOFF2]</a>, fonts for CJK languages are too large to be practical.</p>
+   <p>See the Progressive Font Enrichment: Evaluation Report <a data-link-type="biblio" href="#biblio-pfe-report">[PFE-report]</a> for the investigation which led
+to this specification.</p>
+   <p>There are two different methods which can be used to incrementally transfer fonts. The first method,
+Patch Subset, uses a backend server which can generate binary patches to an existing font. The second
+method, Range Request, utilizes HTTP range requests to load only the parts of the original font that
+are needed.</p>
+   <p>The evaluation report found that patch subset was generally more efficient in terms of overall
+performance and transferred bytes than range request. However, Range Request is simpler to deploy
+for many uses cases while still providing material improvments to loading performance for large fonts
+so it is included in this specification as an alternative method.</p>
    <h2 class="heading settled" data-level="2" id="patch-incxfer"><span class="secno">2. </span><span class="content">Patch Based Incremental Transfer</span><a class="self-link" href="#patch-incxfer"></a></h2>
    <h3 class="heading settled" data-level="2.1" id="patch-overview"><span class="secno">2.1. </span><span class="content">Overview</span><a class="self-link" href="#patch-overview"></a></h3>
    <p>In the patch subset approach to incremental font transfer a server generates binary patches which a
@@ -1153,6 +1164,8 @@ and a target file:</p>
       <td>[0 ms, 20 ms)
    </table>
    <h2 class="heading settled" data-level="3" id="range-request-incxfer"><span class="secno">3. </span><span class="content">Range Request Incremental Transfer</span><a class="self-link" href="#range-request-incxfer"></a></h2>
+   <p>The specification for range request based incremental transfer is currently being drafted and is
+located in a separate document: <a href="RangeRequest.html">Incremental Font Transfer via Range Request</a></p>
    <h2 class="heading settled" data-level="4" id="negotiating-transfer-type"><span class="secno">4. </span><span class="content">Negotiating Incremental Transfer Type</span><a class="self-link" href="#negotiating-transfer-type"></a></h2>
    <h2 class="no-num heading settled" id="priv-sec"><span class="content">Privacy and Security Considerations</span><a class="self-link" href="#priv-sec"></a></h2>
    <p class="issue" id="issue-b39f1b18"><a class="self-link" href="#issue-b39f1b18"></a> Note any issues that have been raised about privacy and security.</p>

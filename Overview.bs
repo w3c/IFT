@@ -35,11 +35,24 @@ Status Text: This is a largely empty document because we have just started worki
 Introduction {#intro}
 =====================
 
-	<em>This section is not normative.</em>
+<em>This section is not normative.</em>
 
-    The success of WebFonts is unevenly distributed. This specification allows WebFonts to be used where slow networks, very large fonts, or complex subsetting requirements currently preclude their use. For example, even using WOFF 2 [[WOFF2]], fonts for CJK languages are too large to be practical.
+The success of WebFonts is unevenly distributed. This specification allows WebFonts to be used where
+slow networks, very large fonts, or complex subsetting requirements currently preclude their use. For
+example, even using WOFF 2 [[WOFF2]], fonts for CJK languages are too large to be practical.
 
-    See the Progressive Font Enrichment: Evaluation Report [[PFE-report]] for the investigation which led to this specification.
+See the Progressive Font Enrichment: Evaluation Report [[PFE-report]] for the investigation which led
+to this specification.
+
+There are two different methods which can be used to incrementally transfer fonts. The first method,
+Patch Subset, uses a backend server which can generate binary patches to an existing font. The second
+method, Range Request, utilizes HTTP range requests to load only the parts of the original font that
+are needed.
+
+The evaluation report found that patch subset was generally more efficient in terms of overall
+performance and transferred bytes than range request. However, Range Request is simpler to deploy
+for many uses cases while still providing material improvments to loading performance for large fonts
+so it is included in this specification as an alternative method.
 
 Patch Based Incremental Transfer {#patch-incxfer}
 =================================================
@@ -666,6 +679,11 @@ The following connection speed values can be used:
 
 Range Request Incremental Transfer {#range-request-incxfer}
 ===========================================================
+
+The specification for range request based incremental transfer is currently being drafted and is
+located in a separate document:
+<a href="RangeRequest.html">Incremental Font Transfer via Range Request</a>
+
 
 Negotiating Incremental Transfer Type {#negotiating-transfer-type}
 ==================================================================
