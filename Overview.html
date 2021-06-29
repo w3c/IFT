@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="3e60812e982dd44aa349e5bd9fb1a31ad9b6aaa0" name="document-revision">
+  <meta content="9c2a604bc797d05c3396ac4b307ce31d2cdd2e6b" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -494,7 +494,7 @@ dfn > a.self-link::before      { content: "#"; }
        </ol>
      </ol>
     <li><a href="#range-request-incxfer"><span class="secno">3</span> <span class="content">Range Request Incremental Transfer</span></a>
-    <li><a href="#negotiating-transfer-type"><span class="secno">4</span> <span class="content">Negotiating Incremental Transfer Type</span></a>
+    <li><a href="#negotiating-transfer-type"><span class="secno">4</span> <span class="content">Using Incremental Font Transfer in HTML</span></a>
     <li><a href="#priv-sec"><span class="secno"></span> <span class="content">Privacy and Security Considerations</span></a>
     <li>
      <a href="#conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
@@ -1166,7 +1166,26 @@ and a target file:</p>
    <h2 class="heading settled" data-level="3" id="range-request-incxfer"><span class="secno">3. </span><span class="content">Range Request Incremental Transfer</span><a class="self-link" href="#range-request-incxfer"></a></h2>
    <p>The specification for range request based incremental transfer is currently being drafted and is
 located in a separate document: <a href="RangeRequest.html">Incremental Font Transfer via Range Request</a></p>
-   <h2 class="heading settled" data-level="4" id="negotiating-transfer-type"><span class="secno">4. </span><span class="content">Negotiating Incremental Transfer Type</span><a class="self-link" href="#negotiating-transfer-type"></a></h2>
+   <h2 class="heading settled" data-level="4" id="negotiating-transfer-type"><span class="secno">4. </span><span class="content">Using Incremental Font Transfer in HTML</span><a class="self-link" href="#negotiating-transfer-type"></a></h2>
+   <p>HTML content can specify that incremental font transfer can be used for a particular font URL
+by using the "supports" syntax in the 'src:' attribute of a font face:</p>
+<pre>@font-face {
+  ...
+  src: url(a_font.ttf) format(truetype supports incremental);
+}
+</pre>
+   <p>An incrementally transferred font must be in a raw format such as truetype or opentype.
+For the initial request for a font the client should assume that the server supports the patch subset
+based method and send a PatchRequest via HTTP GET according to the requirements in <a href="#extend-subset">§ 2.3.2 Extending the Font Subset</a>.</p>
+   <p>If the server does support the patch subset protocol it should respond appropriately following the
+instructions in the patch subset section. However, if the server does not support the patch subset
+protocol it should ignore the additional HTTP GET parameters and instead just begin sending the
+umodified font file.</p>
+   <p>If the client receives a response containing (TODO(garretrieger) add a magic number to first 4 bytes) a
+PatchResponse, then follow the instructions in the Patch Subset section and all future extension
+requests for this URL can be sent as patch subset requests using POST.</p>
+   <p>Otherwise the client should follow the instructions in the Range Request section and all future
+extension requests should be sent according the the Range Request specificiation.</p>
    <h2 class="no-num heading settled" id="priv-sec"><span class="content">Privacy and Security Considerations</span><a class="self-link" href="#priv-sec"></a></h2>
    <p class="issue" id="issue-b39f1b18"><a class="self-link" href="#issue-b39f1b18"></a> Note any issues that have been raised about privacy and security.</p>
   </main>
