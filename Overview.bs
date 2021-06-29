@@ -685,8 +685,34 @@ located in a separate document:
 <a href="RangeRequest.html">Incremental Font Transfer via Range Request</a>
 
 
-Negotiating Incremental Transfer Type {#negotiating-transfer-type}
-==================================================================
+Using Incremental Font Transfer in HTML {#negotiating-transfer-type}
+====================================================================
+
+HTML content can specify that incremental font transfer can be used for a particular font URL
+by using the "supports" syntax in the 'src:' attribute of a font face:
+
+```
+@font-face {
+  ...
+  src: url(a_font.ttf) format(truetype supports incremental);
+}
+```
+
+An incrementally transferred font must be in a raw format such as truetype or opentype.
+For the initial request for a font the client should assume that the server supports the patch subset
+based method and send a PatchRequest via HTTP GET according to the requirements in [[#extend-subset]].
+
+If the server does support the patch subset protocol it should respond appropriately following the
+instructions in the patch subset section. However, if the server does not support the patch subset
+protocol it should ignore the additional HTTP GET parameters and instead just begin sending the
+umodified font file.
+
+If the client receives a response containing (TODO(garretrieger) add a magic number to first 4 bytes) a
+PatchResponse, then follow the instructions in the Patch Subset section and all future extension
+requests for this URL can be sent as patch subset requests using POST.
+
+Otherwise the client should follow the instructions in the Range Request section and all future
+extension requests should be sent according the the Range Request specificiation.
 
 <h2 class=no-num id=priv-sec>Privacy and Security Considerations</h2>
 
