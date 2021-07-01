@@ -57,7 +57,6 @@ Status Text: initial draft is in progress.
 		}
 	}
 </pre>
-
 Introduction {#intro}
 =====================
 
@@ -122,7 +121,9 @@ should be encoded by CBOR are given in the definition of those data types.
     <th>Data Type</th><th>Description</th><th>CBOR Major Type</th>
   </tr>
   <tr>
-    <td>Integer</td><td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive.&nbsp;</td><td>0 or 1</td>
+    <td>Integer</td><td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive.
+    In most cases 32 bit signed values are used, with fingerprints being 64 bit unsigned.</td>
+    <td>0 or 1</td>
   </tr>
   <tr>
     <td>Float</td><td>IEEE 754 Single-Precision Float.</td><td>7</td>
@@ -134,6 +135,14 @@ should be encoded by CBOR are given in the definition of those data types.
     <td>ArrayOf&lt;Type&gt;</td><td>Array of a variable number of items of Type.</td><td>4</td>
   </tr>
 </table>
+
+### ProtcolVersion ### {#protocol-version}
+
+An Integer describing the version of this communication protocol being used by a
+PatchRequest or PatchResponse. This value guides the semantics and interpretation
+of the fields sent.
+
+This field is for future expansion. There is only one valid value, 0.
 
 ### SparseBitSet ### {#sparsebitset}
 
@@ -310,6 +319,175 @@ Encoded as a CBOR map (major type 5). The key in each pair is an
 axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
 pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.
 
+### CompressedIntList ### {#compressedintlist}
+
+A data structure which compactly represents a list of integers. A distinction is
+made between sorted (positive, nondecreasing) and unsorted lists. Sorted lists
+allow for greater compression. Both types of lists are encoded into a ByteString
+for transport.
+
+Unsorted lists use three steps of encoding/compression: deltas, zig-zag and varint.
+Sorted lists only use two steps of encoding/compression: deltas and varint.
+
+The choice of sorted or unsorted is not stored in the encoded bytes; the choice
+of decoding is based on the context where the CompressedIntList occurs.
+
+The final ByteString result is simply the concatenation of the individual varint
+encoded bytes.
+
+#### Delta Encoding #### {#compressedintlist-deltas}
+Delta encoding converts a list of integers to a list of deltas between them.
+
+A list L of n integers L<sub>i<sub>0..n-1</sub></sub> is converted into a list
+of N integers D<sub>i<sub>0..n-1</sub></sub> as follows:
+
+* D<sub>0</sub> = L<sub>0</sub>
+* D<sub>i = 1..n-1</sub> = L<sub>i</sub> - L<sub>i-1<sub>
+
+This has the effect of reducing the magnitude of the values, which reduces the number
+of bytes required in the varint encoding, below.
+
+<div class="example">
+```
+// Note: unsorted
+int_list = [23, 43, 12, 3, 67, 68, 69, 0]
+delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
+```
+</div>
+
+#### Zig-Zag Encoding #### {#compressedintlist-zigzag}
+
+Zig-Zag encoding reversibly converts signed integers to unsigned integers,
+using the same number of bits. The entire range of values is supported.
+This is required, as the [[#compressedintlist-varint]] step works on
+unsigned ints only.
+
+Sorted lists do not have negative values in their delta encoding, so they skip
+this step. Zig-Zag encoding doubles the magnitude of the numbers, which cuts in
+half the range of input values that can, for example, be encoded in 1 byte in
+the varint encoding.
+
+<div class="example">
+<table>
+<tr><th>Value</th><th>Zig-Zag Encoding</th></tr>
+<tr><td>0</td><td>0</td></tr>
+<tr><td>1</td><td>2</td></tr>
+<tr><td>2</td><td>4</td></tr>
+<tr><td>3</td><td>6</td></tr>
+<tr><td>4</td><td>8</td></tr>
+<tr><td>-1</td><td>1</td></tr>
+<tr><td>-2</td><td>3</td></tr>
+<tr><td>-3</td><td>5</td></tr>
+<tr><td>-4</td><td>7</td></tr>
+</table>
+</div>
+
+Psuedo code:
+<figure>
+```
+encode(n) {
+  if (n >= 0)
+    return n * 2
+  else
+    return (n * -2) - 1
+}
+
+decode(n) {
+  if (n & 1)
+    return -((n + 1) / 2)
+  else
+    return n / 2
+}
+```
+
+<div class="example">
+```
+delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
+zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
+```
+</div>
+
+<figcaption>Psuedo-code for Zig-Zag encoding and decoding</figcaption>
+</figure>
+
+*Add reference to proto implementation*
+
+
+#### Variable Length Integer (varint) Encoding #### {#compressedintlist-varint}
+
+Unsigned integers are encoded as a sequence of bytes. Small values require one
+byte, larger values require two bytes etc... 7 bits of the value at a time are encoded.
+These 7 bits are place in the lower 7 bits of the output byte. The high bit is
+used to indicate if additional bytes follow.
+
+The decoder reads and processes bytes while the high bit is set.
+
+The values 0..127 are thus encoded as a singe byte, with the high bit clear.
+The values 128..16383 require 2 bytes. At most 5 bytes are required to encoded
+the full 64 bit unsigned range.
+
+Examples of the encoding:
+
+<div class="example">
+<table>
+<tr><th>Value</th><th>Value (binary)</th><th>Output Bytes</th></tr>
+<tr><td>0</td><td>00000000000000000000000000000000</td><td>00000000</td></tr>
+<tr><td>1</td><td>00000000000000000000000000000001</td><td>00000001</td></tr>
+<tr><td>2</td><td>00000000000000000000000000000010</td><td>00000010</td></tr>
+<tr><td>3</td><td>00000000000000000000000000000011</td><td>00000011</td></tr>
+<tr><td>127</td><td>00000000000000000000000001111111</td><td>01111111</td></tr>
+<tr><td>128</td><td>00000000000000000000000010000000</td>
+    <td>10000000 00000001</td></tr>
+<tr><td>255</td><td>00000000000000000000000011111111</td>
+    <td>11111111 00000001</td></tr>
+<tr><td>16256</td><td>00000000000000000011111110000000</td>
+    <td>10000000 01111111</td></tr>
+<tr><td>2080768</td><td>00000000000111111100000000000000</td>
+    <td>10000000 10000000 01111111</td></tr>
+<tr><td>266338304</td><td>00001111111000000000000000000000</td>
+    <td>10000000 10000000 10000000 01111111</td></tr>
+<tr><td>4294967295</td><td>11111111111111111111111111111111</td>
+    <td>11111111 11111111 11111111 11111111 00001111</td></tr>
+</table>
+</div>
+
+*Add psuedo code*
+
+*Add reference to proto implementation*
+
+<div class="example">
+```
+zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
+bytes = [2E 28 3D 11 80 01 02 02 89 01]
+//       └┘ └┘ └┘ └┘ └───┘ └┘ └┘ └───┘
+```
+</div>
+
+### RangeList ### {#rangelist}
+
+A Range is a set of integers i where min <= i <= max. It is represented by
+the pair of integers [min, max], where min <= max and min >= 0.
+
+A RangeList is a list of n pairs
+[min<sub>i<sub>0..n-1</sub></sub>, max<sub>i<sub>0..n-1</sub></sub>].
+The list must be non-decreasing, i.e. min<sub>i=1..n-1</sub> >= max<sub>i-1<sub>.
+
+To encode this list, we convert it to a list L of 2n integers, where
+L<sub>2i</sub> = min<sub>i</sub> and L<sub>2i+1</sub> = max<sub>i</sub> for
+i = 0..n-1.
+
+L is a sorted list, so [[#compressedintlist]] is used to encode it as a ByteString.
+
+<div class="example">
+```
+RangeList = [3, 10], [13, 268]
+int list = [3, 10, 13, 268]
+delta list = [3, 7, 3, 255]
+// Sorted, so no Zig-Zag encoding.
+CompressedIntList (sorted) = [0x03 0x07 0x03 0xFF 0x01]
+```
+</div>
+
 ### Objects ### {#objects}
 
 Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
@@ -329,47 +507,22 @@ for a type specifies for each field:
 *  The type of the value stored in this field. Can be any of the types defined in [[#data-types]]
     including object types.
 
-### Object Schemas ### {#schemas}
+## Object Schemas ## {#schemas}
 
-#### CompressedList #### {#CompressedList}
-
-<table>
-  <tr><th>ID&nbsp;</th><th>Field Name&nbsp;</th><th>Value Type</th></tr>
-  <tr><td>0</td><td>value_deltas</td><td>ArrayOf&lt;Integer&gt;</td></tr>
-</table>
-
-Encodes a list of unsigned integers. The list is ordered and allows
-duplicate values. Given a list L to be encoded the array value_deltas is calculated:
-
-```
-value_deltas = []
-if length(L) > 0:
-  value_deltas[0] = L[0]
-  for i in range(1, len(L)):
-    value_deltas[i] = L[i] - L[i-1]
-```
-
-<div class=example>
-  The list [2, 2, 5, 1, 3, 7] would be encoded as [2, 0, 3, -4, 2, 4].
-</div>
-
-#### CompressedSet #### {#CompressedSet}
+### CompressedSet ### {#CompressedSet}
 
 Encodes a set of unsigned integers. The set is not ordered and does not
-allow duplicates. Members of the set are encoded into either a sparse bit
-set or a list of ranges. To obtain the final set the members of the sparse
+allow duplicates. Members of the set are encoded into either a SparseBitSet or a
+RangeList. To obtain the final set the members of the sparse
 bit set and the list of ranges are unioned together.
-
-The list of ranges is encoded as a series of deltas. For example the ranges
-
-[3, 10], [13, 15], [17, 17] would be encoded as [3, 7, 3, 2, 2, 0].
 
 <table>
   <tr><th>ID&nbsp;</th><th>Field Name</th><th>Type</th></tr>
-  <tr><td>0</td><td>sparse_bit_set</td><td>SparseBitSet</td></tr>
-  <tr><td>1</td><td>range_deltas</td><td>ArrayOf&lt;Integer&gt;</td></tr>
+  <tr><td>0</td><td>sparse_bit_set</td><td>SparseBitSet (ByteString)</td></tr>
+  <tr><td>1</td><td>range_deltas</td><td>RangeList (ByteString)</td></tr>
 </table>
 
+<<<<<<< HEAD
 #### AxisInterval #### {#AxisInterval}
 
 <table>
@@ -389,21 +542,31 @@ For an <code>AxisInterval</code> object to be well formed:
     then this interval is a single point, <code>start</code>.
 
 #### PatchRequest #### {#PatchRequest}
+=======
+### PatchRequest ### {#PatchRequest}
+>>>>>>> f7305b5 (Add html?)
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
-  <tr><td>0</td><td>protocol_version</td><td>Integer</td></tr>
-  <tr><td>1</td><td>accept_patch_format</td><td>ArrayOf&lt;Integer&gt;</td></tr>
+  <tr><td>0</td><td>protocol_version</td><td>ProtocolVersion (Integer)</td></tr>
+  <tr><td>1</td><td>accept_patch_format</td><td>CompressedIntList (ByteString)</td></tr>
   <tr><td>2</td><td>codepoints_have</td><td>CompressedSet</td></tr>
   <tr><td>3</td><td>codepoints_needed</td><td>CompressedSet</td></tr>
   <tr><td>4</td><td>indices_have</td><td>CompressedSet</td></tr>
   <tr><td>5</td><td>indices_needed</td><td>CompressedSet</td></tr>
+<<<<<<< HEAD
   <tr><td>6</td><td>axis_space_have</td><td>AxisSpace</td></tr>
   <tr><td>7</td><td>axis_space_needed</td><td>AxisSpace</td></tr>
   <tr><td>8</td><td>ordering_checksum</td><td>Integer</td></tr>
   <tr><td>9</td><td>original_font_checksum</td><td>Integer</td></tr>
   <tr><td>10</td><td>base_checksum</td><td>Integer</td></tr>
   <tr><td>11</td><td>connection_speed</td><td>Integer</td></tr>
+=======
+  <tr><td>6</td><td>ordering_checksum</td><td>Integer (64 bit unsigned)</td></tr>
+  <tr><td>7</td><td>original_font_checksum</td><td>Integer (64 bit unsigned)</td></tr>
+  <tr><td>8</td><td>base_checksum</td><td>Integer (64 bit unsigned)</td></tr>
+  <tr><td>9</td><td>connection_speed</td><td>Integer</td></tr>
+>>>>>>> f7305b5 (Add html?)
 </table>
 
 For a PatchRequest object to be well formed:
@@ -420,16 +583,24 @@ For a PatchRequest object to be well formed:
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
-  <tr><td>0</td><td>protocol_version</td><td>Integer</td>
+  <tr><td>0</td><td>protocol_version</td><td>ProtocolVersion (Integer)</td>
   <tr><td>1</td><td>patch_format</td><td>Integer</td></tr>
   <tr><td>2</td><td>patch</td><td>ByteString</td></tr>
   <tr><td>3</td><td>replacement</td><td>ByteString</td></tr>
+<<<<<<< HEAD
   <tr><td>4</td><td>original_font_checksum</td><td>Integer</td></tr>
   <tr><td>5</td><td>patched_checksum</td><td>Integer</td></tr>
   <tr><td>6</td><td>codepoint_ordering</td><td>CompressedList</td></tr>
   <tr><td>7</td><td>ordering_checksum</td><td>Integer</td></tr>
   <tr><td>8</td><td>subset_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
   <tr><td>9</td><td>original_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
+=======
+  <tr><td>4</td><td>original_font_checksum</td><td>Integer (64 bit unsigned)</td></tr>
+  <tr><td>5</td><td>patched_checksum</td><td>Integer (64 bit unsigned)</td></tr>
+
+  <tr><td>6</td><td>codepoint_ordering</td><td>CompressedIntList</td></tr>
+  <tr><td>7</td><td>ordering_checksum</td><td>Integer (64 bit unsigned)</td></tr>
+>>>>>>> f7305b5 (Add html?)
 </table>
 
 For a PatchResponse object to be well formed:
@@ -534,14 +705,14 @@ as follows:
 
 ### Handling PatchResponse ### {#handling-patch-response}
 
-If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a>
+If a server is able to successfully process a <a href="#PatchRequest"><code>PatchRequest</code></a>
 if will respond with HTTP status code 200 and the body of the response will be a
-<a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
-should interpret and process the fields of the object as follows:
+<a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR.
+The client should interpret and process the fields of the object as follows:
 
 1.  If field <code>replacement</code> is set then: the byte array in this field is a binary patch
      in the format specified by <code>patch_format</code>. Apply the binary patch to a base which
-     is a empty byte array. Replace the saved font subset with the result of the patch application.
+     is an empty byte array. Replace the saved font subset with the result of the patch application.
 
 2. If field <code>patch</code> is set then:  the byte array in this field is a binary patch
     in the format specified by <code>patch_format</code>. Apply the binary patch to the saved font
