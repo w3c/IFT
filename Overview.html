@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="2c6768755a21f9ab7cf244b3f106eaada04f8df1" name="document-revision">
+  <meta content="7021662c0bc821d4dededea471473edbf37744a9" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -456,36 +456,51 @@ dfn > a.self-link::before      { content: "#"; }
        <ol class="toc">
         <li><a href="#encoding"><span class="secno">2.2.1</span> <span class="content">Encoding</span></a>
         <li><a href="#primitives"><span class="secno">2.2.2</span> <span class="content">Primitives</span></a>
-        <li><a href="#sparsebitset"><span class="secno">2.2.3</span> <span class="content">SparseBitSet</span></a>
-        <li><a href="#AxisSpace"><span class="secno">2.2.4</span> <span class="content">AxisSpace</span></a>
-        <li><a href="#objects"><span class="secno">2.2.5</span> <span class="content">Objects</span></a>
+        <li><a href="#protocol-version"><span class="secno">2.2.3</span> <span class="content">ProtcolVersion</span></a>
+        <li><a href="#sparsebitset"><span class="secno">2.2.4</span> <span class="content">SparseBitSet</span></a>
+        <li><a href="#AxisSpace"><span class="secno">2.2.5</span> <span class="content">AxisSpace</span></a>
         <li>
-         <a href="#schemas"><span class="secno">2.2.6</span> <span class="content">Object Schemas</span></a>
+         <a href="#compressedintlist"><span class="secno">2.2.6</span> <span class="content">CompressedIntList</span></a>
          <ol class="toc">
-          <li><a href="#CompressedList"><span class="secno">2.2.6.1</span> <span class="content">CompressedList</span></a>
-          <li><a href="#CompressedSet"><span class="secno">2.2.6.2</span> <span class="content">CompressedSet</span></a>
-          <li><a href="#AxisInterval"><span class="secno">2.2.6.3</span> <span class="content">AxisInterval</span></a>
-          <li><a href="#PatchRequest"><span class="secno">2.2.6.4</span> <span class="content">PatchRequest</span></a>
-          <li><a href="#PatchResponse"><span class="secno">2.2.6.5</span> <span class="content">PatchResponse</span></a>
+          <li><a href="#compressedintlist-deltas"><span class="secno">2.2.6.1</span> <span class="content">Delta Encoding</span></a>
+          <li><a href="#compressedintlist-zigzag"><span class="secno">2.2.6.2</span> <span class="content">Zig-Zag Encoding</span></a>
+          <li><a href="#compressedintlist-varint"><span class="secno">2.2.6.3</span> <span class="content">Variable Length Integer (varint) Encoding</span></a>
+         </ol>
+        <li><a href="#rangelist"><span class="secno">2.2.7</span> <span class="content">RangeList</span></a>
+        <li><a href="#objects"><span class="secno">2.2.8</span> <span class="content">Objects</span></a>
+       </ol>
+      <li>
+       <a href="#schemas"><span class="secno">2.3</span> <span class="content">Object Schemas</span></a>
+       <ol class="toc">
+        <li>
+         <a href="#CompressedSet"><span class="secno">2.3.1</span> <span class="content">CompressedSet</span></a>
+         <ol class="toc">
+          <li><a href="#AxisInterval"><span class="secno">2.3.1.1</span> <span class="content">AxisInterval</span></a>
+          <li><a href="#PatchRequest"><span class="secno">2.3.1.2</span> <span class="content">PatchRequest</span></a>
+         </ol>
+        <li>
+         <a href="#PatchRequest①"><span class="secno">2.3.2</span> <span class="content">PatchRequest</span></a>
+         <ol class="toc">
+          <li><a href="#PatchResponse"><span class="secno">2.3.2.1</span> <span class="content">PatchResponse</span></a>
          </ol>
        </ol>
       <li>
-       <a href="#client"><span class="secno">2.3</span> <span class="content">Client</span></a>
+       <a href="#client"><span class="secno">2.4</span> <span class="content">Client</span></a>
        <ol class="toc">
-        <li><a href="#client-state"><span class="secno">2.3.1</span> <span class="content">Client State</span></a>
-        <li><a href="#extend-subset"><span class="secno">2.3.2</span> <span class="content">Extending the Font Subset</span></a>
-        <li><a href="#handling-patch-response"><span class="secno">2.3.3</span> <span class="content">Handling PatchResponse</span></a>
-        <li><a href="#client-side-checksum-mismatch"><span class="secno">2.3.4</span> <span class="content">Client Side Checksum Mismatch</span></a>
+        <li><a href="#client-state"><span class="secno">2.4.1</span> <span class="content">Client State</span></a>
+        <li><a href="#extend-subset"><span class="secno">2.4.2</span> <span class="content">Extending the Font Subset</span></a>
+        <li><a href="#handling-patch-response"><span class="secno">2.4.3</span> <span class="content">Handling PatchResponse</span></a>
+        <li><a href="#client-side-checksum-mismatch"><span class="secno">2.4.4</span> <span class="content">Client Side Checksum Mismatch</span></a>
        </ol>
-      <li><a href="#handling-patch-request"><span class="secno">2.4</span> <span class="content">Server: Responding to a PatchRequest</span></a>
-      <li><a href="#computing-checksums"><span class="secno">2.5</span> <span class="content">Computing Checksums</span></a>
+      <li><a href="#handling-patch-request"><span class="secno">2.5</span> <span class="content">Server: Responding to a PatchRequest</span></a>
+      <li><a href="#computing-checksums"><span class="secno">2.6</span> <span class="content">Computing Checksums</span></a>
       <li>
-       <a href="#codepoint-reordering"><span class="secno">2.6</span> <span class="content">Codepoint Reordering</span></a>
+       <a href="#codepoint-reordering"><span class="secno">2.7</span> <span class="content">Codepoint Reordering</span></a>
        <ol class="toc">
-        <li><a href="#reordering-checksum"><span class="secno">2.6.1</span> <span class="content">Codepoint Reordering Checksum</span></a>
+        <li><a href="#reordering-checksum"><span class="secno">2.7.1</span> <span class="content">Codepoint Reordering Checksum</span></a>
        </ol>
-      <li><a href="#patch-formats"><span class="secno">2.7</span> <span class="content">Patch Formats</span></a>
-      <li><a href="#connection-speeds"><span class="secno">2.8</span> <span class="content">Connection Speeds</span></a>
+      <li><a href="#patch-formats"><span class="secno">2.8</span> <span class="content">Patch Formats</span></a>
+      <li><a href="#connection-speeds"><span class="secno">2.9</span> <span class="content">Connection Speeds</span></a>
      </ol>
     <li><a href="#range-request-incxfer"><span class="secno">3</span> <span class="content">Range Request Incremental Transfer</span></a>
     <li><a href="#negotiating-transfer-type"><span class="secno">4</span> <span class="content">Using Incremental Font Transfer in HTML</span></a>
@@ -558,7 +573,8 @@ should be encoded by CBOR are given in the definition of those data types.</p>
       <th>CBOR Major Type
      <tr>
       <td>Integer
-      <td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive. 
+      <td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive.
+    In most cases 32 bit signed values are used, with fingerprints being 64 bit unsigned.
       <td>0 or 1
      <tr>
       <td>Float
@@ -573,7 +589,12 @@ should be encoded by CBOR are given in the definition of those data types.</p>
       <td>Array of a variable number of items of Type.
       <td>4
    </table>
-   <h4 class="heading settled" data-level="2.2.3" id="sparsebitset"><span class="secno">2.2.3. </span><span class="content">SparseBitSet</span><a class="self-link" href="#sparsebitset"></a></h4>
+   <h4 class="heading settled" data-level="2.2.3" id="protocol-version"><span class="secno">2.2.3. </span><span class="content">ProtcolVersion</span><a class="self-link" href="#protocol-version"></a></h4>
+   <p>An Integer describing the version of this communication protocol being used by a
+PatchRequest or PatchResponse. This value guides the semantics and interpretation
+of the fields sent.</p>
+   <p>This field is for future expansion. There is only one valid value, 0.</p>
+   <h4 class="heading settled" data-level="2.2.4" id="sparsebitset"><span class="secno">2.2.4. </span><span class="content">SparseBitSet</span><a class="self-link" href="#sparsebitset"></a></h4>
    <p>A data structure which compactly stores a set of distinct unsigned integers. The set is represented as
 a tree where each node has a fixed number of children that recursively sub-divides an interval into
 equal partitions. A tree of height <i>H</i> with branching factor <i>B</i> can store set membership
@@ -734,11 +755,202 @@ significant bit in the byte and the bit with the largest index is the most signi
       <p>n<sub>3</sub> append 0011. Bit 0 set for value 16, bit 1 set for value 17.</p>
     </ul>
    </div>
-   <h4 class="heading settled" data-level="2.2.4" id="AxisSpace"><span class="secno">2.2.4. </span><span class="content">AxisSpace</span><a class="self-link" href="#AxisSpace"></a></h4>
+   <h4 class="heading settled" data-level="2.2.5" id="AxisSpace"><span class="secno">2.2.5. </span><span class="content">AxisSpace</span><a class="self-link" href="#AxisSpace"></a></h4>
    <p>Stores a set of intervals on one or more open type variation axes <a data-link-type="biblio" href="#biblio-opentype-variations">[opentype-variations]</a>.
 Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
 pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.</p>
-   <h4 class="heading settled" data-level="2.2.5" id="objects"><span class="secno">2.2.5. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
+   <h4 class="heading settled" data-level="2.2.6" id="compressedintlist"><span class="secno">2.2.6. </span><span class="content">CompressedIntList</span><a class="self-link" href="#compressedintlist"></a></h4>
+   <p>A data structure which compactly represents a list of integers. A distinction is
+made between sorted (positive, nondecreasing) and unsorted lists. Sorted lists
+allow for greater compression. Both types of lists are encoded into a ByteString
+for transport.</p>
+   <p>Unsorted lists use three steps of encoding/compression: deltas, zig-zag and varint.
+Sorted lists only use two steps of encoding/compression: deltas and varint.</p>
+   <p>The choice of sorted or unsorted is not stored in the encoded bytes; the choice
+of decoding is based on the context where the CompressedIntList occurs.</p>
+   <p>The final ByteString result is simply the concatenation of the individual varint
+encoded bytes.</p>
+   <h5 class="heading settled" data-level="2.2.6.1" id="compressedintlist-deltas"><span class="secno">2.2.6.1. </span><span class="content">Delta Encoding</span><a class="self-link" href="#compressedintlist-deltas"></a></h5>
+    Delta encoding converts a list of integers to a list of deltas between them. 
+   <p>A list L of n integers L<sub>i<sub>0..n-1</sub></sub> is converted into a list
+of N integers D<sub>i<sub>0..n-1</sub></sub> as follows:</p>
+   <ul>
+    <li data-md>
+     <p>D<sub>0</sub> = L<sub>0</sub></p>
+    <li data-md>
+     <p>D<sub>i = 1..n-1</sub> = L<sub>i</sub> - L<sub>i-1<sub></sub></sub></p>
+   </ul>
+   <p>This has the effect of reducing the magnitude of the values, which reduces the number
+of bytes required in the varint encoding, below.</p>
+   <div class="example" id="example-a8b975f3">
+    <a class="self-link" href="#example-a8b975f3"></a> 
+<pre>// Note: unsorted
+int_list = [23, 43, 12, 3, 67, 68, 69, 0]
+delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
+</pre>
+   </div>
+   <h5 class="heading settled" data-level="2.2.6.2" id="compressedintlist-zigzag"><span class="secno">2.2.6.2. </span><span class="content">Zig-Zag Encoding</span><a class="self-link" href="#compressedintlist-zigzag"></a></h5>
+   <p>Zig-Zag encoding reversibly converts signed integers to unsigned integers,
+using the same number of bits. The entire range of values is supported.
+This is required, as the <a href="#compressedintlist-varint">§ 2.2.6.3 Variable Length Integer (varint) Encoding</a> step works on
+unsigned ints only.</p>
+   <p>Sorted lists do not have negative values in their delta encoding, so they skip
+this step. Zig-Zag encoding doubles the magnitude of the numbers, which cuts in
+half the range of input values that can, for example, be encoded in 1 byte in
+the varint encoding.</p>
+   <div class="example" id="example-16a15e38">
+    <a class="self-link" href="#example-16a15e38"></a> 
+    <table>
+     <tbody>
+      <tr>
+       <th>Value
+       <th>Zig-Zag Encoding
+      <tr>
+       <td>0
+       <td>0
+      <tr>
+       <td>1
+       <td>2
+      <tr>
+       <td>2
+       <td>4
+      <tr>
+       <td>3
+       <td>6
+      <tr>
+       <td>4
+       <td>8
+      <tr>
+       <td>-1
+       <td>1
+      <tr>
+       <td>-2
+       <td>3
+      <tr>
+       <td>-3
+       <td>5
+      <tr>
+       <td>-4
+       <td>7
+    </table>
+   </div>
+   <p>Psuedo code:</p>
+   <figure>
+<pre>encode(n) {
+  if (n >= 0)
+    return n * 2
+  else
+    return (n * -2) - 1
+}
+
+decode(n) {
+  if (n &amp; 1)
+    return -((n + 1) / 2)
+  else
+    return n / 2
+}
+</pre>
+    <div class="example" id="example-d75ff9a8">
+<pre>delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
+zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
+</pre>
+    </div>
+    <figcaption>Psuedo-code for Zig-Zag encoding and decoding</figcaption>
+   </figure>
+   <p>*Add reference to proto implementation*</p>
+   <h5 class="heading settled" data-level="2.2.6.3" id="compressedintlist-varint"><span class="secno">2.2.6.3. </span><span class="content">Variable Length Integer (varint) Encoding</span><a class="self-link" href="#compressedintlist-varint"></a></h5>
+   <p>Unsigned integers are encoded as a sequence of bytes. Small values require one
+byte, larger values require two bytes etc... 7 bits of the value at a time are encoded.
+These 7 bits are place in the lower 7 bits of the output byte. The high bit is
+used to indicate if additional bytes follow.</p>
+   <p>The decoder reads and processes bytes while the high bit is set.</p>
+   <p>The values 0..127 are thus encoded as a singe byte, with the high bit clear.
+The values 128..16383 require 2 bytes. At most 5 bytes are required to encoded
+the full 64 bit unsigned range.</p>
+   <p>Examples of the encoding:</p>
+   <div class="example" id="example-685f1d95">
+    <a class="self-link" href="#example-685f1d95"></a> 
+    <table>
+     <tbody>
+      <tr>
+       <th>Value
+       <th>Value (binary)
+       <th>Output Bytes
+      <tr>
+       <td>0
+       <td>00000000000000000000000000000000
+       <td>00000000
+      <tr>
+       <td>1
+       <td>00000000000000000000000000000001
+       <td>00000001
+      <tr>
+       <td>2
+       <td>00000000000000000000000000000010
+       <td>00000010
+      <tr>
+       <td>3
+       <td>00000000000000000000000000000011
+       <td>00000011
+      <tr>
+       <td>127
+       <td>00000000000000000000000001111111
+       <td>01111111
+      <tr>
+       <td>128
+       <td>00000000000000000000000010000000
+       <td>10000000 00000001
+      <tr>
+       <td>255
+       <td>00000000000000000000000011111111
+       <td>11111111 00000001
+      <tr>
+       <td>16256
+       <td>00000000000000000011111110000000
+       <td>10000000 01111111
+      <tr>
+       <td>2080768
+       <td>00000000000111111100000000000000
+       <td>10000000 10000000 01111111
+      <tr>
+       <td>266338304
+       <td>00001111111000000000000000000000
+       <td>10000000 10000000 10000000 01111111
+      <tr>
+       <td>4294967295
+       <td>11111111111111111111111111111111
+       <td>11111111 11111111 11111111 11111111 00001111
+    </table>
+   </div>
+   <p>*Add psuedo code*</p>
+   <p>*Add reference to proto implementation*</p>
+   <div class="example" id="example-ca161576">
+    <a class="self-link" href="#example-ca161576"></a> 
+<pre>zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
+bytes = [2E 28 3D 11 80 01 02 02 89 01]
+//       └┘ └┘ └┘ └┘ └───┘ └┘ └┘ └───┘
+</pre>
+   </div>
+   <h4 class="heading settled" data-level="2.2.7" id="rangelist"><span class="secno">2.2.7. </span><span class="content">RangeList</span><a class="self-link" href="#rangelist"></a></h4>
+   <p>A Range is a set of integers i where min &lt;= i &lt;= max. It is represented by
+the pair of integers [min, max], where min &lt;= max and min >= 0.</p>
+   <p>A RangeList is a list of n pairs
+[min<sub>i<sub>0..n-1</sub></sub>, max<sub>i<sub>0..n-1</sub></sub>].
+The list must be non-decreasing, i.e. min<sub>i=1..n-1</sub> >= max<sub>i-1<sub>.</sub></sub></p>
+   <p>To encode this list, we convert it to a list L of 2n integers, where
+L<sub>2i</sub> = min<sub>i</sub> and L<sub>2i+1</sub> = max<sub>i</sub> for
+i = 0..n-1.</p>
+   <p>L is a sorted list, so <a href="#compressedintlist">§ 2.2.6 CompressedIntList</a> is used to encode it as a ByteString.</p>
+   <div class="example" id="example-ce67a84d">
+    <a class="self-link" href="#example-ce67a84d"></a> 
+<pre>RangeList = [3, 10], [13, 268]
+int list = [3, 10, 13, 268]
+delta list = [3, 7, 3, 255]
+// Sorted, so no Zig-Zag encoding.
+CompressedIntList (sorted) = [0x03 0x07 0x03 0xFF 0x01]
+</pre>
+   </div>
+   <h4 class="heading settled" data-level="2.2.8" id="objects"><span class="secno">2.2.8. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
    <p>Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
 (major type 5). Each key and value pair is encoded as a single map entry. Keys are always unsigned
 integers and are encoded using major type 0. Values are encoded using the encoding specified by the
@@ -746,7 +958,7 @@ type of the value.</p>
    <p>All fields in an object are optional and do not need to have an associated value. Conversely when
 decoding and object fields may be present which are not specified in the schema. The decoder must
 ignore without error any key and value pairs where the key is not recognized.</p>
-   <p>There are several types of object used, each type is defined by a schema in <a href="#schemas">§ 2.2.6 Object Schemas</a>. The schema
+   <p>There are several types of object used, each type is defined by a schema in <a href="#schemas">§ 2.3 Object Schemas</a>. The schema
 for a type specifies for each field:</p>
    <ul>
     <li data-md>
@@ -756,35 +968,12 @@ for a type specifies for each field:</p>
     <li data-md>
      <p>The type of the value stored in this field. Can be any of the types defined in <a href="#data-types">§ 2.2 Data Types</a> including object types.</p>
    </ul>
-   <h4 class="heading settled" data-level="2.2.6" id="schemas"><span class="secno">2.2.6. </span><span class="content">Object Schemas</span><a class="self-link" href="#schemas"></a></h4>
-   <h5 class="heading settled" data-level="2.2.6.1" id="CompressedList"><span class="secno">2.2.6.1. </span><span class="content">CompressedList</span><a class="self-link" href="#CompressedList"></a></h5>
-   <table>
-    <tbody>
-     <tr>
-      <th>ID 
-      <th>Field Name 
-      <th>Value Type
-     <tr>
-      <td>0
-      <td>value_deltas
-      <td>ArrayOf&lt;Integer>
-   </table>
-   <p>Encodes a list of unsigned integers. The list is ordered and allows
-duplicate values. Given a list L to be encoded the array value_deltas is calculated:</p>
-<pre>value_deltas = []
-if length(L) > 0:
-  value_deltas[0] = L[0]
-  for i in range(1, len(L)):
-    value_deltas[i] = L[i] - L[i-1]
-</pre>
-   <div class="example" id="example-6e146a01"><a class="self-link" href="#example-6e146a01"></a> The list [2, 2, 5, 1, 3, 7] would be encoded as [2, 0, 3, -4, 2, 4]. </div>
-   <h5 class="heading settled" data-level="2.2.6.2" id="CompressedSet"><span class="secno">2.2.6.2. </span><span class="content">CompressedSet</span><a class="self-link" href="#CompressedSet"></a></h5>
+   <h3 class="heading settled" data-level="2.3" id="schemas"><span class="secno">2.3. </span><span class="content">Object Schemas</span><a class="self-link" href="#schemas"></a></h3>
+   <h4 class="heading settled" data-level="2.3.1" id="CompressedSet"><span class="secno">2.3.1. </span><span class="content">CompressedSet</span><a class="self-link" href="#CompressedSet"></a></h4>
    <p>Encodes a set of unsigned integers. The set is not ordered and does not
-allow duplicates. Members of the set are encoded into either a sparse bit
-set or a list of ranges. To obtain the final set the members of the sparse
+allow duplicates. Members of the set are encoded into either a SparseBitSet or a
+RangeList. To obtain the final set the members of the sparse
 bit set and the list of ranges are unioned together.</p>
-   <p>The list of ranges is encoded as a series of deltas. For example the ranges</p>
-   <p>[3, 10], [13, 15], [17, 17] would be encoded as [3, 7, 3, 2, 2, 0].</p>
    <table>
     <tbody>
      <tr>
@@ -794,13 +983,14 @@ bit set and the list of ranges are unioned together.</p>
      <tr>
       <td>0
       <td>sparse_bit_set
-      <td>SparseBitSet
+      <td>SparseBitSet (ByteString)
      <tr>
       <td>1
       <td>range_deltas
-      <td>ArrayOf&lt;Integer>
+      <td>RangeList (ByteString)
    </table>
-   <h5 class="heading settled" data-level="2.2.6.3" id="AxisInterval"><span class="secno">2.2.6.3. </span><span class="content">AxisInterval</span><a class="self-link" href="#AxisInterval"></a></h5>
+   <p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
+   <h5 class="heading settled" data-level="2.3.1.1" id="AxisInterval"><span class="secno">2.3.1.1. </span><span class="content">AxisInterval</span><a class="self-link" href="#AxisInterval"></a></h5>
    <table>
     <tbody>
      <tr>
@@ -826,7 +1016,42 @@ variable axis in a font.</p>
      <p><code>end</code> is optional, must be greater than <code>start</code>. If <code>end</code> is not set
 then this interval is a single point, <code>start</code>.</p>
    </ul>
-   <h5 class="heading settled" data-level="2.2.6.4" id="PatchRequest"><span class="secno">2.2.6.4. </span><span class="content">PatchRequest</span><a class="self-link" href="#PatchRequest"></a></h5>
+   <h5 class="heading settled" data-level="2.3.1.2" id="PatchRequest"><span class="secno">2.3.1.2. </span><span class="content">PatchRequest</span><a class="self-link" href="#PatchRequest"></a></h5>
+    ======= 
+   <h4 class="heading settled" data-level="2.3.2" id="PatchRequest①"><span class="secno">2.3.2. </span><span class="content">PatchRequest</span><a class="self-link" href="#PatchRequest①"></a></h4>
+   <blockquote>
+    <blockquote>
+     <blockquote>
+      <blockquote>
+       <blockquote>
+        <blockquote>
+         <blockquote>
+          <p>f7305b5 (Add html?)</p>
+         </blockquote>
+        </blockquote>
+       </blockquote>
+      </blockquote>
+     </blockquote>
+    </blockquote>
+   </blockquote>
+    &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+  
+======= 
+   <blockquote>
+    <blockquote>
+     <blockquote>
+      <blockquote>
+       <blockquote>
+        <blockquote>
+         <blockquote>
+          <p>f7305b5 (Add html?)</p>
+         </blockquote>
+        </blockquote>
+       </blockquote>
+      </blockquote>
+     </blockquote>
+    </blockquote>
+   </blockquote>
    <table>
     <tbody>
      <tr>
@@ -836,11 +1061,11 @@ then this interval is a single point, <code>start</code>.</p>
      <tr>
       <td>0
       <td>protocol_version
-      <td>Integer
+      <td>ProtocolVersion (Integer)
      <tr>
       <td>1
       <td>accept_patch_format
-      <td>ArrayOf&lt;Integer>
+      <td>CompressedIntList (ByteString)
      <tr>
       <td>2
       <td>codepoints_have
@@ -881,22 +1106,56 @@ then this interval is a single point, <code>start</code>.</p>
       <td>11
       <td>connection_speed
       <td>Integer
+     <tr>
+      <td>6
+      <td>ordering_checksum
+      <td>Integer (64 bit unsigned)
+     <tr>
+      <td>7
+      <td>original_font_checksum
+      <td>Integer (64 bit unsigned)
+     <tr>
+      <td>8
+      <td>base_checksum
+      <td>Integer (64 bit unsigned)
+     <tr>
+      <td>9
+      <td>connection_speed
+      <td>Integer
    </table>
    <p>For a PatchRequest object to be well formed:</p>
    <ul>
     <li data-md>
      <p><code>protocol_version</code> must be set to 0.</p>
     <li data-md>
-     <p><code>accept_patch_format</code> can include any of the values listed in <a href="#patch-formats">§ 2.7 Patch Formats</a>.</p>
+     <p><code>accept_patch_format</code> can include any of the values listed in <a href="#patch-formats">§ 2.8 Patch Formats</a>.</p>
     <li data-md>
      <p>If either of <code>indices_have</code> or <code>indices_needed</code> is set to a non-empty set
 then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p>If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then <code>original_font_checksum</code> and <code>base_checksum</code> must be set.</p>
     <li data-md>
-     <p><code>connection_speed</code> can be any of the values listed in <a href="#connection-speeds">§ 2.8 Connection Speeds</a>.</p>
+     <p><code>connection_speed</code> can be any of the values listed in <a href="#connection-speeds">§ 2.9 Connection Speeds</a>.</p>
    </ul>
-   <h5 class="heading settled" data-level="2.2.6.5" id="PatchResponse"><span class="secno">2.2.6.5. </span><span class="content">PatchResponse</span><a class="self-link" href="#PatchResponse"></a></h5>
+   <h5 class="heading settled" data-level="2.3.2.1" id="PatchResponse"><span class="secno">2.3.2.1. </span><span class="content">PatchResponse</span><a class="self-link" href="#PatchResponse"></a></h5>
+    &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+  
+======= 
+   <blockquote>
+    <blockquote>
+     <blockquote>
+      <blockquote>
+       <blockquote>
+        <blockquote>
+         <blockquote>
+          <p>f7305b5 (Add html?)</p>
+         </blockquote>
+        </blockquote>
+       </blockquote>
+      </blockquote>
+     </blockquote>
+    </blockquote>
+   </blockquote>
    <table>
     <tbody>
      <tr>
@@ -906,7 +1165,7 @@ then <code>ordering_checksum</code> must be set.</p>
      <tr>
       <td>0
       <td>protocol_version
-      <td>Integer
+      <td>ProtocolVersion (Integer)
      <tr>
       <td>1
       <td>patch_format
@@ -943,13 +1202,29 @@ then <code>ordering_checksum</code> must be set.</p>
       <td>9
       <td>original_axis_space
       <td>ArrayOf&lt;AxisInterval>
+     <tr>
+      <td>4
+      <td>original_font_checksum
+      <td>Integer (64 bit unsigned)
+     <tr>
+      <td>5
+      <td>patched_checksum
+      <td>Integer (64 bit unsigned)
+     <tr>
+      <td>6
+      <td>codepoint_ordering
+      <td>CompressedIntList
+     <tr>
+      <td>7
+      <td>ordering_checksum
+      <td>Integer (64 bit unsigned)
    </table>
    <p>For a PatchResponse object to be well formed:</p>
    <ul>
     <li data-md>
      <p><code>protocol_version</code> must be set to 0.</p>
     <li data-md>
-     <p><code>patch_format</code> can be any of the values listed <a href="#patch-formats">§ 2.7 Patch Formats</a></p>
+     <p><code>patch_format</code> can be any of the values listed <a href="#patch-formats">§ 2.8 Patch Formats</a></p>
     <li data-md>
      <p>Only one of <code>patch</code> or <code>replacement</code> may be set.</p>
     <li data-md>
@@ -957,8 +1232,8 @@ then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p>If <code>codepoint_ordering</code> is set then <code>ordering_checksum</code> must be set.</p>
    </ul>
-   <h3 class="heading settled" data-level="2.3" id="client"><span class="secno">2.3. </span><span class="content">Client</span><a class="self-link" href="#client"></a></h3>
-   <h4 class="heading settled" data-level="2.3.1" id="client-state"><span class="secno">2.3.1. </span><span class="content">Client State</span><a class="self-link" href="#client-state"></a></h4>
+   <h3 class="heading settled" data-level="2.4" id="client"><span class="secno">2.4. </span><span class="content">Client</span><a class="self-link" href="#client"></a></h3>
+   <h4 class="heading settled" data-level="2.4.1" id="client-state"><span class="secno">2.4.1. </span><span class="content">Client State</span><a class="self-link" href="#client-state"></a></h4>
    <p>The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:</p>
    <ul>
@@ -969,7 +1244,7 @@ the font being incrementally transferred. For a new font this is initialized to 
      <p>Original font checksum: the most recent value of <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> received
 from the server for this font.</p>
     <li data-md>
-     <p>Codepoint Reordering Map: The most recent <a href="#codepoint-reordering">§ 2.6 Codepoint Reordering</a> received from the server
+     <p>Codepoint Reordering Map: The most recent <a href="#codepoint-reordering">§ 2.7 Codepoint Reordering</a> received from the server
 for this font.</p>
     <li data-md>
      <p>Codepoint Reordering Checksum: The most recent <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a> for this font.</p>
@@ -979,7 +1254,7 @@ by <a href="#PatchResponse"><code>PatchResponse.original_axis_space</code></a>.<
     <li data-md>
      <p>Subset Axis Space: the most recent variations axis space that the subsetted font covers. Supplied by <a href="#PatchResponse"><code>PatchResponse.subset_axis_space</code></a>.</p>
    </ul>
-   <h4 class="heading settled" data-level="2.3.2" id="extend-subset"><span class="secno">2.3.2. </span><span class="content">Extending the Font Subset</span><a class="self-link" href="#extend-subset"></a></h4>
+   <h4 class="heading settled" data-level="2.4.2" id="extend-subset"><span class="secno">2.4.2. </span><span class="content">Extending the Font Subset</span><a class="self-link" href="#extend-subset"></a></h4>
    <p>A client extends its font subset to cover additional codepoints by making HTTP requests to
 a Patch Subset server. The HTTP request must use either the GET or POST method:</p>
    <ul>
@@ -997,7 +1272,7 @@ as follows:</p>
     <li data-md>
      <p><code>protocol_version</code>: set to 0.</p>
     <li data-md>
-     <p><code>accept_patch_format</code>: set to the list of <a href="#patch-formats">§ 2.7 Patch Formats</a> that this client is
+     <p><code>accept_patch_format</code>: set to the list of <a href="#patch-formats">§ 2.8 Patch Formats</a> that this client is
 capable of decoding. Must contain at least one format.</p>
     <li data-md>
      <p><code>codepoints_have</code>: set to exactly the set of codepoints that the current font subset
@@ -1009,11 +1284,11 @@ add to its font subset. If the client has a codepoint ordering for this font the
 field should not be set.</p>
     <li data-md>
      <p><code>indices_have</code>: encodes the set of additional codepoints that the current
-font subset contains data for. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.6 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
+font subset contains data for. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.7 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
 ordering for this font then this field should not be set.</p>
     <li data-md>
      <p><code>indices_needed</code>: encodes the set of codepoints that the client wants to add to its
-font subset. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.6 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
+font subset. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.7 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
 ordering for this font then this field should not be set.</p>
     <li data-md>
      <p><code>axis_space_have</code>: set to the current value of <code>subset_axis_space</code> saved in the state for this font.</p>
@@ -1029,27 +1304,27 @@ Set to saved value for <code>original_font_checksum</code> in the state for this
 there is no saved value leave this field unset.</p>
     <li data-md>
      <p><code>base_checksum</code>:
-Set to the checksum of the font subset byte array saved in the state for this font. See: <a href="#computing-checksums">§ 2.5 Computing Checksums</a>.</p>
+Set to the checksum of the font subset byte array saved in the state for this font. See: <a href="#computing-checksums">§ 2.6 Computing Checksums</a>.</p>
     <li data-md>
      <p><code>connection_speed</code>:
-Can be optionally set by the client to a value from <a href="#connection-speeds">§ 2.8 Connection Speeds</a> by finding the value
+Can be optionally set by the client to a value from <a href="#connection-speeds">§ 2.9 Connection Speeds</a> by finding the value
 that corresponds to the client’s average round trip time.</p>
    </ul>
-   <h4 class="heading settled" data-level="2.3.3" id="handling-patch-response"><span class="secno">2.3.3. </span><span class="content">Handling PatchResponse</span><a class="self-link" href="#handling-patch-response"></a></h4>
-   <p>If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a> if will respond with HTTP status code 200 and the body of the response will be a <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
-should interpret and process the fields of the object as follows:</p>
+   <h4 class="heading settled" data-level="2.4.3" id="handling-patch-response"><span class="secno">2.4.3. </span><span class="content">Handling PatchResponse</span><a class="self-link" href="#handling-patch-response"></a></h4>
+   <p>If a server is able to successfully process a <a href="#PatchRequest"><code>PatchRequest</code></a> if will respond with HTTP status code 200 and the body of the response will be a <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR.
+The client should interpret and process the fields of the object as follows:</p>
    <ol>
     <li data-md>
      <p>If field <code>replacement</code> is set then: the byte array in this field is a binary patch
  in the format specified by <code>patch_format</code>. Apply the binary patch to a base which
- is a empty byte array. Replace the saved font subset with the result of the patch application.</p>
+ is an empty byte array. Replace the saved font subset with the result of the patch application.</p>
     <li data-md>
      <p>If field <code>patch</code> is set then:  the byte array in this field is a binary patch
 in the format specified by <code>patch_format</code>. Apply the binary patch to the saved font
 subset. Replace the saved font subset with the result of the patch application.</p>
     <li data-md>
      <p>If either <code>replacement</code> or <code>patch</code> is set then: <a href="#computing-checksums">compute the checksum</a> of the font subset produced by the patch
-application in steps 1 or 2. If the computed checksum is not equal to <code>patched_checksum</code> this is a recoverable error. Follow the procedure in <a href="#client-side-checksum-mismatch">§ 2.3.4 Client Side Checksum Mismatch</a>. Otherwise
+application in steps 1 or 2. If the computed checksum is not equal to <code>patched_checksum</code> this is a recoverable error. Follow the procedure in <a href="#client-side-checksum-mismatch">§ 2.4.4 Client Side Checksum Mismatch</a>. Otherwise
 update the saved original font checksum with the value in <code>original_font_checksum</code>.</p>
     <li data-md>
      <p>If fields <code>codepoint_ordering</code> and <code>ordering_checksum</code> are set then update
@@ -1064,7 +1339,7 @@ specified in this field.</p>
      <p>If <code>subset_axis_space</code> is set then update the saved subset axis space with the value
 specified in this field.</p>
    </ol>
-   <h4 class="heading settled" data-level="2.3.4" id="client-side-checksum-mismatch"><span class="secno">2.3.4. </span><span class="content">Client Side Checksum Mismatch</span><a class="self-link" href="#client-side-checksum-mismatch"></a></h4>
+   <h4 class="heading settled" data-level="2.4.4" id="client-side-checksum-mismatch"><span class="secno">2.4.4. </span><span class="content">Client Side Checksum Mismatch</span><a class="self-link" href="#client-side-checksum-mismatch"></a></h4>
    <p>If the the checksum of the font subset computed by the client does not match the <code>patched_checksum</code> in the server’s response then the client should:</p>
    <ol>
     <li data-md>
@@ -1074,9 +1349,9 @@ specified in this field.</p>
 to the union of the codepoints in the discarded font subset and the set of code points
 the the previous request was trying to add.</p>
    </ol>
-   <h3 class="heading settled" data-level="2.4" id="handling-patch-request"><span class="secno">2.4. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
+   <h3 class="heading settled" data-level="2.5" id="handling-patch-request"><span class="secno">2.5. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
    <p>If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
-HTTPS that was populated according to the requirements in <a href="#extend-subset">§ 2.3.2 Extending the Font Subset</a> then it should
+HTTPS that was populated according to the requirements in <a href="#extend-subset">§ 2.4.2 Extending the Font Subset</a> then it should
 respond with HTTP status code 200. The body of the response should be a single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</p>
    <p>The path in the request identifies the specific font that a patch is desired for. From the request
 object the server can produce two codepoint sets:</p>
@@ -1101,9 +1376,9 @@ object the server can produce two codepoint sets:</p>
    </ol>
    <p>If the server does not recognize the codepoint ordering used by the client, it must respond
 with a response that will cause the client to update it’s codepoint ordering to one the server
-will recognize via the process described in <a href="#handling-patch-response">§ 2.3.3 Handling PatchResponse</a> and not include any patch.
+will recognize via the process described in <a href="#handling-patch-response">§ 2.4.3 Handling PatchResponse</a> and not include any patch.
 That is the <code>patch</code> and <code>replacement</code> fields must not be set.</p>
-   <p>Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 2.3.3 Handling PatchResponse</a> to a font subset with checksum <code>base_checksum</code> it must result
+   <p>Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 2.4.3 Handling PatchResponse</a> to a font subset with checksum <code>base_checksum</code> it must result
 in an extended font subset:</p>
    <ul>
     <li data-md>
@@ -1120,9 +1395,9 @@ has and the axis space the client needs.</p>
 one of those listed in <code>accept_patch_format</code>.</p>
     <li data-md>
      <p>The value of <code>original_font_checksum</code> must be set to the checksum of the original font.
-The checksum value must computed by the procedure in <a href="#computing-checksums">§ 2.5 Computing Checksums</a>.</p>
+The checksum value must computed by the procedure in <a href="#computing-checksums">§ 2.6 Computing Checksums</a>.</p>
     <li data-md>
-     <p>If the set of codepoints the client has is empty the response must set the <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following <a href="#codepoint-reordering">§ 2.6 Codepoint Reordering</a>.</p>
+     <p>If the set of codepoints the client has is empty the response must set the <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following <a href="#codepoint-reordering">§ 2.7 Codepoint Reordering</a>.</p>
     <li data-md>
      <p>If the set of codepoints the client has is empty and the original font has variation axes, the
 response must set the <code>original_axis_space</code> fields to the axis space covered by
@@ -1151,7 +1426,7 @@ error.</p>
      <p>If the requested font is not recognized by the server it may respond with http status code 404 to
 indicate a not found error.</p>
    </ul>
-   <h3 class="heading settled" data-level="2.5" id="computing-checksums"><span class="secno">2.5. </span><span class="content">Computing Checksums</span><a class="self-link" href="#computing-checksums"></a></h3>
+   <h3 class="heading settled" data-level="2.6" id="computing-checksums"><span class="secno">2.6. </span><span class="content">Computing Checksums</span><a class="self-link" href="#computing-checksums"></a></h3>
    <p>64 bit checksums of byte strings are computed using the <a href="https://github.com/ztanml/fast-hash">fast hash</a> algorithm. A python like pseudo
 code version of the algorithm is presented below:</p>
 <pre># Constant values come fast hash: https://github.com/ztanml/fast-hash
@@ -1180,7 +1455,7 @@ fast_hash(byte[] data):
   return mix((hash ^ mix(last_value)) * M)
 </pre>
    <p class="note" role="note"><span>Note:</span> a C implementation of fast hash can be found <a href="https://github.com/ztanml/fast-hash">here</a>.</p>
-   <h3 class="heading settled" data-level="2.6" id="codepoint-reordering"><span class="secno">2.6. </span><span class="content">Codepoint Reordering</span><a class="self-link" href="#codepoint-reordering"></a></h3>
+   <h3 class="heading settled" data-level="2.7" id="codepoint-reordering"><span class="secno">2.7. </span><span class="content">Codepoint Reordering</span><a class="self-link" href="#codepoint-reordering"></a></h3>
    <p>A codepoint reordering for a font defines a function which maps unicode codepoint values from the
 font to a continuous space of [0, number of codepoints in the font). This transformation is intended
 to reduce the cost of representing codepoint sets.</p>
@@ -1189,7 +1464,7 @@ codepoints that are supported by the font. The index of a particular unicode cod
 the new value for that codepoint.</p>
    <p>A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
 size of encoded codepoint sets for that font.</p>
-   <h4 class="heading settled" data-level="2.6.1" id="reordering-checksum"><span class="secno">2.6.1. </span><span class="content">Codepoint Reordering Checksum</span><a class="self-link" href="#reordering-checksum"></a></h4>
+   <h4 class="heading settled" data-level="2.7.1" id="reordering-checksum"><span class="secno">2.7.1. </span><span class="content">Codepoint Reordering Checksum</span><a class="self-link" href="#reordering-checksum"></a></h4>
    <p>A checksum of a codepoint reordering can be computed as follows:</p>
 <pre>SEED = 0x11743e80f437ffe6
 M = 0x880355f21e6d1965
@@ -1209,7 +1484,7 @@ fast_hash_ordering(uint64[] ordering):
 
   return mix(hash)
 </pre>
-   <h3 class="heading settled" data-level="2.7" id="patch-formats"><span class="secno">2.7. </span><span class="content">Patch Formats</span><a class="self-link" href="#patch-formats"></a></h3>
+   <h3 class="heading settled" data-level="2.8" id="patch-formats"><span class="secno">2.8. </span><span class="content">Patch Formats</span><a class="self-link" href="#patch-formats"></a></h3>
    <p>The following patch formats may be used by the server to create binary diffs between a source file
 and a target file:</p>
    <table>
@@ -1229,7 +1504,7 @@ and a target file:</p>
       <td>Uses brotli compression <a data-link-type="biblio" href="#biblio-rfc7932">[rfc7932]</a> to produce the patch. The source file is used as a shared
     dictionary <a data-link-type="biblio" href="#biblio-shared-brotli">[Shared-Brotli]</a> given to the brotli compressor and decompressor.
    </table>
-   <h3 class="heading settled" data-level="2.8" id="connection-speeds"><span class="secno">2.8. </span><span class="content">Connection Speeds</span><a class="self-link" href="#connection-speeds"></a></h3>
+   <h3 class="heading settled" data-level="2.9" id="connection-speeds"><span class="secno">2.9. </span><span class="content">Connection Speeds</span><a class="self-link" href="#connection-speeds"></a></h3>
    <p>The following connection speed values can be used:</p>
    <table>
     <tbody>
@@ -1275,7 +1550,7 @@ by using the "supports" syntax in the 'src:' attribute of a font face:</p>
 </pre>
    <p>An incrementally transferred font must be in a raw format such as truetype or opentype.
 For the initial request for a font the client should assume that the server supports the patch subset
-based method and send a PatchRequest via HTTP GET according to the requirements in <a href="#extend-subset">§ 2.3.2 Extending the Font Subset</a>.</p>
+based method and send a PatchRequest via HTTP GET according to the requirements in <a href="#extend-subset">§ 2.4.2 Extending the Font Subset</a>.</p>
    <p>If the server does support the patch subset protocol it should respond appropriately following the
 instructions in the patch subset section. However, if the server does not support the patch subset
 protocol it should ignore the additional HTTP GET parameters and instead just begin sending the
