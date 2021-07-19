@@ -5,9 +5,9 @@
   <title>Incremental Font Transfer</title>
   <meta content="w3c/ED" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
-  <meta content="Bikeshed version bb6b91100, updated Mon Jul 12 16:52:37 2021 -0700" name="generator">
+  <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="3f85c8513c64e2232dad5c7327babb1931e369fc" name="document-revision">
+  <meta content="fd9279f38e49b5f53fb24f30920596af85285f6d" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -114,9 +114,9 @@ pre .property::before, pre .property::after {
     --ins-bg: transparent;
 
     --a-normal-text: #034575;
-    --a-normal-underline: #bbb;
+    --a-normal-underline: #707070;
     --a-visited-text: var(--a-normal-text);
-    --a-visited-underline: #707070;
+    --a-visited-underline: #bbb;
     --a-hover-bg: rgba(75%, 75%, 75%, .25);
     --a-active-text: #c00;
     --a-active-underline: #c00;
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-07-27">27 July 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-07-30">30 July 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -475,23 +475,15 @@ dfn > a.self-link::before      { content: "#"; }
         <li><a href="#handling-patch-response"><span class="secno">2.3.3</span> <span class="content">Handling PatchResponse</span></a>
         <li><a href="#client-side-checksum-mismatch"><span class="secno">2.3.4</span> <span class="content">Client Side Checksum Mismatch</span></a>
        </ol>
+      <li><a href="#handling-patch-request"><span class="secno">2.4</span> <span class="content">Server: Responding to a PatchRequest</span></a>
+      <li><a href="#computing-checksums"><span class="secno">2.5</span> <span class="content">Computing Checksums</span></a>
       <li>
-       <a href="#server"><span class="secno">2.4</span> <span class="content">Server</span></a>
+       <a href="#codepoint-reordering"><span class="secno">2.6</span> <span class="content">Codepoint Reordering</span></a>
        <ol class="toc">
-        <li><a href="#handling-patch-request"><span class="secno">2.4.1</span> <span class="content">Responding to a PatchRequest</span></a>
+        <li><a href="#reordering-checksum"><span class="secno">2.6.1</span> <span class="content">Codepoint Reordering Checksum</span></a>
        </ol>
-      <li>
-       <a href="#procedures"><span class="secno">2.5</span> <span class="content">Procedures</span></a>
-       <ol class="toc">
-        <li><a href="#computing-checksums"><span class="secno">2.5.1</span> <span class="content">Computing Checksums</span></a>
-        <li>
-         <a href="#codepoint-reordering"><span class="secno">2.5.2</span> <span class="content">Codepoint Reordering</span></a>
-         <ol class="toc">
-          <li><a href="#reordering-checksum"><span class="secno">2.5.2.1</span> <span class="content">Codepoint Reordering Checksum</span></a>
-         </ol>
-        <li><a href="#patch-formats"><span class="secno">2.5.3</span> <span class="content">Patch Formats</span></a>
-        <li><a href="#connection-speeds"><span class="secno">2.5.4</span> <span class="content">Connection Speeds</span></a>
-       </ol>
+      <li><a href="#patch-formats"><span class="secno">2.7</span> <span class="content">Patch Formats</span></a>
+      <li><a href="#connection-speeds"><span class="secno">2.8</span> <span class="content">Connection Speeds</span></a>
      </ol>
     <li><a href="#range-request-incxfer"><span class="secno">3</span> <span class="content">Range Request Incremental Transfer</span></a>
     <li><a href="#negotiating-transfer-type"><span class="secno">4</span> <span class="content">Using Incremental Font Transfer in HTML</span></a>
@@ -851,14 +843,14 @@ bit set and the list of ranges are unioned together.</p>
     <li data-md>
      <p><code>protocol_version</code> must be set to 0.</p>
     <li data-md>
-     <p><code>accept_patch_format</code> can include any of the values listed in <a href="#patch-formats">§ 2.5.3 Patch Formats</a>.</p>
+     <p><code>accept_patch_format</code> can include any of the values listed in <a href="#patch-formats">§ 2.7 Patch Formats</a>.</p>
     <li data-md>
      <p>If either of <code>indices_have</code> or <code>indices_needed</code> is set to a non-empty set
 then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p>If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then <code>original_font_checksum</code> and <code>base_checksum</code> must be set.</p>
     <li data-md>
-     <p><code>connection_speed</code> can be any of the values listed in <a href="#connection-speeds">§ 2.5.4 Connection Speeds</a>.</p>
+     <p><code>connection_speed</code> can be any of the values listed in <a href="#connection-speeds">§ 2.8 Connection Speeds</a>.</p>
    </ul>
    <h5 class="heading settled" data-level="2.2.5.4" id="PatchResponse"><span class="secno">2.2.5.4. </span><span class="content">PatchResponse</span><a class="self-link" href="#PatchResponse"></a></h5>
    <table>
@@ -905,7 +897,7 @@ then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p><code>protocol_version</code> must be set to 0.</p>
     <li data-md>
-     <p><code>patch_format</code> can be any of the values listed <a href="#patch-formats">§ 2.5.3 Patch Formats</a></p>
+     <p><code>patch_format</code> can be any of the values listed <a href="#patch-formats">§ 2.7 Patch Formats</a></p>
     <li data-md>
      <p>Only one of <code>patch</code> or <code>replacement</code> may be set.</p>
     <li data-md>
@@ -925,7 +917,7 @@ the font being incrementally transferred. For a new font this is initialized to 
      <p>Original font checksum: the most recent value of <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> received
 from the server for this font.</p>
     <li data-md>
-     <p>Codepoint Reordering Map: The most recent <a href="#codepoint-reordering">§ 2.5.2 Codepoint Reordering</a> received from the server
+     <p>Codepoint Reordering Map: The most recent <a href="#codepoint-reordering">§ 2.6 Codepoint Reordering</a> received from the server
 for this font.</p>
     <li data-md>
      <p>Codepoint Reordering Checksum: The most recent <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a> for this font.</p>
@@ -948,7 +940,7 @@ as follows:</p>
     <li data-md>
      <p><code>protocol_version</code>: set to 0.</p>
     <li data-md>
-     <p><code>accept_patch_format</code>: set to the list of <a href="#patch-formats">§ 2.5.3 Patch Formats</a> that this client is
+     <p><code>accept_patch_format</code>: set to the list of <a href="#patch-formats">§ 2.7 Patch Formats</a> that this client is
 capable of decoding. Must contain at least one format.</p>
     <li data-md>
      <p><code>codepoints_have</code>: set to exactly the set of codepoints that the current font subset
@@ -960,11 +952,11 @@ add to its font subset. If the client has a codepoint ordering for this font the
 field should not be set.</p>
     <li data-md>
      <p><code>indices_have</code>: encodes the set of additional codepoints that the current
-font subset contains data for. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.5.2 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
+font subset contains data for. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.6 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
 ordering for this font then this field should not be set.</p>
     <li data-md>
      <p><code>indices_needed</code>: encodes the set of codepoints that the client wants to add to its
-font subset. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.5.2 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
+font subset. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.6 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
 ordering for this font then this field should not be set.</p>
     <li data-md>
      <p><code>ordering_checksum</code>: If either of <code>indices_have</code> or <code>indices_needed</code> is set then this must be set to the current value of <code>ordering_checksum</code> saved in the state for this font.</p>
@@ -974,10 +966,10 @@ Set to saved value for <code>original_font_checksum</code> in the state for this
 there is no saved value leave this field unset.</p>
     <li data-md>
      <p><code>base_checksum</code>:
-Set to the checksum of the font subset byte array saved in the state for this font. See: <a href="#computing-checksums">§ 2.5.1 Computing Checksums</a>.</p>
+Set to the checksum of the font subset byte array saved in the state for this font. See: <a href="#computing-checksums">§ 2.5 Computing Checksums</a>.</p>
     <li data-md>
      <p><code>connection_speed</code>:
-Can be optionally set by the client to a value from <a href="#connection-speeds">§ 2.5.4 Connection Speeds</a> by finding the value
+Can be optionally set by the client to a value from <a href="#connection-speeds">§ 2.8 Connection Speeds</a> by finding the value
 that corresponds to the client’s average round trip time.</p>
    </ul>
    <h4 class="heading settled" data-level="2.3.3" id="handling-patch-response"><span class="secno">2.3.3. </span><span class="content">Handling PatchResponse</span><a class="self-link" href="#handling-patch-response"></a></h4>
@@ -1013,8 +1005,7 @@ this response.</p>
 to the union of the codepoints in the discarded font subset and the set of code points
 the the previous request was trying to add.</p>
    </ol>
-   <h3 class="heading settled" data-level="2.4" id="server"><span class="secno">2.4. </span><span class="content">Server</span><a class="self-link" href="#server"></a></h3>
-   <h4 class="heading settled" data-level="2.4.1" id="handling-patch-request"><span class="secno">2.4.1. </span><span class="content">Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h4>
+   <h3 class="heading settled" data-level="2.4" id="handling-patch-request"><span class="secno">2.4. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
    <p>If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
 HTTPS that was populated according to the requirements in <a href="#extend-subset">§ 2.3.2 Extending the Font Subset</a> then it should
 respond with HTTP status code 200. The body of the response should be a single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</p>
@@ -1035,6 +1026,9 @@ That is the <code>patch</code> and <code>replacement</code> fields must not be s
    <p>Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 2.3.3 Handling PatchResponse</a> to a font subset with checksum <code>base_checksum</code> it must result
 in an extended font subset that contains data for at least the union of the set of codepoints needed
 and the sets of codepoints the client already has. The format of the patch in the either the <code>patch</code> or <code>replace</code> fields must be one of those listed in <code>accept_patch_format</code>.</p>
+   <p>If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
+ignore the unrecognized ones. Likewise if <code>connection_speed</code> contains any unrecognized
+connection speeds the server should ignore the unrecognized ones.</p>
    <p class="note" role="note"><span>Note:</span> the server can optionally use the client’s provided connection speed to inform how many extra
 codepoints should be sent. For example on slower connections it may be more performant to send extra
 codepoints if they can prevent a future request from needing to be sent.</p>
@@ -1050,8 +1044,7 @@ error.</p>
      <p>If the requested font is not recognized by the server it may respond with http status code 404 to
 indicate a not found error.</p>
    </ul>
-   <h3 class="heading settled" data-level="2.5" id="procedures"><span class="secno">2.5. </span><span class="content">Procedures</span><a class="self-link" href="#procedures"></a></h3>
-   <h4 class="heading settled" data-level="2.5.1" id="computing-checksums"><span class="secno">2.5.1. </span><span class="content">Computing Checksums</span><a class="self-link" href="#computing-checksums"></a></h4>
+   <h3 class="heading settled" data-level="2.5" id="computing-checksums"><span class="secno">2.5. </span><span class="content">Computing Checksums</span><a class="self-link" href="#computing-checksums"></a></h3>
    <p>64 bit checksums of byte strings are computed using the <a href="https://github.com/ztanml/fast-hash">fast hash</a> algorithm. A python like pseudo
 code version of the algorithm is presented below:</p>
 <pre># Constant values come fast hash: https://github.com/ztanml/fast-hash
@@ -1080,7 +1073,7 @@ fast_hash(byte[] data):
   return mix((hash ^ mix(last_value)) * M)
 </pre>
    <p class="note" role="note"><span>Note:</span> a C implementation of fast hash can be found <a href="https://github.com/ztanml/fast-hash">here</a>.</p>
-   <h4 class="heading settled" data-level="2.5.2" id="codepoint-reordering"><span class="secno">2.5.2. </span><span class="content">Codepoint Reordering</span><a class="self-link" href="#codepoint-reordering"></a></h4>
+   <h3 class="heading settled" data-level="2.6" id="codepoint-reordering"><span class="secno">2.6. </span><span class="content">Codepoint Reordering</span><a class="self-link" href="#codepoint-reordering"></a></h3>
    <p>A codepoint reordering for a font defines a function which maps unicode codepoint values from the
 font to a continuous space of [0, number of codepoints in the font). This transformation is intended
 to reduce the cost of representing codepoint sets.</p>
@@ -1089,7 +1082,7 @@ codepoints that are supported by the font. The index of a particular unicode cod
 the new value for that codepoint.</p>
    <p>A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
 size of encoded codepoint sets for that font.</p>
-   <h5 class="heading settled" data-level="2.5.2.1" id="reordering-checksum"><span class="secno">2.5.2.1. </span><span class="content">Codepoint Reordering Checksum</span><a class="self-link" href="#reordering-checksum"></a></h5>
+   <h4 class="heading settled" data-level="2.6.1" id="reordering-checksum"><span class="secno">2.6.1. </span><span class="content">Codepoint Reordering Checksum</span><a class="self-link" href="#reordering-checksum"></a></h4>
    <p>A checksum of a codepoint reordering can be computed as follows:</p>
 <pre>SEED = 0x11743e80f437ffe6
 M = 0x880355f21e6d1965
@@ -1109,7 +1102,7 @@ fast_hash_ordering(uint64[] ordering):
 
   return mix(hash)
 </pre>
-   <h4 class="heading settled" data-level="2.5.3" id="patch-formats"><span class="secno">2.5.3. </span><span class="content">Patch Formats</span><a class="self-link" href="#patch-formats"></a></h4>
+   <h3 class="heading settled" data-level="2.7" id="patch-formats"><span class="secno">2.7. </span><span class="content">Patch Formats</span><a class="self-link" href="#patch-formats"></a></h3>
    <p>The following patch formats may be used by the server to create binary diffs between a source file
 and a target file:</p>
    <table>
@@ -1129,7 +1122,7 @@ and a target file:</p>
       <td>Uses brotli compression <a data-link-type="biblio" href="#biblio-rfc7932">[rfc7932]</a> to produce the patch. The source file is used as a shared
     dictionary <a data-link-type="biblio" href="#biblio-shared-brotli">[Shared-Brotli]</a> given to the brotli compressor and decompressor.
    </table>
-   <h4 class="heading settled" data-level="2.5.4" id="connection-speeds"><span class="secno">2.5.4. </span><span class="content">Connection Speeds</span><a class="self-link" href="#connection-speeds"></a></h4>
+   <h3 class="heading settled" data-level="2.8" id="connection-speeds"><span class="secno">2.8. </span><span class="content">Connection Speeds</span><a class="self-link" href="#connection-speeds"></a></h3>
    <p>The following connection speed values can be used:</p>
    <table>
     <tbody>
@@ -1239,11 +1232,11 @@ extension requests should be sent according the the Range Request specificiation
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
    <dt id="biblio-rfc3284">[RFC3284]
-   <dd>D. Korn; et al. <a href="https://www.rfc-editor.org/rfc/rfc3284">The VCDIFF Generic Differencing and Compression Data Format</a>. June 2002. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3284">https://www.rfc-editor.org/rfc/rfc3284</a>
+   <dd>D. Korn; et al. <a href="https://datatracker.ietf.org/doc/html/rfc3284">The VCDIFF Generic Differencing and Compression Data Format</a>. June 2002. Proposed Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc3284">https://datatracker.ietf.org/doc/html/rfc3284</a>
    <dt id="biblio-rfc7932">[RFC7932]
-   <dd>J. Alakuijala; Z. Szabadka. <a href="https://www.rfc-editor.org/rfc/rfc7932">Brotli Compressed Data Format</a>. July 2016. Informational. URL: <a href="https://www.rfc-editor.org/rfc/rfc7932">https://www.rfc-editor.org/rfc/rfc7932</a>
+   <dd>J. Alakuijala; Z. Szabadka. <a href="https://datatracker.ietf.org/doc/html/rfc7932">Brotli Compressed Data Format</a>. July 2016. Informational. URL: <a href="https://datatracker.ietf.org/doc/html/rfc7932">https://datatracker.ietf.org/doc/html/rfc7932</a>
    <dt id="biblio-rfc8949">[RFC8949]
-   <dd>C. Bormann; P. Hoffman. <a href="https://www.rfc-editor.org/rfc/rfc8949">Concise Binary Object Representation (CBOR)</a>. December 2020. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc8949">https://www.rfc-editor.org/rfc/rfc8949</a>
+   <dd>C. Bormann; P. Hoffman. <a href="https://datatracker.ietf.org/doc/html/rfc8949">Concise Binary Object Representation (CBOR)</a>. December 2020. Internet Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc8949">https://datatracker.ietf.org/doc/html/rfc8949</a>
    <dt id="biblio-shared-brotli">[Shared-Brotli]
    <dd>J. Alakuijala; et al. <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08">Shared Brotli Compressed Data Format</a>. 27 Jul 2021. Internet Draft. URL: <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08">https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08</a>
   </dl>
@@ -1252,9 +1245,9 @@ extension requests should be sent according the the Range Request specificiation
    <dt id="biblio-pfe-report">[PFE-report]
    <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/">Progressive Font Enrichment: Evaluation Report</a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
    <dt id="biblio-rfc4648">[RFC4648]
-   <dd>S. Josefsson. <a href="https://www.rfc-editor.org/rfc/rfc4648">The Base16, Base32, and Base64 Data Encodings</a>. October 2006. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>
+   <dd>S. Josefsson. <a href="https://datatracker.ietf.org/doc/html/rfc4648">The Base16, Base32, and Base64 Data Encodings</a>. October 2006. Proposed Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc4648">https://datatracker.ietf.org/doc/html/rfc4648</a>
    <dt id="biblio-woff2">[WOFF2]
-   <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/">WOFF File Format 2.0</a>. 6 July 2021. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
+   <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/">WOFF File Format 2.0</a>. 1 March 2018. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
   </dl>
   <h2 class="no-num no-ref heading settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
   <div style="counter-reset:issue">
