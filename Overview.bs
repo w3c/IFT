@@ -511,10 +511,8 @@ If the the checksum of the font subset computed by the client does not match the
     to the union of the codepoints in the discarded font subset and the set of code points
     the the previous request was trying to add.
 
-Server {#server}
-----------------
-
-### Responding to a PatchRequest ### {#handling-patch-request}
+Server: Responding to a PatchRequest {#handling-patch-request}
+--------------------------------------------------------------
 
 If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
 HTTPS that was populated according to the requirements in [[#extend-subset]] then it should
@@ -546,6 +544,10 @@ and the sets of codepoints the client already has. The format of the patch in th
 <code>patch</code> or <code>replace</code> fields must be one of those listed in
 <code>accept_patch_format</code>.
 
+If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
+ignore the unrecognized ones. Likewise if <code>connection_speed</code> contains any unrecognized
+connection speeds the server should ignore the unrecognized ones.
+
 Note: the server can optionally use the client's provided connection speed to inform how many extra
 codepoints should be sent. For example on slower connections it may be more performant to send extra
 codepoints if they can prevent a future request from needing to be sent.
@@ -562,10 +564,8 @@ Possible error responses:
 *  If the requested font is not recognized by the server it may respond with http status code 404 to
     indicate a not found error.
 
-Procedures {#procedures}
-------------------------
-
-### Computing Checksums ### {#computing-checksums}
+Computing Checksums {#computing-checksums}
+------------------------------------------
 
 64 bit checksums of byte strings are computed using the
 <a href="https://github.com/ztanml/fast-hash">fast hash</a> algorithm. A python like pseudo
@@ -601,7 +601,8 @@ fast_hash(byte[] data):
 Note: a C implementation of fast hash can be found
 <a href="https://github.com/ztanml/fast-hash">here</a>.
 
-### Codepoint Reordering ### {#codepoint-reordering}
+Codepoint Reordering {#codepoint-reordering}
+--------------------------------------------
 
 A codepoint reordering for a font defines a function which maps unicode codepoint values from the
 font to a continuous space of [0, number of codepoints in the font). This transformation is intended
@@ -614,7 +615,7 @@ the new value for that codepoint.
 A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
 size of encoded codepoint sets for that font.
 
-#### Codepoint Reordering Checksum #### {#reordering-checksum}
+### Codepoint Reordering Checksum ### {#reordering-checksum}
 
 A checksum of a codepoint reordering can be computed as follows:
 
@@ -638,7 +639,8 @@ fast_hash_ordering(uint64[] ordering):
   return mix(hash)
 ```
 
-### Patch Formats ### {#patch-formats}
+Patch Formats {#patch-formats}
+------------------------------
 
 The following patch formats may be used by the server to create binary diffs between a source file
 and a target file:
@@ -660,7 +662,8 @@ and a target file:
   </tr>
 </table>
 
-### Connection Speeds ### {#connection-speeds}
+Connection Speeds {#connection-speeds}
+--------------------------------------
 
 The following connection speed values can be used:
 
