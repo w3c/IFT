@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="412d84b4ab26404441d240bfc7cc046d7e5aefb7" name="document-revision">
+  <meta content="5fa30128ddcfbd7e5bbafdd25c051a819b2807d5" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -457,14 +457,16 @@ dfn > a.self-link::before      { content: "#"; }
         <li><a href="#encoding"><span class="secno">2.2.1</span> <span class="content">Encoding</span></a>
         <li><a href="#primitives"><span class="secno">2.2.2</span> <span class="content">Primitives</span></a>
         <li><a href="#sparsebitset"><span class="secno">2.2.3</span> <span class="content">SparseBitSet</span></a>
-        <li><a href="#objects"><span class="secno">2.2.4</span> <span class="content">Objects</span></a>
+        <li><a href="#AxisSpace"><span class="secno">2.2.4</span> <span class="content">AxisSpace</span></a>
+        <li><a href="#objects"><span class="secno">2.2.5</span> <span class="content">Objects</span></a>
         <li>
-         <a href="#schemas"><span class="secno">2.2.5</span> <span class="content">Object Schemas</span></a>
+         <a href="#schemas"><span class="secno">2.2.6</span> <span class="content">Object Schemas</span></a>
          <ol class="toc">
-          <li><a href="#CompressedList"><span class="secno">2.2.5.1</span> <span class="content">CompressedList</span></a>
-          <li><a href="#CompressedSet"><span class="secno">2.2.5.2</span> <span class="content">CompressedSet</span></a>
-          <li><a href="#PatchRequest"><span class="secno">2.2.5.3</span> <span class="content">PatchRequest</span></a>
-          <li><a href="#PatchResponse"><span class="secno">2.2.5.4</span> <span class="content">PatchResponse</span></a>
+          <li><a href="#CompressedList"><span class="secno">2.2.6.1</span> <span class="content">CompressedList</span></a>
+          <li><a href="#CompressedSet"><span class="secno">2.2.6.2</span> <span class="content">CompressedSet</span></a>
+          <li><a href="#AxisInterval"><span class="secno">2.2.6.3</span> <span class="content">AxisInterval</span></a>
+          <li><a href="#PatchRequest"><span class="secno">2.2.6.4</span> <span class="content">PatchRequest</span></a>
+          <li><a href="#PatchResponse"><span class="secno">2.2.6.5</span> <span class="content">PatchResponse</span></a>
          </ol>
        </ol>
       <li>
@@ -558,6 +560,10 @@ should be encoded by CBOR are given in the definition of those data types.</p>
       <td>Integer
       <td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive. 
       <td>0 or 1
+     <tr>
+      <td>Float
+      <td>IEEE 754 Single-Precision Float.
+      <td>7
      <tr>
       <td>ByteString
       <td>Variable number of bytes.
@@ -728,7 +734,11 @@ significant bit in the byte and the bit with the largest index is the most signi
       <p>n<sub>3</sub> append 0011. Bit 0 set for value 16, bit 1 set for value 17.</p>
     </ul>
    </div>
-   <h4 class="heading settled" data-level="2.2.4" id="objects"><span class="secno">2.2.4. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
+   <h4 class="heading settled" data-level="2.2.4" id="AxisSpace"><span class="secno">2.2.4. </span><span class="content">AxisSpace</span><a class="self-link" href="#AxisSpace"></a></h4>
+   <p>Stores a set of intervals on one or more <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview">open type variation
+axes</a>. Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
+pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.</p>
+   <h4 class="heading settled" data-level="2.2.5" id="objects"><span class="secno">2.2.5. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
    <p>Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
 (major type 5). Each key and value pair is encoded as a single map entry. Keys are always unsigned
 integers and are encoded using major type 0. Values are encoded using the encoding specified by the
@@ -736,7 +746,7 @@ type of the value.</p>
    <p>All fields in an object are optional and do not need to have an associated value. Conversely when
 decoding and object fields may be present which are not specified in the schema. The decoder must
 ignore without error any key and value pairs where the key is not recognized.</p>
-   <p>There are several types of object used, each type is defined by a schema in <a href="#schemas">§ 2.2.5 Object Schemas</a>. The schema
+   <p>There are several types of object used, each type is defined by a schema in <a href="#schemas">§ 2.2.6 Object Schemas</a>. The schema
 for a type specifies for each field:</p>
    <ul>
     <li data-md>
@@ -746,8 +756,8 @@ for a type specifies for each field:</p>
     <li data-md>
      <p>The type of the value stored in this field. Can be any of the types defined in <a href="#data-types">§ 2.2 Data Types</a> including object types.</p>
    </ul>
-   <h4 class="heading settled" data-level="2.2.5" id="schemas"><span class="secno">2.2.5. </span><span class="content">Object Schemas</span><a class="self-link" href="#schemas"></a></h4>
-   <h5 class="heading settled" data-level="2.2.5.1" id="CompressedList"><span class="secno">2.2.5.1. </span><span class="content">CompressedList</span><a class="self-link" href="#CompressedList"></a></h5>
+   <h4 class="heading settled" data-level="2.2.6" id="schemas"><span class="secno">2.2.6. </span><span class="content">Object Schemas</span><a class="self-link" href="#schemas"></a></h4>
+   <h5 class="heading settled" data-level="2.2.6.1" id="CompressedList"><span class="secno">2.2.6.1. </span><span class="content">CompressedList</span><a class="self-link" href="#CompressedList"></a></h5>
    <table>
     <tbody>
      <tr>
@@ -768,7 +778,7 @@ if length(L) > 0:
     value_deltas[i] = L[i] - L[i-1]
 </pre>
    <div class="example" id="example-6e146a01"><a class="self-link" href="#example-6e146a01"></a> The list [2, 2, 5, 1, 3, 7] would be encoded as [2, 0, 3, -4, 2, 4]. </div>
-   <h5 class="heading settled" data-level="2.2.5.2" id="CompressedSet"><span class="secno">2.2.5.2. </span><span class="content">CompressedSet</span><a class="self-link" href="#CompressedSet"></a></h5>
+   <h5 class="heading settled" data-level="2.2.6.2" id="CompressedSet"><span class="secno">2.2.6.2. </span><span class="content">CompressedSet</span><a class="self-link" href="#CompressedSet"></a></h5>
    <p>Encodes a set of unsigned integers. The set is not ordered and does not
 allow duplicates. Members of the set are encoded into either a sparse bit
 set or a list of ranges. To obtain the final set the members of the sparse
@@ -790,7 +800,33 @@ bit set and the list of ranges are unioned together.</p>
       <td>range_deltas
       <td>ArrayOf&lt;Integer>
    </table>
-   <h5 class="heading settled" data-level="2.2.5.3" id="PatchRequest"><span class="secno">2.2.5.3. </span><span class="content">PatchRequest</span><a class="self-link" href="#PatchRequest"></a></h5>
+   <h5 class="heading settled" data-level="2.2.6.3" id="AxisInterval"><span class="secno">2.2.6.3. </span><span class="content">AxisInterval</span><a class="self-link" href="#AxisInterval"></a></h5>
+   <table>
+    <tbody>
+     <tr>
+      <th>ID
+      <th>Field Name
+      <th>Value Type
+     <tr>
+      <td>0
+      <td>start
+      <td>Float
+     <tr>
+      <td>1
+      <td>end
+      <td>Float
+   </table>
+   <p><code>AxisInterval</code> defines an interval (from <code>start</code> to <code>end</code>) on some
+variable axis in a font.</p>
+   <p>For an <code>AxisInterval</code> object to be well formed:</p>
+   <ul>
+    <li data-md>
+     <p><code>start</code> must be set.</p>
+    <li data-md>
+     <p><code>end</code> optional, must be greater than <code>start</code>. If <code>end</code> is not set
+then this interval is a single point, <code>start</code>.</p>
+   </ul>
+   <h5 class="heading settled" data-level="2.2.6.4" id="PatchRequest"><span class="secno">2.2.6.4. </span><span class="content">PatchRequest</span><a class="self-link" href="#PatchRequest"></a></h5>
    <table>
     <tbody>
      <tr>
@@ -823,18 +859,26 @@ bit set and the list of ranges are unioned together.</p>
       <td>CompressedSet
      <tr>
       <td>6
+      <td>axis_space_have
+      <td>AxisSpace
+     <tr>
+      <td>7
+      <td>axis_space_needed
+      <td>AxisSpace
+     <tr>
+      <td>8
       <td>ordering_checksum
       <td>Integer
      <tr>
-      <td>7
+      <td>9
       <td>original_font_checksum
       <td>Integer
      <tr>
-      <td>8
+      <td>10
       <td>base_checksum
       <td>Integer
      <tr>
-      <td>9
+      <td>11
       <td>connection_speed
       <td>Integer
    </table>
@@ -852,7 +896,7 @@ then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p><code>connection_speed</code> can be any of the values listed in <a href="#connection-speeds">§ 2.8 Connection Speeds</a>.</p>
    </ul>
-   <h5 class="heading settled" data-level="2.2.5.4" id="PatchResponse"><span class="secno">2.2.5.4. </span><span class="content">PatchResponse</span><a class="self-link" href="#PatchResponse"></a></h5>
+   <h5 class="heading settled" data-level="2.2.6.5" id="PatchResponse"><span class="secno">2.2.6.5. </span><span class="content">PatchResponse</span><a class="self-link" href="#PatchResponse"></a></h5>
    <table>
     <tbody>
      <tr>
@@ -891,6 +935,14 @@ then <code>ordering_checksum</code> must be set.</p>
       <td>7
       <td>ordering_checksum
       <td>Integer
+     <tr>
+      <td>8
+      <td>subset_axis_space
+      <td>ArrayOf&lt;AxisInterval>
+     <tr>
+      <td>9
+      <td>original_axis_space
+      <td>ArrayOf&lt;AxisInterval>
    </table>
    <p>For a PatchRequest object to be well formed:</p>
    <ul>
@@ -907,6 +959,7 @@ then <code>ordering_checksum</code> must be set.</p>
    </ul>
    <h3 class="heading settled" data-level="2.3" id="client"><span class="secno">2.3. </span><span class="content">Client</span><a class="self-link" href="#client"></a></h3>
    <h4 class="heading settled" data-level="2.3.1" id="client-state"><span class="secno">2.3.1. </span><span class="content">Client State</span><a class="self-link" href="#client-state"></a></h4>
+   <p>TODO(garretrieger): track subset axis space, original font axis space.</p>
    <p>The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:</p>
    <ul>
@@ -959,6 +1012,12 @@ ordering for this font then this field should not be set.</p>
 font subset. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 2.6 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
 ordering for this font then this field should not be set.</p>
     <li data-md>
+     <p><code>axis_space_have</code>: set to the current value of <code>subset_axis_space</code> saved in the state for this font.</p>
+    <li data-md>
+     <p><code>axis_space_needed</code>: set to the intervals of each variable axis in the original
+font that the client wants to add to its font subset. If the client wants an entire axis
+from the original font then that axis should not be listed.</p>
+    <li data-md>
      <p><code>ordering_checksum</code>: If either of <code>indices_have</code> or <code>indices_needed</code> is set then this must be set to the current value of <code>ordering_checksum</code> saved in the state for this font.</p>
     <li data-md>
      <p><code>original_font_checksum</code>:
@@ -973,6 +1032,7 @@ Can be optionally set by the client to a value from <a href="#connection-speeds"
 that corresponds to the client’s average round trip time.</p>
    </ul>
    <h4 class="heading settled" data-level="2.3.3" id="handling-patch-response"><span class="secno">2.3.3. </span><span class="content">Handling PatchResponse</span><a class="self-link" href="#handling-patch-response"></a></h4>
+   <p>TODO(garretrieger): update axes in client state.</p>
    <p>If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a> if will respond with HTTP status code 200 and the body of the response will be a <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
 should interpret and process the fields of the object as follows:</p>
    <ol>
@@ -1006,6 +1066,11 @@ to the union of the codepoints in the discarded font subset and the set of code 
 the the previous request was trying to add.</p>
    </ol>
    <h3 class="heading settled" data-level="2.4" id="handling-patch-request"><span class="secno">2.4. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
+   <p>TODO(garretrieger): axes stuff:</p>
+   <ul>
+    <li data-md>
+     <p>Must be superset of axes have, axes needed</p>
+   </ul>
    <p>If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
 HTTPS that was populated according to the requirements in <a href="#extend-subset">§ 2.3.2 Extending the Font Subset</a> then it should
 respond with HTTP status code 200. The body of the response should be a single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</p>

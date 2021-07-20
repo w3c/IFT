@@ -112,6 +112,9 @@ should be encoded by CBOR are given in the definition of those data types.
     <td>Integer</td><td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive.&nbsp;</td><td>0 or 1</td>
   </tr>
   <tr>
+    <td>Float</td><td>IEEE 754 Single-Precision Float.</td><td>7</td>
+  </tr>
+  <tr>
     <td>ByteString</td><td>Variable number of bytes.</td><td>2</td>
   </tr>
   <tr>
@@ -286,6 +289,15 @@ significant bit in the byte and the bit with the largest index is the most signi
 
 </div>
 
+### AxisSpace ### {#AxisSpace}
+
+Stores a set of intervals on one or more
+<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview">open type variation
+axes</a>. Encoded as a CBOR map (major type 5). The key in each pair is an
+<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord">
+axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
+pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.
+
 ### Objects ### {#objects}
 
 Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
@@ -346,6 +358,24 @@ The list of ranges is encoded as a series of deltas. For example the ranges
   <tr><td>1</td><td>range_deltas</td><td>ArrayOf&lt;Integer&gt;</td></tr>
 </table>
 
+#### AxisInterval #### {#AxisInterval}
+
+<table>
+  <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
+  <tr><td>0</td><td>start</td><td>Float</td></tr>
+  <tr><td>1</td><td>end</td><td>Float</td></tr>
+</table>
+
+<code>AxisInterval</code> defines an interval (from <code>start</code> to <code>end</code>) on some
+variable axis in a font.
+
+For an <code>AxisInterval</code> object to be well formed:
+
+*  <code>start</code> must be set.
+
+*  <code>end</code> optional, must be greater than <code>start</code>. If <code>end</code> is not set
+    then this interval is a single point, <code>start</code>.
+
 #### PatchRequest #### {#PatchRequest}
 
 <table>
@@ -356,10 +386,12 @@ The list of ranges is encoded as a series of deltas. For example the ranges
   <tr><td>3</td><td>codepoints_needed</td><td>CompressedSet</td></tr>
   <tr><td>4</td><td>indices_have</td><td>CompressedSet</td></tr>
   <tr><td>5</td><td>indices_needed</td><td>CompressedSet</td></tr>
-  <tr><td>6</td><td>ordering_checksum</td><td>Integer</td></tr>
-  <tr><td>7</td><td>original_font_checksum</td><td>Integer</td></tr>
-  <tr><td>8</td><td>base_checksum</td><td>Integer</td></tr>
-  <tr><td>9</td><td>connection_speed</td><td>Integer</td></tr>
+  <tr><td>6</td><td>axis_space_have</td><td>AxisSpace</td></tr>
+  <tr><td>7</td><td>axis_space_needed</td><td>AxisSpace</td></tr>
+  <tr><td>8</td><td>ordering_checksum</td><td>Integer</td></tr>
+  <tr><td>9</td><td>original_font_checksum</td><td>Integer</td></tr>
+  <tr><td>10</td><td>base_checksum</td><td>Integer</td></tr>
+  <tr><td>11</td><td>connection_speed</td><td>Integer</td></tr>
 </table>
 
 For a PatchRequest object to be well formed:
@@ -380,12 +412,12 @@ For a PatchRequest object to be well formed:
   <tr><td>1</td><td>patch_format</td><td>Integer</td></tr>
   <tr><td>2</td><td>patch</td><td>ByteString</td></tr>
   <tr><td>3</td><td>replacement</td><td>ByteString</td></tr>
-
   <tr><td>4</td><td>original_font_checksum</td><td>Integer</td></tr>
   <tr><td>5</td><td>patched_checksum</td><td>Integer</td></tr>
-
   <tr><td>6</td><td>codepoint_ordering</td><td>CompressedList</td></tr>
   <tr><td>7</td><td>ordering_checksum</td><td>Integer</td></tr>
+  <tr><td>8</td><td>subset_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
+  <tr><td>9</td><td>original_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
 </table>
 
 For a PatchRequest object to be well formed:
@@ -400,6 +432,8 @@ Client {#client}
 ----------------
 
 ### Client State ### {#client-state}
+
+TODO(garretrieger): track subset axis space, original font axis space.
 
 The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:
@@ -457,6 +491,13 @@ as follows:
     [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
     ordering for this font then this field should not be set.
 
+*  <code>axis_space_have</code>: set to the current value of <code>subset_axis_space</code>
+    saved in the state for this font.
+
+*  <code>axis_space_needed</code>: set to the intervals of each variable axis in the original
+    font that the client wants to add to its font subset. If the client wants an entire axis
+    from the original font then that axis should not be listed.
+
 *  <code>ordering_checksum</code>: If either of <code>indices_have</code> or
     <code>indices_needed</code> is set then this must be set to the current value of
     <code>ordering_checksum</code> saved in the state for this font.
@@ -474,6 +515,8 @@ as follows:
     that corresponds to the client's average round trip time.
 
 ### Handling PatchResponse ### {#handling-patch-response}
+
+TODO(garretrieger): update axes in client state.
 
 If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a>
 if will respond with HTTP status code 200 and the body of the response will be a
@@ -513,6 +556,9 @@ If the the checksum of the font subset computed by the client does not match the
 
 Server: Responding to a PatchRequest {#handling-patch-request}
 --------------------------------------------------------------
+
+TODO(garretrieger): axes stuff:
+- Must be superset of axes have, axes needed
 
 If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
 HTTPS that was populated according to the requirements in [[#extend-subset]] then it should
