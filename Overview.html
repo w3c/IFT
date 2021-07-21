@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="5fa30128ddcfbd7e5bbafdd25c051a819b2807d5" name="document-revision">
+  <meta content="cade5ffc86b3b9e0fedd6ec029787ebc16a0a51e" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -944,7 +944,7 @@ then <code>ordering_checksum</code> must be set.</p>
       <td>original_axis_space
       <td>ArrayOf&lt;AxisInterval>
    </table>
-   <p>For a PatchRequest object to be well formed:</p>
+   <p>For a PatchResponse object to be well formed:</p>
    <ul>
     <li data-md>
      <p><code>protocol_version</code> must be set to 0.</p>
@@ -959,7 +959,6 @@ then <code>ordering_checksum</code> must be set.</p>
    </ul>
    <h3 class="heading settled" data-level="2.3" id="client"><span class="secno">2.3. </span><span class="content">Client</span><a class="self-link" href="#client"></a></h3>
    <h4 class="heading settled" data-level="2.3.1" id="client-state"><span class="secno">2.3.1. </span><span class="content">Client State</span><a class="self-link" href="#client-state"></a></h4>
-   <p>TODO(garretrieger): track subset axis space, original font axis space.</p>
    <p>The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:</p>
    <ul>
@@ -974,6 +973,11 @@ from the server for this font.</p>
 for this font.</p>
     <li data-md>
      <p>Codepoint Reordering Checksum: The most recent <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a> for this font.</p>
+    <li data-md>
+     <p>Original Font Axis Space: the variations axis space that the original font covers. Supplied
+by <a href="#PatchResponse"><code>PatchResponse.original_axis_space</code></a>.</p>
+    <li data-md>
+     <p>Subset Axis Space: the most recent variations axis space that the subsetted font covers. Supplied by <a href="#PatchResponse"><code>PatchResponse.subset_axis_space</code></a>.</p>
    </ul>
    <h4 class="heading settled" data-level="2.3.2" id="extend-subset"><span class="secno">2.3.2. </span><span class="content">Extending the Font Subset</span><a class="self-link" href="#extend-subset"></a></h4>
    <p>A client extends its font subset to cover additional codepoints by making HTTP requests to
@@ -1032,7 +1036,6 @@ Can be optionally set by the client to a value from <a href="#connection-speeds"
 that corresponds to the client’s average round trip time.</p>
    </ul>
    <h4 class="heading settled" data-level="2.3.3" id="handling-patch-response"><span class="secno">2.3.3. </span><span class="content">Handling PatchResponse</span><a class="self-link" href="#handling-patch-response"></a></h4>
-   <p>TODO(garretrieger): update axes in client state.</p>
    <p>If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a> if will respond with HTTP status code 200 and the body of the response will be a <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
 should interpret and process the fields of the object as follows:</p>
    <ol>
@@ -1054,6 +1057,12 @@ the saved codepoint ordering and checksum with the new values specified by these
 If neither <code>replacement</code> nor <code>patch</code> are set, then the client should
 resend the request that triggered this response but use the new codepoint ordering provided in
 this response.</p>
+    <li data-md>
+     <p>If <code>original_axis_space</code> is set then update the saved original axis space with the value
+specified in this field.</p>
+    <li data-md>
+     <p>If <code>subset_axis_space</code> is set then update the saved subset axis space with the value
+specified in this field.</p>
    </ol>
    <h4 class="heading settled" data-level="2.3.4" id="client-side-checksum-mismatch"><span class="secno">2.3.4. </span><span class="content">Client Side Checksum Mismatch</span><a class="self-link" href="#client-side-checksum-mismatch"></a></h4>
    <p>If the the checksum of the font subset computed by the client does not match the <code>patched_checksum</code> in the server’s response then the client should:</p>
@@ -1070,6 +1079,8 @@ the the previous request was trying to add.</p>
    <ul>
     <li data-md>
      <p>Must be superset of axes have, axes needed</p>
+    <li data-md>
+     <p>Only send original axis space during a replacement</p>
    </ul>
    <p>If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
 HTTPS that was populated according to the requirements in <a href="#extend-subset">§ 2.3.2 Extending the Font Subset</a> then it should
@@ -1091,6 +1102,9 @@ That is the <code>patch</code> and <code>replacement</code> fields must not be s
    <p>Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 2.3.3 Handling PatchResponse</a> to a font subset with checksum <code>base_checksum</code> it must result
 in an extended font subset that contains data for at least the union of the set of codepoints needed
 and the sets of codepoints the client already has. The format of the patch in the either the <code>patch</code> or <code>replace</code> fields must be one of those listed in <code>accept_patch_format</code>.</p>
+   <p>The value of <code>original_font_checksum</code> must be set to the checksum of the original font.
+The checksum value must computed by the procedure in <a href="#computing-checksums">§ 2.5 Computing Checksums</a>.</p>
+   <p>If the set of codepoints the client has is empty the response should set the <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following <a href="#codepoint-reordering">§ 2.6 Codepoint Reordering</a>.</p>
    <p>If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
 ignore the unrecognized ones. Likewise if <code>connection_speed</code> contains any unrecognized
 connection speeds the server should ignore the unrecognized ones.</p>
