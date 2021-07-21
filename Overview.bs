@@ -567,10 +567,6 @@ If the the checksum of the font subset computed by the client does not match the
 Server: Responding to a PatchRequest {#handling-patch-request}
 --------------------------------------------------------------
 
-TODO(garretrieger): axes stuff:
-- Must be superset of axes have, axes needed
-- Only send original axis space during a replacement
-
 If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
 HTTPS that was populated according to the requirements in [[#extend-subset]] then it should
 respond with HTTP status code 200. The body of the response should be a single
@@ -586,8 +582,18 @@ object the server can produce two codepoint sets:
 
 2.  Codepoints the client needs: formed by the union of the codepoint sets specified by
      <code>codepoints_needed</code> and <code>indices_needed</code>. The indices in
-     <code>indices_have</code> must be mapped to codepoints by the application of the
+     <code>indices_needed</code> must be mapped to codepoints by the application of the
      codepoint reordering with a checksum matching <code>ordering_checksum</code>.
+
+Likewise, the server can produce two variable axis spaces:
+
+1.  Axis space the client has: provided by <code>axis_space_have</code>. If any axes in the font are
+     not specified in <code>axis_space_have</code> then for those axes add their entire interval
+     from the original font.
+
+2. Axis space the client needs: provided by <code>axis_space_needed</code>. If any axes in the font are
+     not specified in <code>axis_space_needed</code> then for those axes add their entire interval
+     from the original font.
 
 If the server does not recognize the codepoint ordering used by the client, it must respond
 with a response that will cause the client to update it's codepoint ordering to one the server
@@ -596,21 +602,37 @@ That is the <code>patch</code> and <code>replacement</code> fields must not be s
 
 Otherwise when the response is applied by the client following the process in
 [[#handling-patch-response]] to a font subset with checksum <code>base_checksum</code> it must result
-in an extended font subset that contains data for at least the union of the set of codepoints needed
-and the sets of codepoints the client already has. The format of the patch in the either the
-<code>patch</code> or <code>replace</code> fields must be one of those listed in
-<code>accept_patch_format</code>.
+in an extended font subset:
 
-The value of <code>original_font_checksum</code> must be set to the checksum of the original font.
-The checksum value must computed by the procedure in [[#computing-checksums]].
+*  That contains data for at least the union of the set of codepoints needed and the sets of
+    codepoints the client already has.
 
-If the set of codepoints the client has is empty the response should set the
-<code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following
-[[#codepoint-reordering]].
+*  That contains a variation axis space that covers at least the union of the axis space the client
+    has and the axis space the client needs.
 
-If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
-ignore the unrecognized ones. Likewise if <code>connection_speed</code> contains any unrecognized
-connection speeds the server should ignore the unrecognized ones.
+Additionally:
+    
+*  The format of the patch in the either the <code>patch</code> or <code>replace</code> fields must be
+    one of those listed in <code>accept_patch_format</code>.
+
+*  The value of <code>original_font_checksum</code> must be set to the checksum of the original font.
+    The checksum value must computed by the procedure in [[#computing-checksums]].
+
+*  If the set of codepoints the client has is empty the response must set the
+    <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following
+    [[#codepoint-reordering]].
+
+*  If the set of codepoints the client has is empty and the original font has variation axes, the
+    response must set the <code>original_axis_space</code> fields to the axis space covered by
+    the original font.
+
+*  If <code>patch</code> or <code>replacement</code> fields are set and the original font has
+    variation axes, the response must set the <code>subset_axis_space</code> field to the axis space
+    covered by the font subset.
+
+*  If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
+    ignore the unrecognized ones. Likewise if <code>connection_speed</code> contains any unrecognized
+    connection speeds the server should ignore the unrecognized ones.
 
 Note: the server can optionally use the client's provided connection speed to inform how many extra
 codepoints should be sent. For example on slower connections it may be more performant to send extra
