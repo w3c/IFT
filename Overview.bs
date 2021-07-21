@@ -420,7 +420,7 @@ For a PatchRequest object to be well formed:
   <tr><td>9</td><td>original_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
 </table>
 
-For a PatchRequest object to be well formed:
+For a PatchResponse object to be well formed:
 *  <code>protocol_version</code> must be set to 0.
 *  <code>patch_format</code> can be any of the values listed [[#patch-formats]]
 *  Only one of <code>patch</code> or <code>replacement</code> may be set.
@@ -433,8 +433,6 @@ Client {#client}
 
 ### Client State ### {#client-state}
 
-TODO(garretrieger): track subset axis space, original font axis space.
-
 The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:
 
@@ -443,11 +441,19 @@ transferred:
 *  Original font checksum: the most recent value of
     <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> received
     from the server for this font.
+    
 *  Codepoint Reordering Map: The most recent [[#codepoint-reordering]] received from the server
     for this font.
+    
 *  Codepoint Reordering Checksum: The most recent
     <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a>
     for this font.
+
+*  Original Font Axis Space: the variations axis space that the original font covers. Supplied
+    by <a href="#PatchResponse"><code>PatchResponse.original_axis_space</code></a>.
+
+*  Subset Axis Space: the most recent variations axis space that the subsetted font covers. Supplied by
+    <a href="#PatchResponse"><code>PatchResponse.subset_axis_space</code></a>.
 
 ### Extending the Font Subset ### {#extend-subset}
 
@@ -516,8 +522,6 @@ as follows:
 
 ### Handling PatchResponse ### {#handling-patch-response}
 
-TODO(garretrieger): update axes in client state.
-
 If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a>
 if will respond with HTTP status code 200 and the body of the response will be a
 <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
@@ -543,6 +547,12 @@ should interpret and process the fields of the object as follows:
     resend the request that triggered this response but use the new codepoint ordering provided in
     this response.
 
+5. If <code>original_axis_space</code> is set then update the saved original axis space with the value
+    specified in this field.
+
+6. If <code>subset_axis_space</code> is set then update the saved subset axis space with the value
+    specified in this field.
+
 ### Client Side Checksum Mismatch ### {#client-side-checksum-mismatch}
 
 If the the checksum of the font subset computed by the client does not match the
@@ -559,6 +569,7 @@ Server: Responding to a PatchRequest {#handling-patch-request}
 
 TODO(garretrieger): axes stuff:
 - Must be superset of axes have, axes needed
+- Only send original axis space during a replacement
 
 If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
 HTTPS that was populated according to the requirements in [[#extend-subset]] then it should
@@ -589,6 +600,13 @@ in an extended font subset that contains data for at least the union of the set 
 and the sets of codepoints the client already has. The format of the patch in the either the
 <code>patch</code> or <code>replace</code> fields must be one of those listed in
 <code>accept_patch_format</code>.
+
+The value of <code>original_font_checksum</code> must be set to the checksum of the original font.
+The checksum value must computed by the procedure in [[#computing-checksums]].
+
+If the set of codepoints the client has is empty the response should set the
+<code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following
+[[#codepoint-reordering]].
 
 If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
 ignore the unrecognized ones. Likewise if <code>connection_speed</code> contains any unrecognized
