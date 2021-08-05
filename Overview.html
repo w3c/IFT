@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="d73e7e3b75d1e75c5bc6b388873870a8b404e35a" name="document-revision">
+  <meta content="38825765ad53c5cf4fbdbc4cc2c6a8f973d5cfe3" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-08-13">13 August 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-08-16">16 August 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1205,8 +1205,9 @@ Can be optionally set by the client to a value from <a href="#connection-speeds"
 that corresponds to the client’s average round trip time.</p>
    </ul>
    <h4 class="heading settled" data-level="2.4.3" id="handling-patch-response"><span class="secno">2.4.3. </span><span class="content">Handling PatchResponse</span><a class="self-link" href="#handling-patch-response"></a></h4>
-   <p>If a server is able to successfully process a <a href="#PatchRequest"><code>PatchRequest</code></a> if will respond with HTTP status code 200 and the body of the response will be a <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR.
-The client should interpret and process the fields of the object as follows:</p>
+   <p>If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a> it will respond with HTTP status code 200 and the body of the response will be a 4 byte magic
+number (0x49, 0x46, 0x54, 0x20) followed by a single <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
+should interpret and process the fields of the object as follows:</p>
    <ol>
     <li data-md>
      <p>If field <code>replacement</code> is set then: the byte array in this field is a binary patch
@@ -1246,7 +1247,8 @@ the the previous request was trying to add.</p>
    <h3 class="heading settled" data-level="2.5" id="handling-patch-request"><span class="secno">2.5. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
    <p>If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
 HTTPS that was populated according to the requirements in <a href="#extend-subset">§ 2.4.2 Extending the Font Subset</a> then it should
-respond with HTTP status code 200. The body of the response should be a single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</p>
+respond with HTTP status code 200. The first 4 bytes of the response must be set to 0x49, 0x46, 0x54,
+0x20 ("IFT " encoded as ASCII) followed by a single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</p>
    <p>The path in the request identifies the specific font that a patch is desired for. From the request
 object the server can produce two codepoint sets:</p>
    <ol>
@@ -1449,9 +1451,9 @@ based method and send a PatchRequest via HTTP GET according to the requirements 
 instructions in the patch subset section. However, if the server does not support the patch subset
 protocol it should ignore the additional HTTP GET parameters and instead just begin sending the
 umodified font file.</p>
-   <p>If the client receives a response containing (TODO(garretrieger) add a magic number to first 4 bytes) a
-PatchResponse, then follow the instructions in the Patch Subset section and all future extension
-requests for this URL can be sent as patch subset requests using POST.</p>
+   <p>If the client receives a response where the first 4 bytes of the body are 0x49, 0x46, 0x54,
+0x20 that indicates it contains a PatchResponse. Follow the instructions in <a href="#handling-patch-response">§ 2.4.3 Handling PatchResponse</a> to handle the response and all future requests should use the patch subset
+approach over POST.</p>
    <p>Otherwise the client should follow the instructions in the Range Request section and all future
 extension requests should be sent according the the Range Request specificiation.</p>
    <h2 class="no-num heading settled" id="priv-sec"><span class="content">Privacy and Security Considerations</span><a class="self-link" href="#priv-sec"></a></h2>
