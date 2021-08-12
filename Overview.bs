@@ -310,17 +310,17 @@ significant bit in the byte and the bit with the largest index is the most signi
 
 </div>
 
-### CompressedIntList ### {#compressedintlist}
+### IntegerList ### {#integerlist}
 
 A data structure which compactly represents a list of integers.
 The list is encoded into a ByteString for transport.
 
-There are three steps of encoding/compression: first delta, second zig-zag, and finally uintbase128.
+There are three steps of encoding/compression: first delta, second zig-zag, and finally UIntBase128.
 
-The final ByteString result is simply the concatenation of the individual uintbase128
+The final ByteString result is simply the concatenation of the individual UIntBase128
 encoded bytes.
 
-#### Delta Encoding #### {#compressedintlist-deltas}
+#### Delta Encoding #### {#integerlist-deltas}
 Delta encoding converts a list of integers to a list of deltas between them.
 
 A list L of n integers L<sub>i<sub>0..n-1</sub></sub> is converted into a list
@@ -330,7 +330,7 @@ of N integers D<sub>i<sub>0..n-1</sub></sub> as follows:
 * D<sub>i = 1..n-1</sub> = L<sub>i</sub> - L<sub>i-1<sub>
 
 This has the effect of reducing the magnitude of the values, which reduces the number
-of bytes required in the uintbase128 encoding, below.
+of bytes required in the UIntBase128 encoding, below.
 
 <div class="example">
 ```
@@ -340,16 +340,16 @@ delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
 ```
 </div>
 
-#### Zig-Zag Encoding #### {#compressedintlist-zigzag}
+#### Zig-Zag Encoding #### {#integerlist-zigzag}
 
 Zig-Zag encoding reversibly converts signed integers to unsigned integers,
 using the same number of bits. The entire range of values is supported.
-This is required, as the [[#compressedintlist-uintbase128]] step works on
+This is required, as the [[#integerlist-uintbase128]] step works on
 unsigned ints only.
 
 Zig-Zag encoding doubles the magnitude of the numbers, which cuts in
 half the range of input values that can, for example, be encoded in 1 byte in
-the uintbase128 encoding.
+the UIntBase128 encoding.
 
 <div class="example">
 <table>
@@ -367,7 +367,7 @@ the uintbase128 encoding.
 </div>
 
 Psuedo code:
-<figure>
+
 ```
 encode(n) {
   if (n >= 0)
@@ -391,9 +391,6 @@ zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
 ```
 </div>
 
-<figcaption>Psuedo-code for Zig-Zag encoding and decoding</figcaption>
-</figure>
-
 <div class="example">
 ```
 zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
@@ -404,7 +401,7 @@ bytes = [2E 28 3D 11 80 01 02 02 89 01]
 
 *TODO: Add reference to proto implementation*
 
-#### UIntBase128 Encoding #### {#compressedintlist-uintbase128}
+#### UIntBase128 Encoding #### {#integerlist-uintbase128}
 
 UIntBase128 is a different variable length encoding of unsigned integers,
 suitable for values up to 2<sup>32</sup>-1. A UIntBase128 encoded number
@@ -470,15 +467,15 @@ Value       Value (binary)                     Output Bytes
 ```
 </div>
 
-### CompressedSortedIntList ### {#compressedsortedintlist}
+### SortedIntegerList ### {#sortedintegerlist}
 
 A data structure which compactly represents a sorted list of non-negative integers.
 The list is encoded into a ByteString for transport.
 
-This is a variation on CompressedIntList with better compression.
+This is a variation on IntegerList with better compression.
 Sorted lists only use two steps of encoding/compression: first deltas and then
 UIntBase128.
-The [[#compressedintlist-zigzag]] step is skipped.
+The [[#integerlist-zigzag]] step is skipped.
 This allows twice the range in UIntBase128, so that single bytes may be used more often.
 
 </div>
@@ -497,7 +494,8 @@ To encode this list, we convert it to a list L of 2n integers, where
 L<sub>2i</sub> = min<sub>i</sub> and L<sub>2i+1</sub> = max<sub>i</sub> for
 i = 0..n-1.
 
-L is a sorted list, so [[#compressedsortedintlist]] is used to encode it as a ByteString.
+L is a sorted list of integers, so [[#sortedintegerlist]] is used to encode it as a
+ByteString.
 
 <div class="example">
 ```
@@ -505,7 +503,7 @@ RangeList = [3, 10], [13, 268]
 int list = [3, 10, 13, 268]
 delta list = [3, 7, 3, 255]
 // Sorted, so no Zig-Zag encoding.
-CompressedIntList (sorted) = [0x03 0x07 0x03 0xFF 0x01]
+IntegerList (sorted) = [0x03 0x07 0x03 0xFF 0x01]
 ```
 </div>
 
@@ -574,7 +572,7 @@ For an <code>AxisInterval</code> object to be well formed:
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
   <tr><td>0</td><td>protocol_version</td><td>ProtocolVersion (Integer)</td></tr>
-  <tr><td>1</td><td>accept_patch_format</td><td>CompressedIntList (ByteString)</td></tr>
+  <tr><td>1</td><td>accept_patch_format</td><td>IntegerList (ByteString)</td></tr>
   <tr><td>2</td><td>codepoints_have</td><td>CompressedSet</td></tr>
   <tr><td>3</td><td>codepoints_needed</td><td>CompressedSet</td></tr>
   <tr><td>4</td><td>indices_have</td><td>CompressedSet</td></tr>
@@ -607,7 +605,7 @@ For a PatchRequest object to be well formed:
   <tr><td>3</td><td>replacement</td><td>ByteString</td></tr>
   <tr><td>4</td><td>original_font_checksum</td><td>Integer</td></tr>
   <tr><td>5</td><td>patched_checksum</td><td>Integer</td></tr>
-  <tr><td>6</td><td>codepoint_ordering</td><td>CompressedIntList</td></tr>
+  <tr><td>6</td><td>codepoint_ordering</td><td>IntegerList</td></tr>
   <tr><td>7</td><td>ordering_checksum</td><td>Integer</td></tr>
   <tr><td>8</td><td>subset_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
   <tr><td>9</td><td>original_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
