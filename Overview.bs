@@ -320,16 +320,10 @@ pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.
 
 ### CompressedIntList ### {#compressedintlist}
 
-A data structure which compactly represents a list of integers. A distinction is
-made between sorted (positive, nondecreasing) and unsorted lists. Sorted lists
-allow for greater compression. Both types of lists are encoded into a ByteString
-for transport.
+A data structure which compactly represents a list of integers.
+The list is encoded into a ByteString for transport.
 
-Unsorted lists use three steps of encoding/compression: first delta, second zig-zag, and finally varint.
-Sorted lists only use two steps of encoding/compression: first deltas and then varint.
-
-The choice of sorted or unsorted is not stored in the encoded bytes; the choice
-of decoding is based on the context where the CompressedIntList occurs.
+There are three steps of encoding/compression: first delta, second zig-zag, and finally varint.
 
 The final ByteString result is simply the concatenation of the individual varint
 encoded bytes.
@@ -361,8 +355,7 @@ using the same number of bits. The entire range of values is supported.
 This is required, as the [[#compressedintlist-varint]] step works on
 unsigned ints only.
 
-Sorted lists do not have negative values in their delta encoding, so they skip
-this step. Zig-Zag encoding doubles the magnitude of the numbers, which cuts in
+Zig-Zag encoding doubles the magnitude of the numbers, which cuts in
 half the range of input values that can, for example, be encoded in 1 byte in
 the varint encoding.
 
@@ -444,9 +437,9 @@ Value       Value (binary)                     Output Bytes
 ```
 </div>
 
-*Add psuedo code*
+*TODO Add psuedo code*
 
-*Add reference to proto implementation*
+*TODO Add reference to proto implementation*
 
 <div class="example">
 ```
@@ -454,6 +447,19 @@ zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
 bytes = [2E 28 3D 11 80 01 02 02 89 01]
 //       └┘ └┘ └┘ └┘ └───┘ └┘ └┘ └───┘
 ```
+</div>
+
+### CompressedSortedIntList ### {#compressedsortedintlist}
+
+A data structure which compactly represents a sorted list of non-negative integers.
+The list is encoded into a ByteString for transport.
+
+This is a variation on CompressedIntList with better compression.
+Sorted lists only use two steps of encoding/compression: first deltas and then
+varint.
+The [[#compressedintlist-zigzag]] step is skipped.
+This allows twice the range in the varints, so that single bytes may be used more often.
+
 </div>
 
 ### RangeList ### {#rangelist}
@@ -470,7 +476,7 @@ To encode this list, we convert it to a list L of 2n integers, where
 L<sub>2i</sub> = min<sub>i</sub> and L<sub>2i+1</sub> = max<sub>i</sub> for
 i = 0..n-1.
 
-L is a sorted list, so [[#compressedintlist]] is used to encode it as a ByteString.
+L is a sorted list, so [[#compressedsortedintlist]] is used to encode it as a ByteString.
 
 <div class="example">
 ```
@@ -516,8 +522,7 @@ bit set and the list of ranges are unioned together.
   <tr><td>1</td><td>range_deltas</td><td>RangeList (ByteString)</td></tr>
 </table>
 
-<<<<<<< HEAD
-#### AxisInterval #### {#AxisInterval}
+### AxisInterval ### {#AxisInterval}
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
@@ -535,10 +540,7 @@ For an <code>AxisInterval</code> object to be well formed:
 *  <code>end</code> is optional, must be greater than <code>start</code>. If <code>end</code> is not set
     then this interval is a single point, <code>start</code>.
 
-#### PatchRequest #### {#PatchRequest}
-=======
 ### PatchRequest ### {#PatchRequest}
->>>>>>> f7305b5 (Add html?)
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
@@ -548,19 +550,12 @@ For an <code>AxisInterval</code> object to be well formed:
   <tr><td>3</td><td>codepoints_needed</td><td>CompressedSet</td></tr>
   <tr><td>4</td><td>indices_have</td><td>CompressedSet</td></tr>
   <tr><td>5</td><td>indices_needed</td><td>CompressedSet</td></tr>
-<<<<<<< HEAD
   <tr><td>6</td><td>axis_space_have</td><td>AxisSpace</td></tr>
   <tr><td>7</td><td>axis_space_needed</td><td>AxisSpace</td></tr>
   <tr><td>8</td><td>ordering_checksum</td><td>Integer</td></tr>
   <tr><td>9</td><td>original_font_checksum</td><td>Integer</td></tr>
   <tr><td>10</td><td>base_checksum</td><td>Integer</td></tr>
   <tr><td>11</td><td>connection_speed</td><td>Integer</td></tr>
-=======
-  <tr><td>6</td><td>ordering_checksum</td><td>Integer (64 bit unsigned)</td></tr>
-  <tr><td>7</td><td>original_font_checksum</td><td>Integer (64 bit unsigned)</td></tr>
-  <tr><td>8</td><td>base_checksum</td><td>Integer</td></tr>
-  <tr><td>9</td><td>connection_speed</td><td>Integer</td></tr>
->>>>>>> f7305b5 (Add html?)
 </table>
 
 For a PatchRequest object to be well formed:
@@ -581,20 +576,12 @@ For a PatchRequest object to be well formed:
   <tr><td>1</td><td>patch_format</td><td>Integer</td></tr>
   <tr><td>2</td><td>patch</td><td>ByteString</td></tr>
   <tr><td>3</td><td>replacement</td><td>ByteString</td></tr>
-<<<<<<< HEAD
   <tr><td>4</td><td>original_font_checksum</td><td>Integer</td></tr>
   <tr><td>5</td><td>patched_checksum</td><td>Integer</td></tr>
   <tr><td>6</td><td>codepoint_ordering</td><td>CompressedList</td></tr>
   <tr><td>7</td><td>ordering_checksum</td><td>Integer</td></tr>
   <tr><td>8</td><td>subset_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
   <tr><td>9</td><td>original_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
-=======
-  <tr><td>4</td><td>original_font_checksum</td><td>Integer (64 bit unsigned)</td></tr>
-  <tr><td>5</td><td>patched_checksum</td><td>Integer (64 bit unsigned)</td></tr>
-
-  <tr><td>6</td><td>codepoint_ordering</td><td>CompressedIntList</td></tr>
-  <tr><td>7</td><td>ordering_checksum</td><td>Integer (64 bit unsigned)</td></tr>
->>>>>>> f7305b5 (Add html?)
 </table>
 
 For a PatchResponse object to be well formed:
