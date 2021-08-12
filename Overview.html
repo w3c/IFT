@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="fc907dc10fb1c01c03b6e8c16a97416fa24a4270" name="document-revision">
+  <meta content="18d805a59d8dd9dbb8945e3f8ff50a62e20bdf7d" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -466,20 +466,17 @@ dfn > a.self-link::before      { content: "#"; }
           <li><a href="#compressedintlist-zigzag"><span class="secno">2.2.6.2</span> <span class="content">Zig-Zag Encoding</span></a>
           <li><a href="#compressedintlist-varint"><span class="secno">2.2.6.3</span> <span class="content">Variable Length Integer (varint) Encoding</span></a>
          </ol>
-        <li><a href="#rangelist"><span class="secno">2.2.7</span> <span class="content">RangeList</span></a>
-        <li><a href="#objects"><span class="secno">2.2.8</span> <span class="content">Objects</span></a>
+        <li><a href="#compressedsortedintlist"><span class="secno">2.2.7</span> <span class="content">CompressedSortedIntList</span></a>
+        <li><a href="#rangelist"><span class="secno">2.2.8</span> <span class="content">RangeList</span></a>
+        <li><a href="#objects"><span class="secno">2.2.9</span> <span class="content">Objects</span></a>
        </ol>
       <li>
        <a href="#schemas"><span class="secno">2.3</span> <span class="content">Object Schemas</span></a>
        <ol class="toc">
-        <li>
-         <a href="#CompressedSet"><span class="secno">2.3.1</span> <span class="content">CompressedSet</span></a>
-         <ol class="toc">
-          <li><a href="#AxisInterval"><span class="secno">2.3.1.1</span> <span class="content">AxisInterval</span></a>
-          <li><a href="#PatchRequest"><span class="secno">2.3.1.2</span> <span class="content">PatchRequest</span></a>
-         </ol>
-        <li><a href="#PatchRequest①"><span class="secno">2.3.2</span> <span class="content">PatchRequest</span></a>
-        <li><a href="#PatchResponse"><span class="secno">2.3.3</span> <span class="content">PatchResponse #</span></a>
+        <li><a href="#CompressedSet"><span class="secno">2.3.1</span> <span class="content">CompressedSet</span></a>
+        <li><a href="#AxisInterval"><span class="secno">2.3.2</span> <span class="content">AxisInterval</span></a>
+        <li><a href="#PatchRequest"><span class="secno">2.3.3</span> <span class="content">PatchRequest</span></a>
+        <li><a href="#PatchResponse"><span class="secno">2.3.4</span> <span class="content">PatchResponse #</span></a>
        </ol>
       <li>
        <a href="#client"><span class="secno">2.4</span> <span class="content">Client</span></a>
@@ -756,14 +753,9 @@ significant bit in the byte and the bit with the largest index is the most signi
 Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
 pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.</p>
    <h4 class="heading settled" data-level="2.2.6" id="compressedintlist"><span class="secno">2.2.6. </span><span class="content">CompressedIntList</span><a class="self-link" href="#compressedintlist"></a></h4>
-   <p>A data structure which compactly represents a list of integers. A distinction is
-made between sorted (positive, nondecreasing) and unsorted lists. Sorted lists
-allow for greater compression. Both types of lists are encoded into a ByteString
-for transport.</p>
-   <p>Unsorted lists use three steps of encoding/compression: first delta, second zig-zag, and finally varint.
-Sorted lists only use two steps of encoding/compression: first deltas and then varint.</p>
-   <p>The choice of sorted or unsorted is not stored in the encoded bytes; the choice
-of decoding is based on the context where the CompressedIntList occurs.</p>
+   <p>A data structure which compactly represents a list of integers.
+The list is encoded into a ByteString for transport.</p>
+   <p>There are three steps of encoding/compression: first delta, second zig-zag, and finally varint.</p>
    <p>The final ByteString result is simply the concatenation of the individual varint
 encoded bytes.</p>
    <h5 class="heading settled" data-level="2.2.6.1" id="compressedintlist-deltas"><span class="secno">2.2.6.1. </span><span class="content">Delta Encoding</span><a class="self-link" href="#compressedintlist-deltas"></a></h5>
@@ -790,8 +782,7 @@ delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
 using the same number of bits. The entire range of values is supported.
 This is required, as the <a href="#compressedintlist-varint">§ 2.2.6.3 Variable Length Integer (varint) Encoding</a> step works on
 unsigned ints only.</p>
-   <p>Sorted lists do not have negative values in their delta encoding, so they skip
-this step. Zig-Zag encoding doubles the magnitude of the numbers, which cuts in
+   <p>Zig-Zag encoding doubles the magnitude of the numbers, which cuts in
 half the range of input values that can, for example, be encoded in 1 byte in
 the varint encoding.</p>
    <div class="example" id="example-16a15e38">
@@ -880,8 +871,8 @@ the full 64 bit unsigned range.</p>
 4294967295  11111111111111111111111111111111   11111111 11111111 11111111 11111111 00001111
 </pre>
    </div>
-   <p>*Add psuedo code*</p>
-   <p>*Add reference to proto implementation*</p>
+   <p>*TODO Add psuedo code*</p>
+   <p>*TODO Add reference to proto implementation*</p>
    <div class="example" id="example-ca161576">
     <a class="self-link" href="#example-ca161576"></a> 
 <pre>zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
@@ -889,7 +880,15 @@ bytes = [2E 28 3D 11 80 01 02 02 89 01]
 //       └┘ └┘ └┘ └┘ └───┘ └┘ └┘ └───┘
 </pre>
    </div>
-   <h4 class="heading settled" data-level="2.2.7" id="rangelist"><span class="secno">2.2.7. </span><span class="content">RangeList</span><a class="self-link" href="#rangelist"></a></h4>
+   <h4 class="heading settled" data-level="2.2.7" id="compressedsortedintlist"><span class="secno">2.2.7. </span><span class="content">CompressedSortedIntList</span><a class="self-link" href="#compressedsortedintlist"></a></h4>
+   <p>A data structure which compactly represents a sorted list of non-negative integers.
+The list is encoded into a ByteString for transport.</p>
+   <p>This is a variation on CompressedIntList with better compression.
+Sorted lists only use two steps of encoding/compression: first deltas and then
+varint.
+The <a href="#compressedintlist-zigzag">§ 2.2.6.2 Zig-Zag Encoding</a> step is skipped.
+This allows twice the range in the varints, so that single bytes may be used more often.</p>
+   <h4 class="heading settled" data-level="2.2.8" id="rangelist"><span class="secno">2.2.8. </span><span class="content">RangeList</span><a class="self-link" href="#rangelist"></a></h4>
    <p>A RangeList encodes a set of unsigned 32 bit integers. The set is encoded as a
 list of disjoint intervals. Each interval is represented by two integers, a
 start (inclusive) and end (inclusive).</p>
@@ -899,7 +898,7 @@ The list must be non-decreasing, i.e. min<sub>i=1..n-1</sub> >= max<sub>i-1<sub>
    <p>To encode this list, we convert it to a list L of 2n integers, where
 L<sub>2i</sub> = min<sub>i</sub> and L<sub>2i+1</sub> = max<sub>i</sub> for
 i = 0..n-1.</p>
-   <p>L is a sorted list, so <a href="#compressedintlist">§ 2.2.6 CompressedIntList</a> is used to encode it as a ByteString.</p>
+   <p>L is a sorted list, so <a href="#compressedsortedintlist">§ 2.2.7 CompressedSortedIntList</a> is used to encode it as a ByteString.</p>
    <div class="example" id="example-ce67a84d">
     <a class="self-link" href="#example-ce67a84d"></a> 
 <pre>RangeList = [3, 10], [13, 268]
@@ -909,7 +908,7 @@ delta list = [3, 7, 3, 255]
 CompressedIntList (sorted) = [0x03 0x07 0x03 0xFF 0x01]
 </pre>
    </div>
-   <h4 class="heading settled" data-level="2.2.8" id="objects"><span class="secno">2.2.8. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
+   <h4 class="heading settled" data-level="2.2.9" id="objects"><span class="secno">2.2.9. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
    <p>Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
 (major type 5). Each key and value pair is encoded as a single map entry. Keys are always unsigned
 integers and are encoded using major type 0. Values are encoded using the encoding specified by the
@@ -948,8 +947,7 @@ bit set and the list of ranges are unioned together.</p>
       <td>range_deltas
       <td>RangeList (ByteString)
    </table>
-   <p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
-   <h5 class="heading settled" data-level="2.3.1.1" id="AxisInterval"><span class="secno">2.3.1.1. </span><span class="content">AxisInterval</span><a class="self-link" href="#AxisInterval"></a></h5>
+   <h4 class="heading settled" data-level="2.3.2" id="AxisInterval"><span class="secno">2.3.2. </span><span class="content">AxisInterval</span><a class="self-link" href="#AxisInterval"></a></h4>
    <table>
     <tbody>
      <tr>
@@ -975,42 +973,7 @@ variable axis in a font.</p>
      <p><code>end</code> is optional, must be greater than <code>start</code>. If <code>end</code> is not set
 then this interval is a single point, <code>start</code>.</p>
    </ul>
-   <h5 class="heading settled" data-level="2.3.1.2" id="PatchRequest"><span class="secno">2.3.1.2. </span><span class="content">PatchRequest</span><a class="self-link" href="#PatchRequest"></a></h5>
-    ======= 
-   <h4 class="heading settled" data-level="2.3.2" id="PatchRequest①"><span class="secno">2.3.2. </span><span class="content">PatchRequest</span><a class="self-link" href="#PatchRequest①"></a></h4>
-   <blockquote>
-    <blockquote>
-     <blockquote>
-      <blockquote>
-       <blockquote>
-        <blockquote>
-         <blockquote>
-          <p>f7305b5 (Add html?)</p>
-         </blockquote>
-        </blockquote>
-       </blockquote>
-      </blockquote>
-     </blockquote>
-    </blockquote>
-   </blockquote>
-    &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-  
-======= 
-   <blockquote>
-    <blockquote>
-     <blockquote>
-      <blockquote>
-       <blockquote>
-        <blockquote>
-         <blockquote>
-          <p>f7305b5 (Add html?)</p>
-         </blockquote>
-        </blockquote>
-       </blockquote>
-      </blockquote>
-     </blockquote>
-    </blockquote>
-   </blockquote>
+   <h4 class="heading settled" data-level="2.3.3" id="PatchRequest"><span class="secno">2.3.3. </span><span class="content">PatchRequest</span><a class="self-link" href="#PatchRequest"></a></h4>
    <table>
     <tbody>
      <tr>
@@ -1065,22 +1028,6 @@ then this interval is a single point, <code>start</code>.</p>
       <td>11
       <td>connection_speed
       <td>Integer
-     <tr>
-      <td>6
-      <td>ordering_checksum
-      <td>Integer (64 bit unsigned)
-     <tr>
-      <td>7
-      <td>original_font_checksum
-      <td>Integer (64 bit unsigned)
-     <tr>
-      <td>8
-      <td>base_checksum
-      <td>Integer
-     <tr>
-      <td>9
-      <td>connection_speed
-      <td>Integer
    </table>
    <p>For a PatchRequest object to be well formed:</p>
    <ul>
@@ -1096,25 +1043,7 @@ then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p><code>connection_speed</code> can be any of the values listed in <a href="#connection-speeds">§ 2.9 Connection Speeds</a>.</p>
    </ul>
-   <h4 class="heading settled" data-level="2.3.3" id="PatchResponse"><span class="secno">2.3.3. </span><span class="content">PatchResponse #</span><a class="self-link" href="#PatchResponse"></a></h4>
-    &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-  
-======= 
-   <blockquote>
-    <blockquote>
-     <blockquote>
-      <blockquote>
-       <blockquote>
-        <blockquote>
-         <blockquote>
-          <p>f7305b5 (Add html?)</p>
-         </blockquote>
-        </blockquote>
-       </blockquote>
-      </blockquote>
-     </blockquote>
-    </blockquote>
-   </blockquote>
+   <h4 class="heading settled" data-level="2.3.4" id="PatchResponse"><span class="secno">2.3.4. </span><span class="content">PatchResponse #</span><a class="self-link" href="#PatchResponse"></a></h4>
    <table>
     <tbody>
      <tr>
@@ -1161,22 +1090,6 @@ then <code>ordering_checksum</code> must be set.</p>
       <td>9
       <td>original_axis_space
       <td>ArrayOf&lt;AxisInterval>
-     <tr>
-      <td>4
-      <td>original_font_checksum
-      <td>Integer (64 bit unsigned)
-     <tr>
-      <td>5
-      <td>patched_checksum
-      <td>Integer (64 bit unsigned)
-     <tr>
-      <td>6
-      <td>codepoint_ordering
-      <td>CompressedIntList
-     <tr>
-      <td>7
-      <td>ordering_checksum
-      <td>Integer (64 bit unsigned)
    </table>
    <p>For a PatchResponse object to be well formed:</p>
    <ul>
