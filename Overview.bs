@@ -121,8 +121,7 @@ should be encoded by CBOR are given in the definition of those data types.
     <th>Data Type</th><th>Description</th><th>CBOR Major Type</th>
   </tr>
   <tr>
-    <td>Integer</td><td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive.
-    In most cases 32 bit signed values are used, with fingerprints being 64 bit unsigned.</td>
+    <td>Integer</td><td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive.</td>
     <td>0 or 1</td>
   </tr>
   <tr>
@@ -136,7 +135,7 @@ should be encoded by CBOR are given in the definition of those data types.
   </tr>
 </table>
 
-### ProtcolVersion ### {#protocol-version}
+### ProtocolVersion ### {#protocol-version}
 
 An Integer describing the version of this communication protocol being used by a
 PatchRequest or PatchResponse. This value guides the semantics and interpretation
@@ -326,8 +325,8 @@ made between sorted (positive, nondecreasing) and unsorted lists. Sorted lists
 allow for greater compression. Both types of lists are encoded into a ByteString
 for transport.
 
-Unsorted lists use three steps of encoding/compression: deltas, zig-zag and varint.
-Sorted lists only use two steps of encoding/compression: deltas and varint.
+Unsorted lists use three steps of encoding/compression: first delta, second zig-zag, and finally varint.
+Sorted lists only use two steps of encoding/compression: first deltas and then varint.
 
 The choice of sorted or unsorted is not stored in the encoded bytes; the choice
 of decoding is based on the context where the CompressedIntList occurs.
@@ -410,7 +409,7 @@ zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
 <figcaption>Psuedo-code for Zig-Zag encoding and decoding</figcaption>
 </figure>
 
-*Add reference to proto implementation*
+*TODO: Add reference to proto implementation*
 
 
 #### Variable Length Integer (varint) Encoding #### {#compressedintlist-varint}
@@ -429,26 +428,20 @@ the full 64 bit unsigned range.
 Examples of the encoding:
 
 <div class="example">
-<table>
-<tr><th>Value</th><th>Value (binary)</th><th>Output Bytes</th></tr>
-<tr><td>0</td><td>00000000000000000000000000000000</td><td>00000000</td></tr>
-<tr><td>1</td><td>00000000000000000000000000000001</td><td>00000001</td></tr>
-<tr><td>2</td><td>00000000000000000000000000000010</td><td>00000010</td></tr>
-<tr><td>3</td><td>00000000000000000000000000000011</td><td>00000011</td></tr>
-<tr><td>127</td><td>00000000000000000000000001111111</td><td>01111111</td></tr>
-<tr><td>128</td><td>00000000000000000000000010000000</td>
-    <td>10000000 00000001</td></tr>
-<tr><td>255</td><td>00000000000000000000000011111111</td>
-    <td>11111111 00000001</td></tr>
-<tr><td>16256</td><td>00000000000000000011111110000000</td>
-    <td>10000000 01111111</td></tr>
-<tr><td>2080768</td><td>00000000000111111100000000000000</td>
-    <td>10000000 10000000 01111111</td></tr>
-<tr><td>266338304</td><td>00001111111000000000000000000000</td>
-    <td>10000000 10000000 10000000 01111111</td></tr>
-<tr><td>4294967295</td><td>11111111111111111111111111111111</td>
-    <td>11111111 11111111 11111111 11111111 00001111</td></tr>
-</table>
+```
+Value       Value (binary)                     Output Bytes
+0           00000000000000000000000000000000   00000000
+1           00000000000000000000000000000001   00000001
+2           00000000000000000000000000000010   00000010
+3           00000000000000000000000000000011   00000011
+127         00000000000000000000000001111111   01111111
+128         00000000000000000000000010000000   10000000 00000001
+255         00000000000000000000000011111111   11111111 00000001
+16256       00000000000000000011111110000000   10000000 01111111
+2080768     00000000000111111100000000000000   10000000 10000000 01111111
+266338304   00001111111000000000000000000000   10000000 10000000 10000000 01111111
+4294967295  11111111111111111111111111111111   11111111 11111111 11111111 11111111 00001111
+```
 </div>
 
 *Add psuedo code*
@@ -465,8 +458,9 @@ bytes = [2E 28 3D 11 80 01 02 02 89 01]
 
 ### RangeList ### {#rangelist}
 
-A Range is a set of integers i where min <= i <= max. It is represented by
-the pair of integers [min, max], where min <= max and min >= 0.
+A RangeList encodes a set of unsigned 32 bit integers. The set is encoded as a
+list of disjoint intervals. Each interval is represented by two integers, a
+start (inclusive) and end (inclusive).
 
 A RangeList is a list of n pairs
 [min<sub>i<sub>0..n-1</sub></sub>, max<sub>i<sub>0..n-1</sub></sub>].
@@ -564,7 +558,7 @@ For an <code>AxisInterval</code> object to be well formed:
 =======
   <tr><td>6</td><td>ordering_checksum</td><td>Integer (64 bit unsigned)</td></tr>
   <tr><td>7</td><td>original_font_checksum</td><td>Integer (64 bit unsigned)</td></tr>
-  <tr><td>8</td><td>base_checksum</td><td>Integer (64 bit unsigned)</td></tr>
+  <tr><td>8</td><td>base_checksum</td><td>Integer</td></tr>
   <tr><td>9</td><td>connection_speed</td><td>Integer</td></tr>
 >>>>>>> f7305b5 (Add html?)
 </table>
@@ -579,7 +573,7 @@ For a PatchRequest object to be well formed:
     <code>original_font_checksum</code> and <code>base_checksum</code> must be set.
 *  <code>connection_speed</code> can be any of the values listed in [[#connection-speeds]].
 
-#### PatchResponse #### {#PatchResponse}
+### PatchResponse #### {#PatchResponse}
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
