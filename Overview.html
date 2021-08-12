@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="7021662c0bc821d4dededea471473edbf37744a9" name="document-revision">
+  <meta content="fc907dc10fb1c01c03b6e8c16a97416fa24a4270" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -456,7 +456,7 @@ dfn > a.self-link::before      { content: "#"; }
        <ol class="toc">
         <li><a href="#encoding"><span class="secno">2.2.1</span> <span class="content">Encoding</span></a>
         <li><a href="#primitives"><span class="secno">2.2.2</span> <span class="content">Primitives</span></a>
-        <li><a href="#protocol-version"><span class="secno">2.2.3</span> <span class="content">ProtcolVersion</span></a>
+        <li><a href="#protocol-version"><span class="secno">2.2.3</span> <span class="content">ProtocolVersion</span></a>
         <li><a href="#sparsebitset"><span class="secno">2.2.4</span> <span class="content">SparseBitSet</span></a>
         <li><a href="#AxisSpace"><span class="secno">2.2.5</span> <span class="content">AxisSpace</span></a>
         <li>
@@ -478,11 +478,8 @@ dfn > a.self-link::before      { content: "#"; }
           <li><a href="#AxisInterval"><span class="secno">2.3.1.1</span> <span class="content">AxisInterval</span></a>
           <li><a href="#PatchRequest"><span class="secno">2.3.1.2</span> <span class="content">PatchRequest</span></a>
          </ol>
-        <li>
-         <a href="#PatchRequest①"><span class="secno">2.3.2</span> <span class="content">PatchRequest</span></a>
-         <ol class="toc">
-          <li><a href="#PatchResponse"><span class="secno">2.3.2.1</span> <span class="content">PatchResponse</span></a>
-         </ol>
+        <li><a href="#PatchRequest①"><span class="secno">2.3.2</span> <span class="content">PatchRequest</span></a>
+        <li><a href="#PatchResponse"><span class="secno">2.3.3</span> <span class="content">PatchResponse #</span></a>
        </ol>
       <li>
        <a href="#client"><span class="secno">2.4</span> <span class="content">Client</span></a>
@@ -574,7 +571,6 @@ should be encoded by CBOR are given in the definition of those data types.</p>
      <tr>
       <td>Integer
       <td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive.
-    In most cases 32 bit signed values are used, with fingerprints being 64 bit unsigned.
       <td>0 or 1
      <tr>
       <td>Float
@@ -589,7 +585,7 @@ should be encoded by CBOR are given in the definition of those data types.</p>
       <td>Array of a variable number of items of Type.
       <td>4
    </table>
-   <h4 class="heading settled" data-level="2.2.3" id="protocol-version"><span class="secno">2.2.3. </span><span class="content">ProtcolVersion</span><a class="self-link" href="#protocol-version"></a></h4>
+   <h4 class="heading settled" data-level="2.2.3" id="protocol-version"><span class="secno">2.2.3. </span><span class="content">ProtocolVersion</span><a class="self-link" href="#protocol-version"></a></h4>
    <p>An Integer describing the version of this communication protocol being used by a
 PatchRequest or PatchResponse. This value guides the semantics and interpretation
 of the fields sent.</p>
@@ -764,8 +760,8 @@ pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.</p>
 made between sorted (positive, nondecreasing) and unsorted lists. Sorted lists
 allow for greater compression. Both types of lists are encoded into a ByteString
 for transport.</p>
-   <p>Unsorted lists use three steps of encoding/compression: deltas, zig-zag and varint.
-Sorted lists only use two steps of encoding/compression: deltas and varint.</p>
+   <p>Unsorted lists use three steps of encoding/compression: first delta, second zig-zag, and finally varint.
+Sorted lists only use two steps of encoding/compression: first deltas and then varint.</p>
    <p>The choice of sorted or unsorted is not stored in the encoded bytes; the choice
 of decoding is based on the context where the CompressedIntList occurs.</p>
    <p>The final ByteString result is simply the concatenation of the individual varint
@@ -857,7 +853,7 @@ zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
     </div>
     <figcaption>Psuedo-code for Zig-Zag encoding and decoding</figcaption>
    </figure>
-   <p>*Add reference to proto implementation*</p>
+   <p>*TODO: Add reference to proto implementation*</p>
    <h5 class="heading settled" data-level="2.2.6.3" id="compressedintlist-varint"><span class="secno">2.2.6.3. </span><span class="content">Variable Length Integer (varint) Encoding</span><a class="self-link" href="#compressedintlist-varint"></a></h5>
    <p>Unsigned integers are encoded as a sequence of bytes. Small values require one
 byte, larger values require two bytes etc... 7 bits of the value at a time are encoded.
@@ -868,59 +864,21 @@ used to indicate if additional bytes follow.</p>
 The values 128..16383 require 2 bytes. At most 5 bytes are required to encoded
 the full 64 bit unsigned range.</p>
    <p>Examples of the encoding:</p>
-   <div class="example" id="example-685f1d95">
-    <a class="self-link" href="#example-685f1d95"></a> 
-    <table>
-     <tbody>
-      <tr>
-       <th>Value
-       <th>Value (binary)
-       <th>Output Bytes
-      <tr>
-       <td>0
-       <td>00000000000000000000000000000000
-       <td>00000000
-      <tr>
-       <td>1
-       <td>00000000000000000000000000000001
-       <td>00000001
-      <tr>
-       <td>2
-       <td>00000000000000000000000000000010
-       <td>00000010
-      <tr>
-       <td>3
-       <td>00000000000000000000000000000011
-       <td>00000011
-      <tr>
-       <td>127
-       <td>00000000000000000000000001111111
-       <td>01111111
-      <tr>
-       <td>128
-       <td>00000000000000000000000010000000
-       <td>10000000 00000001
-      <tr>
-       <td>255
-       <td>00000000000000000000000011111111
-       <td>11111111 00000001
-      <tr>
-       <td>16256
-       <td>00000000000000000011111110000000
-       <td>10000000 01111111
-      <tr>
-       <td>2080768
-       <td>00000000000111111100000000000000
-       <td>10000000 10000000 01111111
-      <tr>
-       <td>266338304
-       <td>00001111111000000000000000000000
-       <td>10000000 10000000 10000000 01111111
-      <tr>
-       <td>4294967295
-       <td>11111111111111111111111111111111
-       <td>11111111 11111111 11111111 11111111 00001111
-    </table>
+   <div class="example" id="example-96daa8f6">
+    <a class="self-link" href="#example-96daa8f6"></a> 
+<pre>Value       Value (binary)                     Output Bytes
+0           00000000000000000000000000000000   00000000
+1           00000000000000000000000000000001   00000001
+2           00000000000000000000000000000010   00000010
+3           00000000000000000000000000000011   00000011
+127         00000000000000000000000001111111   01111111
+128         00000000000000000000000010000000   10000000 00000001
+255         00000000000000000000000011111111   11111111 00000001
+16256       00000000000000000011111110000000   10000000 01111111
+2080768     00000000000111111100000000000000   10000000 10000000 01111111
+266338304   00001111111000000000000000000000   10000000 10000000 10000000 01111111
+4294967295  11111111111111111111111111111111   11111111 11111111 11111111 11111111 00001111
+</pre>
    </div>
    <p>*Add psuedo code*</p>
    <p>*Add reference to proto implementation*</p>
@@ -932,8 +890,9 @@ bytes = [2E 28 3D 11 80 01 02 02 89 01]
 </pre>
    </div>
    <h4 class="heading settled" data-level="2.2.7" id="rangelist"><span class="secno">2.2.7. </span><span class="content">RangeList</span><a class="self-link" href="#rangelist"></a></h4>
-   <p>A Range is a set of integers i where min &lt;= i &lt;= max. It is represented by
-the pair of integers [min, max], where min &lt;= max and min >= 0.</p>
+   <p>A RangeList encodes a set of unsigned 32 bit integers. The set is encoded as a
+list of disjoint intervals. Each interval is represented by two integers, a
+start (inclusive) and end (inclusive).</p>
    <p>A RangeList is a list of n pairs
 [min<sub>i<sub>0..n-1</sub></sub>, max<sub>i<sub>0..n-1</sub></sub>].
 The list must be non-decreasing, i.e. min<sub>i=1..n-1</sub> >= max<sub>i-1<sub>.</sub></sub></p>
@@ -1117,7 +1076,7 @@ then this interval is a single point, <code>start</code>.</p>
      <tr>
       <td>8
       <td>base_checksum
-      <td>Integer (64 bit unsigned)
+      <td>Integer
      <tr>
       <td>9
       <td>connection_speed
@@ -1137,7 +1096,7 @@ then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p><code>connection_speed</code> can be any of the values listed in <a href="#connection-speeds">§ 2.9 Connection Speeds</a>.</p>
    </ul>
-   <h5 class="heading settled" data-level="2.3.2.1" id="PatchResponse"><span class="secno">2.3.2.1. </span><span class="content">PatchResponse</span><a class="self-link" href="#PatchResponse"></a></h5>
+   <h4 class="heading settled" data-level="2.3.3" id="PatchResponse"><span class="secno">2.3.3. </span><span class="content">PatchResponse #</span><a class="self-link" href="#PatchResponse"></a></h4>
     &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
   
 ======= 
