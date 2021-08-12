@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="ea34d10ac7021c92c946e4e0dd2268c20f6bc01c" name="document-revision">
+  <meta content="1c869bb2368da37fb3765092d25bd68d2ff1543f" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -818,19 +818,17 @@ the UIntBase128 encoding.</p>
     </table>
    </div>
    <p>Psuedo code:</p>
-<pre>encode(n) {
-  if (n >= 0)
+<pre>encode(n):
+  if n >= 0:
     return n * 2
-  else
+  else:
     return (n * -2) - 1
-}
 
 decode(n) {
-  if (n &amp; 1)
+  if n &amp; 1:
     return -((n + 1) / 2)
-  else
+  else:
     return n / 2
-}
 </pre>
    <div class="example" id="example-d75ff9a8">
     <a class="self-link" href="#example-d75ff9a8"></a> 
@@ -863,34 +861,31 @@ or two (or more) bytes: [0x80, 0x3f]. An encoder must not allow this to happen a
 if it encounters a UIntBase128-encoded value with
 leading zeros (a value that starts with the byte 0x80), if UIntBase128-encoded
 sequence is longer than 5 bytes, or if a UIntBase128-encoded value exceeds
-2<sup>32</sup>-1.</p>
-   <div class="example" id="example-38105e7c">
-    <a class="self-link" href="#example-38105e7c"></a> 
+2<sup>32</sup>-1. Pseudo-code:</p>
 <pre>bool ReadUIntBase128( data, *result ) {
-    UInt32 accum = 0;
+  UInt32 accum = 0;
 
-    for (i = 0; i &lt; 5; i++) {
-        UInt8 data_byte = data.getNextUInt8();
+  for (i = 0; i &lt; 5; i++) {
+    UInt8 data_byte = data.getNextUInt8();
 
-        // No leading 0’s
-        if (i == 0 &amp;&amp; data_byte == 0x80) return false;if (i == 0 &amp;&amp; data_byte = 0x80) return false;
+    // No leading 0’s
+    if (i == 0 &amp;&amp; data_byte == 0x80) return false;if (i == 0 &amp;&amp; data_byte = 0x80) return false;
 
-        // If any of top 7 bits are set then &lt;&lt; 7 would overflow
-        if (accum &amp; 0xFE000000) return false;
+    // If any of top 7 bits are set then &lt;&lt; 7 would overflow
+    if (accum &amp; 0xFE000000) return false;
 
-        *accum = (accum &lt;&lt; 7) | (data_byte &amp; 0x7F);
+    *accum = (accum &lt;&lt; 7) | (data_byte &amp; 0x7F);
 
-        // Spin until most significant bit of data byte is false
-        if ((data_byte &amp; 0x80) == 0) {
-            *result = accum;
-            return true;
-        }
+    // Spin until most significant bit of data byte is false
+    if ((data_byte &amp; 0x80) == 0) {
+      *result = accum;
+      return true;
     }
-    // UIntBase128 sequence exceeds 5 bytes
-    return false;
+  }
+  // UIntBase128 sequence exceeds 5 bytes
+  return false;
 }
 </pre>
-   </div>
    <div class="example" id="example-96daa8f6">
     <a class="self-link" href="#example-96daa8f6"></a> 
 <pre>Value       Value (binary)                     Output Bytes

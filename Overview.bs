@@ -369,19 +369,17 @@ the UIntBase128 encoding.
 Psuedo code:
 
 ```
-encode(n) {
-  if (n >= 0)
+encode(n):
+  if n >= 0:
     return n * 2
-  else
+  else:
     return (n * -2) - 1
-}
 
 decode(n) {
-  if (n & 1)
+  if n & 1:
     return -((n + 1) / 2)
-  else
+  else:
     return n / 2
-}
 ```
 
 <div class="example">
@@ -420,35 +418,33 @@ or two (or more) bytes: [0x80, 0x3f]. An encoder must not allow this to happen a
 if it encounters a UIntBase128-encoded value with
 leading zeros (a value that starts with the byte 0x80), if UIntBase128-encoded
 sequence is longer than 5 bytes, or if a UIntBase128-encoded value exceeds
-2<sup>32</sup>-1.
+2<sup>32</sup>-1. Pseudo-code:
 
-<div class="example">
 ```
 bool ReadUIntBase128( data, *result ) {
-    UInt32 accum = 0;
+  UInt32 accum = 0;
 
-    for (i = 0; i < 5; i++) {
-        UInt8 data_byte = data.getNextUInt8();
+  for (i = 0; i < 5; i++) {
+    UInt8 data_byte = data.getNextUInt8();
 
-        // No leading 0's
-        if (i == 0 && data_byte == 0x80) return false;if (i == 0 && data_byte = 0x80) return false;
+    // No leading 0's
+    if (i == 0 && data_byte == 0x80) return false;if (i == 0 && data_byte = 0x80) return false;
 
-        // If any of top 7 bits are set then << 7 would overflow
-        if (accum & 0xFE000000) return false;
+    // If any of top 7 bits are set then << 7 would overflow
+    if (accum & 0xFE000000) return false;
 
-        *accum = (accum << 7) | (data_byte & 0x7F);
+    *accum = (accum << 7) | (data_byte & 0x7F);
 
-        // Spin until most significant bit of data byte is false
-        if ((data_byte & 0x80) == 0) {
-            *result = accum;
-            return true;
-        }
+    // Spin until most significant bit of data byte is false
+    if ((data_byte & 0x80) == 0) {
+      *result = accum;
+      return true;
     }
-    // UIntBase128 sequence exceeds 5 bytes
-    return false;
+  }
+  // UIntBase128 sequence exceeds 5 bytes
+  return false;
 }
 ```
-</div>
 
 <div class="example">
 ```
