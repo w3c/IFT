@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="18d805a59d8dd9dbb8945e3f8ff50a62e20bdf7d" name="document-revision">
+  <meta content="c101455e7f4a54af58e537069227badfade50c91" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -464,7 +464,7 @@ dfn > a.self-link::before      { content: "#"; }
          <ol class="toc">
           <li><a href="#compressedintlist-deltas"><span class="secno">2.2.6.1</span> <span class="content">Delta Encoding</span></a>
           <li><a href="#compressedintlist-zigzag"><span class="secno">2.2.6.2</span> <span class="content">Zig-Zag Encoding</span></a>
-          <li><a href="#compressedintlist-varint"><span class="secno">2.2.6.3</span> <span class="content">Variable Length Integer (varint) Encoding</span></a>
+          <li><a href="#compressedintlist-uintbase128"><span class="secno">2.2.6.3</span> <span class="content">UIntBase128 Encoding</span></a>
          </ol>
         <li><a href="#compressedsortedintlist"><span class="secno">2.2.7</span> <span class="content">CompressedSortedIntList</span></a>
         <li><a href="#rangelist"><span class="secno">2.2.8</span> <span class="content">RangeList</span></a>
@@ -755,8 +755,8 @@ pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.</p>
    <h4 class="heading settled" data-level="2.2.6" id="compressedintlist"><span class="secno">2.2.6. </span><span class="content">CompressedIntList</span><a class="self-link" href="#compressedintlist"></a></h4>
    <p>A data structure which compactly represents a list of integers.
 The list is encoded into a ByteString for transport.</p>
-   <p>There are three steps of encoding/compression: first delta, second zig-zag, and finally varint.</p>
-   <p>The final ByteString result is simply the concatenation of the individual varint
+   <p>There are three steps of encoding/compression: first delta, second zig-zag, and finally uintbase128.</p>
+   <p>The final ByteString result is simply the concatenation of the individual uintbase128
 encoded bytes.</p>
    <h5 class="heading settled" data-level="2.2.6.1" id="compressedintlist-deltas"><span class="secno">2.2.6.1. </span><span class="content">Delta Encoding</span><a class="self-link" href="#compressedintlist-deltas"></a></h5>
     Delta encoding converts a list of integers to a list of deltas between them. 
@@ -769,7 +769,7 @@ of N integers D<sub>i<sub>0..n-1</sub></sub> as follows:</p>
      <p>D<sub>i = 1..n-1</sub> = L<sub>i</sub> - L<sub>i-1<sub></sub></sub></p>
    </ul>
    <p>This has the effect of reducing the magnitude of the values, which reduces the number
-of bytes required in the varint encoding, below.</p>
+of bytes required in the uintbase128 encoding, below.</p>
    <div class="example" id="example-a8b975f3">
     <a class="self-link" href="#example-a8b975f3"></a> 
 <pre>// Note: unsorted
@@ -780,11 +780,11 @@ delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
    <h5 class="heading settled" data-level="2.2.6.2" id="compressedintlist-zigzag"><span class="secno">2.2.6.2. </span><span class="content">Zig-Zag Encoding</span><a class="self-link" href="#compressedintlist-zigzag"></a></h5>
    <p>Zig-Zag encoding reversibly converts signed integers to unsigned integers,
 using the same number of bits. The entire range of values is supported.
-This is required, as the <a href="#compressedintlist-varint">§ 2.2.6.3 Variable Length Integer (varint) Encoding</a> step works on
+This is required, as the <a href="#compressedintlist-uintbase128">§ 2.2.6.3 UIntBase128 Encoding</a> step works on
 unsigned ints only.</p>
    <p>Zig-Zag encoding doubles the magnitude of the numbers, which cuts in
 half the range of input values that can, for example, be encoded in 1 byte in
-the varint encoding.</p>
+the uintbase128 encoding.</p>
    <div class="example" id="example-16a15e38">
     <a class="self-link" href="#example-16a15e38"></a> 
     <table>
@@ -844,17 +844,59 @@ zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
     </div>
     <figcaption>Psuedo-code for Zig-Zag encoding and decoding</figcaption>
    </figure>
+   <div class="example" id="example-ca161576">
+    <a class="self-link" href="#example-ca161576"></a> 
+<pre>zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
+bytes = [2E 28 3D 11 80 01 02 02 89 01]
+//       └┘ └┘ └┘ └┘ └───┘ └┘ └┘ └───┘
+</pre>
+   </div>
    <p>*TODO: Add reference to proto implementation*</p>
-   <h5 class="heading settled" data-level="2.2.6.3" id="compressedintlist-varint"><span class="secno">2.2.6.3. </span><span class="content">Variable Length Integer (varint) Encoding</span><a class="self-link" href="#compressedintlist-varint"></a></h5>
-   <p>Unsigned integers are encoded as a sequence of bytes. Small values require one
-byte, larger values require two bytes etc... 7 bits of the value at a time are encoded.
-These 7 bits are place in the lower 7 bits of the output byte. The high bit is
-used to indicate if additional bytes follow.</p>
-   <p>The decoder reads and processes bytes while the high bit is set.</p>
-   <p>The values 0..127 are thus encoded as a singe byte, with the high bit clear.
-The values 128..16383 require 2 bytes. At most 5 bytes are required to encoded
-the full 64 bit unsigned range.</p>
-   <p>Examples of the encoding:</p>
+   <h5 class="heading settled" data-level="2.2.6.3" id="compressedintlist-uintbase128"><span class="secno">2.2.6.3. </span><span class="content">UIntBase128 Encoding</span><a class="self-link" href="#compressedintlist-uintbase128"></a></h5>
+   <p>UIntBase128 is a different variable length encoding of unsigned integers,
+suitable for values up to 2<sup>32</sup>-1. A UIntBase128 encoded number
+is a sequence of bytes for which the most significant bit is set for all but
+the last byte, and clear for the last byte. The number itself is base 128
+encoded in the lower 7 bits of each byte. Thus, a decoding procedure for
+a UIntBase128 is: start with value = 0. Consume a byte, setting value =
+old value times 128 + (byte bitwise-and 127). Repeat last step until
+the most significant bit of byte is false.</p>
+   <p>UIntBase128 encoding format allows a possibility of sub-optimal encoding, where e.g.
+the same numerical value can be represented with variable number of bytes (utilizing
+leading zeros). For example, the value 63 could be encoded as either one byte 0x3F
+or two (or more) bytes: [0x80, 0x3f]. An encoder must not allow this to happen and
+*MUST* produce shortest possible encoding. A decoder *MUST* reject the font file
+if it encounters a UintBase128-encoded value with
+leading zeros (a value that starts with the byte 0x80), if UintBase128-encoded
+sequence is longer than 5 bytes, or if a UintBase128-encoded value exceeds
+2<sup>32</sup>-1.</p>
+   <div class="example" id="example-38105e7c">
+    <a class="self-link" href="#example-38105e7c"></a> 
+<pre>bool ReadUIntBase128( data, *result ) {
+    UInt32 accum = 0;
+
+    for (i = 0; i &lt; 5; i++) {
+        UInt8 data_byte = data.getNextUInt8();
+
+        // No leading 0’s
+        if (i == 0 &amp;&amp; data_byte == 0x80) return false;if (i == 0 &amp;&amp; data_byte = 0x80) return false;
+
+        // If any of top 7 bits are set then &lt;&lt; 7 would overflow
+        if (accum &amp; 0xFE000000) return false;
+
+        *accum = (accum &lt;&lt; 7) | (data_byte &amp; 0x7F);
+
+        // Spin until most significant bit of data byte is false
+        if ((data_byte &amp; 0x80) == 0) {
+            *result = accum;
+            return true;
+        }
+    }
+    // UIntBase128 sequence exceeds 5 bytes
+    return false;
+}
+</pre>
+   </div>
    <div class="example" id="example-96daa8f6">
     <a class="self-link" href="#example-96daa8f6"></a> 
 <pre>Value       Value (binary)                     Output Bytes
@@ -871,23 +913,14 @@ the full 64 bit unsigned range.</p>
 4294967295  11111111111111111111111111111111   11111111 11111111 11111111 11111111 00001111
 </pre>
    </div>
-   <p>*TODO Add psuedo code*</p>
-   <p>*TODO Add reference to proto implementation*</p>
-   <div class="example" id="example-ca161576">
-    <a class="self-link" href="#example-ca161576"></a> 
-<pre>zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
-bytes = [2E 28 3D 11 80 01 02 02 89 01]
-//       └┘ └┘ └┘ └┘ └───┘ └┘ └┘ └───┘
-</pre>
-   </div>
    <h4 class="heading settled" data-level="2.2.7" id="compressedsortedintlist"><span class="secno">2.2.7. </span><span class="content">CompressedSortedIntList</span><a class="self-link" href="#compressedsortedintlist"></a></h4>
    <p>A data structure which compactly represents a sorted list of non-negative integers.
 The list is encoded into a ByteString for transport.</p>
    <p>This is a variation on CompressedIntList with better compression.
 Sorted lists only use two steps of encoding/compression: first deltas and then
-varint.
+uintbase128.
 The <a href="#compressedintlist-zigzag">§ 2.2.6.2 Zig-Zag Encoding</a> step is skipped.
-This allows twice the range in the varints, so that single bytes may be used more often.</p>
+This allows twice the range in uintbase128, so that single bytes may be used more often.</p>
    <h4 class="heading settled" data-level="2.2.8" id="rangelist"><span class="secno">2.2.8. </span><span class="content">RangeList</span><a class="self-link" href="#rangelist"></a></h4>
    <p>A RangeList encodes a set of unsigned 32 bit integers. The set is encoded as a
 list of disjoint intervals. Each interval is represented by two integers, a
