@@ -310,14 +310,6 @@ significant bit in the byte and the bit with the largest index is the most signi
 
 </div>
 
-### AxisSpace ### {#AxisSpace}
-
-Stores a set of intervals on one or more open type variation axes [[opentype-variations]]</a>.
-Encoded as a CBOR map (major type 5). The key in each pair is an
-<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord">
-axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
-pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.
-
 ### CompressedIntList ### {#compressedintlist}
 
 A data structure which compactly represents a list of integers.
@@ -428,9 +420,9 @@ the same numerical value can be represented with variable number of bytes (utili
 leading zeros). For example, the value 63 could be encoded as either one byte 0x3F
 or two (or more) bytes: [0x80, 0x3f]. An encoder must not allow this to happen and
 *MUST* produce shortest possible encoding. A decoder *MUST* reject the font file
-if it encounters a UintBase128-encoded value with
-leading zeros (a value that starts with the byte 0x80), if UintBase128-encoded
-sequence is longer than 5 bytes, or if a UintBase128-encoded value exceeds
+if it encounters a UIntBase128-encoded value with
+leading zeros (a value that starts with the byte 0x80), if UIntBase128-encoded
+sequence is longer than 5 bytes, or if a UIntBase128-encoded value exceeds
 2<sup>32</sup>-1.
 
 <div class="example">
@@ -485,9 +477,9 @@ The list is encoded into a ByteString for transport.
 
 This is a variation on CompressedIntList with better compression.
 Sorted lists only use two steps of encoding/compression: first deltas and then
-uintbase128.
+UIntBase128.
 The [[#compressedintlist-zigzag]] step is skipped.
-This allows twice the range in uintbase128, so that single bytes may be used more often.
+This allows twice the range in UIntBase128, so that single bytes may be used more often.
 
 </div>
 
@@ -516,6 +508,14 @@ delta list = [3, 7, 3, 255]
 CompressedIntList (sorted) = [0x03 0x07 0x03 0xFF 0x01]
 ```
 </div>
+
+### AxisSpace ### {#AxisSpace}
+
+Stores a set of intervals on one or more open type variation axes [[opentype-variations]]</a>.
+Encoded as a CBOR map (major type 5). The key in each pair is an
+<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord">
+axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
+pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.
 
 ### Objects ### {#objects}
 
@@ -607,7 +607,7 @@ For a PatchRequest object to be well formed:
   <tr><td>3</td><td>replacement</td><td>ByteString</td></tr>
   <tr><td>4</td><td>original_font_checksum</td><td>Integer</td></tr>
   <tr><td>5</td><td>patched_checksum</td><td>Integer</td></tr>
-  <tr><td>6</td><td>codepoint_ordering</td><td>CompressedList</td></tr>
+  <tr><td>6</td><td>codepoint_ordering</td><td>CompressedIntList</td></tr>
   <tr><td>7</td><td>ordering_checksum</td><td>Integer</td></tr>
   <tr><td>8</td><td>subset_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
   <tr><td>9</td><td>original_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>

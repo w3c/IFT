@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="c101455e7f4a54af58e537069227badfade50c91" name="document-revision">
+  <meta content="93f22517e0913074f6cec27eadc511a8f65e632d" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -458,16 +458,16 @@ dfn > a.self-link::before      { content: "#"; }
         <li><a href="#primitives"><span class="secno">2.2.2</span> <span class="content">Primitives</span></a>
         <li><a href="#protocol-version"><span class="secno">2.2.3</span> <span class="content">ProtocolVersion</span></a>
         <li><a href="#sparsebitset"><span class="secno">2.2.4</span> <span class="content">SparseBitSet</span></a>
-        <li><a href="#AxisSpace"><span class="secno">2.2.5</span> <span class="content">AxisSpace</span></a>
         <li>
-         <a href="#compressedintlist"><span class="secno">2.2.6</span> <span class="content">CompressedIntList</span></a>
+         <a href="#compressedintlist"><span class="secno">2.2.5</span> <span class="content">CompressedIntList</span></a>
          <ol class="toc">
-          <li><a href="#compressedintlist-deltas"><span class="secno">2.2.6.1</span> <span class="content">Delta Encoding</span></a>
-          <li><a href="#compressedintlist-zigzag"><span class="secno">2.2.6.2</span> <span class="content">Zig-Zag Encoding</span></a>
-          <li><a href="#compressedintlist-uintbase128"><span class="secno">2.2.6.3</span> <span class="content">UIntBase128 Encoding</span></a>
+          <li><a href="#compressedintlist-deltas"><span class="secno">2.2.5.1</span> <span class="content">Delta Encoding</span></a>
+          <li><a href="#compressedintlist-zigzag"><span class="secno">2.2.5.2</span> <span class="content">Zig-Zag Encoding</span></a>
+          <li><a href="#compressedintlist-uintbase128"><span class="secno">2.2.5.3</span> <span class="content">UIntBase128 Encoding</span></a>
          </ol>
-        <li><a href="#compressedsortedintlist"><span class="secno">2.2.7</span> <span class="content">CompressedSortedIntList</span></a>
-        <li><a href="#rangelist"><span class="secno">2.2.8</span> <span class="content">RangeList</span></a>
+        <li><a href="#compressedsortedintlist"><span class="secno">2.2.6</span> <span class="content">CompressedSortedIntList</span></a>
+        <li><a href="#rangelist"><span class="secno">2.2.7</span> <span class="content">RangeList</span></a>
+        <li><a href="#AxisSpace"><span class="secno">2.2.8</span> <span class="content">AxisSpace</span></a>
         <li><a href="#objects"><span class="secno">2.2.9</span> <span class="content">Objects</span></a>
        </ol>
       <li>
@@ -748,17 +748,13 @@ significant bit in the byte and the bit with the largest index is the most signi
       <p>n<sub>3</sub> append 0011. Bit 0 set for value 16, bit 1 set for value 17.</p>
     </ul>
    </div>
-   <h4 class="heading settled" data-level="2.2.5" id="AxisSpace"><span class="secno">2.2.5. </span><span class="content">AxisSpace</span><a class="self-link" href="#AxisSpace"></a></h4>
-   <p>Stores a set of intervals on one or more open type variation axes <a data-link-type="biblio" href="#biblio-opentype-variations">[opentype-variations]</a>.
-Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
-pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.</p>
-   <h4 class="heading settled" data-level="2.2.6" id="compressedintlist"><span class="secno">2.2.6. </span><span class="content">CompressedIntList</span><a class="self-link" href="#compressedintlist"></a></h4>
+   <h4 class="heading settled" data-level="2.2.5" id="compressedintlist"><span class="secno">2.2.5. </span><span class="content">CompressedIntList</span><a class="self-link" href="#compressedintlist"></a></h4>
    <p>A data structure which compactly represents a list of integers.
 The list is encoded into a ByteString for transport.</p>
    <p>There are three steps of encoding/compression: first delta, second zig-zag, and finally uintbase128.</p>
    <p>The final ByteString result is simply the concatenation of the individual uintbase128
 encoded bytes.</p>
-   <h5 class="heading settled" data-level="2.2.6.1" id="compressedintlist-deltas"><span class="secno">2.2.6.1. </span><span class="content">Delta Encoding</span><a class="self-link" href="#compressedintlist-deltas"></a></h5>
+   <h5 class="heading settled" data-level="2.2.5.1" id="compressedintlist-deltas"><span class="secno">2.2.5.1. </span><span class="content">Delta Encoding</span><a class="self-link" href="#compressedintlist-deltas"></a></h5>
     Delta encoding converts a list of integers to a list of deltas between them. 
    <p>A list L of n integers L<sub>i<sub>0..n-1</sub></sub> is converted into a list
 of N integers D<sub>i<sub>0..n-1</sub></sub> as follows:</p>
@@ -777,10 +773,10 @@ int_list = [23, 43, 12, 3, 67, 68, 69, 0]
 delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
 </pre>
    </div>
-   <h5 class="heading settled" data-level="2.2.6.2" id="compressedintlist-zigzag"><span class="secno">2.2.6.2. </span><span class="content">Zig-Zag Encoding</span><a class="self-link" href="#compressedintlist-zigzag"></a></h5>
+   <h5 class="heading settled" data-level="2.2.5.2" id="compressedintlist-zigzag"><span class="secno">2.2.5.2. </span><span class="content">Zig-Zag Encoding</span><a class="self-link" href="#compressedintlist-zigzag"></a></h5>
    <p>Zig-Zag encoding reversibly converts signed integers to unsigned integers,
 using the same number of bits. The entire range of values is supported.
-This is required, as the <a href="#compressedintlist-uintbase128">§ 2.2.6.3 UIntBase128 Encoding</a> step works on
+This is required, as the <a href="#compressedintlist-uintbase128">§ 2.2.5.3 UIntBase128 Encoding</a> step works on
 unsigned ints only.</p>
    <p>Zig-Zag encoding doubles the magnitude of the numbers, which cuts in
 half the range of input values that can, for example, be encoded in 1 byte in
@@ -852,7 +848,7 @@ bytes = [2E 28 3D 11 80 01 02 02 89 01]
 </pre>
    </div>
    <p>*TODO: Add reference to proto implementation*</p>
-   <h5 class="heading settled" data-level="2.2.6.3" id="compressedintlist-uintbase128"><span class="secno">2.2.6.3. </span><span class="content">UIntBase128 Encoding</span><a class="self-link" href="#compressedintlist-uintbase128"></a></h5>
+   <h5 class="heading settled" data-level="2.2.5.3" id="compressedintlist-uintbase128"><span class="secno">2.2.5.3. </span><span class="content">UIntBase128 Encoding</span><a class="self-link" href="#compressedintlist-uintbase128"></a></h5>
    <p>UIntBase128 is a different variable length encoding of unsigned integers,
 suitable for values up to 2<sup>32</sup>-1. A UIntBase128 encoded number
 is a sequence of bytes for which the most significant bit is set for all but
@@ -866,9 +862,9 @@ the same numerical value can be represented with variable number of bytes (utili
 leading zeros). For example, the value 63 could be encoded as either one byte 0x3F
 or two (or more) bytes: [0x80, 0x3f]. An encoder must not allow this to happen and
 *MUST* produce shortest possible encoding. A decoder *MUST* reject the font file
-if it encounters a UintBase128-encoded value with
-leading zeros (a value that starts with the byte 0x80), if UintBase128-encoded
-sequence is longer than 5 bytes, or if a UintBase128-encoded value exceeds
+if it encounters a UIntBase128-encoded value with
+leading zeros (a value that starts with the byte 0x80), if UIntBase128-encoded
+sequence is longer than 5 bytes, or if a UIntBase128-encoded value exceeds
 2<sup>32</sup>-1.</p>
    <div class="example" id="example-38105e7c">
     <a class="self-link" href="#example-38105e7c"></a> 
@@ -913,15 +909,15 @@ sequence is longer than 5 bytes, or if a UintBase128-encoded value exceeds
 4294967295  11111111111111111111111111111111   11111111 11111111 11111111 11111111 00001111
 </pre>
    </div>
-   <h4 class="heading settled" data-level="2.2.7" id="compressedsortedintlist"><span class="secno">2.2.7. </span><span class="content">CompressedSortedIntList</span><a class="self-link" href="#compressedsortedintlist"></a></h4>
+   <h4 class="heading settled" data-level="2.2.6" id="compressedsortedintlist"><span class="secno">2.2.6. </span><span class="content">CompressedSortedIntList</span><a class="self-link" href="#compressedsortedintlist"></a></h4>
    <p>A data structure which compactly represents a sorted list of non-negative integers.
 The list is encoded into a ByteString for transport.</p>
    <p>This is a variation on CompressedIntList with better compression.
 Sorted lists only use two steps of encoding/compression: first deltas and then
-uintbase128.
-The <a href="#compressedintlist-zigzag">§ 2.2.6.2 Zig-Zag Encoding</a> step is skipped.
-This allows twice the range in uintbase128, so that single bytes may be used more often.</p>
-   <h4 class="heading settled" data-level="2.2.8" id="rangelist"><span class="secno">2.2.8. </span><span class="content">RangeList</span><a class="self-link" href="#rangelist"></a></h4>
+UIntBase128.
+The <a href="#compressedintlist-zigzag">§ 2.2.5.2 Zig-Zag Encoding</a> step is skipped.
+This allows twice the range in UIntBase128, so that single bytes may be used more often.</p>
+   <h4 class="heading settled" data-level="2.2.7" id="rangelist"><span class="secno">2.2.7. </span><span class="content">RangeList</span><a class="self-link" href="#rangelist"></a></h4>
    <p>A RangeList encodes a set of unsigned 32 bit integers. The set is encoded as a
 list of disjoint intervals. Each interval is represented by two integers, a
 start (inclusive) and end (inclusive).</p>
@@ -931,7 +927,7 @@ The list must be non-decreasing, i.e. min<sub>i=1..n-1</sub> >= max<sub>i-1<sub>
    <p>To encode this list, we convert it to a list L of 2n integers, where
 L<sub>2i</sub> = min<sub>i</sub> and L<sub>2i+1</sub> = max<sub>i</sub> for
 i = 0..n-1.</p>
-   <p>L is a sorted list, so <a href="#compressedsortedintlist">§ 2.2.7 CompressedSortedIntList</a> is used to encode it as a ByteString.</p>
+   <p>L is a sorted list, so <a href="#compressedsortedintlist">§ 2.2.6 CompressedSortedIntList</a> is used to encode it as a ByteString.</p>
    <div class="example" id="example-ce67a84d">
     <a class="self-link" href="#example-ce67a84d"></a> 
 <pre>RangeList = [3, 10], [13, 268]
@@ -941,6 +937,10 @@ delta list = [3, 7, 3, 255]
 CompressedIntList (sorted) = [0x03 0x07 0x03 0xFF 0x01]
 </pre>
    </div>
+   <h4 class="heading settled" data-level="2.2.8" id="AxisSpace"><span class="secno">2.2.8. </span><span class="content">AxisSpace</span><a class="self-link" href="#AxisSpace"></a></h4>
+   <p>Stores a set of intervals on one or more open type variation axes <a data-link-type="biblio" href="#biblio-opentype-variations">[opentype-variations]</a>.
+Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
+pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.</p>
    <h4 class="heading settled" data-level="2.2.9" id="objects"><span class="secno">2.2.9. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
    <p>Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
 (major type 5). Each key and value pair is encoded as a single map entry. Keys are always unsigned
@@ -1110,7 +1110,7 @@ then <code>ordering_checksum</code> must be set.</p>
      <tr>
       <td>6
       <td>codepoint_ordering
-      <td>CompressedList
+      <td>CompressedIntList
      <tr>
       <td>7
       <td>ordering_checksum
