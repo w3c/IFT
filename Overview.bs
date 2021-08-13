@@ -121,7 +121,7 @@ should be encoded by CBOR are given in the definition of those data types.
     <th>Data Type</th><th>Description</th><th>CBOR Major Type</th>
   </tr>
   <tr>
-    <td>Integer</td><td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive.</td>
+    <td>Integer</td><td>An integer value range [-2<sup>64</sup> - 1, 2<sup>64</sup> - 1] inclusive.</td>
     <td>0 or 1</td>
   </tr>
   <tr>
@@ -141,7 +141,7 @@ An Integer describing the version of this communication protocol being used by a
 PatchRequest or PatchResponse. This value guides the semantics and interpretation
 of the fields sent.
 
-This field is for future expansion. There is only one valid value, 0.
+This field is for future expansion. There currently is only one valid value, 0.
 
 ### SparseBitSet ### {#sparsebitset}
 
@@ -344,8 +344,8 @@ delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
 
 Zig-Zag encoding reversibly converts signed integers to unsigned integers,
 using the same number of bits. The entire range of values is supported.
-This is required, as the [[#integerlist-uintbase128]] step works on
-unsigned integers only. The encoding maps positive integer values as even positive integers and
+This step is required, as the [[#integerlist-uintbase128]] step works on
+unsigned integers only. The encoding maps positive integer values to even positive integers and
 negative integer values to odd positive integers. Psuedo code:
 
 ```
@@ -386,7 +386,7 @@ zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
 
 #### UIntBase128 Encoding #### {#integerlist-uintbase128}
 
-UIntBase128 is a different variable length encoding of unsigned integers,
+UIntBase128 is a variable length encoding of unsigned integers,
 suitable for values up to 2<sup>32</sup>-1. A UIntBase128 encoded number
 is a sequence of bytes for which the most significant bit is set for all but
 the last byte, and clear for the last byte. The number itself is base 128
@@ -439,11 +439,11 @@ Value       Output Bytes
 2           00000010
 3           00000011
 127         01111111
-128         10000000 00000001
-255         11111111 00000001
-16256       10000000 01111111
-2080768     10000000 10000000 01111111
-266338304   10000000 10000000 10000000 01111111
+128         10000001 00000000
+255         10000001 01111111
+16256       11111111 00000000
+2080768     11111111 10000000 00000000
+266338304   11111111 10000000 10000000 00000000
 4294967295  11111111 11111111 11111111 11111111 00001111
 ```
 </div>
