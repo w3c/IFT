@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="ed7b25060170eec7a368c4b8c1a88ae2621ad19a" name="document-revision">
+  <meta content="ba28b63a71a0656b04b8a6b6d3555ff7093d89ea" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-08-12">12 August 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-08-13">13 August 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -567,7 +567,7 @@ should be encoded by CBOR are given in the definition of those data types.</p>
       <th>CBOR Major Type
      <tr>
       <td>Integer
-      <td>An integer value range [-2^64 - 1, 2^64 - 1] inclusive.
+      <td>An integer value range [-2<sup>64</sup> - 1, 2<sup>64</sup> - 1] inclusive.
       <td>0 or 1
      <tr>
       <td>Float
@@ -586,7 +586,7 @@ should be encoded by CBOR are given in the definition of those data types.</p>
    <p>An Integer describing the version of this communication protocol being used by a
 PatchRequest or PatchResponse. This value guides the semantics and interpretation
 of the fields sent.</p>
-   <p>This field is for future expansion. There is only one valid value, 0.</p>
+   <p>This field is for future expansion. There currently is only one valid value, 0.</p>
    <h4 class="heading settled" data-level="2.2.4" id="sparsebitset"><span class="secno">2.2.4. </span><span class="content">SparseBitSet</span><a class="self-link" href="#sparsebitset"></a></h4>
    <p>A data structure which compactly stores a set of distinct unsigned integers. The set is represented as
 a tree where each node has a fixed number of children that recursively sub-divides an interval into
@@ -776,8 +776,8 @@ delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
    <h5 class="heading settled" data-level="2.2.5.2" id="integerlist-zigzag"><span class="secno">2.2.5.2. </span><span class="content">Zig-Zag Encoding</span><a class="self-link" href="#integerlist-zigzag"></a></h5>
    <p>Zig-Zag encoding reversibly converts signed integers to unsigned integers,
 using the same number of bits. The entire range of values is supported.
-This is required, as the <a href="#integerlist-uintbase128">§ 2.2.5.3 UIntBase128 Encoding</a> step works on
-unsigned integers only. The encoding maps positive integer values as even positive integers and
+This step is required, as the <a href="#integerlist-uintbase128">§ 2.2.5.3 UIntBase128 Encoding</a> step works on
+unsigned integers only. The encoding maps positive integer values to even positive integers and
 negative integer values to odd positive integers. Psuedo code:</p>
 <pre>encode(n):
   if n >= 0:
@@ -834,7 +834,7 @@ zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
 </pre>
    </div>
    <h5 class="heading settled" data-level="2.2.5.3" id="integerlist-uintbase128"><span class="secno">2.2.5.3. </span><span class="content">UIntBase128 Encoding</span><a class="self-link" href="#integerlist-uintbase128"></a></h5>
-   <p>UIntBase128 is a different variable length encoding of unsigned integers,
+   <p>UIntBase128 is a variable length encoding of unsigned integers,
 suitable for values up to 2<sup>32</sup>-1. A UIntBase128 encoded number
 is a sequence of bytes for which the most significant bit is set for all but
 the last byte, and clear for the last byte. The number itself is base 128
@@ -875,19 +875,19 @@ sequence is longer than 5 bytes, or if a UIntBase128-encoded value exceeds
   return false;
 }
 </pre>
-   <div class="example" id="example-f79e322c">
-    <a class="self-link" href="#example-f79e322c"></a> 
+   <div class="example" id="example-34487699">
+    <a class="self-link" href="#example-34487699"></a> 
 <pre>Value       Output Bytes
 0           00000000
 1           00000001
 2           00000010
 3           00000011
 127         01111111
-128         10000000 00000001
-255         11111111 00000001
-16256       10000000 01111111
-2080768     10000000 10000000 01111111
-266338304   10000000 10000000 10000000 01111111
+128         10000001 00000000
+255         10000001 01111111
+16256       11111111 00000000
+2080768     11111111 10000000 00000000
+266338304   11111111 10000000 10000000 00000000
 4294967295  11111111 11111111 11111111 11111111 00001111
 </pre>
    </div>
