@@ -345,28 +345,8 @@ delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
 Zig-Zag encoding reversibly converts signed integers to unsigned integers,
 using the same number of bits. The entire range of values is supported.
 This is required, as the [[#integerlist-uintbase128]] step works on
-unsigned integers only.
-
-Zig-Zag encoding doubles the magnitude of the numbers, which cuts in
-half the range of input values that can, for example, be encoded in 1 byte in
-the UIntBase128 encoding.
-
-<div class="example">
-<table>
-<tr><th>Value</th><th>Zig-Zag Encoding</th></tr>
-<tr><td>0</td><td>0</td></tr>
-<tr><td>1</td><td>2</td></tr>
-<tr><td>2</td><td>4</td></tr>
-<tr><td>3</td><td>6</td></tr>
-<tr><td>4</td><td>8</td></tr>
-<tr><td>-1</td><td>1</td></tr>
-<tr><td>-2</td><td>3</td></tr>
-<tr><td>-3</td><td>5</td></tr>
-<tr><td>-4</td><td>7</td></tr>
-</table>
-</div>
-
-Psuedo code:
+unsigned integers only. The encoding maps positive integer values as even positive integers and
+negative integer values to odd positive integers. Psuedo code:
 
 ```
 encode(n):
@@ -383,21 +363,26 @@ decode(n) {
 ```
 
 <div class="example">
+<table>
+<tr><th>Value</th><th>Zig-Zag Encoding</th></tr>
+<tr><td>0</td><td>0</td></tr>
+<tr><td>1</td><td>2</td></tr>
+<tr><td>2</td><td>4</td></tr>
+<tr><td>3</td><td>6</td></tr>
+<tr><td>4</td><td>8</td></tr>
+<tr><td>-1</td><td>1</td></tr>
+<tr><td>-2</td><td>3</td></tr>
+<tr><td>-3</td><td>5</td></tr>
+<tr><td>-4</td><td>7</td></tr>
+</table>
+</div>
+
+<div class="example">
 ```
 delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
 zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
 ```
 </div>
-
-<div class="example">
-```
-zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
-bytes = [2E 28 3D 11 80 01 02 02 89 01]
-//       └┘ └┘ └┘ └┘ └───┘ └┘ └┘ └───┘
-```
-</div>
-
-*TODO: Add reference to proto implementation*
 
 #### UIntBase128 Encoding #### {#integerlist-uintbase128}
 
@@ -462,6 +447,15 @@ Value       Value (binary)                     Output Bytes
 4294967295  11111111111111111111111111111111   11111111 11111111 11111111 11111111 00001111
 ```
 </div>
+
+<div class="example">
+```
+zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
+bytes = [2E 28 3D 11 80 01 02 02 89 01]
+//       └┘ └┘ └┘ └┘ └───┘ └┘ └┘ └───┘
+```
+</div>
+
 
 ### SortedIntegerList ### {#sortedintegerlist}
 

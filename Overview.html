@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="1c869bb2368da37fb3765092d25bd68d2ff1543f" name="document-revision">
+  <meta content="8a60e19c74e257007bb5163a614a6790670a9cc1" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -777,10 +777,20 @@ delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
    <p>Zig-Zag encoding reversibly converts signed integers to unsigned integers,
 using the same number of bits. The entire range of values is supported.
 This is required, as the <a href="#integerlist-uintbase128">§ 2.2.5.3 UIntBase128 Encoding</a> step works on
-unsigned integers only.</p>
-   <p>Zig-Zag encoding doubles the magnitude of the numbers, which cuts in
-half the range of input values that can, for example, be encoded in 1 byte in
-the UIntBase128 encoding.</p>
+unsigned integers only. The encoding maps positive integer values as even positive integers and
+negative integer values to odd positive integers. Psuedo code:</p>
+<pre>encode(n):
+  if n >= 0:
+    return n * 2
+  else:
+    return (n * -2) - 1
+
+decode(n) {
+  if n &amp; 1:
+    return -((n + 1) / 2)
+  else:
+    return n / 2
+</pre>
    <div class="example" id="example-16a15e38">
     <a class="self-link" href="#example-16a15e38"></a> 
     <table>
@@ -817,33 +827,12 @@ the UIntBase128 encoding.</p>
        <td>7
     </table>
    </div>
-   <p>Psuedo code:</p>
-<pre>encode(n):
-  if n >= 0:
-    return n * 2
-  else:
-    return (n * -2) - 1
-
-decode(n) {
-  if n &amp; 1:
-    return -((n + 1) / 2)
-  else:
-    return n / 2
-</pre>
    <div class="example" id="example-d75ff9a8">
     <a class="self-link" href="#example-d75ff9a8"></a> 
 <pre>delta_list = [23, 20, -31, -9, 64, 1, 1, -69]
 zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
 </pre>
    </div>
-   <div class="example" id="example-ca161576">
-    <a class="self-link" href="#example-ca161576"></a> 
-<pre>zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
-bytes = [2E 28 3D 11 80 01 02 02 89 01]
-//       └┘ └┘ └┘ └┘ └───┘ └┘ └┘ └───┘
-</pre>
-   </div>
-   <p>*TODO: Add reference to proto implementation*</p>
    <h5 class="heading settled" data-level="2.2.5.3" id="integerlist-uintbase128"><span class="secno">2.2.5.3. </span><span class="content">UIntBase128 Encoding</span><a class="self-link" href="#integerlist-uintbase128"></a></h5>
    <p>UIntBase128 is a different variable length encoding of unsigned integers,
 suitable for values up to 2<sup>32</sup>-1. A UIntBase128 encoded number
@@ -900,6 +889,13 @@ sequence is longer than 5 bytes, or if a UIntBase128-encoded value exceeds
 2080768     00000000000111111100000000000000   10000000 10000000 01111111
 266338304   00001111111000000000000000000000   10000000 10000000 10000000 01111111
 4294967295  11111111111111111111111111111111   11111111 11111111 11111111 11111111 00001111
+</pre>
+   </div>
+   <div class="example" id="example-ca161576">
+    <a class="self-link" href="#example-ca161576"></a> 
+<pre>zig_zag_encoded_list = [46, 40, 61, 17, 128, 2, 2, 137]
+bytes = [2E 28 3D 11 80 01 02 02 89 01]
+//       └┘ └┘ └┘ └┘ └───┘ └┘ └┘ └───┘
 </pre>
    </div>
    <h4 class="heading settled" data-level="2.2.6" id="sortedintegerlist"><span class="secno">2.2.6. </span><span class="content">SortedIntegerList</span><a class="self-link" href="#sortedintegerlist"></a></h4>
