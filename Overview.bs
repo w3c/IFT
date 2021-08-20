@@ -858,7 +858,7 @@ fast_hash(byte[] data):
   # When casting byte arrays into unsigned 64 bit integers the bytes are in little
   # endian order. That is the smallest index is the least significant byte.
   uint64 hash = SEED ^ (length(data) * M)
-  for (i = 0; i <= length(bytes) - 8; i += 8)
+  for (i = 0; i <= length(data) - 8; i += 8)
     hash = (hash ^ mix((uint64) data[i:i+8])) * M
 
   remaining = length(data) % 8
@@ -872,6 +872,22 @@ fast_hash(byte[] data):
 
 Note: a C implementation of fast hash can be found
 <a href="https://github.com/ztanml/fast-hash">here</a>.
+
+<div class=example>
+
+<table>
+  <tr><th>Bytes</th><th>Checksum value</th></tr>
+  <tr>
+    <td>0f 7b 5a e5</td>
+    <td>0xe5e0d1dc89eaa189</td>
+  </tr>
+  <tr>
+  <td>1d f4 02 5e d3 b8 43 21 3b ae de</td>
+  <td>0xb31e9c70768205fb</td>
+  </tr>
+</table>
+
+</div>
 
 Codepoint Reordering {#codepoint-reordering}
 --------------------------------------------

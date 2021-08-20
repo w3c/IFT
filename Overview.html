@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="b7818b583f60c170ad9aaae32944a66c5c77d3d4" name="document-revision">
+  <meta content="b80384e2574e6b41474a885e057d661e66ea1f05" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -1344,7 +1344,7 @@ fast_hash(byte[] data):
   # When casting byte arrays into unsigned 64 bit integers the bytes are in little
   # endian order. That is the smallest index is the least significant byte.
   uint64 hash = SEED ^ (length(data) * M)
-  for (i = 0; i &lt;= length(bytes) - 8; i += 8)
+  for (i = 0; i &lt;= length(data) - 8; i += 8)
     hash = (hash ^ mix((uint64) data[i:i+8])) * M
 
   remaining = length(data) % 8
@@ -1356,6 +1356,21 @@ fast_hash(byte[] data):
   return mix((hash ^ mix(last_value)) * M)
 </pre>
    <p class="note" role="note"><span>Note:</span> a C implementation of fast hash can be found <a href="https://github.com/ztanml/fast-hash">here</a>.</p>
+   <div class="example" id="example-e69b2b2f">
+    <a class="self-link" href="#example-e69b2b2f"></a> 
+    <table>
+     <tbody>
+      <tr>
+       <th>Bytes
+       <th>Checksum value
+      <tr>
+       <td>0f 7b 5a e5
+       <td>0xe5e0d1dc89eaa189
+      <tr>
+       <td>1d f4 02 5e d3 b8 43 21 3b ae de
+       <td>0xb31e9c70768205fb
+    </table>
+   </div>
    <h3 class="heading settled" data-level="2.7" id="codepoint-reordering"><span class="secno">2.7. </span><span class="content">Codepoint Reordering</span><a class="self-link" href="#codepoint-reordering"></a></h3>
    <p>A codepoint reordering for a font defines a function which maps unicode codepoint values from the
 font to a continuous space of [0, number of codepoints in the font). This transformation is intended
