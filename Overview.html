@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="b80384e2574e6b41474a885e057d661e66ea1f05" name="document-revision">
+  <meta content="951f2aa257ab29713502ef0cf8cc878de938e35a" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -1355,6 +1355,8 @@ fast_hash(byte[] data):
                                       [0] * (8 - remaining))
   return mix((hash ^ mix(last_value)) * M)
 </pre>
+   <p>To ensure checksums are consistent across all platforms, all integers during the computation must be
+in little endian order.</p>
    <p class="note" role="note"><span>Note:</span> a C implementation of fast hash can be found <a href="https://github.com/ztanml/fast-hash">here</a>.</p>
    <div class="example" id="example-e69b2b2f">
     <a class="self-link" href="#example-e69b2b2f"></a> 
@@ -1393,13 +1395,25 @@ mix(value):
 
 fast_hash_ordering(uint64[] ordering):
   uint64 hash = SEED ^ (length(ordering) * 8 * M)
-  for (i = 0; i &lt; length(ordering); i++)
-    # to ensure checksums are consistent across all platforms, the integers must be in little
-    # endian order.
-    hash = (hash ^ mix(little_endian (ordering[i])) * M
+  for i in ordering:
+    hash = (hash ^ mix(ordering[i])) * M
 
   return mix(hash)
 </pre>
+   <p>To ensure checksums are consistent across all platforms, all integers during the computation must be
+in little endian order.</p>
+   <div class="example" id="example-6c33d2ed">
+    <a class="self-link" href="#example-6c33d2ed"></a> 
+    <table>
+     <tbody>
+      <tr>
+       <th>Codepoint Ordering
+       <th>Checksum value
+      <tr>
+       <td>[106, 97, 105, 120, 100]
+       <td>0x6986dc19f4e621e
+    </table>
+   </div>
    <h3 class="heading settled" data-level="2.8" id="patch-formats"><span class="secno">2.8. </span><span class="content">Patch Formats</span><a class="self-link" href="#patch-formats"></a></h3>
    <p>The following patch formats may be used by the server to create binary diffs between a source file
 and a target file:</p>

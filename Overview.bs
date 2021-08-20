@@ -870,6 +870,9 @@ fast_hash(byte[] data):
   return mix((hash ^ mix(last_value)) * M)
 ```
 
+To ensure checksums are consistent across all platforms, all integers during the computation must be
+in little endian order.
+
 Note: a C implementation of fast hash can be found
 <a href="https://github.com/ztanml/fast-hash">here</a>.
 
@@ -919,13 +922,26 @@ mix(value):
 
 fast_hash_ordering(uint64[] ordering):
   uint64 hash = SEED ^ (length(ordering) * 8 * M)
-  for (i = 0; i < length(ordering); i++)
-    # to ensure checksums are consistent across all platforms, the integers must be in little
-    # endian order.
-    hash = (hash ^ mix(little_endian (ordering[i])) * M
+  for i in ordering:
+    hash = (hash ^ mix(ordering[i])) * M
 
   return mix(hash)
 ```
+
+To ensure checksums are consistent across all platforms, all integers during the computation must be
+in little endian order.
+
+<div class=example>
+
+<table>
+  <tr><th>Codepoint Ordering</th><th>Checksum value</th></tr>
+  <tr>
+    <td>[106, 97, 105, 120, 100]</td>
+    <td>0x6986dc19f4e621e</td>
+  </tr>
+</table>
+
+</div>
 
 Patch Formats {#patch-formats}
 ------------------------------
