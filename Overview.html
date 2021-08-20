@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="38825765ad53c5cf4fbdbc4cc2c6a8f973d5cfe3" name="document-revision">
+  <meta content="b7818b583f60c170ad9aaae32944a66c5c77d3d4" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-08-16">16 August 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-08-20">20 August 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -929,7 +929,8 @@ bytes = [03 07 03 81 7F]
    <h4 class="heading settled" data-level="2.2.8" id="AxisSpace"><span class="secno">2.2.8. </span><span class="content">AxisSpace</span><a class="self-link" href="#AxisSpace"></a></h4>
    <p>Stores a set of intervals on one or more open type variation axes <a data-link-type="biblio" href="#biblio-opentype-variations">[opentype-variations]</a>.
 Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
-pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.</p>
+pair is an <code>ArrayOf&lt;AxisInterval></code> <a href="#AxisInterval">§ 2.3.2 AxisInterval</a>. The list of intervals for a
+distinct axis tag must be disjoint.</p>
    <h4 class="heading settled" data-level="2.2.9" id="objects"><span class="secno">2.2.9. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
    <p>Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
 (major type 5). Each key and value pair is encoded as a single map entry. Keys are always unsigned
@@ -985,8 +986,8 @@ bit set and the list of ranges are unioned together.</p>
       <td>end
       <td>Float
    </table>
-   <p><code>AxisInterval</code> defines an interval (from <code>start</code> to <code>end</code>) on some
-variable axis in a font.</p>
+   <p><code>AxisInterval</code> defines an interval (from <code>start</code> to <code>end</code> inclusive)
+on some variable axis in a font.</p>
    <p>For an <code>AxisInterval</code> object to be well formed:</p>
    <ul>
     <li data-md>

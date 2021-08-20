@@ -502,7 +502,8 @@ Stores a set of intervals on one or more open type variation axes [[opentype-var
 Encoded as a CBOR map (major type 5). The key in each pair is an
 <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord">
 axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
-pair is an <a href="#AxisInterval"><code>AxisInterval</code></a>.
+pair is an <code>ArrayOf&lt;AxisInterval&gt;</code> [[#AxisInterval]]. The list of intervals for a
+distinct axis tag must be disjoint.
 
 ### Objects ### {#objects}
 
@@ -546,8 +547,8 @@ bit set and the list of ranges are unioned together.
   <tr><td>1</td><td>end</td><td>Float</td></tr>
 </table>
 
-<code>AxisInterval</code> defines an interval (from <code>start</code> to <code>end</code>) on some
-variable axis in a font.
+<code>AxisInterval</code> defines an interval (from <code>start</code> to <code>end</code> inclusive)
+on some variable axis in a font.
 
 For an <code>AxisInterval</code> object to be well formed:
 
