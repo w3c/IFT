@@ -315,15 +315,19 @@ significant bit in the byte and the bit with the largest index is the most signi
 
 ### IntegerList ### {#integerlist}
 
-A data structure which compactly represents a list of integers.
-The list is encoded into a ByteString for transport.
+A data structure which compactly represents a list of non-negative integers
+from 0 to 2<sup>31</sup>-1. The list is encoded into a ByteString for transport.
 
 There are three steps of encoding/compression: first delta, second zig-zag, and finally UIntBase128.
-
 The final ByteString result is simply the concatenation of the individual UIntBase128
 encoded bytes.
 
+IntegerList encoding must reject an input list which contains values not in the range
+0 to 2<sup>31</sup>-1. Likewise if decoding an IntegerList results in values which are not
+in the range 0 to 2<sup>31</sup>-1 the list is invalid and must be rejected.
+
 #### Delta Encoding #### {#integerlist-deltas}
+
 Delta encoding converts a list of integers to a list of deltas between them.
 
 A list L of n integers L<sub>i<sub>0..n-1</sub></sub> is converted into a list
@@ -462,20 +466,20 @@ bytes = [2E 28 3D 11 81 00 02 02 81 09]
 
 ### SortedIntegerList ### {#sortedintegerlist}
 
-A data structure which compactly represents a sorted list of non-negative integers.
-The list is encoded into a ByteString for transport.
+A data structure which compactly represents a sorted list of ascending non-negative integers
+(0 to 2<sup>32</sup>-1). The list is encoded into a ByteString for transport.
 
-This is a variation on IntegerList with better compression.
-Sorted lists only use two steps of encoding/compression: first deltas and then
-UIntBase128.
-The [[#integerlist-zigzag]] step is skipped.
+This is a variation on IntegerList with better compression. Sorted lists only use two steps of
+encoding/compression: first deltas and then UIntBase128. The [[#integerlist-zigzag]] step is skipped.
 This allows twice the range in UIntBase128, so that single bytes may be used more often.
 
-</div>
+SortedIntegerList encoding must reject an input list which contains values not in the range
+0 to 2<sup>32</sup>-1. Likewise if decoding an IntegerList results in values which are not
+in the range 0 to 2<sup>32</sup>-1 the list is invalid and must be rejected.
 
 ### RangeList ### {#rangelist}
 
-A RangeList encodes a set of unsigned 32 bit integers. The set is encoded as a
+A RangeList encodes a set of non-negative integers (0 to 2<sup>32</sup>-1). The set is encoded as a
 list of disjoint intervals. Each interval is represented by two integers, a
 start (inclusive) and end (inclusive).
 

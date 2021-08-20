@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/example/" rel="canonical">
-  <meta content="951f2aa257ab29713502ef0cf8cc878de938e35a" name="document-revision">
+  <meta content="7c2e2527e5d9495af3fe1bf3bf01d42e98d51b0f" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -753,13 +753,16 @@ significant bit in the byte and the bit with the largest index is the most signi
     </ul>
    </div>
    <h4 class="heading settled" data-level="2.2.5" id="integerlist"><span class="secno">2.2.5. </span><span class="content">IntegerList</span><a class="self-link" href="#integerlist"></a></h4>
-   <p>A data structure which compactly represents a list of integers.
-The list is encoded into a ByteString for transport.</p>
-   <p>There are three steps of encoding/compression: first delta, second zig-zag, and finally UIntBase128.</p>
-   <p>The final ByteString result is simply the concatenation of the individual UIntBase128
+   <p>A data structure which compactly represents a list of non-negative integers
+from 0 to 2<sup>31</sup>-1. The list is encoded into a ByteString for transport.</p>
+   <p>There are three steps of encoding/compression: first delta, second zig-zag, and finally UIntBase128.
+The final ByteString result is simply the concatenation of the individual UIntBase128
 encoded bytes.</p>
+   <p>IntegerList encoding must reject an input list which contains values not in the range
+0 to 2<sup>31</sup>-1. Likewise if decoding an IntegerList results in values which are not
+in the range 0 to 2<sup>31</sup>-1 the list is invalid and must be rejected.</p>
    <h5 class="heading settled" data-level="2.2.5.1" id="integerlist-deltas"><span class="secno">2.2.5.1. </span><span class="content">Delta Encoding</span><a class="self-link" href="#integerlist-deltas"></a></h5>
-    Delta encoding converts a list of integers to a list of deltas between them. 
+   <p>Delta encoding converts a list of integers to a list of deltas between them.</p>
    <p>A list L of n integers L<sub>i<sub>0..n-1</sub></sub> is converted into a list
 of N integers D<sub>i<sub>0..n-1</sub></sub> as follows:</p>
    <ul>
@@ -903,15 +906,16 @@ bytes = [2E 28 3D 11 81 00 02 02 81 09]
 </pre>
    </div>
    <h4 class="heading settled" data-level="2.2.6" id="sortedintegerlist"><span class="secno">2.2.6. </span><span class="content">SortedIntegerList</span><a class="self-link" href="#sortedintegerlist"></a></h4>
-   <p>A data structure which compactly represents a sorted list of non-negative integers.
-The list is encoded into a ByteString for transport.</p>
-   <p>This is a variation on IntegerList with better compression.
-Sorted lists only use two steps of encoding/compression: first deltas and then
-UIntBase128.
-The <a href="#integerlist-zigzag">§ 2.2.5.2 Zig-Zag Encoding</a> step is skipped.
+   <p>A data structure which compactly represents a sorted list of ascending non-negative integers
+(0 to 2<sup>32</sup>-1). The list is encoded into a ByteString for transport.</p>
+   <p>This is a variation on IntegerList with better compression. Sorted lists only use two steps of
+encoding/compression: first deltas and then UIntBase128. The <a href="#integerlist-zigzag">§ 2.2.5.2 Zig-Zag Encoding</a> step is skipped.
 This allows twice the range in UIntBase128, so that single bytes may be used more often.</p>
+   <p>SortedIntegerList encoding must reject an input list which contains values not in the range
+0 to 2<sup>32</sup>-1. Likewise if decoding an IntegerList results in values which are not
+in the range 0 to 2<sup>32</sup>-1 the list is invalid and must be rejected.</p>
    <h4 class="heading settled" data-level="2.2.7" id="rangelist"><span class="secno">2.2.7. </span><span class="content">RangeList</span><a class="self-link" href="#rangelist"></a></h4>
-   <p>A RangeList encodes a set of unsigned 32 bit integers. The set is encoded as a
+   <p>A RangeList encodes a set of non-negative integers (0 to 2<sup>32</sup>-1). The set is encoded as a
 list of disjoint intervals. Each interval is represented by two integers, a
 start (inclusive) and end (inclusive).</p>
    <p>A RangeList is a list of n pairs
