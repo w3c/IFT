@@ -1,7 +1,8 @@
 <pre class='metadata'>
 Title: Incremental Font Transfer
 Shortname: PFE
-Status: w3c/ED
+Status: w3c/FPWD
+Prepare for TR: yes
 Group: webfontswg
 Level: none
 TR: https://www.w3.org/TR/example/
@@ -629,10 +630,10 @@ transferred:
 *  Original font checksum: the most recent value of
     <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> received
     from the server for this font.
-    
+
 *  Codepoint Reordering Map: The most recent [[#codepoint-reordering]] received from the server
     for this font.
-    
+
 *  Codepoint Reordering Checksum: The most recent
     <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a>
     for this font.
@@ -801,7 +802,7 @@ in an extended font subset:
     has and the axis space the client needs.
 
 Additionally:
-    
+
 *  The format of the patch in the either the <code>patch</code> or <code>replace</code> fields must be
     one of those listed in <code>accept_patch_format</code>.
 
@@ -1007,11 +1008,11 @@ The specification for range request based incremental transfer is currently bein
 located in a separate document:
 <a href="RangeRequest.html">Incremental Font Transfer via Range Request</a>
 
+Declaring Incremental Fonts {#declaring-fonts}
+==============================================
 
-Using Incremental Font Transfer in HTML {#negotiating-transfer-type}
-====================================================================
-
-HTML content can specify that incremental font transfer can be used for a particular font URL
+CSS stylesheets  (or HTML or SVG content using stylesheets)
+can specify that incremental font transfer can be used for a particular font URL
 by using the "supports" syntax in the 'src:' attribute of a font face:
 
 ```
@@ -1022,6 +1023,10 @@ by using the "supports" syntax in the 'src:' attribute of a font face:
 ```
 
 An incrementally transferred font must be in a raw format such as truetype or opentype.
+
+Negotiating Incremental Font Transfer {#negotiating-transfer-type}
+====================================================================
+
 For the initial request for a font the client should assume that the server supports the patch subset
 based method and send a PatchRequest via HTTP GET according to the requirements in [[#extend-subset]].
 
