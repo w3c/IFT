@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="2047eb2ae7d910938694af89af0eb926ac296066" name="document-revision">
+  <meta content="18ba886e929eef4e28ee0a9a8ca64cfe71b76e8e" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -267,7 +267,11 @@ dfn > a.self-link::before      { content: "#"; }
         <li><a href="#handling-patch-response"><span class="secno">2.4.3</span> <span class="content">Handling PatchResponse</span></a>
         <li><a href="#client-side-checksum-mismatch"><span class="secno">2.4.4</span> <span class="content">Client Side Checksum Mismatch</span></a>
        </ol>
-      <li><a href="#handling-patch-request"><span class="secno">2.5</span> <span class="content">Server: Responding to a PatchRequest</span></a>
+      <li>
+       <a href="#handling-patch-request"><span class="secno">2.5</span> <span class="content">Server: Responding to a PatchRequest</span></a>
+       <ol class="toc">
+        <li><a href="#range-request-support"><span class="secno">2.5.1</span> <span class="content">Range Request Support</span></a>
+       </ol>
       <li><a href="#computing-checksums"><span class="secno">2.6</span> <span class="content">Computing Checksums</span></a>
       <li>
        <a href="#codepoint-reordering"><span class="secno">2.7</span> <span class="content">Codepoint Reordering</span></a>
@@ -1109,6 +1113,9 @@ error.</p>
      <p>If the requested font is not recognized by the server it should respond with http status code 404 to
 indicate a not found error.</p>
    </ul>
+   <h4 class="heading settled" data-level="2.5.1" id="range-request-support"><span class="secno">2.5.1. </span><span class="content">Range Request Support</span><a class="self-link" href="#range-request-support"></a></h4>
+   <p>A patch subset support server must also support incremental transfer via <a href="#range-request-incxfer">§ 3 Range Request Incremental Transfer</a>.
+To support range request incremental tranfser the patch subset server must support HTTP range requests <a data-link-type="biblio" href="#biblio-rfc7233">[rfc7233]</a> against the font files it provides via patch subset.</p>
    <h3 class="heading settled" data-level="2.6" id="computing-checksums"><span class="secno">2.6. </span><span class="content">Computing Checksums</span><a class="self-link" href="#computing-checksums"></a></h3>
    <p>64 bit checksums of byte strings are computed using the <a href="https://github.com/ztanml/fast-hash">fast hash</a> algorithm. A python like pseudo
 code version of the algorithm is presented below:</p>
@@ -1331,6 +1338,8 @@ extension requests should be sent according the the Range Request specificiation
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
    <dt id="biblio-rfc3284">[RFC3284]
    <dd>D. Korn; et al. <a href="https://datatracker.ietf.org/doc/html/rfc3284">The VCDIFF Generic Differencing and Compression Data Format</a>. June 2002. Proposed Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc3284">https://datatracker.ietf.org/doc/html/rfc3284</a>
+   <dt id="biblio-rfc7233">[RFC7233]
+   <dd>R. Fielding, Ed.; Y. Lafon, Ed.; J. Reschke, Ed.. <a href="https://httpwg.org/specs/rfc7233.html">Hypertext Transfer Protocol (HTTP/1.1): Range Requests</a>. June 2014. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc7233.html">https://httpwg.org/specs/rfc7233.html</a>
    <dt id="biblio-rfc7932">[RFC7932]
    <dd>J. Alakuijala; Z. Szabadka. <a href="https://datatracker.ietf.org/doc/html/rfc7932">Brotli Compressed Data Format</a>. July 2016. Informational. URL: <a href="https://datatracker.ietf.org/doc/html/rfc7932">https://datatracker.ietf.org/doc/html/rfc7932</a>
    <dt id="biblio-rfc8949">[RFC8949]
