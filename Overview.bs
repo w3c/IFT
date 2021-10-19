@@ -835,6 +835,15 @@ Note: the server can respond with either a patch or a replacement but should try
 where possible. Replacement's should only be used in situations where the server is unable to recreate
 the client's state in order to generate a patch against it.
 
+Note: if a patch subset service is composed of more than one server task and some subset of those
+tasks are using a subsetter version which produces different binary results than the rest, there is
+a risk that consecutive extend requests may result in unnecessary replacement responses. For example if
+consecutive requests alternate between server backends with different subsetters, then each response
+will be a replacement as the server tasks will be unable to recreate the previously generated
+subset. This scenario might occur during software updates to the server tasks. To combat this
+it's recommended that sticky load balancing is used which aims to send consecutive requests from the
+same client to the same server task.
+
 Possible error responses:
 
 *  If the request is malformed the server must instead respond with http status code 400 to indicate an
