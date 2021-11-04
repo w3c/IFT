@@ -1054,7 +1054,28 @@ extension requests should be sent according the the Range Request specificiation
 
 <h2 class=no-num id=priv>Privacy Considerations</h2>
 
-No Privacy issues have been raised against this document
+
+<h3>Content inference from character set</h3>
+
+IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see <a href="https://w3c.github.io/IFT/Overview.html#extend-subset">Extending the Font Subset</a>.
+
+The purpose of doing so is to allow the server to compute a binary patch to the existing font, adding more characters. Thus, fonts are transferred incrementally, as needed, which <a href="https://www.w3.org/TR/PFE-evaluation/#analysis-cjk">greatly reduces</a>> the bytes transferred and the overall network cost..
+
+For some languages, which use a very large character set (Chinese and Japanese are examples) the vast reduction in total bytes transferred means that Web fonts become usable, including on mobile networks, for the first time.
+
+However, for those languages, it is <em>possible</em> that individual requests might be analyzed by a rogue font server to obtain intelligence about the type of content which is being read. It is unclear how feasible this attack is, or the computational complexity required to exploit it, unless the characters being requested are very unusual.
+
+One mitigation, which was originally introduced for reasons of networking efficiency so is likely to be implemented in practice, is to request additional, un-needed characters to dilute the ability to infer what content the user is viewing. Requesting characters which are <a href="https://www.w3.org/TR/PFE-evaluation/#codepredict">statistically likely to occur</a> may <a href="https://docs.google.com/document/d/1u-05ztF9MqftHbMKB_KiqeUhZKiXNFE4TRSUWFAPXsk/edit">avoid a subsequent request</a>.
+
+(IFT mandates HTTPS, so no in-the-middle attack is possible; the trust is between the client, and the server hosting the fonts).
+
+<h3>Connection speed, and possible fingerprinting</h3>
+
+It is possible to set a connection_speed parameter, which <em>may</em> allow the Web font server to make better trade-offs in terms of size of update vs. number of requests. This parameter is optional. This <em>might</em> be used as a fingerprinting vector, although the values are bucketed and the same or better information is likely available by other means.
+
+<h3>Checksums and possible fingerprinting</h3>
+
+64 bit checksums are generated and transferred between client and server. These are used for error detection, are not persistent across browsing sessions, change frequently in the course of a single browsing session, and thus should not pose a tracking risk.
 
 <h2 class=no-num id=sec>Security Considerations</h2>
 
