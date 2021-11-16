@@ -1088,6 +1088,22 @@ It is possible to set a connection_speed parameter, which <em>may</em> allow the
 
 Also, browsers typically cache resources keyed by the origin domain; thus the checksums and the set of characters the client requires would only be available to that domain and the patch subset server.
 
+<h3 id="per-origin">Per-origin restriction avoids fingerprinting</h3>
+
+  As required by [[!css-fonts-4]],
+  Web Fonts <a href="https://drafts.csswg.org/css-fonts-4/#web-fonts">must not be accessible
+  in any other Document from the one which either is associated with the @font-face rule
+  or owns the FontFaceSet.
+  Other applications on the device must not be able to access Web Fonts.</a>
+  This avoids information leaking across origins.
+
+  Similarly, font palette values
+  <a href="https://drafts.csswg.org/css-fonts-4/#font-palette-values">must only be available to the documents that reference it</a>.
+  Using an author-defined color palette outside of the documents that reference it
+  would constitute a security leak since the contents of one page
+  would be able to affect other pages,
+  something an attacker could use as an attack vector.
+
 <h2 class=no-num id=sec>Security Considerations</h2>
 
 No Security issues have been raised against this document

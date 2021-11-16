@@ -4,10 +4,10 @@
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <title>Incremental Font Transfer</title>
   <meta content="w3c/ED" name="w3c-status">
-  <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
-  <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
+  <meta content="Bikeshed version 83b904c2e, updated Wed Nov 3 17:20:53 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="7df80445986ef14e311ac0a66601f710931f02f1" name="document-revision">
+  <meta content="6e4aedccff69b9a190bb5d6d0a63b36939e45394" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -114,9 +114,9 @@ pre .property::before, pre .property::after {
     --ins-bg: transparent;
 
     --a-normal-text: #034575;
-    --a-normal-underline: #707070;
+    --a-normal-underline: #bbb;
     --a-visited-text: var(--a-normal-text);
-    --a-visited-underline: #bbb;
+    --a-visited-underline: #707070;
     --a-hover-bg: rgba(75%, 75%, 75%, .25);
     --a-active-text: #c00;
     --a-active-underline: #c00;
@@ -208,6 +208,16 @@ figcaption {
 figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
 }</style>
+<style>/* style-issues */
+
+a[href].issue-return {
+    float: right;
+    float: inline-end;
+    color: var(--issueheading-text);
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
 <style>/* style-md-lists */
 
 /* This is a weird hack for me not yet following the commonmark spec
@@ -395,7 +405,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-11-05">5 November 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-11-16">16 November 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -513,6 +523,7 @@ dfn > a.self-link::before      { content: "#"; }
       <li><a href="#content-inference-from-character-set"><span class="secno"></span> <span class="content">Content inference from character set</span></a>
       <li><a href="#checksums-and-possible-fingerprinting"><span class="secno"></span> <span class="content">Connection speed, and possible fingerprinting</span></a>
       <li><a href="#connection-speed-and-possible-fingerprinting"><span class="secno"></span> <span class="content">Checksums and possible fingerprinting</span></a>
+      <li><a href="#per-origin"><span class="secno"></span> <span class="content">Per-origin restriction avoids fingerprinting</span></a>
      </ol>
     <li><a href="#sec"><span class="secno"></span> <span class="content">Security Considerations</span></a>
     <li>
@@ -1255,14 +1266,14 @@ specified in this field.</p>
 specified in this field.</p>
    </ol>
    <h4 class="heading settled" data-level="2.4.4" id="client-side-checksum-mismatch"><span class="secno">2.4.4. </span><span class="content">Client Side Checksum Mismatch</span><a class="self-link" href="#client-side-checksum-mismatch"></a></h4>
-   <p>If the the checksum of the font subset computed by the client does not match the <code>patched_checksum</code> in the server’s response then the client should:</p>
+   <p>If the checksum of the font subset computed by the client does not match the <code>patched_checksum</code> in the server’s response then the client should:</p>
    <ol>
     <li data-md>
      <p>Discard all currently saved state for this font.</p>
     <li data-md>
      <p><a href="#extend-subset">Resend the request</a>. Set the <code>codepoints_needed</code> field
 to the union of the codepoints in the discarded font subset and the set of code points
-the the previous request was trying to add.</p>
+that the previous request was trying to add.</p>
    </ol>
    <h3 class="heading settled" data-level="2.5" id="handling-patch-request"><span class="secno">2.5. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
    <p>If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
@@ -1517,7 +1528,7 @@ umodified font file.</p>
 0x20 that indicates it contains a PatchResponse. Follow the instructions in <a href="#handling-patch-response">§ 2.4.3 Handling PatchResponse</a> to handle the response and all future requests should use the patch subset
 approach over POST.</p>
    <p>Otherwise the client should follow the instructions in the Range Request section and all future
-extension requests should be sent according the the Range Request specificiation.</p>
+extension requests should be sent according to the Range Request specificiation.</p>
    <h2 class="no-num heading settled" id="priv"><span class="content">Privacy Considerations</span><a class="self-link" href="#priv"></a></h2>
    <h3 class="heading settled" id="content-inference-from-character-set"><span class="content">Content inference from character set</span><a class="self-link" href="#content-inference-from-character-set"></a></h3>
    <p>IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see <a href="https://w3c.github.io/IFT/Overview.html#extend-subset">Extending the Font Subset</a>.</p>
@@ -1531,6 +1542,17 @@ extension requests should be sent according the the Range Request specificiation
    <h3 class="heading settled" id="connection-speed-and-possible-fingerprinting"><span class="content">Checksums and possible fingerprinting</span><a class="self-link" href="#connection-speed-and-possible-fingerprinting"></a></h3>
    <p>64 bit checksums are generated and transferred between client and server. These are used for error detection, are not persistent across browsing sessions, change frequently in the course of a single browsing session, and thus should not pose a tracking risk.</p>
    <p>Also, browsers typically cache resources keyed by the origin domain; thus the checksums and the set of characters the client requires would only be available to that domain and the patch subset server.</p>
+   <h3 class="heading settled" id="per-origin"><span class="content">Per-origin restriction avoids fingerprinting</span><a class="self-link" href="#per-origin"></a></h3>
+   <p>As required by <a data-link-type="biblio" href="#biblio-css-fonts-4">[css-fonts-4]</a>,
+  Web Fonts <a href="https://drafts.csswg.org/css-fonts-4/#web-fonts">must not be accessible
+  in any other Document from the one which either is associated with the @font-face rule
+  or owns the FontFaceSet.
+  Other applications on the device must not be able to access Web Fonts.</a> This avoids information leaking across origins.</p>
+   <p>Similarly, font palette values <a href="https://drafts.csswg.org/css-fonts-4/#font-palette-values">must only be available to the documents that reference it</a>.
+  Using an author-defined color palette outside of the documents that reference it
+  would constitute a security leak since the contents of one page
+  would be able to affect other pages,
+  something an attacker could use as an attack vector.</p>
    <h2 class="no-num heading settled" id="sec"><span class="content">Security Considerations</span><a class="self-link" href="#sec"></a></h2>
    <p>No Security issues have been raised against this document</p>
   </main>
@@ -1576,33 +1598,35 @@ extension requests should be sent according the the Range Request specificiation
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
-   <li><a href="#conformant-server">conformant server</a><span>, in §Unnumbered section</span>
-   <li><a href="#conformant-user-agent">conformant user agent</a><span>, in §Unnumbered section</span>
+   <li><a href="#conformant-server">conformant server</a><span>, in § Unnumbered section</span>
+   <li><a href="#conformant-user-agent">conformant user agent</a><span>, in § Unnumbered section</span>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
+   <dt id="biblio-css-fonts-4">[CSS-FONTS-4]
+   <dd>John Daggett; Myles Maxfield; Chris Lilley. <a href="https://www.w3.org/TR/css-fonts-4/"><cite>CSS Fonts Module Level 4</cite></a>. 29 July 2021. WD. URL: <a href="https://www.w3.org/TR/css-fonts-4/">https://www.w3.org/TR/css-fonts-4/</a>
    <dt id="biblio-rfc2119">[RFC2119]
-   <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
+   <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
    <dt id="biblio-rfc3284">[RFC3284]
-   <dd>D. Korn; et al. <a href="https://datatracker.ietf.org/doc/html/rfc3284">The VCDIFF Generic Differencing and Compression Data Format</a>. June 2002. Proposed Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc3284">https://datatracker.ietf.org/doc/html/rfc3284</a>
+   <dd>D. Korn; et al. <a href="https://www.rfc-editor.org/rfc/rfc3284"><cite>The VCDIFF Generic Differencing and Compression Data Format</cite></a>. June 2002. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3284">https://www.rfc-editor.org/rfc/rfc3284</a>
    <dt id="biblio-rfc7233">[RFC7233]
-   <dd>R. Fielding, Ed.; Y. Lafon, Ed.; J. Reschke, Ed.. <a href="https://httpwg.org/specs/rfc7233.html">Hypertext Transfer Protocol (HTTP/1.1): Range Requests</a>. June 2014. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc7233.html">https://httpwg.org/specs/rfc7233.html</a>
+   <dd>R. Fielding, Ed.; Y. Lafon, Ed.; J. Reschke, Ed.. <a href="https://httpwg.org/specs/rfc7233.html"><cite>Hypertext Transfer Protocol (HTTP/1.1): Range Requests</cite></a>. June 2014. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc7233.html">https://httpwg.org/specs/rfc7233.html</a>
    <dt id="biblio-rfc7932">[RFC7932]
-   <dd>J. Alakuijala; Z. Szabadka. <a href="https://datatracker.ietf.org/doc/html/rfc7932">Brotli Compressed Data Format</a>. July 2016. Informational. URL: <a href="https://datatracker.ietf.org/doc/html/rfc7932">https://datatracker.ietf.org/doc/html/rfc7932</a>
+   <dd>J. Alakuijala; Z. Szabadka. <a href="https://www.rfc-editor.org/rfc/rfc7932"><cite>Brotli Compressed Data Format</cite></a>. July 2016. Informational. URL: <a href="https://www.rfc-editor.org/rfc/rfc7932">https://www.rfc-editor.org/rfc/rfc7932</a>
    <dt id="biblio-rfc8949">[RFC8949]
-   <dd>C. Bormann; P. Hoffman. <a href="https://datatracker.ietf.org/doc/html/rfc8949">Concise Binary Object Representation (CBOR)</a>. December 2020. Internet Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc8949">https://datatracker.ietf.org/doc/html/rfc8949</a>
+   <dd>C. Bormann; P. Hoffman. <a href="https://www.rfc-editor.org/rfc/rfc8949"><cite>Concise Binary Object Representation (CBOR)</cite></a>. December 2020. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc8949">https://www.rfc-editor.org/rfc/rfc8949</a>
    <dt id="biblio-shared-brotli">[Shared-Brotli]
-   <dd>J. Alakuijala; et al. <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08">Shared Brotli Compressed Data Format</a>. 27 Jul 2021. Internet Draft. URL: <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08">https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08</a>
+   <dd>J. Alakuijala; et al. <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08"><cite>Shared Brotli Compressed Data Format</cite></a>. 27 Jul 2021. Internet Draft. URL: <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08">https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
    <dt id="biblio-opentype-variations">[OPENTYPE-VARIATIONS]
-   <dd><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview">OpenType Font Variations Overview</a>. 23 October 2020. Note. URL: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview">https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview</a>
+   <dd><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview"><cite>OpenType Font Variations Overview</cite></a>. 23 October 2020. Note. URL: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview">https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview</a>
    <dt id="biblio-pfe-report">[PFE-report]
-   <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/">Progressive Font Enrichment: Evaluation Report</a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
+   <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/"><cite>Progressive Font Enrichment: Evaluation Report</cite></a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
    <dt id="biblio-rfc4648">[RFC4648]
-   <dd>S. Josefsson. <a href="https://datatracker.ietf.org/doc/html/rfc4648">The Base16, Base32, and Base64 Data Encodings</a>. October 2006. Proposed Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc4648">https://datatracker.ietf.org/doc/html/rfc4648</a>
+   <dd>S. Josefsson. <a href="https://www.rfc-editor.org/rfc/rfc4648"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. October 2006. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>
    <dt id="biblio-woff2">[WOFF2]
-   <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/">WOFF File Format 2.0</a>. 1 March 2018. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
+   <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/"><cite>WOFF File Format 2.0</cite></a>. 6 July 2021. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
   </dl>
