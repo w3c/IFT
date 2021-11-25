@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="91c9deb33e8f71c1e6a0e61cd17e1b4c28dfbdf8" name="document-revision">
+  <meta content="d12e38bc00e6cdf8cc819e13838fced9d2af2766" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-11-25">25 November 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-11-26">26 November 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -557,7 +557,7 @@ so it is included in this specification as an alternative method.</p>
    <p>In the patch subset approach to incremental font transfer a server generates binary patches which a
 client applies to a subset of the font in order to extend the coverage of that font subset. The server
 is stateless, it does not maintain any session data for clients between requests. Thus when a client
-requests the generation of a patch from the server it must fully describe the current subset of the
+requests the generation of a patch from the server it has to fully describe the current subset of the
 font that it has in a way which allows the server to recreate it.</p>
    <p>Generic binary patch algorithms are used which do not need to be aware of the specifics of the font
 format. Typically a server will produce a patch by generating two font subsets: one which matches what
@@ -565,8 +565,12 @@ the client currently has and one which matches the extended subset the client de
 is then produced between the two subsets.</p>
    <h4 class="heading settled" data-level="2.1.1" id="font-subset"><span class="secno">2.1.1. </span><span class="content">Font Subset</span><a class="self-link" href="#font-subset"></a></h4>
    <p>A subset of a font file is a modified version of the font that contains only the data needed to
-render a subset of the codepoints in the original font. A subsetted font should be able to render
-any combination of the codepoints in the subset identically to the original font.</p>
+render a subset of the codepoints supported by the original font. When a subsetted font is used to
+render text using any combination of the subset codepoints it must render identically to the original
+font. This includes any optional features that a renderer may choose to use from the original font such
+as hinting instructions, positioning rules, and/or glyph substitutions. Where possible the subsetted
+font file should not include data from the original font that is not necessary to achieve this
+equivalence.</p>
    <h3 class="heading settled" data-level="2.2" id="data-types"><span class="secno">2.2. </span><span class="content">Data Types</span><a class="self-link" href="#data-types"></a></h3>
    <p>This section lists all of the data types that are used to form the request and response messages
 sent between the client and server.</p>
