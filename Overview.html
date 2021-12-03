@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="dc6e27d74a5290fbe173c84c14ee467fd2f8f1ea" name="document-revision">
+  <meta content="d5606c91e28e669d2621bd493455cfc4851bf88f" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -960,8 +960,8 @@ Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https:
 pair is an <code>ArrayOf&lt;AxisInterval></code> <a href="#AxisInterval">§ 2.3.2 AxisInterval</a>. The list of intervals for a
 distinct axis tag must be disjoint.</p>
    <h4 class="heading settled" data-level="2.2.9" id="objects"><span class="secno">2.2.9. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
-   <p>Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
-(major type 5). Each key and value pair is encoded as a single map entry. Keys are always unsigned
+   <p>Objects are data structures comprised of key and value pairs. <span class="conform server client" id="conform-object">Objects are encoded via CBOR as maps (major
+type 5)</span>. Each key and value pair is encoded as a single map entry. Keys are always unsigned
 integers and are encoded using major type 0. Values are encoded using the encoding specified by the
 type of the value.</p>
    <p>All fields in an object are optional and do not need to have an associated value. Conversely when
@@ -1145,15 +1145,15 @@ then <code>ordering_checksum</code> must be set.</p>
    <p>For a PatchResponse object to be well formed:</p>
    <ul>
     <li data-md>
-     <p><code>protocol_version</code> must be set to 0.</p>
+     <p><span class="conform server" id="conform-response-protocol-version"> <code>protocol_version</code> must be set to 0.</span></p>
     <li data-md>
-     <p><code>patch_format</code> can be any of the values listed <a href="#patch-formats">§ 2.8 Patch Formats</a></p>
+     <p><span class="conform server" id="conform-response-valid-format"> <code>patch_format</code> must be one of the values listed in <a href="#patch-formats">§ 2.8 Patch Formats</a>.</span></p>
     <li data-md>
-     <p>Only one of <code>patch</code> or <code>replacement</code> may be set.</p>
+     <p><span class="conform server" id="conform-response-patch-or-replacement"> Only one of <code>patch</code> or <code>replacement</code> must be set.</span></p>
     <li data-md>
-     <p>If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>, <code>patched_checksum</code>, and <code>original_font_checksum</code> must be set.</p>
+     <p><span class="conform server" id="conform-response-font-checksums"> If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>, <code>patched_checksum</code>, and <code>original_font_checksum</code> must be set.</span></p>
     <li data-md>
-     <p>If <code>codepoint_ordering</code> is set then <code>ordering_checksum</code> must be set.</p>
+     <p><span class="conform server" id="conform-response-ordering-checksum"> If <code>codepoint_ordering</code> is set then <code>ordering_checksum</code> must be set.</span></p>
    </ul>
    <h3 class="heading settled" data-level="2.4" id="client"><span class="secno">2.4. </span><span class="content">Client</span><a class="self-link" href="#client"></a></h3>
    <h4 class="heading settled" data-level="2.4.1" id="client-state"><span class="secno">2.4.1. </span><span class="content">Client State</span><a class="self-link" href="#client-state"></a></h4>
@@ -1308,8 +1308,8 @@ That is the <code>patch</code> and <code>replacement</code> fields must not be s
 in an extended font subset:</p>
    <ul>
     <li data-md>
-     <p>That contains data for at least the union of the set of codepoints needed and the sets of
-codepoints the client already has.</p>
+     <p><span class="conform server" id="conform-response-subset">That contains data for at least the union
+of the set of codepoints needed and the sets of codepoints the client already has.</span></p>
     <li data-md>
      <p>That contains a variation axis space that covers at least the union of the axis space the client
 has and the axis space the client needs.</p>
@@ -1317,8 +1317,8 @@ has and the axis space the client needs.</p>
    <p>Additionally:</p>
    <ul>
     <li data-md>
-     <p>The format of the patch in the either the <code>patch</code> or <code>replace</code> fields must be
-one of those listed in <code>accept_patch_format</code>.</p>
+     <p><span class="conform server" id="conform-response-patch-format">The format of the patch in the either the <code>patch</code> or <code>replace</code> fields must be
+one of those listed in <code>accept_patch_format</code></span>.</p>
     <li data-md>
      <p>The value of <code>original_font_checksum</code> must be set to the checksum of the original font.
 The checksum value must computed by the procedure in <a href="#computing-checksums">§ 2.6 Computing Checksums</a>.</p>

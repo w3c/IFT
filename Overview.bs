@@ -541,8 +541,9 @@ distinct axis tag must be disjoint.
 
 ### Objects ### {#objects}
 
-Objects are data structures comprised of key and value pairs. Objects are encoded via CBOR as maps
-(major type 5). Each key and value pair is encoded as a single map entry. Keys are always unsigned
+Objects are data structures comprised of key and value pairs.
+<span class="conform server client" id="conform-object">Objects are encoded via CBOR as maps (major
+type 5)</span>. Each key and value pair is encoded as a single map entry. Keys are always unsigned
 integers and are encoded using major type 0. Values are encoded using the encoding specified by the
 type of the value.
 
@@ -636,12 +637,17 @@ For a PatchRequest object to be well formed:
 </table>
 
 For a PatchResponse object to be well formed:
-*  <code>protocol_version</code> must be set to 0.
-*  <code>patch_format</code> can be any of the values listed [[#patch-formats]]
-*  Only one of <code>patch</code> or <code>replacement</code> may be set.
-*  If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>,
-     <code>patched_checksum</code>, and <code>original_font_checksum</code> must be set.
-*  If <code>codepoint_ordering</code> is set then <code>ordering_checksum</code> must be set.
+*  <span class="conform server" id="conform-response-protocol-version">
+     <code>protocol_version</code> must be set to 0.</span>
+*  <span class="conform server" id="conform-response-valid-format">
+     <code>patch_format</code> must be one of the values listed in [[#patch-formats]].</span>
+*  <span class="conform server" id="conform-response-patch-or-replacement">
+     Only one of <code>patch</code> or <code>replacement</code> must be set.</span>
+*  <span class="conform server" id="conform-response-font-checksums">
+     If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>,
+     <code>patched_checksum</code>, and <code>original_font_checksum</code> must be set.</span>
+*  <span class="conform server" id="conform-response-ordering-checksum">
+     If <code>codepoint_ordering</code> is set then <code>ordering_checksum</code> must be set.</span>
 
 Client {#client}
 ----------------
@@ -823,16 +829,16 @@ Otherwise when the response is applied by the client following the process in
 [[#handling-patch-response]] to a font subset with checksum <code>base_checksum</code> it must result
 in an extended font subset:
 
-*  That contains data for at least the union of the set of codepoints needed and the sets of
-    codepoints the client already has.
+*  <span class="conform server" id="conform-response-subset">That contains data for at least the union
+    of the set of codepoints needed and the sets of codepoints the client already has.</span>
 
 *  That contains a variation axis space that covers at least the union of the axis space the client
     has and the axis space the client needs.
 
 Additionally:
 
-*  The format of the patch in the either the <code>patch</code> or <code>replace</code> fields must be
-    one of those listed in <code>accept_patch_format</code>.
+*  <span class="conform server" id="conform-response-patch-format">The format of the patch in the either the <code>patch</code> or <code>replace</code> fields must be
+    one of those listed in <code>accept_patch_format</code></span>.
 
 *  The value of <code>original_font_checksum</code> must be set to the checksum of the original font.
     The checksum value must computed by the procedure in [[#computing-checksums]].
