@@ -7,7 +7,11 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="d12e38bc00e6cdf8cc819e13838fced9d2af2766" name="document-revision">
+  <meta content="dc6e27d74a5290fbe173c84c14ee467fd2f8f1ea" name="document-revision">
+<style>
+.conform:hover {background: #31668f}
+.conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
+</style>
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +399,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-11-26">26 November 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-12-03">3 December 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1270,10 +1274,11 @@ to the union of the codepoints in the discarded font subset and the set of code 
 that the previous request was trying to add.</p>
    </ol>
    <h3 class="heading settled" data-level="2.5" id="handling-patch-request"><span class="secno">2.5. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
-   <p>If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over
-HTTPS that was populated according to the requirements in <a href="#extend-subset">§ 2.4.2 Extending the Font Subset</a> then it should
-respond with HTTP status code 200. The first 4 bytes of the response must be set to 0x49, 0x46, 0x54,
-0x20 ("IFT " encoded as ASCII) followed by a single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</p>
+   <p><span class="conform server" id="conform-succesful-response">If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over HTTPS for a font the server has and that was
+populated according to the requirements in <a href="#extend-subset">§ 2.4.2 Extending the Font Subset</a> then it must respond with HTTP status
+code 200.</span> <span class="conform server" id="conform-magic-number">The first 4 bytes of the response must be set
+to 0x49, 0x46, 0x54, 0x20 ("IFT " encoded as ASCII) followed by a
+single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</span></p>
    <p>The path in the request identifies the specific font that a patch is desired for. From the request
 object the server can produce two codepoint sets:</p>
    <ol>
