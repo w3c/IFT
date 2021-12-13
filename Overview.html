@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="d12e38bc00e6cdf8cc819e13838fced9d2af2766" name="document-revision">
+  <meta content="f1f7516dbfd7cd3f9b769697f7b0c251a1d78b7c" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -395,7 +395,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-11-26">26 November 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-12-13">13 December 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -502,7 +502,6 @@ dfn > a.self-link::before      { content: "#"; }
         <li><a href="#reordering-checksum"><span class="secno">2.7.1</span> <span class="content">Codepoint Reordering Checksum</span></a>
        </ol>
       <li><a href="#patch-formats"><span class="secno">2.8</span> <span class="content">Patch Formats</span></a>
-      <li><a href="#connection-speeds"><span class="secno">2.9</span> <span class="content">Connection Speeds</span></a>
      </ol>
     <li><a href="#range-request-incxfer"><span class="secno">3</span> <span class="content">Range Request Incremental Transfer</span></a>
     <li><a href="#declaring-fonts"><span class="secno">4</span> <span class="content">Declaring Incremental Fonts</span></a>
@@ -511,8 +510,7 @@ dfn > a.self-link::before      { content: "#"; }
      <a href="#priv"><span class="secno"></span> <span class="content">Privacy Considerations</span></a>
      <ol class="toc">
       <li><a href="#content-inference-from-character-set"><span class="secno"></span> <span class="content">Content inference from character set</span></a>
-      <li><a href="#checksums-and-possible-fingerprinting"><span class="secno"></span> <span class="content">Connection speed, and possible fingerprinting</span></a>
-      <li><a href="#connection-speed-and-possible-fingerprinting"><span class="secno"></span> <span class="content">Checksums and possible fingerprinting</span></a>
+      <li><a href="#checksum-and-possible-fingerprinting"><span class="secno"></span> <span class="content">Checksums and possible fingerprinting</span></a>
       <li><a href="#per-origin"><span class="secno"></span> <span class="content">Per-origin restriction avoids fingerprinting</span></a>
      </ol>
     <li><a href="#sec"><span class="secno"></span> <span class="content">Security Considerations</span></a>
@@ -1071,10 +1069,6 @@ then this interval is a single point, <code>start</code>.</p>
       <td>10
       <td>base_checksum
       <td>Integer
-     <tr>
-      <td>11
-      <td>connection_speed
-      <td>Integer
    </table>
    <p>For a PatchRequest object to be well formed:</p>
    <ul>
@@ -1087,8 +1081,6 @@ then this interval is a single point, <code>start</code>.</p>
 then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p>If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then <code>original_font_checksum</code> and <code>base_checksum</code> must be set.</p>
-    <li data-md>
-     <p><code>connection_speed</code> can be any of the values listed in <a href="#connection-speeds">§ 2.9 Connection Speeds</a>.</p>
    </ul>
    <h4 class="heading settled" data-level="2.3.4" id="PatchResponse"><span class="secno">2.3.4. </span><span class="content">PatchResponse</span><a class="self-link" href="#PatchResponse"></a></h4>
    <table>
@@ -1224,11 +1216,10 @@ there is no saved value leave this field unset.</p>
     <li data-md>
      <p><code>base_checksum</code>:
 Set to the checksum of the font subset byte array saved in the state for this font. See: <a href="#computing-checksums">§ 2.6 Computing Checksums</a>.</p>
-    <li data-md>
-     <p><code>connection_speed</code>:
-Can be optionally set by the client to a value from <a href="#connection-speeds">§ 2.9 Connection Speeds</a> by finding the value
-that corresponds to the client’s average round trip time.</p>
    </ul>
+   <p class="note" role="note"><span>Note:</span> It is allowed for the client to request more codepoints then it strictly needs. For
+example, on slower connections it may be more performant to request extra codepoints if
+that is likely to prevent a future request from needing to be sent.</p>
    <h4 class="heading settled" data-level="2.4.3" id="handling-patch-response"><span class="secno">2.4.3. </span><span class="content">Handling PatchResponse</span><a class="self-link" href="#handling-patch-response"></a></h4>
    <p>If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a> it will respond with HTTP status code 200 and the body of the response will be a 4 byte magic
 number (0x49, 0x46, 0x54, 0x20) followed by a single <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
@@ -1329,12 +1320,8 @@ variation axes, the response must set the <code>subset_axis_space</code> field t
 covered by the font subset.</p>
     <li data-md>
      <p>If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
-ignore the unrecognized ones. Likewise if <code>connection_speed</code> contains any unrecognized
-connection speeds the server should ignore the unrecognized ones.</p>
+ignore the unrecognized ones.</p>
    </ul>
-   <p class="note" role="note"><span>Note:</span> the server can optionally use the client’s provided connection speed to inform how many extra
-codepoints should be sent. For example on slower connections it may be more performant to send extra
-codepoints if they can prevent a future request from needing to be sent.</p>
    <p class="note" role="note"><span>Note:</span> the server can respond with either a patch or a replacement but should try to produce a patch
 where possible. Replacement’s should only be used in situations where the server is unable to recreate
 the client’s state in order to generate a patch against it.</p>
@@ -1465,39 +1452,6 @@ and a target file:</p>
       <td>Uses brotli compression <a data-link-type="biblio" href="#biblio-rfc7932">[rfc7932]</a> to produce the patch. The source file is used as a shared
     dictionary <a data-link-type="biblio" href="#biblio-shared-brotli">[Shared-Brotli]</a> given to the brotli compressor and decompressor.
    </table>
-   <h3 class="heading settled" data-level="2.9" id="connection-speeds"><span class="secno">2.9. </span><span class="content">Connection Speeds</span><a class="self-link" href="#connection-speeds"></a></h3>
-   <p>The following connection speed values can be used:</p>
-   <table>
-    <tbody>
-     <tr>
-      <th>Name
-      <th>Value
-      <th>Round Trip Times
-     <tr>
-      <td>Very Slow
-      <td>0
-      <td>> 1000 ms.
-     <tr>
-      <td>Slow
-      <td>1
-      <td>[300 ms, 1000 ms)
-     <tr>
-      <td>Average
-      <td>2
-      <td>[150 ms, 300 ms)
-     <tr>
-      <td>Fast
-      <td>3
-      <td>[80 ms, 150 ms)
-     <tr>
-      <td>Very Fast
-      <td>4
-      <td>[20 ms, 80 ms)
-     <tr>
-      <td>Extremely Fast
-      <td>5
-      <td>[0 ms, 20 ms)
-   </table>
    <h2 class="heading settled" data-level="3" id="range-request-incxfer"><span class="secno">3. </span><span class="content">Range Request Incremental Transfer</span><a class="self-link" href="#range-request-incxfer"></a></h2>
    <p>The specification for range request based incremental transfer is currently being drafted and is
 located in a separate document: <a href="RangeRequest.html">Incremental Font Transfer via Range Request</a></p>
@@ -1531,9 +1485,7 @@ extension requests should be sent according to the Range Request specificiation.
    <p>However, for those languages, it is <em>possible</em> that individual requests might be analyzed by a rogue font server to obtain intelligence about the type of content which is being read. It is unclear how feasible this attack is, or the computational complexity required to exploit it, unless the characters being requested are very unusual.</p>
    <p>One mitigation, which was originally introduced for reasons of networking efficiency so is likely to be implemented in practice, is to request additional, un-needed characters to dilute the ability to infer what content the user is viewing. Requesting characters which are <a href="https://www.w3.org/TR/PFE-evaluation/#codepredict">statistically likely to occur</a> may <a href="https://docs.google.com/document/d/1u-05ztF9MqftHbMKB_KiqeUhZKiXNFE4TRSUWFAPXsk/edit">avoid a subsequent request</a>.</p>
    <p>(IFT mandates HTTPS, so no in-the-middle attack is possible; the trust is between the client, and the server hosting the fonts).</p>
-   <h3 class="heading settled" id="checksums-and-possible-fingerprinting"><span class="content">Connection speed, and possible fingerprinting</span><a class="self-link" href="#checksums-and-possible-fingerprinting"></a></h3>
-   <p>It is possible to set a connection_speed parameter, which <em>may</em> allow the Web font server to make better trade-offs in terms of size of update vs. number of requests. This parameter is optional. This <em>might</em> be used as a fingerprinting vector, although the values are bucketed and the same or better information is likely available by other means.</p>
-   <h3 class="heading settled" id="connection-speed-and-possible-fingerprinting"><span class="content">Checksums and possible fingerprinting</span><a class="self-link" href="#connection-speed-and-possible-fingerprinting"></a></h3>
+   <h3 class="heading settled" id="checksum-and-possible-fingerprinting"><span class="content">Checksums and possible fingerprinting</span><a class="self-link" href="#checksum-and-possible-fingerprinting"></a></h3>
    <p>64 bit checksums are generated and transferred between client and server. These are used for error detection, are not persistent across browsing sessions, change frequently in the course of a single browsing session, and thus should not pose a tracking risk.</p>
    <p>Also, browsers typically cache resources keyed by the origin domain; thus the checksums and the set of characters the client requires would only be available to that domain and the patch subset server.</p>
    <h3 class="heading settled" id="per-origin"><span class="content">Per-origin restriction avoids fingerprinting</span><a class="self-link" href="#per-origin"></a></h3>

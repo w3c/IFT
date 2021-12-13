@@ -601,7 +601,6 @@ For an <code>AxisInterval</code> object to be well formed:
   <tr><td>8</td><td>ordering_checksum</td><td>Integer</td></tr>
   <tr><td>9</td><td>original_font_checksum</td><td>Integer</td></tr>
   <tr><td>10</td><td>base_checksum</td><td>Integer</td></tr>
-  <tr><td>11</td><td>connection_speed</td><td>Integer</td></tr>
 </table>
 
 For a PatchRequest object to be well formed:
@@ -612,7 +611,6 @@ For a PatchRequest object to be well formed:
     then <code>ordering_checksum</code> must be set.
 *  If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then
     <code>original_font_checksum</code> and <code>base_checksum</code> must be set.
-*  <code>connection_speed</code> can be any of the values listed in [[#connection-speeds]].
 
 ### PatchResponse ### {#PatchResponse}
 
@@ -726,9 +724,11 @@ as follows:
     Set to the checksum of the font subset byte array saved in the state for this font. See:
     [[#computing-checksums]].
 
-*  <code>connection_speed</code>:
-    Can be optionally set by the client to a value from [[#connection-speeds]] by finding the value
-    that corresponds to the client's average round trip time.
+
+Note: It is allowed for the client to request more codepoints then it strictly needs. For
+example, on slower connections it may be more performant to request extra codepoints if
+that is likely to prevent a future request from needing to be sent.
+
 
 ### Handling PatchResponse ### {#handling-patch-response}
 
@@ -843,12 +843,7 @@ Additionally:
     covered by the font subset.
 
 *  If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
-    ignore the unrecognized ones. Likewise if <code>connection_speed</code> contains any unrecognized
-    connection speeds the server should ignore the unrecognized ones.
-
-Note: the server can optionally use the client's provided connection speed to inform how many extra
-codepoints should be sent. For example on slower connections it may be more performant to send extra
-codepoints if they can prevent a future request from needing to be sent.
+    ignore the unrecognized ones.
 
 Note: the server can respond with either a patch or a replacement but should try to produce a patch
 where possible. Replacement's should only be used in situations where the server is unable to recreate
@@ -1007,35 +1002,6 @@ and a target file:
   </tr>
 </table>
 
-Connection Speeds {#connection-speeds}
---------------------------------------
-
-The following connection speed values can be used:
-
-<table>
-  <tr>
-    <th>Name</th><th>Value</th><th>Round Trip Times</th>
-  </tr>
-  <tr>
-    <td>Very Slow</td><td>0</td><td>&gt; 1000 ms.</td>
-  </tr>
-  <tr>
-    <td>Slow</td><td>1</td><td>[300 ms, 1000 ms)</td>
-  </tr>
-  <tr>
-    <td>Average</td><td>2</td><td>[150 ms, 300 ms)</td>
-  </tr>
-  <tr>
-    <td>Fast</td><td>3</td><td>[80 ms, 150 ms)</td>
-  </tr>
-  <tr>
-    <td>Very Fast</td><td>4</td><td>[20 ms, 80 ms)</td>
-  </tr>
-  <tr>
-    <td>Extremely Fast</td><td>5</td><td>[0 ms, 20 ms)</td>
-  </tr>
-</table>
-
 
 Range Request Incremental Transfer {#range-request-incxfer}
 ===========================================================
@@ -1096,11 +1062,8 @@ One mitigation, which was originally introduced for reasons of networking effici
 
 (IFT mandates HTTPS, so no in-the-middle attack is possible; the trust is between the client, and the server hosting the fonts).
 
-<h3 id="checksums-and-possible-fingerprinting">Connection speed, and possible fingerprinting</h3>
 
-It is possible to set a connection_speed parameter, which <em>may</em> allow the Web font server to make better trade-offs in terms of size of update vs. number of requests. This parameter is optional. This <em>might</em> be used as a fingerprinting vector, although the values are bucketed and the same or better information is likely available by other means.
-
-<h3 id="connection-speed-and-possible-fingerprinting">Checksums and possible fingerprinting</h3>
+<h3 id="checksum-and-possible-fingerprinting">Checksums and possible fingerprinting</h3>
 
 64 bit checksums are generated and transferred between client and server. These are used for error detection, are not persistent across browsing sessions, change frequently in the course of a single browsing session, and thus should not pose a tracking risk.
 
