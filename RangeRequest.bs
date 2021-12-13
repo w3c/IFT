@@ -22,7 +22,7 @@ Incremental Font Transfer (IFT) is a collection of technologies to improve the l
 
 There are two technologies inside the IFT collection of technologies. This document describes one of them: the "Range-request method." In this method, the browser uses HTTP range requests to download only specific regions of the font file that it needs. In order for this method to be as effective as possible, the font file itself should be arranged in a particular way, in order to decrease the number of requests the browser needs to make.
 
-The range-request IFT method was specifically designed to target good performance on Chinese, Japanese, and Korean languages. These languages have the largest font files, and include many glyphs which are generally independent. Thus, these languages are a good target for selective downloads.
+The range-request IFT method has best performance on Chinese, Japanese, and Korean languages. These languages usually have the largest font files, and usually include many glyphs which are generally independent.
 
 The range-request method was designed to be as easy as possible to deploy, and doesn't require any server-side software. Deploying this method involves two steps:
 
@@ -34,6 +34,8 @@ A rearranged font file is still a valid font file following existing formats; th
 <h2 id="opt-in">
 Opt-In Mechanism</h2>
 
+<em>This section is general to both IFT methods, and is not specific to the range-request method.</em>
+
 The collection of IFT technologies utilizes a single shared opt-in mechanism. Each method does not use its own opt-in mechanism; instead, the webpage opts into the IFT technologies as a whole, and the browser and server negotiate to decide which specific method will be employed.
 
 The opt-in mechanism is the <code>incremental</code> keyword inside the ''@font-face'' block. Websites specify this keyword inside their <code>@font-face</code> block, and the browser is then responsible for using IFT technologies, and for negotiating with the server to determine which specific IFT method to use.
@@ -43,7 +45,7 @@ The use of the <code>incremental</code> keyword in this CSS rule indicates to th
 <pre>
 @font-face {
     font-family: "MyCoolWebFont";
-    src: url("MyCoolWebFont.otf") format(opentype supports incremental);
+    src: url("MyCoolWebFont.otf") tech(incremental);
 }
 </pre>
 </div>
@@ -53,10 +55,12 @@ Note: Each individual <code>@font-face</code> block may or may not opt-in to IFT
 <h2 id="method-selection">
 IFT Method Selection</h2>
 
-When a page has indicated that a particular font should utilize IFT technology, the browser must determine which method to use. Different browsers may support different IFT methods, and different servers may support different IFT methods, so a negotation occurs at such:
+<em>This section is general to both IFT methods, and is not specific to the range-request method.</em>
+
+When a page has indicated that a particular font should utilize IFT technology, the browser must determine which method to use. Different browsers may support different IFT methods, and different servers may support different IFT methods, so a negotation occurs as such:
 
 1. The browser makes the first request to the server. If the client prefers the <a href="https://w3c.github.io/IFT/Overview.html#patch-incxfer">patch-subset method</a>, it sends the relevant <a href="https://w3c.github.io/IFT/Overview.html#negotiating-transfer-type">query parameter</a>. If the client prefers the range-request method, it does not send the query parameter.
-2. If the server receives the patch-subset query parameter and wishes to honor it, the server may reply with the <a href="https://w3c.github.io/IFT/Overview.html#handling-patch-response">patch-subset magic number</a>. Otherwise, the server may reply with the [[!RFC7233]] <a href="https://httpwg.org/specs/rfc7233.html#header.accept-ranges"><code>Accept-Ranges</code></a> header.
+2. If the server receives the patch-subset query parameter and wishes to honor it, the server may reply with a valid <a href="https://w3c.github.io/IFT/Overview.html#PatchResponse">patch subset response</a> which includes the <a href="https://w3c.github.io/IFT/Overview.html#handling-patch-response">patch-subset magic number</a>. Otherwise, the server may reply with the [[!RFC7233]] <a href="https://httpwg.org/specs/rfc7233.html#header.accept-ranges"><code>Accept-Ranges</code></a> header.
 3. If the client receives the patch-subset magic number, it commences using the patch-subset method. Otherwise, if the client receives the <code>Accept-Ranges: bytes</code> header, it commences using the range-request method. Otherwise, the whole font file is downloaded, and the current non-incremental loading behavior is used.
 
 <h3 id="fallback">
@@ -75,6 +79,9 @@ This summarizes behaviors that result from the above method selection.
     <tbody>
         <tr><th>Server supports both range-request method and patch-subset method
             <td>Client makes initial request without query parameter, and possibly with the <code>Range</code> header. Because all patch-subset servers must support the range-request method, the server replies with <code>Accept-Ranges</code> and initial font data. Client/server commence using range-request method.
+
+            Issue: <a href="https://github.com/w3c/IFT/issues/56">Server-recommended IFT Method selection</a>
+
             <td>Client makes initial request with query parameter. Server replies with the patch-subset magic number, and client/server commence using patch-subset method.
         <tr><th>Server supports only range-request method
             <td>Same as above.
@@ -94,6 +101,8 @@ Background</h2>
 
 A particular organization of font files is beneficial for improving the performance of the range-request IFT method. The range-request IFT method only works with [[!TRUETYPE]], [[!OPENTYPE]], [[!WOFF]], or [[!WOFF2]] files. All of these file formats use an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#organization-of-an-opentype-font"><code>sfnt</code> wrapper</a> which provides a directory of tables inside the font file. A <code>sfnt</code>-based font file is mainly composed of a collection of independent tables.
 
+Issue: <a href="https://github.com/w3c/IFT/issues/59">Using WOFF2 files with range-request mechanism doesn't seem to be a viable option</a>
+
 <h3 id="font-organization-introduction">
 Introduction</h2>
 
@@ -102,7 +111,7 @@ The term <dfn>range-request optimized font</dfn> is used to describe a font file
 Note: Because optimizing a font does not change its file format, no new additional tooling is necessary to interact with these optimized fonts. They are still valid fonts, but with a particular internal organization.
 
 <div class=example>
-The result of optimizing an OpenType font for the range-request IFT method is still a valid OpenType font.
+The result of optimizing an OpenType font for the range-request IFT method is still a valid OpenType font. The resulting file may be larger (by byte count) than it was before optimizing it, but fewer of those bytes should be necessary for a client to download in order to render a target text.
 </div>
 
 Note: There are no <code>MUST</code>-level requirements on the organization of a [=range-request optimized font=]. Any arbitrary font file may be considered to be a [=range-request optimized font=]. However, additional optimizations should increase the performance of loading in a browser via the range-request IFT method. Font creators are encouraged to enact as many of the optimizations listed in this section as are reasonable for the fonts they create.
@@ -110,13 +119,15 @@ Note: There are no <code>MUST</code>-level requirements on the organization of a
 <h3 id="font-organization-compression">
 Compression</h2>
 
-A [=range-request optimized font=] should not use any kind of compression other than [[!RFC7932]] (commonly referred to as "Brotli") compression.
+Servers supporting the range-request IFT method should support compression via the [[!RFC7231]] <code>Content-Encoding</code> header or the [[!RFC7230]] <code>Transfer-Encoding</code> header, rather than having the font file itself be statically compressed.
+
+A [=range-request optimized font=] file (the file itself) should not use any kind of compression other than [[!RFC7932]] (commonly referred to as "Brotli") compression.
 
 If Brotli compression is used in a [=range-request optimized font=], it should use only one <a href="https://datatracker.ietf.org/doc/html/rfc7932#section-9.2">meta-block</a>.
 
 If Brotli compression is used in a [=range-request optimized font=], its one meta-block should have the <a href="https://datatracker.ietf.org/doc/html/rfc7932#section-9.2"><code>ISUNCOMPRESSED</code></a> bit set to 1.
 
-Issue: We can probably do way better than just disabling all compression.
+Issue: <a href="https://github.com/w3c/IFT/issues/60">Static file compression compatibility with range-request method</a>
 
 <h3 id="font-organization-table-ordering">
 Table Ordering</h2>
@@ -136,18 +147,16 @@ If a <code>CFF</code> table exists, the <a href="https://wwwimages2.adobe.com/co
 
 If a <code>CFF2</code> table exists, the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#charStrings">CharString</a> data should lie at the end of the <code>CFF2</code> table.
 
-Issue: https://github.com/w3c/IFT/issues/28 What about font collections?
+Issue: <a href="https://github.com/w3c/IFT/issues/28">Font Collections support</a>
 
 <h3 id="font-organization-glyph-independence">
 Glyph Independence</h2>
 
 Note: The goal of this section is to make every glyph independent from each other.
 
-A [=range-request optimized font=] should not use <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM03/Chap3.html">TrueType instructions</a>.
-
-Note: Some rasterizer software does not even execute these instructions in the first place.
-
 A [=range-request optimized font=] should not use <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6glyf.html">Compound glyphs</a>.
+
+Issue: <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with composite glyphs via range-request</a>
 
 Note: Compound glyphs can be flattened by inlining their component glyphs to become additional contours.
 
@@ -194,7 +203,7 @@ The IFT method selection involves a single round-trip to the server, and if the 
 
 There is a certain amount of data from the beginning of the font file which the browser should unconditionally download. The boundary at the end of this data is called the <dfn>range-request threshold</dfn>.
 
-Note: The first request does not have to be a range request. If the browser expects the [=range-request threshold=] to lie within the first <code>n</code> bytes of the font, the first request may be a range request for the first <code>n</code> bytes of the font. However, a browser may instead make a non-range request, parse the data as it is being streamed from the server, and discover that it has reached the [=range-request threshold=] while data is still being streamed. At this point, the browser is free to close the connection, or keep the connection open and continue to download the rest of the font in the background while making concurrent range requests at the same time.
+Note: The first request does not have to be a range request. If the browser expects the [=range-request threshold=] to lie within the first <code>n</code> bytes of the font, the first request may be a range request for the first <code>n</code> bytes of the font. However, a browser may instead make a non-range request, parse the data as it is being streamed from the server, and discover that it has reached the [=range-request threshold=] while data is still being streamed.
 
 Once all the data before the [=range-request threshold=] has been loaded by the browser, the browser may either close this connection to the server, or it may choose to leave the connection open and let the font data continue loading in the background.
 
@@ -213,15 +222,26 @@ Note: If the font file has followed all of the organization guidelines above, al
 
 Note: Another valid alternative is to treat the entire font as residing on an asynchronous virtual filesystem, and have the browser track which ranges of the font it ended up reading during its normal operation. The browser could then request those regions in range requests.
 
+<h2 id="server-behaviors">
+Server Behaviors</h2>
+
+Servers supporting the range-request IFT method must support [[!RFC7233]] range requests.
+
+Servers supporting the range-request IFT method should support compression via the [[!RFC7231]] <code>Content-Encoding</code> header or the [[!RFC7230]] <code>Transfer-Encoding</code> header, rather than having the font file itself be statically compressed.
+
 <h2 id="sec">
 Security Considerations</h2>
 
 <h2 id="priv">
 Privacy Considerations</h2>
 
+See <a href="https://w3c.github.io/IFT/Overview.html#priv">Privacy Considerations</a>
+
+Issue: <a href="https://github.com/w3c/IFT/issues/62">Method-specific privacy sections</a>
+
 <h2 id="suggested-glyph-character-ordering">
 Appendix A: Suggested glyph/character ordering</h2>
 
 Note: This section describes ordering of characters, not glyph IDs, because the meaning of glyph IDs are not consistent across different fonts. To optimize a particular font according to the ordering listed here, the characters will have to be mapped to glyph IDs inside the font. This approach of mapping characters to glyphs for ordering purposes works particularly well for ideographic languages with large character sets.
 
-Issue: List the suggested ordering.
+Issue: <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a>
