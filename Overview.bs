@@ -22,57 +22,58 @@ Abstract: This specification defines two methods to incrementally transfer fonts
     https://www.specref.org/
 -->
 <pre class=biblio>
-	{
-		"PFE-report": {
-            "href": "https://www.w3.org/TR/PFE-evaluation/",
-            "authors": [
-                "Chris Lilley"
-                ],
-            "status": "Note",
-            "publisher": "W3C",
-			"title": "Progressive Font Enrichment: Evaluation Report",
-			"date": "15 October 2020"
-		},
-    "Shared-Brotli": {
-      "href": "https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08",
-      "authors": [
-        "J. Alakuijala",
-        "T. Duong",
-        "R. Obryk",
-        "Z. Szabadka",
-        "L. Vandevenne"
-        ],
-        "status": "Internet Draft",
-        "title": "Shared Brotli Compressed Data Format",
-        "date": "27 Jul 2021"
-    }
-	}
-</pre>
+{
+  "PFE-report": {
+    "href": "https://www.w3.org/TR/PFE-evaluation/",
+    "authors": ["Chris Lilley"],
+    "status": "Note",
+    "publisher": "W3C",
+    "title": "Progressive Font Enrichment: Evaluation Report",
+    "date": "15 October 2020"
+  },
 
-<pre class=biblio>
-	{
-	    "OpenType-Variations": {
-            "href": "https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview",
-            "authors": [],
-            "status": "Note",
-            "publisher": "Microsoft",
-			"title": "OpenType Font Variations Overview",
-			"date": "23 October 2020"
-		}
-	}
-</pre>
+  "Shared-Brotli": {
+    "href": "https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08",
+    "authors": [
+      "J. Alakuijala",
+      "T. Duong",
+      "R. Obryk",
+      "Z. Szabadka",
+      "L. Vandevenne"
+    ],
+    "status": "Internet Draft",
+    "title": "Shared Brotli Compressed Data Format",
+    "date": "27 Jul 2021"
+  },
 
-<pre class=biblio>
-	{
-	    "fast-hash": {
-            "href": "https://github.com/ztanml/fast-hash",
-            "authors": ["ztanml"],
-            "status": "Note",
-            "publisher": "ztanml",
-			"title": "fast-hash",
-			"date": "22 October 2018"
-		}
-	}
+
+  "OpenType-Variations": {
+    "href": "https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview",
+    "authors": [],
+    "status": "Note",
+    "publisher": "Microsoft",
+    "title": "OpenType Font Variations Overview",
+    "date": "23 October 2020"
+  },
+
+  "fast-hash": {
+    "href": "https://github.com/ztanml/fast-hash",
+    "authors": ["ztanml"],
+    "status": "Note",
+    "publisher": "ztanml",
+    "title": "fast-hash",
+    "date": "22 October 2018"
+  },
+
+  "fetch": {
+    "href": "https://fetch.spec.whatwg.org/",
+    "authors": [],
+    "status": "Living Standard",
+    "publisher": "What WG",
+    "title": "Fetch Standard",
+    "date": "13 December 2021"
+  }
+}
 </pre>
 
 <style>
@@ -676,19 +677,25 @@ transferred:
 
 ### Extending the Font Subset ### {#extend-subset}
 
-A client extends its font subset to cover additional codepoints by making HTTP requests to
-a Patch Subset server. The HTTP request must use either the GET or POST method:
+A client extends its font subset to cover additional codepoints by making requests to a Patch Subset
+server. The request requirements are described here in terms of a fetch according to
+"4. Fetching" in [[!fetch]]. If the implementing user agent does not support fetch, then the request
+should be made using an equivalent HTTP request.
 
-*  If sent as a POST request the post body will be a single
+* The request <strong>method</strong> must be either "GET" or "POST".
+
+* The request <strong>destination</strong> should be "font".
+
+* The request URL <strong>scheme</strong> must be "https".
+
+* The request URL <strong>path</strong> is used to identify the font specific to be loaded.
+
+* If <strong>method</strong> is "POST" then, request <strong>body</strong> must be a single
     <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR.
 
-*  If sent as a GET request the client will include a single query parameter,
-    <code>request</code>:<br/> the value is a single
-    <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then base64url
-    encoding [[rfc4648]].
-
-For both POST and GET requests the path of the request identifies the specific font. All requests
-must be made over HTTPS.
+* Otherwise if <strong>method</strong> is "GET" then, URL <strong>query</strong> must contain a
+    parameter "request" whose value is a single <a href="#PatchRequest"><code>PatchRequest</code></a>
+    object encoded via CBOR and then base64url encoding [[rfc4648]].
 
 The fields of the <a href="#PatchRequest"><code>PatchRequest</code></a> object should be set
 as follows:

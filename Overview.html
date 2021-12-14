@@ -7,11 +7,11 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-
-  <meta content="d5606c91e28e669d2621bd493455cfc4851bf88f" name="document-revision">
+  <meta content="3c42325a83092753e8dcaa58e24ac4ff2a62817c" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
+</style>
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -1170,17 +1170,25 @@ by <a href="#PatchResponse"><code>PatchResponse.original_axis_space</code></a>.<
      <p>Subset Axis Space: the most recent variations axis space that the subsetted font covers. Supplied by <a href="#PatchResponse"><code>PatchResponse.subset_axis_space</code></a>.</p>
    </ul>
    <h4 class="heading settled" data-level="2.4.2" id="extend-subset"><span class="secno">2.4.2. </span><span class="content">Extending the Font Subset</span><a class="self-link" href="#extend-subset"></a></h4>
-   <p>A client extends its font subset to cover additional codepoints by making HTTP requests to
-a Patch Subset server. The HTTP request must use either the GET or POST method:</p>
+   <p>A client extends its font subset to cover additional codepoints by making requests to a Patch Subset
+server. The request requirements are described here in terms of a fetch according to
+"4. Fetching" in <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a>. If the implementing user agent does not support fetch, then the request
+should be made using an equivalent HTTP request.</p>
    <ul>
     <li data-md>
-     <p>If sent as a POST request the post body will be a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR.</p>
+     <p>The request <strong>method</strong> must be either "GET" or "POST".</p>
     <li data-md>
-     <p>If sent as a GET request the client will include a single query parameter, <code>request</code>:<br> the value is a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then base64url
-encoding <a data-link-type="biblio" href="#biblio-rfc4648">[rfc4648]</a>.</p>
+     <p>The request <strong>destination</strong> should be "font".</p>
+    <li data-md>
+     <p>The request URL <strong>scheme</strong> must be "https".</p>
+    <li data-md>
+     <p>The request URL <strong>path</strong> is used to identify the font specific to be loaded.</p>
+    <li data-md>
+     <p>If <strong>method</strong> is "POST" then, request <strong>body</strong> must be a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR.</p>
+    <li data-md>
+     <p>Otherwise if <strong>method</strong> is "GET" then, URL <strong>query</strong> must contain a
+parameter "request" whose value is a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then base64url encoding <a data-link-type="biblio" href="#biblio-rfc4648">[rfc4648]</a>.</p>
    </ul>
-   <p>For both POST and GET requests the path of the request identifies the specific font. All requests
-must be made over HTTPS.</p>
    <p>The fields of the <a href="#PatchRequest"><code>PatchRequest</code></a> object should be set
 as follows:</p>
    <ul>
@@ -1559,6 +1567,8 @@ extension requests should be sent according to the Range Request specificiation.
    <dd>John Daggett; Myles Maxfield; Chris Lilley. <a href="https://www.w3.org/TR/css-fonts-4/">CSS Fonts Module Level 4</a>. 17 November 2020. WD. URL: <a href="https://www.w3.org/TR/css-fonts-4/">https://www.w3.org/TR/css-fonts-4/</a>
    <dt id="biblio-fast-hash">[FAST-HASH]
    <dd>ztanml. <a href="https://github.com/ztanml/fast-hash">fast-hash</a>. 22 October 2018. Note. URL: <a href="https://github.com/ztanml/fast-hash">https://github.com/ztanml/fast-hash</a>
+   <dt id="biblio-fetch">[FETCH]
+   <dd><a href="https://fetch.spec.whatwg.org/">Fetch Standard</a>. 13 December 2021. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
    <dt id="biblio-rfc3284">[RFC3284]
