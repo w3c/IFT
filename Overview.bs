@@ -677,21 +677,25 @@ transferred:
 
 ### Extending the Font Subset ### {#extend-subset}
 
-A client extends its font subset to cover additional codepoints by making HTTP requests to
-a Patch Subset server. The HTTP request must use either the GET or POST method:
+A client extends its font subset to cover additional codepoints by making requests to a Patch Subset
+server. The request requirements are described here in terms of a fetch according to
+"4. Fetching" in [[!fetch]]. If the implementing user agent does not support fetch, then the request
+should be made using an equivalent HTTP request.
 
-*  If sent as a POST request the post body will be a single
+* The request <strong>method</strong> must be either "GET" or "POST".
+
+* The request <strong>destination</strong> should be "font".
+
+* The request URL <strong>scheme</strong> must be "https".
+
+* The request URL <strong>path</strong> is used to identify the font specific to be loaded.
+
+* If <strong>method</strong> is "POST" then, request <strong>body</strong> must be a single
     <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR.
 
-*  If sent as a GET request the client will include a single query parameter,
-    <code>request</code>:<br/> the value is a single
-    <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then base64url
-    encoding [[rfc4648]].
-
-For both POST and GET requests the path of the request identifies the specific font. All requests
-must be made over HTTPS.
-
-If the client user agent implements [[!fetch]] then [[!fetch]] must be used to make the request.
+* Otherwise if <strong>method</strong> is "GET" then, URL <strong>query</strong> must contain a
+    parameter "request" whose value is a single <a href="#PatchRequest"><code>PatchRequest</code></a>
+    object encoded via CBOR and then base64url encoding [[rfc4648]].
 
 The fields of the <a href="#PatchRequest"><code>PatchRequest</code></a> object should be set
 as follows:
