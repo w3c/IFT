@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="800a18bea965bad1a7cb75344cb88d82f1f4965e" name="document-revision">
+  <meta content="1f203b91f1f8055b9909b595a93e5c3381057c45" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -1229,6 +1229,8 @@ should be made using an equivalent HTTP request.</p>
     <li data-md>
      <p>The request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-destination" id="ref-for-concept-request-destination">destination</a> must be "font".</p>
     <li data-md>
+     <p>The request CORS <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-mode" id="ref-for-concept-request-mode">mode</a> must be "cors".</p>
+    <li data-md>
      <p>The request URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-scheme" id="ref-for-concept-url-scheme">scheme</a> must be "https".</p>
     <li data-md>
      <p>The request URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path">path</a> is used to identify the font specific to be loaded.</p>
@@ -1238,6 +1240,9 @@ should be made using an equivalent HTTP request.</p>
      <p>Otherwise if <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method②">method</a> is "GET" then, URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-query" id="ref-for-concept-url-query">query</a> must contain a
 parameter "request" whose value is a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then base64url encoding <a data-link-type="biblio" href="#biblio-rfc4648">[rfc4648]</a>.</p>
    </ul>
+   <p>Any request and/or url parameters which are not specified here should be set based on
+the user agent’s normal handling for font requests. For example if this font load is
+from a CSS font face, then <a href="https://www.w3.org/TR/css-fonts-4/#font-fetching-requirements">CSS Fonts 4 §4.8.2 Font fetching requirements</a> should be followed.</p>
    <p>The fields of the <a href="#PatchRequest"><code>PatchRequest</code></a> object should be set
 as follows:</p>
    <ul>
@@ -1655,6 +1660,12 @@ extension requests should be sent according to the Range Request specificiation.
     <li><a href="#ref-for-concept-request-method">2.4.2. Extending the Font Subset</a> <a href="#ref-for-concept-request-method①">(2)</a> <a href="#ref-for-concept-request-method②">(3)</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-concept-request-mode">
+   <a href="https://fetch.spec.whatwg.org/#concept-request-mode">https://fetch.spec.whatwg.org/#concept-request-mode</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-concept-request-mode">2.4.2. Extending the Font Subset</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-concept-response-status">
    <a href="https://fetch.spec.whatwg.org/#concept-response-status">https://fetch.spec.whatwg.org/#concept-response-status</a><b>Referenced in:</b>
    <ul>
@@ -1697,6 +1708,7 @@ extension requests should be sent according to the Range Request specificiation.
      <li><span class="dfn-paneled" id="term-for-concept-response-body">body <small>(for response)</small></span>
      <li><span class="dfn-paneled" id="term-for-concept-request-destination">destination</span>
      <li><span class="dfn-paneled" id="term-for-concept-request-method">method</span>
+     <li><span class="dfn-paneled" id="term-for-concept-request-mode">mode</span>
      <li><span class="dfn-paneled" id="term-for-concept-response-status">status <small>(for response)</small></span>
      <li><span class="dfn-paneled" id="term-for-concept-request-url">url</span>
     </ul>

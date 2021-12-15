@@ -691,6 +691,8 @@ should be made using an equivalent HTTP request.
 
 * The request [=request/destination=] must be "font".
 
+* The request CORS [=request/mode=] must be "cors".
+
 * The request URL [=url/scheme=] must be "https".
 
 * The request URL [=url/path=] is used to identify the font specific to be loaded.
@@ -701,6 +703,10 @@ should be made using an equivalent HTTP request.
 * Otherwise if [=request/method=] is "GET" then, URL [=url/query=] must contain a
     parameter "request" whose value is a single <a href="#PatchRequest"><code>PatchRequest</code></a>
     object encoded via CBOR and then base64url encoding [[rfc4648]].
+
+Any request and/or url parameters which are not specified here should be set based on
+the user agent's normal handling for font requests. For example if this font load is
+from a CSS font face, then [[css-fonts-4#font-fetching-requirements]] should be followed.
 
 The fields of the <a href="#PatchRequest"><code>PatchRequest</code></a> object should be set
 as follows:
