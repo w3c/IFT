@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="74851a91f1424058448fd5695037dfa620f3ca50" name="document-revision">
+  <meta content="800a18bea965bad1a7cb75344cb88d82f1f4965e" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -446,7 +446,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-12-15">15 December 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-12-16">16 December 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1221,22 +1221,21 @@ by <a href="#PatchResponse"><code>PatchResponse.original_axis_space</code></a>.<
    </ul>
    <h4 class="heading settled" data-level="2.4.2" id="extend-subset"><span class="secno">2.4.2. </span><span class="content">Extending the Font Subset</span><a class="self-link" href="#extend-subset"></a></h4>
    <p>A client extends its font subset to cover additional codepoints by making requests to a Patch Subset
-server. The request requirements are described here in terms of a fetch according to
-"4. Fetching" in <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a>. If the implementing user agent does not support fetch, then the request
+server. The request requirements are described here in terms of a fetch according to <a href="https://fetch.spec.whatwg.org/#fetching">Fetch Standard §4 Fetching</a>. If the implementing user agent does not support fetch, then the request
 should be made using an equivalent HTTP request.</p>
    <ul>
     <li data-md>
-     <p>The request <strong>method</strong> must be either "GET" or "POST".</p>
+     <p>The request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method">method</a> must be either "GET" or "POST".</p>
     <li data-md>
-     <p>The request <strong>destination</strong> should be "font".</p>
+     <p>The request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-destination" id="ref-for-concept-request-destination">destination</a> must be "font".</p>
     <li data-md>
-     <p>The request URL <strong>scheme</strong> must be "https".</p>
+     <p>The request URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-scheme" id="ref-for-concept-url-scheme">scheme</a> must be "https".</p>
     <li data-md>
-     <p>The request URL <strong>path</strong> is used to identify the font specific to be loaded.</p>
+     <p>The request URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path">path</a> is used to identify the font specific to be loaded.</p>
     <li data-md>
-     <p>If <strong>method</strong> is "POST" then, request <strong>body</strong> must be a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR.</p>
+     <p>If <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method①">method</a> is "POST" then, request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-body" id="ref-for-concept-request-body">body</a> must be a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR.</p>
     <li data-md>
-     <p>Otherwise if <strong>method</strong> is "GET" then, URL <strong>query</strong> must contain a
+     <p>Otherwise if <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method②">method</a> is "GET" then, URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-query" id="ref-for-concept-url-query">query</a> must contain a
 parameter "request" whose value is a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then base64url encoding <a data-link-type="biblio" href="#biblio-rfc4648">[rfc4648]</a>.</p>
    </ul>
    <p>The fields of the <a href="#PatchRequest"><code>PatchRequest</code></a> object should be set
@@ -1344,7 +1343,7 @@ must not resend the request again and should follow <a href="#font-load-failed">
      <p>If the client has a saved font subset, it may choose to use that and then use the user
   agent’s existing font fallback mechanism for codepoints not covered by the subset.</p>
     <li data-md>
-     <p>The client may re-issue the request as a regular non incremental font fetch to the same <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path">path</a>. It must not include the patch subset request parameter. This will load
+     <p>The client may re-issue the request as a regular non incremental font fetch to the same <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path①">path</a>. It must not include the patch subset request parameter. This will load
   the entire original font.</p>
     <li data-md>
      <p>Discard the saved font subset, and use the user agent’s existing font fallback mechanism.</p>
@@ -1355,7 +1354,7 @@ discarded.</p>
    <p><span class="conform server" id="conform-succesful-response">If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over HTTPS for a font the server has and that was
 populated according to the requirements in <a href="#extend-subset">§ 2.4.2 Extending the Font Subset</a> then it must respond with HTTP <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status③">status</a> code 200.</span> <span class="conform server" id="conform-magic-number">The first 4 bytes of the response <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body②">body</a> must be set to 0x49, 0x46, 0x54, 0x20 ("IFT " encoded as ASCII) followed by a
 single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</span></p>
-   <p>The <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path①">path</a> in the request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-url" id="ref-for-concept-request-url">url</a> identifies the specific font that a patch is desired
+   <p>The <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path②">path</a> in the request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-url" id="ref-for-concept-request-url">url</a> identifies the specific font that a patch is desired
 for. From the request object the server can produce two codepoint sets:</p>
    <ol>
     <li data-md>
@@ -1644,6 +1643,18 @@ extension requests should be sent according to the Range Request specificiation.
     <li><a href="#ref-for-concept-response-body②">2.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-concept-request-destination">
+   <a href="https://fetch.spec.whatwg.org/#concept-request-destination">https://fetch.spec.whatwg.org/#concept-request-destination</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-concept-request-destination">2.4.2. Extending the Font Subset</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-concept-request-method">
+   <a href="https://fetch.spec.whatwg.org/#concept-request-method">https://fetch.spec.whatwg.org/#concept-request-method</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-concept-request-method">2.4.2. Extending the Font Subset</a> <a href="#ref-for-concept-request-method①">(2)</a> <a href="#ref-for-concept-request-method②">(3)</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-concept-response-status">
    <a href="https://fetch.spec.whatwg.org/#concept-response-status">https://fetch.spec.whatwg.org/#concept-response-status</a><b>Referenced in:</b>
    <ul>
@@ -1661,8 +1672,21 @@ extension requests should be sent according to the Range Request specificiation.
   <aside class="dfn-panel" data-for="term-for-concept-url-path">
    <a href="https://url.spec.whatwg.org/#concept-url-path">https://url.spec.whatwg.org/#concept-url-path</a><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-concept-url-path">2.4.6. Font Load Failed</a>
-    <li><a href="#ref-for-concept-url-path①">2.5. Server: Responding to a PatchRequest</a>
+    <li><a href="#ref-for-concept-url-path">2.4.2. Extending the Font Subset</a>
+    <li><a href="#ref-for-concept-url-path①">2.4.6. Font Load Failed</a>
+    <li><a href="#ref-for-concept-url-path②">2.5. Server: Responding to a PatchRequest</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-concept-url-query">
+   <a href="https://url.spec.whatwg.org/#concept-url-query">https://url.spec.whatwg.org/#concept-url-query</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-concept-url-query">2.4.2. Extending the Font Subset</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-concept-url-scheme">
+   <a href="https://url.spec.whatwg.org/#concept-url-scheme">https://url.spec.whatwg.org/#concept-url-scheme</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-concept-url-scheme">2.4.2. Extending the Font Subset</a>
    </ul>
   </aside>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
@@ -1670,7 +1694,9 @@ extension requests should be sent according to the Range Request specificiation.
    <li>
     <a data-link-type="biblio">[fetch]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-concept-response-body">body</span>
+     <li><span class="dfn-paneled" id="term-for-concept-response-body">body <small>(for response)</small></span>
+     <li><span class="dfn-paneled" id="term-for-concept-request-destination">destination</span>
+     <li><span class="dfn-paneled" id="term-for-concept-request-method">method</span>
      <li><span class="dfn-paneled" id="term-for-concept-response-status">status <small>(for response)</small></span>
      <li><span class="dfn-paneled" id="term-for-concept-request-url">url</span>
     </ul>
@@ -1678,6 +1704,8 @@ extension requests should be sent according to the Range Request specificiation.
     <a data-link-type="biblio">[URL]</a> defines the following terms:
     <ul>
      <li><span class="dfn-paneled" id="term-for-concept-url-path">path</span>
+     <li><span class="dfn-paneled" id="term-for-concept-url-query">query</span>
+     <li><span class="dfn-paneled" id="term-for-concept-url-scheme">scheme</span>
     </ul>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
