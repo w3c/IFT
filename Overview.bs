@@ -21,6 +21,11 @@ Abstract: This specification defines two methods to incrementally transfer fonts
     for things that are not in specref
     https://www.specref.org/
 -->
+
+<pre class=link-defaults>
+spec:fetch; type:dfn; for:/; text:status
+</pre>
+
 <pre class=biblio>
 {
   "PFE-report": {
@@ -751,8 +756,8 @@ that is likely to prevent a future request from needing to be sent.
 ### Handling PatchResponse ### {#handling-patch-response}
 
 If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a>
-it will respond with HTTP status code 200 and the body of the response will be a 4 byte magic
-number (0x49, 0x46, 0x54, 0x20) followed by a single
+it will respond with HTTP [=response/status=] code 200 and the [=response/body=] of the response will
+be a 4 byte magic number (0x49, 0x46, 0x54, 0x20) followed by a single
 <a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
 should interpret and process the fields of the object as follows:
 
@@ -782,6 +787,22 @@ should interpret and process the fields of the object as follows:
 6. If <code>subset_axis_space</code> is set then update the saved subset axis space with the value
     specified in this field.
 
+### Handling Invalid Response from the Server ### {#invalid-server-response}
+
+
+If the response a client receives from the server has a [=response/status=] code other than 200:
+
+*  If it is a redirect [=status=]: follow normal redirect handling, such as
+     [[fetch#http-redirect-fetch]].
+
+*  All other statuses, the font subset extension has failed. Follow [[#font-load-failed]].
+
+If the response the client receives has a [=response/status=] code of 200, but the [=response/body=]
+is malformed. That is, it is missing the magic number, not decodable with CBOR, or the
+<a href="#PatchResponse"><code>PatchResponse</code></a> is not well formed:
+
+*  This is an error. Follow [[#font-load-failed]].
+
 ### Client Side Checksum Mismatch ### {#client-side-checksum-mismatch}
 
 If the checksum of the font subset computed by the client does not match the
@@ -793,19 +814,38 @@ If the checksum of the font subset computed by the client does not match the
     to the union of the codepoints in the discarded font subset and the set of code points
     that the previous request was trying to add.
 
+    If the resent request also results in a checksum mismatch then this is an error. The client
+    must not resend the request again and should follow [[#font-load-failed]]
+
+### Font Load Failed ### {#font-load-failed}
+
+If the font load or extension has failed the client should choose one of the following options:
+
+1.  If the client has a saved font subset, it may choose to use that and then use the user
+      agent's existing font fallback mechanism for codepoints not covered by the subset.
+
+2.  The client may re-issue the request as a regular non incremental font fetch to the same
+      [=url/path=]. It must not include the patch subset request parameter. This will load
+      the entire original font.
+
+3.  Discard the saved font subset, and use the user agent's existing font fallback mechanism.
+
+Regardless of which of the above options are used, the saved client state for this font must be
+discarded.
+
 Server: Responding to a PatchRequest {#handling-patch-request}
 --------------------------------------------------------------
 
 <span class="conform server" id="conform-succesful-response">If the server receives a well formed
 <a href="#PatchRequest"><code>PatchRequest</code></a> over HTTPS for a font the server has and that was
-populated according to the requirements in [[#extend-subset]] then it must respond with HTTP status
-code 200.</span>
-<span class="conform server" id="conform-magic-number">The first 4 bytes of the response must be set
-to 0x49, 0x46, 0x54, 0x20 ("IFT " encoded as ASCII) followed by a
+populated according to the requirements in [[#extend-subset]] then it must respond with HTTP
+[=response/status=] code 200.</span>
+<span class="conform server" id="conform-magic-number">The first 4 bytes of the response
+[=response/body=] must be set to 0x49, 0x46, 0x54, 0x20 ("IFT " encoded as ASCII) followed by a
 single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</span>
 
-The path in the request identifies the specific font that a patch is desired for. From the request
-object the server can produce two codepoint sets:
+The [=url/path=] in the request [=request/url=] identifies the specific font that a patch is desired
+for. From the request object the server can produce two codepoint sets:
 
 1.  Codepoints the client has: formed by the union of the codepoint sets specified by
      <code>codepoints_have</code> and <code>indices_have</code>. The indices in
@@ -880,11 +920,11 @@ same client to the same server task.
 
 Possible error responses:
 
-*  If the request is malformed the server must instead respond with http status code 400 to indicate an
-    error.
+*  If the request is malformed the server must instead respond with http [=response/status=] code 400
+     to indicate an error.
 
-*  If the requested font is not recognized by the server it should respond with http status code 404 to
-    indicate a not found error.
+*  If the requested font is not recognized by the server it should respond with http [=response/status=]
+     code 404 to indicate a not found error.
 
 ### Range Request Support ### {#range-request-support}
 
