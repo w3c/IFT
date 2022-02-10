@@ -272,7 +272,9 @@ to give the smallest encodings for most sets typically encountered.
 
 Next, determine the height, <i>H</i>, of the tree:
 
-<i>H</i> = ceil(log<sub><i>B</i></sub>(max(</i>S</i>) + 1))
+<i>H</i> = ceil(log<sub><i>B</i></sub>(max(<i>S</i>) + 1))
+
+If <i>S</i> is an empty set then <i>H</i> = 1.
 
 Next create a tree of height H where all non-leaf nodes have <i>B</i> children. Each node in the tree
 has a single value composed of <i>B</i> bits. Given a node <i>p</i> which has <i>B</i> children:
@@ -302,6 +304,8 @@ has a single value composed of <i>B</i> bits. Given a node <i>p</i> which has <i
 *  If for node <i>p</i>, End(<i>p</i>) - Start(<i>p</i>) = <i>B</i>, then <i>p</i> will have no
     children.
 
+*  An empty set is considered to have no nodes.
+
 The tree is encoded into a bit string. When appending multiple-bit values to the bit string, bits
 are added in order from least significant bit to most significant bit.
 
@@ -330,7 +334,6 @@ If the number of bits in the bit string is not a multiple of 8, zero bits are ap
 next multiple of 8.
 The bit with the smallest index in the bit string is the least
 significant bit in the byte and the bit with the largest index is the most significant bit.
-
 
 <div class=example>
   The set {2, 33, 323} in a tree with a branching factor of 8 is encoded as the bit string:
@@ -382,6 +385,35 @@ significant bit in the byte and the bit with the largest index is the most signi
   * n<sub>4</sub> append 00000010. Child 4 of n<sub>1</sub>, bit 1 is set for the interval [33, 34) or 33.
   * n<sub>5</sub> append 00001000. Child 0 of n<sub>2</sub>, bit 3 is set for the interval [323, 324)
      or 323.
+
+</div>
+
+<div class=example>
+  The set {} in a tree with a branching factor of 4 is encoded as the bit string:
+
+  ```
+  BitString:
+  |- header- |
+  |          |
+  [ 00000000 ] 
+
+  Which then becomes the ByteString:
+  [
+    0b00000000,
+  ]
+  ```
+
+  First determine the height of the tree. Because we are encoding an empty
+  set height is:
+
+  <i>H</i> = 1
+
+  Then append
+
+  *  branching factor = 4 = 00
+  *  <i>H</i> - 1 = 0 = 000000
+
+  Empty sets have no nodes, so no bytes beyond the header need to be appended.
 
 </div>
 
