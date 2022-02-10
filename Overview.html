@@ -514,11 +514,7 @@ dfn > a.self-link::before      { content: "#"; }
     <li>
      <a href="#patch-incxfer"><span class="secno">4</span> <span class="content">Patch Based Incremental Transfer</span></a>
      <ol class="toc">
-      <li>
-       <a href="#patch-overview"><span class="secno">4.1</span> <span class="content">Overview</span></a>
-       <ol class="toc">
-        <li><a href="#font-subset"><span class="secno">4.1.1</span> <span class="content">Font Subset</span></a>
-       </ol>
+      <li><a href="#font-subset"><span class="secno">4.1</span> <span class="content">Font Subset</span></a>
       <li>
        <a href="#data-types"><span class="secno">4.2</span> <span class="content">Data Types</span></a>
        <ol class="toc">
@@ -630,7 +626,15 @@ slow networks, very large fonts, or complex subsetting requirements currently pr
 example, even using WOFF 2 <a data-link-type="biblio" href="#biblio-woff2">[WOFF2]</a>, fonts for CJK languages are too large to be practical.</p>
    <p>There are two different methods which can be used to incrementally transfer fonts.</p>
    <h3 class="heading settled" data-level="1.1" id="patch-subset"><span class="secno">1.1. </span><span class="content">Patch Subset</span><a class="self-link" href="#patch-subset"></a></h3>
-   <p>The first method, <a href="patch-incxfer">Patch Subset</a>, uses a server which can generate binary updates to an existing font file.</p>
+   <p>In the the first method, <a href="patch-incxfer">Patch Subset</a> a server generates binary patches which a
+client applies to a subset of the font in order to extend the coverage of that subset. The server
+is stateless, it does not maintain any session data for clients between requests. Thus when a client
+requests the generation of a patch from the server it has to fully describe the current subset of the
+font that it has in a way which allows the server to recreate it.</p>
+   <p>Generic binary patch algorithms are used which do not need to be aware of the specifics of the font
+format. Typically a server will produce a patch by generating two font subsets: one which matches what
+the client currently has and one which matches the extended subset the client desires. A binary patch
+is then produced between the two subsets.</p>
    <h3 class="heading settled" data-level="1.2" id="range-request"><span class="secno">1.2. </span><span class="content">Range Request</span><a class="self-link" href="#range-request"></a></h3>
    <p>The second
 method, <a href="#range-request-incxfer">Range Request</a>, is a very simple method of incremental transfer, and has no server-side requirements (other than the server should be able to respond to byte-based range requests). The browser simply makes range requests to the server for the specific bytes in the font file that it needs. In order to know which bytes are necessary, the browser makes one initial special request for the beginning of the file.</p>
@@ -692,17 +696,7 @@ for many uses cases while still providing material improvments to loading perfor
       <td>Client makes initial request to server with query parameter. Server does not reply with the patch-subset magic number, and sends the full font file to the client from beginning to end. 
    </table>
    <h2 class="heading settled" data-level="4" id="patch-incxfer"><span class="secno">4. </span><span class="content">Patch Based Incremental Transfer</span><a class="self-link" href="#patch-incxfer"></a></h2>
-   <h3 class="heading settled" data-level="4.1" id="patch-overview"><span class="secno">4.1. </span><span class="content">Overview</span><a class="self-link" href="#patch-overview"></a></h3>
-   <p>In the patch subset approach to incremental font transfer a server generates binary patches which a
-client applies to a subset of the font in order to extend the coverage of that font subset. The server
-is stateless, it does not maintain any session data for clients between requests. Thus when a client
-requests the generation of a patch from the server it has to fully describe the current subset of the
-font that it has in a way which allows the server to recreate it.</p>
-   <p>Generic binary patch algorithms are used which do not need to be aware of the specifics of the font
-format. Typically a server will produce a patch by generating two font subsets: one which matches what
-the client currently has and one which matches the extended subset the client desires. A binary patch
-is then produced between the two subsets.</p>
-   <h4 class="heading settled" data-level="4.1.1" id="font-subset"><span class="secno">4.1.1. </span><span class="content">Font Subset</span><a class="self-link" href="#font-subset"></a></h4>
+   <h3 class="heading settled" data-level="4.1" id="font-subset"><span class="secno">4.1. </span><span class="content">Font Subset</span><a class="self-link" href="#font-subset"></a></h3>
    <p>A subset of a font file is a modified version of the font that contains only the data needed to
 render a subset of the codepoints supported by the original font. When a subsetted font is used to
 render text using any combination of the subset codepoints it must render identically to the original

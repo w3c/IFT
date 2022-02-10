@@ -102,8 +102,17 @@ There are two different methods which can be used to incrementally transfer font
 Patch Subset {#patch-subset}
 ----------------------------
 
-The first method,
-<a href="patch-incxfer">Patch Subset</a>, uses a server which can generate binary updates to an existing font file.
+In the the first method, <a href="patch-incxfer">Patch Subset</a> a server generates binary patches which a
+client applies to a subset of the font in order to extend the coverage of that subset. The server
+is stateless, it does not maintain any session data for clients between requests. Thus when a client
+requests the generation of a patch from the server it has to fully describe the current subset of the
+font that it has in a way which allows the server to recreate it.
+
+Generic binary patch algorithms are used which do not need to be aware of the specifics of the font
+format. Typically a server will produce a patch by generating two font subsets: one which matches what
+the client currently has and one which matches the extended subset the client desires. A binary patch
+is then produced between the two subsets.
+
 
 Range Request {#range-request}
 ------------------------------
@@ -188,21 +197,8 @@ This summarizes behaviors that result from the above method selection.
 Patch Based Incremental Transfer {#patch-incxfer}
 =================================================
 
-Overview {#patch-overview}
+Font Subset {#font-subset}
 --------------------------
-
-In the patch subset approach to incremental font transfer a server generates binary patches which a
-client applies to a subset of the font in order to extend the coverage of that font subset. The server
-is stateless, it does not maintain any session data for clients between requests. Thus when a client
-requests the generation of a patch from the server it has to fully describe the current subset of the
-font that it has in a way which allows the server to recreate it.
-
-Generic binary patch algorithms are used which do not need to be aware of the specifics of the font
-format. Typically a server will produce a patch by generating two font subsets: one which matches what
-the client currently has and one which matches the extended subset the client desires. A binary patch
-is then produced between the two subsets.
-
-### Font Subset ### {#font-subset}
 
 A subset of a font file is a modified version of the font that contains only the data needed to
 render a subset of the codepoints supported by the original font. When a subsetted font is used to
