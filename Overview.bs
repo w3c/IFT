@@ -113,12 +113,11 @@ format. Typically a server will produce a patch by generating two font subsets: 
 the client currently has and one which matches the extended subset the client desires. A binary patch
 is then produced between the two subsets.
 
-
 Range Request {#range-request}
 ------------------------------
 
 The second
-method, <a href="#range-request-incxfer">Range Request</a>, is a very simple method of incremental transfer, and has no server-side requirements (other than the server should be able to respond to byte-based range requests). The browser simply makes range requests to the server for the specific bytes in the font file that it needs. In order to know which bytes are necessary, the browser makes one initial special request for the beginning of the file.
+method, <a href="#range-request-incxfer">Range Request</a>, has no server-side requirements other than the server should be able to respond to byte-based range requests. The browser makes range requests to the server for the specific bytes in the font file that it needs. In order to know which bytes are necessary, the browser makes one initial special request for the beginning of the file.
 
 In order for the range request method to be as effective as possible, the font file itself should be internally arranged in a particular way, in order to decrease the number of requests the browser needs to make. Therefore, it is expected that web developers wishing to use the range request method will use font files that have had their contents already arranged optimally.
 
