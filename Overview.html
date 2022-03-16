@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="eab712f09df58d2fa03557b7adc1982eb61ed783" name="document-revision">
+  <meta content="4d7ac04811faa6a5101d56d28e9cfcb277365be5" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -798,7 +798,8 @@ are added in order from least significant bit to most significant bit.</p>
       <td>11
       <td>32
    </table>
-   <p>Then append the value <i>H</i> - 1 as a 5 bit unsigned integer.</p>
+   <p>Then append the value <i>H</i> - 1 as a 5 bit unsigned integer. Next append a single 0 bit, which
+is reserved for future use.</p>
    <p>Next the nodes are encoded into the bit string by traversing the nodes of the <i>T</i> in level
 order and appending the value for each non-zero node to the bit string. If all of the set values
 covered by a node’s interval are present within set <i>S</i>, then that node can instead be encoded
@@ -809,8 +810,8 @@ If the number of bits in the bit string is not a multiple of 8, zero bits are ap
 next multiple of 8.
 The bit with the smallest index in the bit string is the least
 significant bit in the byte and the bit with the largest index is the most significant bit.</p>
-   <div class="example" id="example-f61954a3">
-    <a class="self-link" href="#example-f61954a3"></a> The set {2, 33, 323} in a tree with a branching factor of 8 is encoded as the bit string: 
+   <div class="example" id="example-ad7a28d1">
+    <a class="self-link" href="#example-ad7a28d1"></a> The set {2, 33, 323} in a tree with a branching factor of 8 is encoded as the bit string: 
 <pre>  BitString:
   |- header |- lvl 0 |---- level 1 ----|------- level 2 -----------|
   |         |   n0   |   n1       n2   |   n3       n4       n5    |
@@ -834,7 +835,9 @@ significant bit in the byte and the bit with the largest index is the most signi
      <li data-md>
       <p>branching factor = 8 = 10</p>
      <li data-md>
-      <p><i>H</i> - 1 = 2 = 000010</p>
+      <p><i>H</i> - 1 = 2 = 00010</p>
+     <li data-md>
+      <p>reserved bit = 0</p>
     </ul>
     <p>Level 0:</p>
     <ul>
@@ -864,8 +867,8 @@ significant bit in the byte and the bit with the largest index is the most signi
  or 323.</p>
     </ul>
    </div>
-   <div class="example" id="example-5ac8fde7">
-    <a class="self-link" href="#example-5ac8fde7"></a> The set {} in a tree with a branching factor of 4 is encoded as the bit string: 
+   <div class="example" id="example-bc5ac7b1">
+    <a class="self-link" href="#example-bc5ac7b1"></a> The set {} in a tree with a branching factor of 4 is encoded as the bit string: 
 <pre>  BitString:
   |- header- |
   |          |
@@ -884,12 +887,14 @@ significant bit in the byte and the bit with the largest index is the most signi
      <li data-md>
       <p>branching factor = 2 = 00</p>
      <li data-md>
-      <p><i>H</i> - 1 = 0 = 000000</p>
+      <p><i>H</i> - 1 = 0 = 00000</p>
+     <li data-md>
+      <p>reserved bit = 0</p>
     </ul>
     <p>Empty sets have no nodes, so no bytes beyond the header need to be appended.</p>
    </div>
-   <div class="example" id="example-cd7d05dd">
-    <a class="self-link" href="#example-cd7d05dd"></a> The set {0, 1, 2, ..., 17} can be encoded with a branching factor of 4 as: 
+   <div class="example" id="example-bcd5e3df">
+    <a class="self-link" href="#example-bcd5e3df"></a> The set {0, 1, 2, ..., 17} can be encoded with a branching factor of 4 as: 
 <pre>  BitString:
   |- header | l0 |- lvl 1 -| l2  |
   |         | n0 | n1 | n2 | n3  |
@@ -909,7 +914,9 @@ significant bit in the byte and the bit with the largest index is the most signi
      <li data-md>
       <p>branching factor = 4 = 01</p>
      <li data-md>
-      <p><i>H</i> - 1 = 2 = 000010</p>
+      <p><i>H</i> - 1 = 2 = 00010</p>
+     <li data-md>
+      <p>reserved bit = 0</p>
     </ul>
     <p>Level 0:</p>
     <ul>
