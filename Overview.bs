@@ -311,13 +311,13 @@ First append 2 bits which encode the branching factor:
   <tr>
     <th>Bits&nbsp;</th><th>Branching Factor</th>
   </tr>
-  <tr><td>00</td><td>4</td></tr>
-  <tr><td>01</td><td>8</td></tr>
-  <tr><td>10</td><td>16</td></tr>
+  <tr><td>00</td><td>2</td></tr>
+  <tr><td>01</td><td>4</td></tr>
+  <tr><td>10</td><td>8</td></tr>
   <tr><td>11</td><td>32</td></tr>
 </table>
 
-Then append the value <i>H</i> - 1 as a 6 bit unsigned integer.
+Then append the value <i>H</i> - 1 as a 5 bit unsigned integer.
 
 Next the nodes are encoded into the bit string by traversing the nodes of the <i>T</i> in level
 order and appending the value for each non-zero node to the bit string. If all of the set values
@@ -338,11 +338,11 @@ significant bit in the byte and the bit with the largest index is the most signi
   BitString:
   |- header |- lvl 0 |---- level 1 ----|------- level 2 -----------|
   |         |   n0   |   n1       n2   |   n3       n4       n5    |
-  [ 10010000 10000100 10001000 10000000 00100000 01000000 00010000 ]
+  [ 01010000 10000100 10001000 10000000 00100000 01000000 00010000 ]
 
   Which then becomes the ByteString:
   [
-    0b00001001,
+    0b00001010,
     0b00100001,
     0b00010001,
     0b00000001,
@@ -358,7 +358,7 @@ significant bit in the byte and the bit with the largest index is the most signi
 
   Then append
 
-  *  branching factor = 8 = 01
+  *  branching factor = 8 = 10
   *  <i>H</i> - 1 = 2 = 000010
 
   Level 0:
@@ -406,7 +406,7 @@ significant bit in the byte and the bit with the largest index is the most signi
 
   Then append
 
-  *  branching factor = 4 = 00
+  *  branching factor = 2 = 00
   *  <i>H</i> - 1 = 0 = 000000
 
   Empty sets have no nodes, so no bytes beyond the header need to be appended.
@@ -420,11 +420,11 @@ significant bit in the byte and the bit with the largest index is the most signi
   BitString:
   |- header | l0 |- lvl 1 -| l2  |
   |         | n0 | n1 | n2 | n3  |
-  [ 00010000 1100 0000 1000 1100 ]
+  [ 10010000 1100 0000 1000 1100 ]
 
   ByteString:
   [
-    0b00001000,
+    0b00001001,
     0b00000011,
     0b00110001
   ]
@@ -436,7 +436,7 @@ significant bit in the byte and the bit with the largest index is the most signi
 
   Then append
 
-  *  branching factor = 4 = 00
+  *  branching factor = 4 = 01
   *  <i>H</i> - 1 = 2 = 000010
 
   Level 0:
