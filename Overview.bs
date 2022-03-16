@@ -317,7 +317,8 @@ First append 2 bits which encode the branching factor:
   <tr><td>11</td><td>32</td></tr>
 </table>
 
-Then append the value <i>H</i> - 1 as a 5 bit unsigned integer.
+Then append the value <i>H</i> - 1 as a 5 bit unsigned integer. Next append a single 0 bit, which
+is reserved for future use.
 
 Next the nodes are encoded into the bit string by traversing the nodes of the <i>T</i> in level
 order and appending the value for each non-zero node to the bit string. If all of the set values
@@ -359,7 +360,8 @@ significant bit in the byte and the bit with the largest index is the most signi
   Then append
 
   *  branching factor = 8 = 10
-  *  <i>H</i> - 1 = 2 = 000010
+  *  <i>H</i> - 1 = 2 = 00010
+  *  reserved bit = 0
 
   Level 0:
 
@@ -407,7 +409,8 @@ significant bit in the byte and the bit with the largest index is the most signi
   Then append
 
   *  branching factor = 2 = 00
-  *  <i>H</i> - 1 = 0 = 000000
+  *  <i>H</i> - 1 = 0 = 00000
+  *  reserved bit = 0
 
   Empty sets have no nodes, so no bytes beyond the header need to be appended.
 
@@ -437,7 +440,8 @@ significant bit in the byte and the bit with the largest index is the most signi
   Then append
 
   *  branching factor = 4 = 01
-  *  <i>H</i> - 1 = 2 = 000010
+  *  <i>H</i> - 1 = 2 = 00010
+  *  reserved bit = 0
 
   Level 0:
   *  n<sub>0</sub> append 0011. Bit 0 set for [0, 16), bit 1 set for [16, 32)
