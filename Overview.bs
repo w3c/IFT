@@ -751,14 +751,15 @@ For a PatchRequest object to be well formed:
 
 For a PatchResponse object to be well formed:
 *  <span class="conform server" id="conform-response-protocol-version">
-     <code>protocol_version</code> must be set to 0.</span>
-*  <span class="conform server" id="conform-response-valid-format">
-     <code>patch_format</code> must be one of the values listed in [[#patch-formats]].</span>
+     <code>protocol_version</code> must be set to 0.</span>     
 *  <span class="conform server" id="conform-response-patch-or-replacement">
      Only one of <code>patch</code> or <code>replacement</code> must be set.</span>
 *  <span class="conform server" id="conform-response-font-checksums">
      If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>,
      <code>patched_checksum</code>, and <code>original_font_checksum</code> must be set.</span>
+*  <span class="conform server" id="conform-response-valid-format">
+     If <code>patch_format</code> is set then it must be one of the values listed in
+     [[#patch-formats]].</span>
 *  <span class="conform server" id="conform-response-ordering-checksum">
      If <code>codepoint_ordering</code> is set then <code>ordering_checksum</code> must be set.</span>
 
@@ -963,14 +964,16 @@ The [=url/path=] in the request [=request/url=] identifies the specific font tha
 for. From the request object the server can produce two codepoint sets:
 
 1.  Codepoints the client has: formed by the union of the codepoint sets specified by
-     <code>codepoints_have</code> and <code>indices_have</code>. The indices in
+     <code>codepoints_have</code> and <code>indices_have</code>.
+     <span class="conform server" id="conform-remap-codepoints-have">The indices in
      <code>indices_have</code> must be mapped to codepoints by the application of the
-     codepoint reordering with a checksum matching <code>ordering_checksum</code>.
+     codepoint reordering with a checksum matching <code>ordering_checksum</code>.</span>
 
 2.  Codepoints the client needs: formed by the union of the codepoint sets specified by
-     <code>codepoints_needed</code> and <code>indices_needed</code>. The indices in
+     <code>codepoints_needed</code> and <code>indices_needed</code>.
+     <span class="conform server" id="conform-remap-codepoints-needed">The indices in
      <code>indices_needed</code> must be mapped to codepoints by the application of the
-     codepoint reordering with a checksum matching <code>ordering_checksum</code>.
+     codepoint reordering with a checksum matching <code>ordering_checksum</code>.</span>
 
 Likewise, the server can produce two variable axis spaces:
 
@@ -981,11 +984,13 @@ Likewise, the server can produce two variable axis spaces:
 2. Axis space the client needs: provided by <code>axis_space_needed</code>. If any axes in the font are
      not specified in <code>axis_space_needed</code> then for those axes add their entire interval
      from the original font.
-
+     
+<span class="conform server" id="conform-bad-reordering">
 If the server does not recognize the codepoint ordering used by the client, it must respond
 with a response that will cause the client to update it's codepoint ordering to one the server
 will recognize via the process described in [[#handling-patch-response]] and not include any patch.
 That is the <code>patch</code> and <code>replacement</code> fields must not be set.
+</span>
 
 <span class="conform server" id="conform-response-valid-patch">
 Otherwise when the response is applied by the client following the process in
@@ -1014,9 +1019,10 @@ Additionally:
      <code>patched_checksum</code> must be set to the checksum of the extended font subset.
      The checksum value must computed by the procedure in [[#computing-checksums]].</span>
 
-*  If the set of codepoints the client has is empty the response must set the
+*  <span class="conform server" id="conform-response-codepoint-ordering">
+    If the set of codepoints the client has is empty the response must set the
     <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following
-    [[#codepoint-reordering]].
+    [[#codepoint-reordering]].</span>
 
 *  If the set of codepoints the client has is empty and the original font has variation axes, the
     response must set the <code>original_axis_space</code> fields to the axis space covered by

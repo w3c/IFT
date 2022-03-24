@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="69391ea6091055c9047fdc2f1f4c72fc2242e64c" name="document-revision">
+  <meta content="5021b6961684df998afe6ab01472769f31825aee" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -446,7 +446,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2022-03-21">21 March 2022</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2022-03-24">24 March 2022</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1304,11 +1304,11 @@ then <code>ordering_checksum</code> must be set.</p>
     <li data-md>
      <p><span class="conform server" id="conform-response-protocol-version"> <code>protocol_version</code> must be set to 0.</span></p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-valid-format"> <code>patch_format</code> must be one of the values listed in <a href="#patch-formats">§ 4.8 Patch Formats</a>.</span></p>
-    <li data-md>
      <p><span class="conform server" id="conform-response-patch-or-replacement"> Only one of <code>patch</code> or <code>replacement</code> must be set.</span></p>
     <li data-md>
      <p><span class="conform server" id="conform-response-font-checksums"> If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>, <code>patched_checksum</code>, and <code>original_font_checksum</code> must be set.</span></p>
+    <li data-md>
+     <p><span class="conform server" id="conform-response-valid-format"> If <code>patch_format</code> is set then it must be one of the values listed in <a href="#patch-formats">§ 4.8 Patch Formats</a>.</span></p>
     <li data-md>
      <p><span class="conform server" id="conform-response-ordering-checksum"> If <code>codepoint_ordering</code> is set then <code>ordering_checksum</code> must be set.</span></p>
    </ul>
@@ -1478,11 +1478,11 @@ single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via
 for. From the request object the server can produce two codepoint sets:</p>
    <ol>
     <li data-md>
-     <p>Codepoints the client has: formed by the union of the codepoint sets specified by <code>codepoints_have</code> and <code>indices_have</code>. The indices in <code>indices_have</code> must be mapped to codepoints by the application of the
- codepoint reordering with a checksum matching <code>ordering_checksum</code>.</p>
+     <p>Codepoints the client has: formed by the union of the codepoint sets specified by <code>codepoints_have</code> and <code>indices_have</code>. <span class="conform server" id="conform-remap-codepoints-have">The indices in <code>indices_have</code> must be mapped to codepoints by the application of the
+ codepoint reordering with a checksum matching <code>ordering_checksum</code>.</span></p>
     <li data-md>
-     <p>Codepoints the client needs: formed by the union of the codepoint sets specified by <code>codepoints_needed</code> and <code>indices_needed</code>. The indices in <code>indices_needed</code> must be mapped to codepoints by the application of the
- codepoint reordering with a checksum matching <code>ordering_checksum</code>.</p>
+     <p>Codepoints the client needs: formed by the union of the codepoint sets specified by <code>codepoints_needed</code> and <code>indices_needed</code>. <span class="conform server" id="conform-remap-codepoints-needed">The indices in <code>indices_needed</code> must be mapped to codepoints by the application of the
+ codepoint reordering with a checksum matching <code>ordering_checksum</code>.</span></p>
    </ol>
    <p>Likewise, the server can produce two variable axis spaces:</p>
    <ol>
@@ -1495,10 +1495,10 @@ for. From the request object the server can produce two codepoint sets:</p>
  not specified in <code>axis_space_needed</code> then for those axes add their entire interval
  from the original font.</p>
    </ol>
-   <p>If the server does not recognize the codepoint ordering used by the client, it must respond
+   <p><span class="conform server" id="conform-bad-reordering"> If the server does not recognize the codepoint ordering used by the client, it must respond
 with a response that will cause the client to update it’s codepoint ordering to one the server
 will recognize via the process described in <a href="#handling-patch-response">§ 4.4.3 Handling PatchResponse</a> and not include any patch.
-That is the <code>patch</code> and <code>replacement</code> fields must not be set.</p>
+That is the <code>patch</code> and <code>replacement</code> fields must not be set. </span></p>
    <p><span class="conform server" id="conform-response-valid-patch"> Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 4.4.3 Handling PatchResponse</a> to a font subset with checksum <code>base_checksum</code> it must result
 in an extended font subset: </span></p>
    <ul>
@@ -1521,7 +1521,7 @@ The checksum value must computed by the procedure in <a href="#computing-checksu
      <p><span class="conform server" id="conform-response-patched-checksum"> If <code>patch</code> or <code>replacement</code> fields are set the value of <code>patched_checksum</code> must be set to the checksum of the extended font subset.
  The checksum value must computed by the procedure in <a href="#computing-checksums">§ 4.6 Computing Checksums</a>.</span></p>
     <li data-md>
-     <p>If the set of codepoints the client has is empty the response must set the <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a>.</p>
+     <p><span class="conform server" id="conform-response-codepoint-ordering"> If the set of codepoints the client has is empty the response must set the <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a>.</span></p>
     <li data-md>
      <p>If the set of codepoints the client has is empty and the original font has variation axes, the
 response must set the <code>original_axis_space</code> fields to the axis space covered by
