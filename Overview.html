@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="4d7ac04811faa6a5101d56d28e9cfcb277365be5" name="document-revision">
+  <meta content="69391ea6091055c9047fdc2f1f4c72fc2242e64c" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -446,7 +446,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2022-03-16">16 March 2022</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2022-03-21">21 March 2022</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1036,12 +1036,11 @@ the most significant bit of byte is false.</p>
    <p>UIntBase128 encoding format allows a possibility of sub-optimal encoding, where e.g.
 the same numerical value can be represented with variable number of bytes (utilizing
 leading zeros). For example, the value 63 could be encoded as either one byte 0x3F
-or two (or more) bytes: [0x80, 0x3f]. An encoder must not allow this to happen and
-*MUST* produce shortest possible encoding. A decoder *MUST* reject the font file
-if it encounters a UIntBase128-encoded value with
-leading zeros (a value that starts with the byte 0x80), if UIntBase128-encoded
-sequence is longer than 5 bytes, or if a UIntBase128-encoded value exceeds
-2<sup>32</sup>-1. Pseudo-code:</p>
+or two (or more) bytes: [0x80, 0x3f]. <span class="conform server client" id="conform-uintbase128-illegal">An encoder must not allow this
+to happen and must produce shortest possible encoding. A decoder must reject the response/request
+if it encounters a UIntBase128-encoded value with leading zeros (a value that starts with the byte
+0x80), if UIntBase128-encoded sequence is longer than 5 bytes, or if a UIntBase128-encoded value
+exceeds 2<sup>32</sup>-1.</span> Pseudo-code:</p>
 <pre>bool ReadUIntBase128( data, *result ) {
   UInt32 accum = 0;
 
@@ -1054,7 +1053,7 @@ sequence is longer than 5 bytes, or if a UIntBase128-encoded value exceeds
     // If any of top 7 bits are set then &lt;&lt; 7 would overflow
     if (accum &amp; 0xFE000000) return false;
 
-    *accum = (accum &lt;&lt; 7) | (data_byte &amp; 0x7F);
+    accum = (accum &lt;&lt; 7) | (data_byte &amp; 0x7F);
 
     // Spin until most significant bit of data byte is false
     if ((data_byte &amp; 0x80) == 0) {

@@ -547,12 +547,12 @@ the most significant bit of byte is false.
 UIntBase128 encoding format allows a possibility of sub-optimal encoding, where e.g.
 the same numerical value can be represented with variable number of bytes (utilizing
 leading zeros). For example, the value 63 could be encoded as either one byte 0x3F
-or two (or more) bytes: [0x80, 0x3f]. An encoder must not allow this to happen and
-*MUST* produce shortest possible encoding. A decoder *MUST* reject the font file
-if it encounters a UIntBase128-encoded value with
-leading zeros (a value that starts with the byte 0x80), if UIntBase128-encoded
-sequence is longer than 5 bytes, or if a UIntBase128-encoded value exceeds
-2<sup>32</sup>-1. Pseudo-code:
+or two (or more) bytes: [0x80, 0x3f].
+<span class="conform server client" id="conform-uintbase128-illegal">An encoder must not allow this
+to happen and must produce shortest possible encoding. A decoder must reject the response/request
+if it encounters a UIntBase128-encoded value with leading zeros (a value that starts with the byte
+0x80), if UIntBase128-encoded sequence is longer than 5 bytes, or if a UIntBase128-encoded value
+exceeds 2<sup>32</sup>-1.</span> Pseudo-code:
 
 ```
 bool ReadUIntBase128( data, *result ) {
@@ -567,7 +567,7 @@ bool ReadUIntBase128( data, *result ) {
     // If any of top 7 bits are set then << 7 would overflow
     if (accum & 0xFE000000) return false;
 
-    *accum = (accum << 7) | (data_byte & 0x7F);
+    accum = (accum << 7) | (data_byte & 0x7F);
 
     // Spin until most significant bit of data byte is false
     if ((data_byte & 0x80) == 0) {
