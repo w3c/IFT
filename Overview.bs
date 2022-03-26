@@ -726,12 +726,15 @@ For an <code>AxisInterval</code> object to be well formed:
 
 For a PatchRequest object to be well formed:
 
-*  <code>protocol_version</code> must be set to 0.
+*  <span class="conform client server" id="conform-request-protocol-version">
+    <code>protocol_version</code> must be set to 0.</span>
 *  <code>accept_patch_format</code> can include any of the values listed in [[#patch-formats]].
-*  If either of <code>indices_have</code> or <code>indices_needed</code> is set to a non-empty set
-    then <code>ordering_checksum</code> must be set.
-*  If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then
-    <code>original_font_checksum</code> and <code>base_checksum</code> must be set.
+*  <span class="conform client server" id="conform-request-ordering-checksum">
+    If either of <code>indices_have</code> or <code>indices_needed</code> is set to a non-empty set
+    then <code>ordering_checksum</code> must be set.</span>
+*  <span class="conform client server" id="conform-request-base-checksum">
+    If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then
+    <code>original_font_checksum</code> and <code>base_checksum</code> must be set.</span>
 
 ### PatchResponse ### {#PatchResponse}
 
@@ -1050,8 +1053,10 @@ same client to the same server task.
 
 Possible error responses:
 
-*  If the request is malformed the server must instead respond with http [=response/status=] code 400
-     to indicate an error.
+
+*  <span class="conform server" id="conform-reject-malformed-request">
+     If the request is malformed the server must instead respond with http [=response/status=] code 400
+     to indicate an error.</span>
 
 *  If the requested font is not recognized by the server it should respond with http [=response/status=]
      code 404 to indicate a not found error.
