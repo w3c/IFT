@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="81e58c6fbb18bbdecd3f06d651db6668b40ee598" name="document-revision">
+  <meta content="94f2790bb9b00e0e45b650bebe83dae0f6d90639" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -446,7 +446,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2022-03-25">25 March 2022</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2022-03-29">29 March 2022</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1095,8 +1095,8 @@ bytes = [2E 28 3D 11 81 00 02 02 81 09]
 encoding/compression: first deltas and then UIntBase128. The <a href="#integerlist-zigzag">§ 4.2.5.2 Zig-Zag Encoding</a> step is skipped.
 This allows twice the range in UIntBase128, so that single bytes may be used more often.</p>
    <p>SortedIntegerList encoding must reject an input list which contains values not in the range
-0 to 2<sup>32</sup>-1. Likewise if decoding an IntegerList results in values which are not
-in the range 0 to 2<sup>32</sup>-1 the list is invalid and must be rejected.</p>
+0 to 2<sup>32</sup>-1. <span class="conform server client" id="conform-sorted-integer-list-rejects-illegal"> Likewise if decoding an IntegerList results in values which are not
+in the range 0 to 2<sup>32</sup>-1 the list is invalid and must be rejected. </span></p>
    <h4 class="heading settled" data-level="4.2.7" id="rangelist"><span class="secno">4.2.7. </span><span class="content">RangeList</span><a class="self-link" href="#rangelist"></a></h4>
    <p>A RangeList encodes a set of non-negative integers (0 to 2<sup>32</sup>-1). The set is encoded as a
 list of disjoint intervals. Each interval is represented by two integers, a
@@ -1128,8 +1128,7 @@ type 5)</span>. Each key and value pair is encoded as a single map entry. Keys a
 integers and are encoded using major type 0. Values are encoded using the encoding specified by the
 type of the value.</p>
    <p>All fields in an object are optional and do not need to have an associated value. Conversely when
-decoding and object fields may be present which are not specified in the schema. The decoder must
-ignore without error any key and value pairs where the key is not recognized.</p>
+decoding and object fields may be present which are not specified in the schema. <span class="conform server client" id="conform-object-unrecognized-field"> The decoder must ignore without error any key and value pairs where the key is not recognized. </span></p>
    <p>There are several types of object used, each type is defined by a schema in <a href="#schemas">§ 4.3 Object Schemas</a>. The schema
 for a type specifies for each field:</p>
    <ul>
@@ -1606,8 +1605,8 @@ in little endian order.</p>
    <p>A codepoint reordering for a font defines a function which maps unicode codepoint values from the
 font to a continuous space of [0, number of codepoints in the font). This transformation is intended
 to reduce the cost of representing codepoint sets.</p>
-   <p>A codepoint ordering is encoded into a <code>CompressedList</code>. The list must contain all unicode
-codepoints that are supported by the font. The index of a particular unicode codepoint in the list is
+   <p><span class="conform server " id="conform-remap-all">A codepoint ordering is encoded into a <code>CompressedList</code>. The list must contain all unicode codepoints that are supported by the
+font.</span> The index of a particular unicode codepoint in the list is
 the new value for that codepoint.</p>
    <p>A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
 size of encoded codepoint sets for that font.</p>
@@ -1629,7 +1628,7 @@ fast_hash_ordering(uint64[] ordering):
 
   return mix(hash)
 </pre>
-   <p>To ensure checksums are consistent across all platforms, all integers during the computation must be
+   <p>To ensure checksums are consistent across all platforms, all integers during the computation are
 in little endian order.</p>
    <div class="example" id="example-6c33d2ed">
     <a class="self-link" href="#example-6c33d2ed"></a> 
@@ -1655,8 +1654,7 @@ and a target file:</p>
      <tr>
       <td>VCDIFF
       <td>0
-      <td>Uses VCDIFF format <a data-link-type="biblio" href="#biblio-rfc3284">[RFC3284]</a> to produce the patch. All client and server implementations
-    must support this format.
+      <td> Uses VCDIFF format <a data-link-type="biblio" href="#biblio-rfc3284">[RFC3284]</a> to produce the patch. <span class="conform server client" id="conform-vcdiff"> All client and server implementations must support this format. </span> 
      <tr>
       <td>Brotli Shared Dictionary
       <td>1

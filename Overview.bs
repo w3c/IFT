@@ -616,8 +616,11 @@ encoding/compression: first deltas and then UIntBase128. The [[#integerlist-zigz
 This allows twice the range in UIntBase128, so that single bytes may be used more often.
 
 SortedIntegerList encoding must reject an input list which contains values not in the range
-0 to 2<sup>32</sup>-1. Likewise if decoding an IntegerList results in values which are not
+0 to 2<sup>32</sup>-1.
+<span class="conform server client" id="conform-sorted-integer-list-rejects-illegal">
+Likewise if decoding an IntegerList results in values which are not
 in the range 0 to 2<sup>32</sup>-1 the list is invalid and must be rejected.
+</span>
 
 ### RangeList ### {#rangelist}
 
@@ -663,8 +666,10 @@ integers and are encoded using major type 0. Values are encoded using the encodi
 type of the value.
 
 All fields in an object are optional and do not need to have an associated value. Conversely when
-decoding and object fields may be present which are not specified in the schema. The decoder must
-ignore without error any key and value pairs where the key is not recognized.
+decoding and object fields may be present which are not specified in the schema.
+<span class="conform server client" id="conform-object-unrecognized-field">
+The decoder must ignore without error any key and value pairs where the key is not recognized.
+</span>
 
 There are several types of object used, each type is defined by a schema in [[#schemas]]. The schema
 for a type specifies for each field:
@@ -1015,7 +1020,7 @@ Additionally:
 
 *  <span class="conform server" id="conform-response-original-checksum">The value of
     <code>original_font_checksum</code> must be set to the checksum of the original font.
-    The checksum value must computed by the procedure in [[#computing-checksums]].</psan>
+    The checksum value must computed by the procedure in [[#computing-checksums]].</span>
 
 *  <span class="conform server" id="conform-response-patched-checksum">
      If <code>patch</code> or <code>replacement</code> fields are set the value of
@@ -1130,8 +1135,9 @@ A codepoint reordering for a font defines a function which maps unicode codepoin
 font to a continuous space of [0, number of codepoints in the font). This transformation is intended
 to reduce the cost of representing codepoint sets.
 
-A codepoint ordering is encoded into a <code>CompressedList</code>. The list must contain all unicode
-codepoints that are supported by the font. The index of a particular unicode codepoint in the list is
+<span class="conform server " id="conform-remap-all">A codepoint ordering is encoded into a
+<code>CompressedList</code>. The list must contain all unicode codepoints that are supported by the
+font.</span> The index of a particular unicode codepoint in the list is
 the new value for that codepoint.
 
 A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
@@ -1159,7 +1165,7 @@ fast_hash_ordering(uint64[] ordering):
   return mix(hash)
 ```
 
-To ensure checksums are consistent across all platforms, all integers during the computation must be
+To ensure checksums are consistent across all platforms, all integers during the computation are
 in little endian order.
 
 <div class=example>
@@ -1186,8 +1192,12 @@ and a target file:
   </tr>
   <tr>
     <td>VCDIFF</td><td>0</td>
-    <td>Uses VCDIFF format [[!RFC3284]] to produce the patch. All client and server implementations
-    must support this format.</td>
+    <td>
+      Uses VCDIFF format [[!RFC3284]] to produce the patch.
+      <span class="conform server client" id="conform-vcdiff">
+      All client and server implementations must support this format.
+    </span>
+    </td>
   </tr>
   <tr>
     <td>Brotli Shared Dictionary</td><td>1</td>
