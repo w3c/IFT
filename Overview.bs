@@ -753,8 +753,8 @@ For a PatchRequest object to be well formed:
   <tr><td>5</td><td>patched_checksum</td><td>Integer</td></tr>
   <tr><td>6</td><td>codepoint_ordering</td><td>IntegerList</td></tr>
   <tr><td>7</td><td>ordering_checksum</td><td>Integer</td></tr>
-  <tr><td>8</td><td>subset_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
-  <tr><td>9</td><td>original_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
+  <tr><td>8</td><td>subset_axis_space</td><td>AxisSpace</td></tr>
+  <tr><td>9</td><td>original_axis_space</td><td>AxisSpace</td></tr>
 </table>
 
 For a PatchResponse object to be well formed:
@@ -1040,8 +1040,9 @@ Additionally:
     variation axes, the response must set the <code>subset_axis_space</code> field to the axis space
     covered by the font subset.
 
-*  If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
-    ignore the unrecognized ones.
+*  <span class="conform server" id="conform-response-ignore-unrecognized-formats">
+    If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
+    ignore the unrecognized ones.</span>
 
 Note: the server can respond with either a patch or a replacement but should try to produce a patch
 where possible. Replacement's should only be used in situations where the server is unable to recreate
