@@ -616,8 +616,11 @@ encoding/compression: first deltas and then UIntBase128. The [[#integerlist-zigz
 This allows twice the range in UIntBase128, so that single bytes may be used more often.
 
 SortedIntegerList encoding must reject an input list which contains values not in the range
-0 to 2<sup>32</sup>-1. Likewise if decoding an IntegerList results in values which are not
+0 to 2<sup>32</sup>-1.
+<span class="conform server client" id="conform-sorted-integer-list-rejects-illegal">
+Likewise if decoding an IntegerList results in values which are not
 in the range 0 to 2<sup>32</sup>-1 the list is invalid and must be rejected.
+</span>
 
 ### RangeList ### {#rangelist}
 
@@ -663,8 +666,10 @@ integers and are encoded using major type 0. Values are encoded using the encodi
 type of the value.
 
 All fields in an object are optional and do not need to have an associated value. Conversely when
-decoding and object fields may be present which are not specified in the schema. The decoder must
-ignore without error any key and value pairs where the key is not recognized.
+decoding and object fields may be present which are not specified in the schema.
+<span class="conform server client" id="conform-object-unrecognized-field">
+The decoder must ignore without error any key and value pairs where the key is not recognized.
+</span>
 
 There are several types of object used, each type is defined by a schema in [[#schemas]]. The schema
 for a type specifies for each field:
@@ -748,8 +753,8 @@ For a PatchRequest object to be well formed:
   <tr><td>5</td><td>patched_checksum</td><td>Integer</td></tr>
   <tr><td>6</td><td>codepoint_ordering</td><td>IntegerList</td></tr>
   <tr><td>7</td><td>ordering_checksum</td><td>Integer</td></tr>
-  <tr><td>8</td><td>subset_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
-  <tr><td>9</td><td>original_axis_space</td><td>ArrayOf&lt;AxisInterval&gt;</td></tr>
+  <tr><td>8</td><td>subset_axis_space</td><td>AxisSpace</td></tr>
+  <tr><td>9</td><td>original_axis_space</td><td>AxisSpace</td></tr>
 </table>
 
 For a PatchResponse object to be well formed:
@@ -1015,7 +1020,7 @@ Additionally:
 
 *  <span class="conform server" id="conform-response-original-checksum">The value of
     <code>original_font_checksum</code> must be set to the checksum of the original font.
-    The checksum value must computed by the procedure in [[#computing-checksums]].</psan>
+    The checksum value must computed by the procedure in [[#computing-checksums]].</span>
 
 *  <span class="conform server" id="conform-response-patched-checksum">
      If <code>patch</code> or <code>replacement</code> fields are set the value of
@@ -1027,16 +1032,19 @@ Additionally:
     <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following
     [[#codepoint-reordering]].</span>
 
-*  If the set of codepoints the client has is empty and the original font has variation axes, the
+*  <span class="conform server" id="conform-response-original-axis-space">
+    If the set of codepoints the client has is empty and the original font has variation axes, the
     response must set the <code>original_axis_space</code> fields to the axis space covered by
-    the original font.
+    the original font.</span>
 
-*  If <code>patch</code> or <code>replacement</code> fields are set and the original font has
+*  <span class="conform server" id="conform-response-subset-axis-space">
+    If <code>patch</code> or <code>replacement</code> fields are set and the original font has
     variation axes, the response must set the <code>subset_axis_space</code> field to the axis space
-    covered by the font subset.
+    covered by the font subset.</span>
 
-*  If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
-    ignore the unrecognized ones.
+*  <span class="conform server" id="conform-response-ignore-unrecognized-formats">
+    If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
+    ignore the unrecognized ones.</span>
 
 Note: the server can respond with either a patch or a replacement but should try to produce a patch
 where possible. Replacement's should only be used in situations where the server is unable to recreate
@@ -1130,8 +1138,9 @@ A codepoint reordering for a font defines a function which maps unicode codepoin
 font to a continuous space of [0, number of codepoints in the font). This transformation is intended
 to reduce the cost of representing codepoint sets.
 
-A codepoint ordering is encoded into a <code>CompressedList</code>. The list must contain all unicode
-codepoints that are supported by the font. The index of a particular unicode codepoint in the list is
+<span class="conform server " id="conform-remap-all">A codepoint ordering is encoded into a
+<code>CompressedList</code>. The list must contain all unicode codepoints that are supported by the
+font.</span> The index of a particular unicode codepoint in the list is
 the new value for that codepoint.
 
 A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
@@ -1159,7 +1168,7 @@ fast_hash_ordering(uint64[] ordering):
   return mix(hash)
 ```
 
-To ensure checksums are consistent across all platforms, all integers during the computation must be
+To ensure checksums are consistent across all platforms, all integers during the computation are
 in little endian order.
 
 <div class=example>
@@ -1186,8 +1195,12 @@ and a target file:
   </tr>
   <tr>
     <td>VCDIFF</td><td>0</td>
-    <td>Uses VCDIFF format [[!RFC3284]] to produce the patch. All client and server implementations
-    must support this format.</td>
+    <td>
+      Uses VCDIFF format [[!RFC3284]] to produce the patch.
+      <span class="conform server client" id="conform-vcdiff">
+      All client and server implementations must support this format.
+    </span>
+    </td>
   </tr>
   <tr>
     <td>Brotli Shared Dictionary</td><td>1</td>
