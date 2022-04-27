@@ -4,10 +4,10 @@
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <title>Incremental Font Transfer</title>
   <meta content="w3c/ED" name="w3c-status">
-  <link href="https://www.w3.org/StyleSheets/TR/2016/W3C-ED" rel="stylesheet">
-  <meta content="Bikeshed version c5fd42b86, updated Mon Apr 5 16:27:33 2021 -0700" name="generator">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
+  <meta content="Bikeshed version fb1e763a4, updated Tue Mar 1 13:13:50 2022 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="acb789fb2079f0b56dcfcedd70e48b2c6cac4bae" name="document-revision">
+  <meta content="b09773f94cc2108644f3a6ae7941b275683f9698" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -118,9 +118,9 @@ pre .property::before, pre .property::after {
     --ins-bg: transparent;
 
     --a-normal-text: #034575;
-    --a-normal-underline: #707070;
+    --a-normal-underline: #bbb;
     --a-visited-text: var(--a-normal-text);
-    --a-visited-underline: #bbb;
+    --a-visited-underline: #707070;
     --a-hover-bg: rgba(75%, 75%, 75%, .25);
     --a-active-text: #c00;
     --a-active-underline: #c00;
@@ -252,6 +252,16 @@ figcaption:not(.no-marker)::before {
 }
 
 .dfn-paneled { cursor: pointer; }
+</style>
+<style>/* style-issues */
+
+a[href].issue-return {
+    float: right;
+    float: inline-end;
+    color: var(--issueheading-text);
+    font-weight: bold;
+    text-decoration: none;
+}
 </style>
 <style>/* style-md-lists */
 
@@ -446,7 +456,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2022-03-31">31 March 2022</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2022-03-31">31 March 2022</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -458,7 +468,6 @@ dfn > a.self-link::before      { content: "#"; }
      <dd><a href="https://www.w3.org/TR/2022/WD-RangeRequest-20220125/" rel="prev">https://www.w3.org/TR/2022/WD-RangeRequest-20220125/</a>
      <dt>Feedback:
      <dd><span><a href="mailto:public-webfonts-wg@w3.org?subject=%5BIFT%5D%20YOUR%20TOPIC%20HERE">public-webfonts-wg@w3.org</a> with subject line “<kbd>[IFT] <i data-lt>… message topic …</i></kbd>” (<a href="https://lists.w3.org/Archives/Public/public-webfonts-wg/" rel="discussion">archives</a>)</span>
-     <dt>Issue Tracking:
      <dd><a href="https://github.com/w3c/PFE/issues/">GitHub</a>
      <dd><a href="#issues-index">Inline In Spec</a>
      <dt class="editor">Editors:
@@ -812,21 +821,21 @@ The bit with the smallest index in the bit string is the least
 significant bit in the byte and the bit with the largest index is the most significant bit.</p>
    <div class="example" id="example-ad7a28d1">
     <a class="self-link" href="#example-ad7a28d1"></a> The set {2, 33, 323} in a tree with a branching factor of 8 is encoded as the bit string: 
-<pre>  BitString:
-  |- header |- lvl 0 |---- level 1 ----|------- level 2 -----------|
-  |         |   n0   |   n1       n2   |   n3       n4       n5    |
-  [ 01010000 10000100 10001000 10000000 00100000 01000000 00010000 ]
+<pre>BitString:
+|- header |- lvl 0 |---- level 1 ----|------- level 2 -----------|
+|         |   n0   |   n1       n2   |   n3       n4       n5    |
+[ 01010000 10000100 10001000 10000000 00100000 01000000 00010000 ]
 
-  Which then becomes the ByteString:
-  [
-    0b00001010,
-    0b00100001,
-    0b00010001,
-    0b00000001,
-    0b00000100,
-    0b00000010,
-    0b00001000
-  ]
+Which then becomes the ByteString:
+[
+  0b00001010,
+  0b00100001,
+  0b00010001,
+  0b00000001,
+  0b00000100,
+  0b00000010,
+  0b00001000
+]
 </pre>
     <p>First determine the height of the tree:</p>
     <p><i>H</i> = ceil(log<sub>8</sub>(323 + 1)) = 3</p>
@@ -869,15 +878,15 @@ significant bit in the byte and the bit with the largest index is the most signi
    </div>
    <div class="example" id="example-bc5ac7b1">
     <a class="self-link" href="#example-bc5ac7b1"></a> The set {} in a tree with a branching factor of 4 is encoded as the bit string: 
-<pre>  BitString:
-  |- header- |
-  |          |
-  [ 00000000 ]
+<pre>BitString:
+|- header- |
+|          |
+[ 00000000 ]
 
-  Which then becomes the ByteString:
-  [
-    0b00000000,
-  ]
+Which then becomes the ByteString:
+[
+  0b00000000,
+]
 </pre>
     <p>First determine the height of the tree. Because we are encoding an empty
   set height is:</p>
@@ -895,17 +904,17 @@ significant bit in the byte and the bit with the largest index is the most signi
    </div>
    <div class="example" id="example-bcd5e3df">
     <a class="self-link" href="#example-bcd5e3df"></a> The set {0, 1, 2, ..., 17} can be encoded with a branching factor of 4 as: 
-<pre>  BitString:
-  |- header | l0 |- lvl 1 -| l2  |
-  |         | n0 | n1 | n2 | n3  |
-  [ 10010000 1100 0000 1000 1100 ]
+<pre>BitString:
+|- header | l0 |- lvl 1 -| l2  |
+|         | n0 | n1 | n2 | n3  |
+[ 10010000 1100 0000 1000 1100 ]
 
-  ByteString:
-  [
-    0b00001001,
-    0b00000011,
-    0b00110001
-  ]
+ByteString:
+[
+  0b00001001,
+  0b00000011,
+  0b00110001
+]
 </pre>
     <p>First determine the height of the tree:</p>
     <p><i>H</i> = ceil(log<sub>4</sub>(17 + 1)) = 3</p>
@@ -1335,7 +1344,7 @@ by <a href="#PatchResponse"><code>PatchResponse.original_axis_space</code></a>.<
    </ul>
    <h4 class="heading settled" data-level="4.4.2" id="extend-subset"><span class="secno">4.4.2. </span><span class="content">Extending the Font Subset</span><a class="self-link" href="#extend-subset"></a></h4>
    <p>A client extends its font subset to cover additional codepoints by making requests to a Patch Subset
-server. The request requirements are described here in terms of a fetch according to <a href="https://fetch.spec.whatwg.org/#fetching">Fetch Standard §4 Fetching</a>. If the implementing user agent does not support fetch, then the request
+server. The request requirements are described here in terms of a fetch according to <a href="https://fetch.spec.whatwg.org/#fetching"><cite>Fetch Standard</cite> § 4 Fetching</a>. If the implementing user agent does not support fetch, then the request
 should be made using an equivalent HTTP request.</p>
    <ul>
     <li data-md>
@@ -1356,7 +1365,7 @@ parameter "request" whose value is a single <a href="#PatchRequest"><code>PatchR
    </ul>
    <p>Any request and/or url parameters which are not specified here should be set based on
 the user agent’s normal handling for font requests. For example if this font load is
-from a CSS font face, then <a href="https://www.w3.org/TR/css-fonts-4/#font-fetching-requirements">CSS Fonts 4 §4.8.2 Font fetching requirements</a> should be followed.</p>
+from a CSS font face, then <a href="https://www.w3.org/TR/css-fonts-4/#font-fetching-requirements"><cite>CSS Fonts 4</cite> § 4.8.2 Font fetching requirements</a> should be followed.</p>
    <p>The fields of the <a href="#PatchRequest"><code>PatchRequest</code></a> object should be set
 as follows:</p>
    <ul>
@@ -1434,7 +1443,7 @@ specified in this field.</p>
    <p>If the response a client receives from the server has a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status①">status</a> code other than 200:</p>
    <ul>
     <li data-md>
-     <p>If it is a redirect <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-status" id="ref-for-concept-status">status</a>: follow normal redirect handling, such as <a href="https://fetch.spec.whatwg.org/#http-redirect-fetch">Fetch Standard §4.4 HTTP-redirect fetch</a>.</p>
+     <p>If it is a redirect <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-status" id="ref-for-concept-status">status</a>: follow normal redirect handling, such as <a href="https://fetch.spec.whatwg.org/#http-redirect-fetch"><cite>Fetch Standard</cite> § 4.4 HTTP-redirect fetch</a>.</p>
     <li data-md>
      <p>All other statuses, the font subset extension has failed. Follow <a href="#font-load-failed">§ 4.4.6 Font Load Failed</a>.</p>
    </ul>
@@ -1522,9 +1531,9 @@ The checksum value must computed by the procedure in <a href="#computing-checksu
     <li data-md>
      <p><span class="conform server" id="conform-response-codepoint-ordering"> If the set of codepoints the client has is empty the response must set the <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a>.</span></p>
     <li data-md>
-     <p>If the set of codepoints the client has is empty and the original font has variation axes, the
+     <p><span class="conform server" id="conform-response-original-axis-space"> If the set of codepoints the client has is empty and the original font has variation axes, the
 response must set the <code>original_axis_space</code> fields to the axis space covered by
-the original font.</p>
+the original font.</span></p>
     <li data-md>
      <p>If <code>patch</code> or <code>replacement</code> fields are set and the original font has
 variation axes, the response must set the <code>subset_axis_space</code> field to the axis space
@@ -1805,13 +1814,13 @@ and a target file:</p>
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
-   <li><a href="#conformant-server">conformant server</a><span>, in §Unnumbered section</span>
-   <li><a href="#conformant-user-agent">conformant user agent</a><span>, in §Unnumbered section</span>
-   <li><a href="#corpus">corpus</a><span>, in §5.1.6</span>
-   <li><a href="#outline-table">outline table</a><span>, in §5.1.4</span>
-   <li><a href="#range-request-optimized-font">range-request optimized font</a><span>, in §5.1.2</span>
-   <li><a href="#range-request-threshold">range-request threshold</a><span>, in §5.2.1</span>
-   <li><a href="#usage-document-frequency">usage document frequency</a><span>, in §5.1.6</span>
+   <li><a href="#conformant-server">conformant server</a><span>, in § Unnumbered section</span>
+   <li><a href="#conformant-user-agent">conformant user agent</a><span>, in § Unnumbered section</span>
+   <li><a href="#corpus">corpus</a><span>, in § 5.1.6</span>
+   <li><a href="#outline-table">outline table</a><span>, in § 5.1.4</span>
+   <li><a href="#range-request-optimized-font">range-request optimized font</a><span>, in § 5.1.2</span>
+   <li><a href="#range-request-threshold">range-request threshold</a><span>, in § 5.2.1</span>
+   <li><a href="#usage-document-frequency">usage document frequency</a><span>, in § 5.1.6</span>
   </ul>
   <aside class="dfn-panel" data-for="term-for-at-font-face-rule">
    <a href="https://drafts.csswg.org/css-fonts-5/#at-font-face-rule">https://drafts.csswg.org/css-fonts-5/#at-font-face-rule</a><b>Referenced in:</b>
@@ -1908,57 +1917,57 @@ and a target file:</p>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
    <dt id="biblio-css-fonts-4">[CSS-FONTS-4]
-   <dd>John Daggett; Myles Maxfield; Chris Lilley. <a href="https://www.w3.org/TR/css-fonts-4/">CSS Fonts Module Level 4</a>. 17 November 2020. WD. URL: <a href="https://www.w3.org/TR/css-fonts-4/">https://www.w3.org/TR/css-fonts-4/</a>
+   <dd>John Daggett; Myles Maxfield; Chris Lilley. <a href="https://www.w3.org/TR/css-fonts-4/"><cite>CSS Fonts Module Level 4</cite></a>. 29 July 2021. WD. URL: <a href="https://www.w3.org/TR/css-fonts-4/">https://www.w3.org/TR/css-fonts-4/</a>
    <dt id="biblio-css-fonts-5">[CSS-FONTS-5]
-   <dd>CSS Fonts Module Level 5 URL: <a href="https://www.w3.org/TR/css-fonts-5/">https://www.w3.org/TR/css-fonts-5/</a>
+   <dd>Myles Maxfield; Chris Lilley. <a href="https://www.w3.org/TR/css-fonts-5/"><cite>CSS Fonts Module Level 5</cite></a>. 29 July 2021. WD. URL: <a href="https://www.w3.org/TR/css-fonts-5/">https://www.w3.org/TR/css-fonts-5/</a>
    <dt id="biblio-fast-hash">[FAST-HASH]
-   <dd>ztanml. <a href="https://github.com/ztanml/fast-hash">fast-hash</a>. 22 October 2018. Note. URL: <a href="https://github.com/ztanml/fast-hash">https://github.com/ztanml/fast-hash</a>
+   <dd>ztanml. <a href="https://github.com/ztanml/fast-hash"><cite>fast-hash</cite></a>. 22 October 2018. Note. URL: <a href="https://github.com/ztanml/fast-hash">https://github.com/ztanml/fast-hash</a>
    <dt id="biblio-fetch">[FETCH]
-   <dd><a href="https://fetch.spec.whatwg.org/">Fetch Standard</a>. 13 December 2021. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
+   <dd><a href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. 13 December 2021. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
    <dt id="biblio-opentype">[OPENTYPE]
-   <dd><a href="http://www.microsoft.com/typography/otspec/default.htm">OpenType specification</a>. URL: <a href="http://www.microsoft.com/typography/otspec/default.htm">http://www.microsoft.com/typography/otspec/default.htm</a>
+   <dd><a href="http://www.microsoft.com/typography/otspec/default.htm"><cite>OpenType specification</cite></a>. URL: <a href="http://www.microsoft.com/typography/otspec/default.htm">http://www.microsoft.com/typography/otspec/default.htm</a>
    <dt id="biblio-rfc2119">[RFC2119]
-   <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
+   <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
    <dt id="biblio-rfc3284">[RFC3284]
-   <dd>D. Korn; et al. <a href="https://datatracker.ietf.org/doc/html/rfc3284">The VCDIFF Generic Differencing and Compression Data Format</a>. June 2002. Proposed Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc3284">https://datatracker.ietf.org/doc/html/rfc3284</a>
+   <dd>D. Korn; et al. <a href="https://www.rfc-editor.org/rfc/rfc3284"><cite>The VCDIFF Generic Differencing and Compression Data Format</cite></a>. June 2002. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3284">https://www.rfc-editor.org/rfc/rfc3284</a>
    <dt id="biblio-rfc7230">[RFC7230]
-   <dd>R. Fielding, Ed.; J. Reschke, Ed.. <a href="https://httpwg.org/specs/rfc7230.html">Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</a>. June 2014. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc7230.html">https://httpwg.org/specs/rfc7230.html</a>
+   <dd>R. Fielding, Ed.; J. Reschke, Ed.. <a href="https://httpwg.org/specs/rfc7230.html"><cite>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</cite></a>. June 2014. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc7230.html">https://httpwg.org/specs/rfc7230.html</a>
    <dt id="biblio-rfc7231">[RFC7231]
-   <dd>R. Fielding, Ed.; J. Reschke, Ed.. <a href="https://httpwg.org/specs/rfc7231.html">Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</a>. June 2014. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc7231.html">https://httpwg.org/specs/rfc7231.html</a>
+   <dd>R. Fielding, Ed.; J. Reschke, Ed.. <a href="https://httpwg.org/specs/rfc7231.html"><cite>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</cite></a>. June 2014. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc7231.html">https://httpwg.org/specs/rfc7231.html</a>
    <dt id="biblio-rfc7233">[RFC7233]
-   <dd>R. Fielding, Ed.; Y. Lafon, Ed.; J. Reschke, Ed.. <a href="https://httpwg.org/specs/rfc7233.html">Hypertext Transfer Protocol (HTTP/1.1): Range Requests</a>. June 2014. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc7233.html">https://httpwg.org/specs/rfc7233.html</a>
+   <dd>R. Fielding, Ed.; Y. Lafon, Ed.; J. Reschke, Ed.. <a href="https://httpwg.org/specs/rfc7233.html"><cite>Hypertext Transfer Protocol (HTTP/1.1): Range Requests</cite></a>. June 2014. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc7233.html">https://httpwg.org/specs/rfc7233.html</a>
    <dt id="biblio-rfc7932">[RFC7932]
-   <dd>J. Alakuijala; Z. Szabadka. <a href="https://datatracker.ietf.org/doc/html/rfc7932">Brotli Compressed Data Format</a>. July 2016. Informational. URL: <a href="https://datatracker.ietf.org/doc/html/rfc7932">https://datatracker.ietf.org/doc/html/rfc7932</a>
+   <dd>J. Alakuijala; Z. Szabadka. <a href="https://www.rfc-editor.org/rfc/rfc7932"><cite>Brotli Compressed Data Format</cite></a>. July 2016. Informational. URL: <a href="https://www.rfc-editor.org/rfc/rfc7932">https://www.rfc-editor.org/rfc/rfc7932</a>
    <dt id="biblio-rfc8949">[RFC8949]
-   <dd>C. Bormann; P. Hoffman. <a href="https://datatracker.ietf.org/doc/html/rfc8949">Concise Binary Object Representation (CBOR)</a>. December 2020. Internet Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc8949">https://datatracker.ietf.org/doc/html/rfc8949</a>
+   <dd>C. Bormann; P. Hoffman. <a href="https://www.rfc-editor.org/rfc/rfc8949"><cite>Concise Binary Object Representation (CBOR)</cite></a>. December 2020. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc8949">https://www.rfc-editor.org/rfc/rfc8949</a>
    <dt id="biblio-shared-brotli">[Shared-Brotli]
-   <dd>J. Alakuijala; et al. <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08">Shared Brotli Compressed Data Format</a>. 27 Jul 2021. Internet Draft. URL: <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08">https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08</a>
+   <dd>J. Alakuijala; et al. <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08"><cite>Shared Brotli Compressed Data Format</cite></a>. 27 Jul 2021. Internet Draft. URL: <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08">https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-08</a>
    <dt id="biblio-truetype">[TRUETYPE]
-   <dd><a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/">TrueType™ Reference Manual</a>. URL: <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/">https://developer.apple.com/fonts/TrueType-Reference-Manual/</a>
+   <dd><a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/"><cite>TrueType™ Reference Manual</cite></a>. URL: <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/">https://developer.apple.com/fonts/TrueType-Reference-Manual/</a>
    <dt id="biblio-url">[URL]
-   <dd>Anne van Kesteren. <a href="https://url.spec.whatwg.org/">URL Standard</a>. Living Standard. URL: <a href="https://url.spec.whatwg.org/">https://url.spec.whatwg.org/</a>
+   <dd>Anne van Kesteren. <a href="https://url.spec.whatwg.org/"><cite>URL Standard</cite></a>. Living Standard. URL: <a href="https://url.spec.whatwg.org/">https://url.spec.whatwg.org/</a>
    <dt id="biblio-woff">[WOFF]
-   <dd>Jonathan Kew; Tal Leming; Erik van Blokland. <a href="https://www.w3.org/TR/WOFF/">WOFF File Format 1.0</a>. 13 December 2012. REC. URL: <a href="https://www.w3.org/TR/WOFF/">https://www.w3.org/TR/WOFF/</a>
+   <dd>Jonathan Kew; Tal Leming; Erik van Blokland. <a href="https://www.w3.org/TR/WOFF/"><cite>WOFF File Format 1.0</cite></a>. 13 December 2012. REC. URL: <a href="https://www.w3.org/TR/WOFF/">https://www.w3.org/TR/WOFF/</a>
    <dt id="biblio-woff2">[WOFF2]
-   <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/">WOFF File Format 2.0</a>. 1 March 2018. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
+   <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/"><cite>WOFF File Format 2.0</cite></a>. 6 July 2021. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
    <dt id="biblio-opentype-variations">[OPENTYPE-VARIATIONS]
-   <dd><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview">OpenType Font Variations Overview</a>. 23 October 2020. Note. URL: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview">https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview</a>
+   <dd><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview"><cite>OpenType Font Variations Overview</cite></a>. 23 October 2020. Note. URL: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview">https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview</a>
    <dt id="biblio-pfe-report">[PFE-report]
-   <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/">Progressive Font Enrichment: Evaluation Report</a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
+   <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/"><cite>Progressive Font Enrichment: Evaluation Report</cite></a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
    <dt id="biblio-rfc4648">[RFC4648]
-   <dd>S. Josefsson. <a href="https://datatracker.ietf.org/doc/html/rfc4648">The Base16, Base32, and Base64 Data Encodings</a>. October 2006. Proposed Standard. URL: <a href="https://datatracker.ietf.org/doc/html/rfc4648">https://datatracker.ietf.org/doc/html/rfc4648</a>
+   <dd>S. Josefsson. <a href="https://www.rfc-editor.org/rfc/rfc4648"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. October 2006. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>
   </dl>
   <h2 class="no-num no-ref heading settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
   <div style="counter-reset:issue">
-   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/56">Server-recommended IFT Method selection</a><a href="#issue-2bae6363"> ↵ </a></div>
-   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/59">Using WOFF2 files with range-request mechanism doesn’t seem to be a viable option</a><a href="#issue-73fb8795"> ↵ </a></div>
-   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/60">Static file compression compatibility with range-request method</a><a href="#issue-6786fd81"> ↵ </a></div>
-   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/28">Font Collections support</a><a href="#issue-010f4980"> ↵ </a></div>
-   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with composite glyphs via range-request</a><a href="#issue-5533a524"> ↵ </a></div>
-   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a><a href="#issue-763d5c98"> ↵ </a></div>
+   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/56">Server-recommended IFT Method selection</a> <a class="issue-return" href="#issue-2bae6363" title="Jump to section">↵</a></div>
+   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/59">Using WOFF2 files with range-request mechanism doesn’t seem to be a viable option</a> <a class="issue-return" href="#issue-73fb8795" title="Jump to section">↵</a></div>
+   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/60">Static file compression compatibility with range-request method</a> <a class="issue-return" href="#issue-6786fd81" title="Jump to section">↵</a></div>
+   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/28">Font Collections support</a> <a class="issue-return" href="#issue-010f4980" title="Jump to section">↵</a></div>
+   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with composite glyphs via range-request</a> <a class="issue-return" href="#issue-5533a524" title="Jump to section">↵</a></div>
+   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a> <a class="issue-return" href="#issue-763d5c98" title="Jump to section">↵</a></div>
   </div>
   <aside class="dfn-panel" data-for="range-request-optimized-font">
    <b><a href="#range-request-optimized-font">#range-request-optimized-font</a></b><b>Referenced in:</b>
