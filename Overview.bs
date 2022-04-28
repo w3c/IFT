@@ -654,8 +654,9 @@ Stores a set of intervals on one or more open type variation axes [[opentype-var
 Encoded as a CBOR map (major type 5). The key in each pair is an
 <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord">
 axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
-pair is an <code>ArrayOf&lt;AxisInterval&gt;</code> [[#AxisInterval]]. The list of intervals for a
-distinct axis tag must be disjoint.
+pair is an <code>ArrayOf&lt;AxisInterval&gt;</code> [[#AxisInterval]].
+<span class="conform client server" id="conform-axis-space-disjoint">The list of intervals for a
+each axis tag must be disjoint.</span>
 
 ### Objects ### {#objects}
 
@@ -707,10 +708,13 @@ on some variable axis in a font.
 
 For an <code>AxisInterval</code> object to be well formed:
 
-*  <code>start</code> must be set.
+*  <span class="conform client server" id="conform-axis-interval-start">
+    <code>start</code> must be set.
+    </span>
 
-*  <code>end</code> is optional, must be greater than <code>start</code>. If <code>end</code> is not set
-    then this interval is a single point, <code>start</code>.
+*  <span class="conform client server" id="conform-axis-interval-end">
+    <code>end</code> is optional, if set it must be greater than <code>start</code>.</span>
+    If <code>end</code> is not set then this interval is a single point, <code>start</code>.
 
 ### PatchRequest ### {#PatchRequest}
 
