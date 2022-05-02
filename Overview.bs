@@ -200,13 +200,16 @@ Patch Based Incremental Transfer {#patch-incxfer}
 Font Subset {#font-subset}
 --------------------------
 
+
 A subset of a font file is a modified version of the font that contains only the data needed to
-render a subset of the codepoints supported by the original font. When a subsetted font is used to
+render a subset of the codepoints supported by the original font.
+<span class="conform client server" id="conform-font-subset">When a subsetted font is used to
 render text using any combination of the subset codepoints it must render identically to the original
 font. This includes any optional features that a renderer may choose to use from the original font such
-as hinting instructions, positioning rules, and/or glyph substitutions. Where possible the subsetted
-font file should not include data from the original font that is not necessary to achieve this
-equivalence.
+as hinting instructions, positioning rules, and/or glyph substitutions.</span>
+Where possible the subsetted font file should not include data from the original font that is not
+necessary to achieve this equivalence.
+
 
 
 Data Types {#data-types}
@@ -654,8 +657,9 @@ Stores a set of intervals on one or more open type variation axes [[opentype-var
 Encoded as a CBOR map (major type 5). The key in each pair is an
 <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord">
 axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
-pair is an <code>ArrayOf&lt;AxisInterval&gt;</code> [[#AxisInterval]]. The list of intervals for a
-distinct axis tag must be disjoint.
+pair is an <code>ArrayOf&lt;AxisInterval&gt;</code> [[#AxisInterval]].
+<span class="conform client server" id="conform-axis-space-disjoint">The list of intervals for a
+each axis tag must be disjoint.</span>
 
 ### Objects ### {#objects}
 
@@ -707,10 +711,13 @@ on some variable axis in a font.
 
 For an <code>AxisInterval</code> object to be well formed:
 
-*  <code>start</code> must be set.
+*  <span class="conform client server" id="conform-axis-interval-start">
+    <code>start</code> must be set.
+    </span>
 
-*  <code>end</code> is optional, must be greater than <code>start</code>. If <code>end</code> is not set
-    then this interval is a single point, <code>start</code>.
+*  <span class="conform client server" id="conform-axis-interval-end">
+    <code>end</code> is optional, if set it must be greater than <code>start</code>.</span>
+    If <code>end</code> is not set then this interval is a single point, <code>start</code>.
 
 ### PatchRequest ### {#PatchRequest}
 
@@ -1043,7 +1050,7 @@ Additionally:
     covered by the font subset.</span>
 
 *  <span class="conform server" id="conform-response-ignore-unrecognized-formats">
-    If <code>accept_patch_format</code> contains any unrecognized patch formats the server should
+    If <code>accept_patch_format</code> contains any unrecognized patch formats the server must
     ignore the unrecognized ones.</span>
 
 Note: the server can respond with either a patch or a replacement but should try to produce a patch
@@ -1110,7 +1117,7 @@ fast_hash(byte[] data):
   return mix((hash ^ mix(last_value)) * M)
 ```
 
-To ensure checksums are consistent across all platforms, all integers during the computation must be
+To ensure checksums are consistent across all platforms, all integers during the computation are
 in little endian order.
 
 Note: a C implementation of fast hash can be found here: [[!fast-hash]]
