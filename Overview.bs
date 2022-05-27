@@ -651,6 +651,26 @@ bytes = [03 07 03 81 7F]
 ```
 </div>
 
+### FeatureTagSet ### {#featuretagset}
+
+A FeatureTagSet encodes a set of zero or more
+<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>.
+Each feature tag is mapped to an integer value and then the set of mapped integers are encoded in a
+[[#sortedintegerlist]]. Feature tags are mapped to integers as follows:
+
+*  If the tag is found in [[#feature-tag-list]]:
+
+    *  If the "Encoded As" column corresponding to the tag is "default" then the tag is skipped and
+        not encoded.
+
+    *  Else, the tag is mapped to the integer value in the "Encoded As" column.
+
+*  Otherwise: the tag is converted to an integer by treating the tag's 4 byte string as a 4 byte
+    little endian integer.
+
+The final encoding is produced by sorting the mapped integers (exlcuding tags which are skipped)
+into ascending order and then encoding the sorted list as a [[#sortedintegerlist]].
+
 ### AxisSpace ### {#AxisSpace}
 
 Stores a set of intervals on one or more open type variation axes [[opentype-variations]]</a>.
@@ -729,11 +749,13 @@ For an <code>AxisInterval</code> object to be well formed:
   <tr><td>3</td><td>codepoints_needed</td><td>CompressedSet</td></tr>
   <tr><td>4</td><td>indices_have</td><td>CompressedSet</td></tr>
   <tr><td>5</td><td>indices_needed</td><td>CompressedSet</td></tr>
-  <tr><td>6</td><td>axis_space_have</td><td>AxisSpace</td></tr>
-  <tr><td>7</td><td>axis_space_needed</td><td>AxisSpace</td></tr>
-  <tr><td>8</td><td>ordering_checksum</td><td>Integer</td></tr>
-  <tr><td>9</td><td>original_font_checksum</td><td>Integer</td></tr>
-  <tr><td>10</td><td>base_checksum</td><td>Integer</td></tr>
+  <tr><td>6</td><td>features_have</td><td>FeatureTagSet</td></tr>
+  <tr><td>7</td><td>features_needed</td><td>FeatureTagSet</td></tr>
+  <tr><td>8</td><td>axis_space_have</td><td>AxisSpace</td></tr>
+  <tr><td>9</td><td>axis_space_needed</td><td>AxisSpace</td></tr>
+  <tr><td>10</td><td>ordering_checksum</td><td>Integer</td></tr>
+  <tr><td>11</td><td>original_font_checksum</td><td>Integer</td></tr>
+  <tr><td>12</td><td>base_checksum</td><td>Integer</td></tr>
 </table>
 
 For a PatchRequest object to be well formed:
@@ -762,6 +784,7 @@ For a PatchRequest object to be well formed:
   <tr><td>7</td><td>ordering_checksum</td><td>Integer</td></tr>
   <tr><td>8</td><td>subset_axis_space</td><td>AxisSpace</td></tr>
   <tr><td>9</td><td>original_axis_space</td><td>AxisSpace</td></tr>
+  <tr><td>10</td><td>original_features</td><td>FeatureTagSet</td></tr>
 </table>
 
 For a PatchResponse object to be well formed:
@@ -1415,3 +1438,19 @@ Appendix A: Suggested glyph/character ordering</h2>
 Note: This section describes ordering of characters, not glyph IDs, because the meaning of glyph IDs are not consistent across different fonts. To optimize a particular font according to the ordering listed here, the characters will have to be mapped to glyph IDs inside the font. This approach of mapping characters to glyphs for ordering purposes works particularly well for ideographic languages with large character sets.
 
 Issue: <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a>
+
+<h2 id="feature-tag-list">
+Appendix B: Default Feature Tags and Encoding IDs</h2>
+
+<table>
+  <tr>
+    <th>tag</th><th>Encoded as</th>
+  </tr>
+  <!-- TODO: fill this out -->
+  <tr>
+    <td>aaaa</td><td>default</td>
+  </tr>
+  <tr>
+    <td>aaab</td><td>1</td>
+  </tr>
+</table>
