@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version fb1e763a4, updated Tue Mar 1 13:13:50 2022 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="b121c38ce51a3b33c176240030e04532da3554d1" name="document-revision">
+  <meta content="718435631ac0cf432bb07c07a2d5febac26dd526" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -456,7 +456,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2022-06-02">2 June 2022</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2022-06-03">3 June 2022</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -477,7 +477,7 @@ dfn > a.self-link::before      { content: "#"; }
     </dl>
    </div>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2022 <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="https://www.keio.ac.jp/">Keio</a>, <a href="https://ev.buaa.edu.cn/">Beihang</a>). W3C <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">document use</a> rules apply. </p>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2022 <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="https://www.keio.ac.jp/">Keio</a>, <a href="https://ev.buaa.edu.cn/">Beihang</a>). W3C <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document" rel="license">permissive document license</a> rules apply. </p>
    <hr title="Separator for header">
   </div>
   <div class="p-summary" data-fill-with="abstract">
@@ -541,8 +541,9 @@ dfn > a.self-link::before      { content: "#"; }
          </ol>
         <li><a href="#sortedintegerlist"><span class="secno">4.2.6</span> <span class="content">SortedIntegerList</span></a>
         <li><a href="#rangelist"><span class="secno">4.2.7</span> <span class="content">RangeList</span></a>
-        <li><a href="#AxisSpace"><span class="secno">4.2.8</span> <span class="content">AxisSpace</span></a>
-        <li><a href="#objects"><span class="secno">4.2.9</span> <span class="content">Objects</span></a>
+        <li><a href="#featuretagset"><span class="secno">4.2.8</span> <span class="content">FeatureTagSet</span></a>
+        <li><a href="#AxisSpace"><span class="secno">4.2.9</span> <span class="content">AxisSpace</span></a>
+        <li><a href="#objects"><span class="secno">4.2.10</span> <span class="content">Objects</span></a>
        </ol>
       <li>
        <a href="#schemas"><span class="secno">4.3</span> <span class="content">Object Schemas</span></a>
@@ -606,12 +607,12 @@ dfn > a.self-link::before      { content: "#"; }
      </ol>
     <li><a href="#sec"><span class="secno"></span> <span class="content">Security Considerations</span></a>
     <li><a href="#suggested-glyph-character-ordering"><span class="secno"></span> <span class="content"> Appendix A: Suggested glyph/character ordering</span></a>
+    <li><a href="#feature-tag-list"><span class="secno"></span> <span class="content"> Appendix B: Default Feature Tags and Encoding IDs</span></a>
     <li>
-     <a href="#conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
+     <a href="#w3c-conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
      <ol class="toc">
-      <li><a href="#conventions"><span class="secno"></span> <span class="content">Document conventions</span></a>
-      <li><a href="#conformant-algorithms"><span class="secno"></span> <span class="content">Conformant Algorithms</span></a>
-      <li><a href="#conformance-classes"><span class="secno"></span> <span class="content">Conformance Classes</span></a>
+      <li><a href="#w3c-conventions"><span class="secno"></span> <span class="content">Document conventions</span></a>
+      <li><a href="#w3c-conformant-algorithms"><span class="secno"></span> <span class="content">Conformant Algorithms</span></a>
      </ol>
     <li>
      <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
@@ -1126,12 +1127,31 @@ delta_list = [3, 7, 3, 255]
 bytes = [03 07 03 81 7F]
 </pre>
    </div>
-   <h4 class="heading settled" data-level="4.2.8" id="AxisSpace"><span class="secno">4.2.8. </span><span class="content">AxisSpace</span><a class="self-link" href="#AxisSpace"></a></h4>
+   <h4 class="heading settled" data-level="4.2.8" id="featuretagset"><span class="secno">4.2.8. </span><span class="content">FeatureTagSet</span><a class="self-link" href="#featuretagset"></a></h4>
+   <p>A FeatureTagSet encodes a set of zero or more <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>.
+Each feature tag is mapped to an integer value and then the set of mapped integers are encoded in a <a href="#sortedintegerlist">§ 4.2.6 SortedIntegerList</a>. Feature tags are mapped to integers as follows:</p>
+   <ul>
+    <li data-md>
+     <p>If the tag is found in <a href="#feature-tag-list">Appendix B: Default Feature Tags and Encoding IDs</a>:</p>
+     <ul>
+      <li data-md>
+       <p>If the "Encoded As" column corresponding to the tag is "default" then the tag is skipped and
+not encoded.</p>
+      <li data-md>
+       <p>Else, the tag is mapped to the integer value in the "Encoded As" column.</p>
+     </ul>
+    <li data-md>
+     <p>Otherwise: the tag is converted to an integer by treating the tag’s 4 byte string as a 4 byte
+little endian integer.</p>
+   </ul>
+   <p>The final encoding is produced by sorting the mapped integers (exlcuding tags which are skipped)
+into ascending order and then encoding the sorted list as a <a href="#sortedintegerlist">§ 4.2.6 SortedIntegerList</a>.</p>
+   <h4 class="heading settled" data-level="4.2.9" id="AxisSpace"><span class="secno">4.2.9. </span><span class="content">AxisSpace</span><a class="self-link" href="#AxisSpace"></a></h4>
    <p>Stores a set of intervals on one or more open type variation axes <a data-link-type="biblio" href="#biblio-opentype-variations">[opentype-variations]</a>.
 Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
 pair is an <code>ArrayOf&lt;AxisInterval></code> <a href="#AxisInterval">§ 4.3.2 AxisInterval</a>. <span class="conform client server" id="conform-axis-space-disjoint">The list of intervals for a
 each axis tag must be disjoint.</span></p>
-   <h4 class="heading settled" data-level="4.2.9" id="objects"><span class="secno">4.2.9. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
+   <h4 class="heading settled" data-level="4.2.10" id="objects"><span class="secno">4.2.10. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
    <p>Objects are data structures comprised of key and value pairs. <span class="conform server client" id="conform-object">Objects are encoded via CBOR as maps (major
 type 5)</span>. Each key and value pair is encoded as a single map entry. Keys are always unsigned
 integers and are encoded using major type 0. Values are encoded using the encoding specified by the
@@ -1227,22 +1247,30 @@ on some variable axis in a font.</p>
       <td>CompressedSet
      <tr>
       <td>6
+      <td>features_have
+      <td>FeatureTagSet
+     <tr>
+      <td>7
+      <td>features_needed
+      <td>FeatureTagSet
+     <tr>
+      <td>8
       <td>axis_space_have
       <td>AxisSpace
      <tr>
-      <td>7
+      <td>9
       <td>axis_space_needed
       <td>AxisSpace
      <tr>
-      <td>8
+      <td>10
       <td>ordering_checksum
       <td>Integer
      <tr>
-      <td>9
+      <td>11
       <td>original_font_checksum
       <td>Integer
      <tr>
-      <td>10
+      <td>12
       <td>base_checksum
       <td>Integer
    </table>
@@ -1305,6 +1333,10 @@ then <code>ordering_checksum</code> must be set.</span></p>
       <td>9
       <td>original_axis_space
       <td>AxisSpace
+     <tr>
+      <td>10
+      <td>original_features
+      <td>FeatureTagSet
    </table>
    <p>For a PatchResponse object to be well formed:</p>
    <ul>
@@ -1772,51 +1804,65 @@ which carry different types of glyph outlines:</p>
    <h2 class="heading settled" id="suggested-glyph-character-ordering"><span class="content"> Appendix A: Suggested glyph/character ordering</span><a class="self-link" href="#suggested-glyph-character-ordering"></a></h2>
    <p class="note" role="note"><span>Note:</span> This section describes ordering of characters, not glyph IDs, because the meaning of glyph IDs are not consistent across different fonts. To optimize a particular font according to the ordering listed here, the characters will have to be mapped to glyph IDs inside the font. This approach of mapping characters to glyphs for ordering purposes works particularly well for ideographic languages with large character sets.</p>
    <p class="issue" id="issue-763d5c98"><a class="self-link" href="#issue-763d5c98"></a> <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a></p>
+   <h2 class="heading settled" id="feature-tag-list"><span class="content"> Appendix B: Default Feature Tags and Encoding IDs</span><a class="self-link" href="#feature-tag-list"></a></h2>
+   <table>
+    <tbody>
+     <tr>
+      <th>tag
+      <th>Encoded as
+     <tr>
+      <td>aaaa
+      <td>default
+     <tr>
+      <td>aaab
+      <td>1
+   </table>
   </main>
   <div data-fill-with="conformance">
-   <h2 class="no-ref no-num heading settled" id="conformance"><span class="content">Conformance</span><a class="self-link" href="#conformance"></a></h2>
-   <h3 class="no-ref no-num heading settled" id="conventions"><span class="content">Document conventions</span><a class="self-link" href="#conventions"></a></h3>
-   <p>Conformance requirements are expressed with a combination of
-    descriptive assertions and RFC 2119 terminology. The key words “MUST”,
-    “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”,
-    “RECOMMENDED”, “MAY”, and “OPTIONAL” in the normative parts of this
-    document are to be interpreted as described in RFC 2119.
-    However, for readability, these words do not appear in all uppercase
-    letters in this specification. </p>
-   <p>All of the text of this specification is normative except sections
-    explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119">[RFC2119]</a></p>
+   <h2 class="no-ref no-num heading settled" id="w3c-conformance"><span class="content">Conformance</span><a class="self-link" href="#w3c-conformance"></a></h2>
+   <h3 class="no-ref no-num heading settled" id="w3c-conventions"><span class="content">Document conventions</span><a class="self-link" href="#w3c-conventions"></a></h3>
+   <p>Conformance requirements are expressed
+    with a combination of descriptive assertions
+    and RFC 2119 terminology.
+    The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL”
+    in the normative parts of this document
+    are to be interpreted as described in RFC 2119.
+    However, for readability,
+    these words do not appear in all uppercase letters in this specification. </p>
+   <p>All of the text of this specification is normative
+    except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119">[RFC2119]</a> </p>
    <p>Examples in this specification are introduced with the words “for example”
-    or are set apart from the normative text with <code>class="example"</code>,
+    or are set apart from the normative text
+    with <code>class="example"</code>,
     like this: </p>
-   <div class="example" id="example-ae2b6bc0">
-    <a class="self-link" href="#example-ae2b6bc0"></a> 
-    <p>This is an example of an informative example.</p>
+   <div class="example" id="w3c-example">
+    <a class="self-link" href="#w3c-example"></a> 
+    <p>This is an example of an informative example. </p>
    </div>
-   <p>Informative notes begin with the word “Note” and are set apart from the
-    normative text with <code>class="note"</code>, like this: </p>
-   <p class="note" role="note">Note, this is an informative note.</p>
-   <h3 class="no-ref no-num heading settled" id="conformant-algorithms"><span class="content">Conformant Algorithms</span><a class="self-link" href="#conformant-algorithms"></a></h3>
-   <p>Requirements phrased in the imperative as part of algorithms (such as
-    "strip any leading space characters" or "return false and abort these
-    steps") are to be interpreted with the meaning of the key word ("must",
-    "should", "may", etc) used in introducing the algorithm.</p>
-   <p>Conformance requirements phrased as algorithms or specific steps can be
-    implemented in any manner, so long as the end result is equivalent. In
-    particular, the algorithms defined in this specification are intended to
-    be easy to understand and are not intended to be performant. Implementers
-    are encouraged to optimize.</p>
-   <h3 class="no-ref no-num heading settled" id="conformance-classes"><span class="content">Conformance Classes</span><a class="self-link" href="#conformance-classes"></a></h3>
-   <p>A <dfn data-dfn-type="dfn" data-export id="conformant-user-agent">conformant user agent<a class="self-link" href="#conformant-user-agent"></a></dfn> must implement all the requirements
-    listed in this specification that are applicable to user agents.</p>
-   <p>A <dfn data-dfn-type="dfn" data-export id="conformant-server">conformant server<a class="self-link" href="#conformant-server"></a></dfn> must implement all the requirements listed
-    in this specification that are applicable to servers.</p>
+   <p>Informative notes begin with the word “Note”
+    and are set apart from the normative text
+    with <code>class="note"</code>,
+    like this: </p>
+   <p class="note" role="note">Note, this is an informative note. </p>
+   <h3 class="no-ref no-num heading settled" id="w3c-conformant-algorithms"><span class="content">Conformant Algorithms</span><a class="self-link" href="#w3c-conformant-algorithms"></a></h3>
+   <p>Requirements phrased in the imperative as part of algorithms
+    (such as "strip any leading space characters"
+    or "return false and abort these steps")
+    are to be interpreted with the meaning of the key word
+    ("must", "should", "may", etc)
+    used in introducing the algorithm. </p>
+   <p>Conformance requirements phrased as algorithms or specific steps
+    can be implemented in any manner,
+    so long as the end result is equivalent.
+    In particular, the algorithms defined in this specification
+    are intended to be easy to understand
+    and are not intended to be performant.
+    Implementers are encouraged to optimize. </p>
   </div>
 <script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
-   <li><a href="#conformant-server">conformant server</a><span>, in § Unnumbered section</span>
-   <li><a href="#conformant-user-agent">conformant user agent</a><span>, in § Unnumbered section</span>
    <li><a href="#corpus">corpus</a><span>, in § 5.2.6</span>
    <li><a href="#outline-table">outline table</a><span>, in § 5.2.4</span>
    <li><a href="#range-request-optimized-font">range-request optimized font</a><span>, in § 5.2.2</span>
