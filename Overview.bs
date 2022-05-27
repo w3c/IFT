@@ -671,6 +671,11 @@ Each feature tag is mapped to an integer value and then the set of mapped intege
 The final encoding is produced by sorting the mapped integers (exlcuding tags which are skipped)
 into ascending order and then encoding the sorted list as a [[#sortedintegerlist]].
 
+When decoding a FeatureTagSet the integer values are mapped back to the original tags by reversing
+the above mapping rules.
+<span class="conform server client" id="conform-feature-tag-set-defaults">Additionally all
+default features in [[#feature-tag-list]] must be added to the decoded set.</span>
+
 ### AxisSpace ### {#AxisSpace}
 
 Stores a set of intervals on one or more open type variation axes [[opentype-variations]]</a>.
@@ -881,6 +886,16 @@ as follows:
     font subset. The codepoint values are transformed to indices by applying
     [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
     ordering for this font then this field should not be set.
+
+* <code>features_have</code>: set to the list of
+    <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>
+    that the current font subset has data for. If the current font subset is an empty byte array this
+    field is left unset. Additionally, if the current font subset has all data for features present in
+    the original font then this field can be unset.
+
+* <code>features_needed</code>: set to the list of feature tags that the client wants to add
+    to the current font subset. Alternatively, if the client wishes to add all features from
+    the original font to it's subset then this field should be unset.
 
 *  <code>axis_space_have</code>: set to the current value of <code>subset_axis_space</code>
     saved in the state for this font.

@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version fb1e763a4, updated Tue Mar 1 13:13:50 2022 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="718435631ac0cf432bb07c07a2d5febac26dd526" name="document-revision">
+  <meta content="2fc77490b62273c9fd0a1a2d9e725bcb0e89553c" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -1146,6 +1146,9 @@ little endian integer.</p>
    </ul>
    <p>The final encoding is produced by sorting the mapped integers (exlcuding tags which are skipped)
 into ascending order and then encoding the sorted list as a <a href="#sortedintegerlist">§ 4.2.6 SortedIntegerList</a>.</p>
+   <p>When decoding a FeatureTagSet the integer values are mapped back to the original tags by reversing
+the above mapping rules. <span class="conform server client" id="conform-feature-tag-set-defaults">Additionally all
+default features in <a href="#feature-tag-list">Appendix B: Default Feature Tags and Encoding IDs</a> must be added to the decoded set.</span></p>
    <h4 class="heading settled" data-level="4.2.9" id="AxisSpace"><span class="secno">4.2.9. </span><span class="content">AxisSpace</span><a class="self-link" href="#AxisSpace"></a></h4>
    <p>Stores a set of intervals on one or more open type variation axes <a data-link-type="biblio" href="#biblio-opentype-variations">[opentype-variations]</a>.
 Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
@@ -1421,6 +1424,14 @@ ordering for this font then this field should not be set.</p>
      <p><code>indices_needed</code>: encodes the set of codepoints that the client wants to add to its
 font subset. The codepoint values are transformed to indices by applying <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a> to each codepoint value. If the client does not have a codepoint
 ordering for this font then this field should not be set.</p>
+    <li data-md>
+     <p><code>features_have</code>: set to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a> that the current font subset has data for. If the current font subset is an empty byte array this
+field is left unset. Additionally, if the current font subset has all data for features present in
+the original font then this field can be unset.</p>
+    <li data-md>
+     <p><code>features_needed</code>: set to the list of feature tags that the client wants to add
+to the current font subset. Alternatively, if the client wishes to add all features from
+the original font to it’s subset then this field should be unset.</p>
     <li data-md>
      <p><code>axis_space_have</code>: set to the current value of <code>subset_axis_space</code> saved in the state for this font.</p>
     <li data-md>
