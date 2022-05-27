@@ -1028,14 +1028,22 @@ for. From the request object the server can produce two codepoint sets:
      <code>indices_needed</code> must be mapped to codepoints by the application of the
      codepoint reordering with a checksum matching <code>ordering_checksum</code>.</span>
 
-Likewise, the server can produce two variable axis spaces:
+Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>:
 
-1.  Axis space the client has: provided by <code>axis_space_have</code>. If any axes in the font are
+1.  Feature tags the client's subset has: specified by <code>features_have</code>. If the field is
+     unset this indicates the client's subset contains all features in the original font.
+
+2.  Feature tags the client needs: specified by <code>features_needed</code>. If the field is unset
+     this indicates the client wants all features in the original font.
+
+Lastly, the server can produce two variable axis spaces:
+
+1.  Axis space the client has: specified by <code>axis_space_have</code>. If any axes in the font are
      not specified in <code>axis_space_have</code> then for those axes add their entire interval
      from the original font.
 
-2. Axis space the client needs: provided by <code>axis_space_needed</code>. If any axes in the font are
-     not specified in <code>axis_space_needed</code> then for those axes add their entire interval
+2. Axis space the client needs: specified by <code>axis_space_needed</code>. If any axes in the font
+     are not specified in <code>axis_space_needed</code> then for those axes add their entire interval
      from the original font.
 
 <span class="conform server" id="conform-bad-reordering">
@@ -1054,8 +1062,12 @@ in an extended font subset:
 *  <span class="conform server" id="conform-response-subset">That contains data for at least the union
     of the set of codepoints needed and the sets of codepoints the client already has.</span>
 
-*  That contains a variation axis space that covers at least the union of the axis space the client
-    has and the axis space the client needs.
+*  <span class="conform server" id="conform-response-subset-features">That contains data for at least
+    the union of the set of features needed and the sets of features the client already has.</span>
+
+*  <span class="conform server" id="conform-response-subset-axis-space">That contains a variation axis
+    space that covers at least the union of the axis space the client has and the axis space the
+    client needs.</span>
 
 Additionally:
 
@@ -1077,12 +1089,17 @@ Additionally:
     <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following
     [[#codepoint-reordering]].</span>
 
+*  <span class="conform server" id="conform-response-original-features">
+    If the <code>patch</code> or <code>replacement</code> fields are set then the
+    <code>original_features</code> field should be set to the list of feature tags that the original
+    font has data for.</span>
+
 *  <span class="conform server" id="conform-response-original-axis-space">
     If the set of codepoints the client has is empty and the original font has variation axes, the
     response must set the <code>original_axis_space</code> fields to the axis space covered by
     the original font.</span>
 
-*  <span class="conform server" id="conform-response-subset-axis-space">
+*  <span class="conform server" id="conform-response-subset-axis-space-field">
     If <code>patch</code> or <code>replacement</code> fields are set and the original font has
     variation axes, the response must set the <code>subset_axis_space</code> field to the axis space
     covered by the font subset.</span>

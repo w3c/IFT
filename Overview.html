@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version fb1e763a4, updated Tue Mar 1 13:13:50 2022 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="2fc77490b62273c9fd0a1a2d9e725bcb0e89553c" name="document-revision">
+  <meta content="0269b3e598b6eb53e689540934ece24cf7845736" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -1534,15 +1534,24 @@ for. From the request object the server can produce two codepoint sets:</p>
      <p>Codepoints the client needs: formed by the union of the codepoint sets specified by <code>codepoints_needed</code> and <code>indices_needed</code>. <span class="conform server" id="conform-remap-codepoints-needed">The indices in <code>indices_needed</code> must be mapped to codepoints by the application of the
  codepoint reordering with a checksum matching <code>ordering_checksum</code>.</span></p>
    </ol>
-   <p>Likewise, the server can produce two variable axis spaces:</p>
+   <p>Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>:</p>
    <ol>
     <li data-md>
-     <p>Axis space the client has: provided by <code>axis_space_have</code>. If any axes in the font are
+     <p>Feature tags the client’s subset has: specified by <code>features_have</code>. If the field is
+ unset this indicates the client’s subset contains all features in the original font.</p>
+    <li data-md>
+     <p>Feature tags the client needs: specified by <code>features_needed</code>. If the field is unset
+ this indicates the client wants all features in the original font.</p>
+   </ol>
+   <p>Lastly, the server can produce two variable axis spaces:</p>
+   <ol>
+    <li data-md>
+     <p>Axis space the client has: specified by <code>axis_space_have</code>. If any axes in the font are
  not specified in <code>axis_space_have</code> then for those axes add their entire interval
  from the original font.</p>
     <li data-md>
-     <p>Axis space the client needs: provided by <code>axis_space_needed</code>. If any axes in the font are
- not specified in <code>axis_space_needed</code> then for those axes add their entire interval
+     <p>Axis space the client needs: specified by <code>axis_space_needed</code>. If any axes in the font
+ are not specified in <code>axis_space_needed</code> then for those axes add their entire interval
  from the original font.</p>
    </ol>
    <p><span class="conform server" id="conform-bad-reordering"> If the server does not recognize the codepoint ordering used by the client, it must respond
@@ -1556,8 +1565,12 @@ in an extended font subset: </span></p>
      <p><span class="conform server" id="conform-response-subset">That contains data for at least the union
 of the set of codepoints needed and the sets of codepoints the client already has.</span></p>
     <li data-md>
-     <p>That contains a variation axis space that covers at least the union of the axis space the client
-has and the axis space the client needs.</p>
+     <p><span class="conform server" id="conform-response-subset-features">That contains data for at least
+the union of the set of features needed and the sets of features the client already has.</span></p>
+    <li data-md>
+     <p><span class="conform server" id="conform-response-subset-axis-space">That contains a variation axis
+space that covers at least the union of the axis space the client has and the axis space the
+client needs.</span></p>
    </ul>
    <p>Additionally:</p>
    <ul>
@@ -1573,11 +1586,14 @@ The checksum value must computed by the procedure in <a href="#computing-checksu
     <li data-md>
      <p><span class="conform server" id="conform-response-codepoint-ordering"> If the set of codepoints the client has is empty the response must set the <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a>.</span></p>
     <li data-md>
+     <p><span class="conform server" id="conform-response-original-features"> If the <code>patch</code> or <code>replacement</code> fields are set then the <code>original_features</code> field should be set to the list of feature tags that the original
+font has data for.</span></p>
+    <li data-md>
      <p><span class="conform server" id="conform-response-original-axis-space"> If the set of codepoints the client has is empty and the original font has variation axes, the
 response must set the <code>original_axis_space</code> fields to the axis space covered by
 the original font.</span></p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-subset-axis-space"> If <code>patch</code> or <code>replacement</code> fields are set and the original font has
+     <p><span class="conform server" id="conform-response-subset-axis-space-field"> If <code>patch</code> or <code>replacement</code> fields are set and the original font has
 variation axes, the response must set the <code>subset_axis_space</code> field to the axis space
 covered by the font subset.</span></p>
     <li data-md>
