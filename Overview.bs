@@ -804,7 +804,7 @@ For a PatchResponse object to be well formed:
      Only one of <code>patch</code> or <code>replacement</code> must be set.</span>
 *  <span class="conform server" id="conform-response-font-checksums">
      If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>,
-     <code>patched_checksum</code>, and <code>original_font_checksum</code> must be set.</span>
+     and <code>patched_checksum</code> must be set.</span>
 *  <span class="conform server" id="conform-response-valid-format">
      If <code>patch_format</code> is set then it must be one of the values listed in
      [[#patch-formats]].</span>
@@ -843,7 +843,8 @@ Additionally, the client can optionally store:
 *  Original font feature list: a list of the
     <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>
     that the original font has data for. This information can be used by the client to avoid sending
-    unnecessary requests for features which the original font does not contain.
+    unnecessary requests for features which the original font does not contain. Supplied by
+    <a href="#PatchResponse"><code>PatchResponse.original_features</code></a>.
 
 ### Extending the Font Subset ### {#extend-subset}
 
@@ -962,10 +963,13 @@ should interpret and process the fields of the object as follows:
     resend the request that triggered this response but use the new codepoint ordering provided in
     this response.
 
-5. If <code>original_axis_space</code> is set then update the saved original axis space with the value
+5. If <code>original_features</code> is set and the client has opted to save them then update the saved
+    original feature list with the value specified in this field.
+
+6. If <code>original_axis_space</code> is set then update the saved original axis space with the value
     specified in this field.
 
-6. If <code>subset_axis_space</code> is set then update the saved subset axis space with the value
+7. If <code>subset_axis_space</code> is set then update the saved subset axis space with the value
     specified in this field.
 
 ### Handling Invalid Response from the Server ### {#invalid-server-response}
@@ -1081,35 +1085,39 @@ in an extended font subset:
     space that covers at least the union of the axis space the client has and the axis space the
     client needs.</span>
 
+If the checksum of the original font computed by the procedure in [[#computing-checksums]] does not
+match the checksum in <code>PatchRequest.original_font_checksum</code> or
+<code>PatchRequest.original_font_checksum</code> is unset, then:
+
+*  <span class="conform server" id="conform-response-original-checksum">The value of
+    <code>original_font_checksum</code> must be set to the checksum of the original font
+    computed by the procedure in [[#computing-checksums]].</span>
+
+*  <span class="conform server" id="conform-response-codepoint-ordering">
+    The response must set the
+    <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following
+    [[#codepoint-reordering]].</span>
+
+*  <span class="conform server" id="conform-response-original-features">
+    The response must set the <code>original_features</code> field to the list of
+    <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>
+    that the original font has data for.</span>
+
+*  <span class="conform server" id="conform-response-original-axis-space">
+    If the original font has variation axes, the
+    response must set the <code>original_axis_space</code> field to the axis space covered by
+    the original font.</span>
+
 Additionally:
 
 *  <span class="conform server" id="conform-response-patch-format">The format of the patch in the
     either the <code>patch</code> or <code>replace</code> fields must be one of those listed in
     <code>accept_patch_format</code></span>.
 
-*  <span class="conform server" id="conform-response-original-checksum">The value of
-    <code>original_font_checksum</code> must be set to the checksum of the original font.
-    The checksum value must computed by the procedure in [[#computing-checksums]].</span>
-
 *  <span class="conform server" id="conform-response-patched-checksum">
      If <code>patch</code> or <code>replacement</code> fields are set the value of
      <code>patched_checksum</code> must be set to the checksum of the extended font subset.
      The checksum value must computed by the procedure in [[#computing-checksums]].</span>
-
-*  <span class="conform server" id="conform-response-codepoint-ordering">
-    If the set of codepoints the client has is empty the response must set the
-    <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following
-    [[#codepoint-reordering]].</span>
-
-*  <span class="conform server" id="conform-response-original-features">
-    If the <code>patch</code> or <code>replacement</code> fields are set then the
-    <code>original_features</code> field should be set to the list of feature tags that the original
-    font has data for.</span>
-
-*  <span class="conform server" id="conform-response-original-axis-space">
-    If the set of codepoints the client has is empty and the original font has variation axes, the
-    response must set the <code>original_axis_space</code> fields to the axis space covered by
-    the original font.</span>
 
 *  <span class="conform server" id="conform-response-subset-axis-space-field">
     If <code>patch</code> or <code>replacement</code> fields are set and the original font has
