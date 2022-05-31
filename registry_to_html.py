@@ -7,11 +7,11 @@ with open("feature-registry.csv") as r:
   reader = csv.reader(r, delimiter=",")
   i = 1
   for row in reader:
-    if row[0] == "tag" or row[0].startswith("#"):
+    if row[0] == "Tag" or row[0].startswith("#"):
         continue
 
 
-    if row[2] == "1":
+    if int(row[2]) == 1:
       v = "default"
     else:
       m = re.search("[a-z]{2}([0-9]{2})-[a-z]{2}([0-9]{2})", row[0])
