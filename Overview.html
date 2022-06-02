@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version fb1e763a4, updated Tue Mar 1 13:13:50 2022 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="e699391df565ec8fc82050a02046343775b74521" name="document-revision">
+  <meta content="b121c38ce51a3b33c176240030e04532da3554d1" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -456,7 +456,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2022-05-17">17 May 2022</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2022-06-02">2 June 2022</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -677,7 +677,7 @@ for many uses cases while still providing material improvments to loading perfor
     <li data-md>
      <p>The browser makes the first request to the server. If the client prefers the <a href="https://w3c.github.io/IFT/Overview.html#patch-incxfer">patch-subset method</a>, it sends the relevant <a href="https://w3c.github.io/IFT/Overview.html#negotiating-transfer-type">query parameter</a>. If the client prefers the range-request method, it does not send the query parameter.</p>
     <li data-md>
-     <p>If the server receives the patch-subset query parameter and wishes to honor it, the server should reply with a valid <a href="https://w3c.github.io/IFT/Overview.html#PatchResponse">patch subset response</a> which includes the <a href="https://w3c.github.io/IFT/Overview.html#handling-patch-response">patch-subset magic number</a>. Otherwise, the server should reply with the <a data-link-type="biblio" href="#biblio-rfc7233">[RFC7233]</a> <a href="https://httpwg.org/specs/rfc7233.html#header.accept-ranges"><code>Accept-Ranges</code></a> header, if it supports HTTP Range Requests.</p>
+     <p>If the server receives the patch-subset query parameter and wishes to honor it, the server must reply with a valid <a href="https://w3c.github.io/IFT/Overview.html#PatchResponse">patch subset response</a> which includes the <a href="https://w3c.github.io/IFT/Overview.html#handling-patch-response">patch-subset magic number</a>. Otherwise, the server must reply with the <a data-link-type="biblio" href="#biblio-rfc7233">[RFC7233]</a> <a href="https://httpwg.org/specs/rfc7233.html#header.accept-ranges"><code>Accept-Ranges</code></a> header, if it supports HTTP Range Requests.</p>
     <li data-md>
      <p>If the client receives the patch-subset magic number, it commences using the patch-subset method. Otherwise, if the client receives the <code>Accept-Ranges: bytes</code> header, it commences using the range-request method. Otherwise, the whole font file is downloaded, and the current non-incremental loading behavior is used.</p>
    </ol>
@@ -1692,8 +1692,8 @@ and a target file:</p>
    <p>If Brotli compression is used in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font④">range-request optimized font</a>, its one meta-block should have the <a href="https://datatracker.ietf.org/doc/html/rfc7932#section-9.2"><code>ISUNCOMPRESSED</code></a> bit set to 1.</p>
    <p class="issue" id="issue-6786fd81"><a class="self-link" href="#issue-6786fd81"></a> <a href="https://github.com/w3c/IFT/issues/60">Static file compression compatibility with range-request method</a></p>
    <h4 class="heading settled" data-level="5.2.4" id="font-organization-table-ordering"><span class="secno">5.2.4. </span><span class="content">Table Ordering</span><a class="self-link" href="#font-organization-table-ordering"></a></h4>
-   <p>No two tables in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑤">range-request optimized font</a> should share a tag name.</p>
-   <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑥">range-request optimized font</a> should have only one of these tables:</p>
+   <p>The term <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="outline-table">outline table</dfn> is used to describe these three tables,
+which carry different types of glyph outlines:</p>
    <ul>
     <li data-md>
      <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff"><code>CFF</code></a> table</p>
@@ -1702,7 +1702,8 @@ and a target file:</p>
     <li data-md>
      <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf"><code>glyf</code></a> table</p>
    </ul>
-   <p>The term <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="outline-table">outline table</dfn> is used to describe the one table which is either a <code>CFF</code> table, <code>CFF2</code> table, or <code>glyf</code> table.</p>
+   <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑤">range-request optimized font</a> should have only one outline table.</p>
+   <p>No two tables in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑥">range-request optimized font</a> should share a tag name.</p>
    <p>The <a data-link-type="dfn" href="#outline-table" id="ref-for-outline-table">outline table</a> data in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑦">range-request optimized font</a> should lie at the end of the file.</p>
    <p>If a <code>CFF</code> table exists, the <a href="https://wwwimages2.adobe.com/content/dam/acom/en/devnet/font/pdfs/5176.CFF.pdf">CharString</a> data should lie at the end of the <code>CFF</code> table.</p>
    <p>If a <code>CFF2</code> table exists, the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#charStrings">CharString</a> data should lie at the end of the <code>CFF2</code> table.</p>
