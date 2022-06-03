@@ -890,6 +890,8 @@ Extend font subset algorithm:
 
      * The request CORS [=request/mode=] must be "cors".
 
+     * The request [=request/cache mode=] should be "no-store".
+
      * The request URL [=url/scheme=] must be "https".
 
      * The request URL [=url/path=] is set to the input font URL.
@@ -901,8 +903,6 @@ Extend font subset algorithm:
           parameter "request" whose value is a single
           <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then
           base64url encoding [[rfc4648]].
-
-     TODO(garretrieger): how is cache mode set?
 
      Any request and/or url parameters which are not specified here should be set based on
      the user agent's normal handling for font requests. For example if this font load is
@@ -1060,6 +1060,73 @@ If the font load or extension has failed the client should choose one of the fol
 
 Regardless of which of the above options are used, the saved client state for this font must be
 discarded.
+
+### Load a Font in a User Agent with a HTTP Cache ### {#load-a-font}
+
+<em>This section is not normative.</em>
+
+The previous section [[#extend-subset]] provides no guidance on how a user agent should handle
+saving client state between invocations of the subset extension algorithm. This section provides an
+algorithm that user agents which implement [[fetch]] may choose to use to save client
+state to the user agents HTTP cache ([[RFC7234]]).
+
+The inputs to this algorithm:
+
+*  Font URL: a URL where the font to be extended is located.
+
+*  Desired Subset Definition: a <a href="#font-subset-definition">description</a> of the desired
+    minimum font subset.
+
+The algorithm outputs:
+
+*  A <a href="#font-subset">Font Subset</a> which covers at minimum the input subset definition.
+
+The algorithm:
+
+1.  Make a HTTP fetch:
+
+     * The request [=request/method=] is "GET".
+
+     * The request [=request/destination=] must be "font".
+
+     * The request CORS [=request/mode=] must be "cors".
+
+     * The request URL [=url/scheme=] must be "https".
+
+     * The request URL [=url/path=] is set to the input font URL.
+
+     * The request [=request/cache mode=] is "only-if-cached".
+
+2.  If the request is successful and the response is "fresh" ([[RFC7234#expiration.model]])
+     then invoke [[#extend-subset]] with:
+
+     *  Font url set to the input font url.
+
+     *  Client state set to the response.
+
+     *  Desired subset definition set to the input subset definition.
+
+     *  Fetch algorithm set to [[fetch]].
+
+     Once that returns go to step 4.
+
+3.  Otherwise:
+
+     *  Font url set to the input font url.
+
+     *  Client state set to the response.
+
+     *  Desired subset definition set to the input subset definition.
+
+     *  Fetch algorithm set to [[fetch]].
+
+     Once that returns go to step 4.
+
+4.  If the returned cache headers are non-null update the cache entry for the input
+     font url with the returned client state and returned cache headers.
+
+5.  Return the font subset contained in the returned client state.
+
 
 Server: Responding to a PatchRequest {#handling-patch-request}
 --------------------------------------------------------------

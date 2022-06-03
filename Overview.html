@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version fb1e763a4, updated Tue Mar 1 13:13:50 2022 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="ad41c00db9850c8cdafb299aa56d6b02f135eb0a" name="document-revision">
+  <meta content="b8da6392edf5de815564e605f08022cc55b50d3b" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -569,6 +569,7 @@ dfn > a.self-link::before      { content: "#"; }
           <li><a href="#client-side-checksum-mismatch"><span class="secno">4.4.2.3</span> <span class="content">Client Side Checksum Mismatch</span></a>
           <li><a href="#font-load-failed"><span class="secno">4.4.2.4</span> <span class="content">Font Load Failed</span></a>
          </ol>
+        <li><a href="#load-a-font"><span class="secno">4.4.3</span> <span class="content">Load a Font in a User Agent with a HTTP Cache</span></a>
        </ol>
       <li>
        <a href="#handling-patch-request"><span class="secno">4.5</span> <span class="content">Server: Responding to a PatchRequest</span></a>
@@ -1444,6 +1445,8 @@ can be cached, or null.</p>
       <li data-md>
        <p>The request CORS <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-mode" id="ref-for-concept-request-mode">mode</a> must be "cors".</p>
       <li data-md>
+       <p>The request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-cache-mode" id="ref-for-concept-request-cache-mode">cache mode</a> should be "no-store".</p>
+      <li data-md>
        <p>The request URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-scheme" id="ref-for-concept-url-scheme">scheme</a> must be "https".</p>
       <li data-md>
        <p>The request URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path">path</a> is set to the input font URL.</p>
@@ -1454,7 +1457,6 @@ can be cached, or null.</p>
   parameter "request" whose value is a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then
   base64url encoding <a data-link-type="biblio" href="#biblio-rfc4648">[rfc4648]</a>.</p>
      </ul>
-     <p>TODO(garretrieger): how is cache mode set?</p>
      <p>Any request and/or url parameters which are not specified here should be set based on
  the user agent’s normal handling for font requests. For example if this font load is
  from a CSS font face, then <a href="https://www.w3.org/TR/css-fonts-4/#font-fetching-requirements"><cite>CSS Fonts 4</cite> § 4.8.2 Font fetching requirements</a> should be followed.</p>
@@ -1589,11 +1591,81 @@ must not resend the request again and should follow <a href="#font-load-failed">
    </ol>
    <p>Regardless of which of the above options are used, the saved client state for this font must be
 discarded.</p>
+   <h4 class="heading settled" data-level="4.4.3" id="load-a-font"><span class="secno">4.4.3. </span><span class="content">Load a Font in a User Agent with a HTTP Cache</span><a class="self-link" href="#load-a-font"></a></h4>
+   <p><em>This section is not normative.</em></p>
+   <p>The previous section <a href="#extend-subset">§ 4.4.2 Extending the Font Subset</a> provides no guidance on how a user agent should handle
+saving client state between invocations of the subset extension algorithm. This section provides an
+algorithm that user agents which implement <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a> may choose to use to save client
+state to the user agents HTTP cache (<a data-link-type="biblio" href="#biblio-rfc7234">[RFC7234]</a>).</p>
+   <p>The inputs to this algorithm:</p>
+   <ul>
+    <li data-md>
+     <p>Font URL: a URL where the font to be extended is located.</p>
+    <li data-md>
+     <p>Desired Subset Definition: a <a href="#font-subset-definition">description</a> of the desired
+minimum font subset.</p>
+   </ul>
+   <p>The algorithm outputs:</p>
+   <ul>
+    <li data-md>
+     <p>A <a href="#font-subset">Font Subset</a> which covers at minimum the input subset definition.</p>
+   </ul>
+   <p>The algorithm:</p>
+   <ol>
+    <li data-md>
+     <p>Make a HTTP fetch:</p>
+     <ul>
+      <li data-md>
+       <p>The request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method③">method</a> is "GET".</p>
+      <li data-md>
+       <p>The request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-destination" id="ref-for-concept-request-destination①">destination</a> must be "font".</p>
+      <li data-md>
+       <p>The request CORS <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-mode" id="ref-for-concept-request-mode①">mode</a> must be "cors".</p>
+      <li data-md>
+       <p>The request URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-scheme" id="ref-for-concept-url-scheme①">scheme</a> must be "https".</p>
+      <li data-md>
+       <p>The request URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path②">path</a> is set to the input font URL.</p>
+      <li data-md>
+       <p>The request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-cache-mode" id="ref-for-concept-request-cache-mode①">cache mode</a> is "only-if-cached".</p>
+     </ul>
+    <li data-md>
+     <p>If the request is successful and the response is "fresh" (<a href="https://httpwg.org/specs/rfc7234.html#expiration.model">Hypertext Transfer Protocol (HTTP/1.1): Caching § expiration.model</a>)
+ then invoke <a href="#extend-subset">§ 4.4.2 Extending the Font Subset</a> with:</p>
+     <ul>
+      <li data-md>
+       <p>Font url set to the input font url.</p>
+      <li data-md>
+       <p>Client state set to the response.</p>
+      <li data-md>
+       <p>Desired subset definition set to the input subset definition.</p>
+      <li data-md>
+       <p>Fetch algorithm set to <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a>.</p>
+     </ul>
+     <p>Once that returns go to step 4.</p>
+    <li data-md>
+     <p>Otherwise:</p>
+     <ul>
+      <li data-md>
+       <p>Font url set to the input font url.</p>
+      <li data-md>
+       <p>Client state set to the response.</p>
+      <li data-md>
+       <p>Desired subset definition set to the input subset definition.</p>
+      <li data-md>
+       <p>Fetch algorithm set to <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a>.</p>
+     </ul>
+     <p>Once that returns go to step 4.</p>
+    <li data-md>
+     <p>If the returned cache headers are non-null update the cache entry for the input
+ font url with the returned client state and returned cache headers.</p>
+    <li data-md>
+     <p>Return the font subset contained in the returned client state.</p>
+   </ol>
    <h3 class="heading settled" data-level="4.5" id="handling-patch-request"><span class="secno">4.5. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
    <p><span class="conform server" id="conform-successful-response">If the server receives a well formed <a href="#PatchRequest"><code>PatchRequest</code></a> over HTTPS for a font the server has and that was
 populated according to the requirements in <a href="#extend-subset">§ 4.4.2 Extending the Font Subset</a> then it must respond with HTTP <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status③">status</a> code 200.</span> <span class="conform server" id="conform-magic-number">The first 4 bytes of the response <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body②">body</a> must be set to 0x49, 0x46, 0x54, 0x20 ("IFT " encoded as ASCII) followed by a
 single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</span></p>
-   <p>The <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path②">path</a> in the request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-url" id="ref-for-concept-request-url">url</a> identifies the specific font that a patch is desired
+   <p>The <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path③">path</a> in the request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-url" id="ref-for-concept-request-url">url</a> identifies the specific font that a patch is desired
 for. From the request object the server can produce two codepoint sets:</p>
    <ol>
     <li data-md>
@@ -2348,22 +2420,32 @@ which carry different types of glyph outlines:</p>
     <li><a href="#ref-for-concept-response-body②">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-concept-request-cache-mode">
+   <a href="https://fetch.spec.whatwg.org/#concept-request-cache-mode">https://fetch.spec.whatwg.org/#concept-request-cache-mode</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-concept-request-cache-mode">4.4.2. Extending the Font Subset</a>
+    <li><a href="#ref-for-concept-request-cache-mode①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-concept-request-destination">
    <a href="https://fetch.spec.whatwg.org/#concept-request-destination">https://fetch.spec.whatwg.org/#concept-request-destination</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-request-destination">4.4.2. Extending the Font Subset</a>
+    <li><a href="#ref-for-concept-request-destination①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-concept-request-method">
    <a href="https://fetch.spec.whatwg.org/#concept-request-method">https://fetch.spec.whatwg.org/#concept-request-method</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-request-method">4.4.2. Extending the Font Subset</a> <a href="#ref-for-concept-request-method①">(2)</a> <a href="#ref-for-concept-request-method②">(3)</a>
+    <li><a href="#ref-for-concept-request-method③">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-concept-request-mode">
    <a href="https://fetch.spec.whatwg.org/#concept-request-mode">https://fetch.spec.whatwg.org/#concept-request-mode</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-request-mode">4.4.2. Extending the Font Subset</a>
+    <li><a href="#ref-for-concept-request-mode①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-concept-response-status">
@@ -2385,7 +2467,8 @@ which carry different types of glyph outlines:</p>
    <ul>
     <li><a href="#ref-for-concept-url-path">4.4.2. Extending the Font Subset</a>
     <li><a href="#ref-for-concept-url-path①">4.4.2.4. Font Load Failed</a>
-    <li><a href="#ref-for-concept-url-path②">4.5. Server: Responding to a PatchRequest</a>
+    <li><a href="#ref-for-concept-url-path②">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
+    <li><a href="#ref-for-concept-url-path③">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-concept-url-query">
@@ -2398,6 +2481,7 @@ which carry different types of glyph outlines:</p>
    <a href="https://url.spec.whatwg.org/#concept-url-scheme">https://url.spec.whatwg.org/#concept-url-scheme</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-url-scheme">4.4.2. Extending the Font Subset</a>
+    <li><a href="#ref-for-concept-url-scheme①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
    </ul>
   </aside>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
@@ -2411,6 +2495,7 @@ which carry different types of glyph outlines:</p>
     <a data-link-type="biblio">[fetch]</a> defines the following terms:
     <ul>
      <li><span class="dfn-paneled" id="term-for-concept-response-body">body <small>(for response)</small></span>
+     <li><span class="dfn-paneled" id="term-for-concept-request-cache-mode">cache mode</span>
      <li><span class="dfn-paneled" id="term-for-concept-request-destination">destination</span>
      <li><span class="dfn-paneled" id="term-for-concept-request-method">method</span>
      <li><span class="dfn-paneled" id="term-for-concept-request-mode">mode</span>
@@ -2471,6 +2556,8 @@ which carry different types of glyph outlines:</p>
    <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/"><cite>Progressive Font Enrichment: Evaluation Report</cite></a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
    <dt id="biblio-rfc4648">[RFC4648]
    <dd>S. Josefsson. <a href="https://www.rfc-editor.org/rfc/rfc4648"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. October 2006. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>
+   <dt id="biblio-rfc7234">[RFC7234]
+   <dd>R. Fielding, Ed.; M. Nottingham, Ed.; J. Reschke, Ed.. <a href="https://httpwg.org/specs/rfc7234.html"><cite>Hypertext Transfer Protocol (HTTP/1.1): Caching</cite></a>. June 2014. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc7234.html">https://httpwg.org/specs/rfc7234.html</a>
   </dl>
   <h2 class="no-num no-ref heading settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
   <div style="counter-reset:issue">
