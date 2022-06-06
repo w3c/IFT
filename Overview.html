@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version fb1e763a4, updated Tue Mar 1 13:13:50 2022 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="9653eb3f13b1f4fec5b3ed97b9363d7ff2432de3" name="document-revision">
+  <meta content="71ea7593fed40c7a06a5dcbd0f5170f0cc89738a" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -1592,11 +1592,10 @@ must not resend the request again and should follow <a href="#font-load-failed">
    <p>Regardless of which of the above options are used, the saved client state for this font must be
 discarded.</p>
    <h4 class="heading settled" data-level="4.4.3" id="load-a-font"><span class="secno">4.4.3. </span><span class="content">Load a Font in a User Agent with a HTTP Cache</span><a class="self-link" href="#load-a-font"></a></h4>
-   <p><em>This section is not normative.</em></p>
    <p>The previous section <a href="#extend-subset">§ 4.4.2 Extending the Font Subset</a> provides no guidance on how a user agent should handle
 saving client state between invocations of the subset extension algorithm. This section provides an
-algorithm that user agents which implement <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a> may choose to use to save client
-state to the user agents HTTP cache (<a data-link-type="biblio" href="#biblio-rfc7234">[RFC7234]</a>).</p>
+algorithm that user agents which implement <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a> should use to save client state to the user
+agents HTTP cache (<a data-link-type="biblio" href="#biblio-rfc7234">[RFC7234]</a>).</p>
    <p>The inputs to this algorithm:</p>
    <ul>
     <li data-md>
@@ -1643,7 +1642,7 @@ minimum font subset.</p>
      </ul>
      <p>Once that returns go to step 4.</p>
     <li data-md>
-     <p>Otherwise:</p>
+     <p>Otherwise, invoke <a href="#extend-subset">§ 4.4.2 Extending the Font Subset</a> with:</p>
      <ul>
       <li data-md>
        <p>Font url set to the input font url.</p>
