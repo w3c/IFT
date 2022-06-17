@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version fb1e763a4, updated Tue Mar 1 13:13:50 2022 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="fa16e53db0d9c263fa360e16c46bda1b328ee558" name="document-revision">
+  <meta content="693d13381be6b5fc20d6d4da6af3752abfa289a3" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -456,7 +456,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2022-06-13">13 June 2022</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2022-06-16">16 June 2022</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -761,6 +761,10 @@ should be encoded by CBOR are given in the definition of those data types.</p>
       <td>ByteString
       <td>Variable number of bytes.
       <td>2
+     <tr>
+      <td>String
+      <td>UTF-8 <a data-link-type="biblio" href="#biblio-rfc3629">[rfc3629]</a> text string.
+      <td>3
      <tr>
       <td>ArrayOf&lt;Type>
       <td>Array of a variable number of items of Type.
@@ -1296,6 +1300,10 @@ on some variable axis in a font.</p>
       <td>12
       <td>base_checksum
       <td>Integer
+     <tr>
+      <td>13
+      <td>fragment_id
+      <td>String
    </table>
    <p>For a PatchRequest object to be well formed:</p>
    <ul>
@@ -1410,6 +1418,9 @@ features, and/or design-variation space. The inputs to this algorithm are:</p>
     <li data-md>
      <p>Font URL: a URL where the font to be extended is located.</p>
     <li data-md>
+     <p>Fragement Identifier (optional): if the font at the font url is a collection of fonts, the fragment
+identifier (<a href="https://www.rfc-editor.org/rfc/rfc8081#section-4.2">The "font" Top-Level Media Type § section-4.2</a>) identifies a single font within the collection.</p>
+    <li data-md>
      <p>Client State (optional): previously saved <a href="#client-state">client state</a> for the given
 font url, or null.</p>
     <li data-md>
@@ -1508,6 +1519,10 @@ can be cached, or null.</p>
       <li data-md>
        <p><code>base_checksum</code>:
  Set to the checksum of the font subset byte array saved in the state for this font. See: <a href="#computing-checksums">§ 4.6 Computing Checksums</a>.</p>
+      <li data-md>
+       <p><code>fragment_id</code>:
+ If a fragment identifier was provided as an input then this field must be set to the provided
+ fragment identifier, otherwise it must be left unset.</p>
      </ul>
      <p class="note" role="note"><span>Note:</span> It is allowed for the client to request more codepoints then it strictly needs. For
  example, on slower connections it may be more performant to request extra codepoints if
@@ -1665,7 +1680,10 @@ minimum font subset.</p>
 populated according to the requirements in <a href="#extend-subset">§ 4.4.2 Extending the Font Subset</a> then it must respond with HTTP <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status③">status</a> code 200.</span> <span class="conform server" id="conform-magic-number">The first 4 bytes of the response <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body②">body</a> must be set to 0x49, 0x46, 0x54, 0x20 ("IFT " encoded as ASCII) followed by a
 single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</span></p>
    <p>The <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path③">path</a> in the request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-url" id="ref-for-concept-request-url">url</a> identifies the specific font that a patch is desired
-for. From the request object the server can produce two codepoint sets:</p>
+for. If the request has the <code>fragment_id</code> field set and the file identified by <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path④">path</a> is a collection of fonts, then <code>fragment_id</code> identifies the font within that collection
+that a patch is desired for. The identified font is referred to as the 'original font' in the rest
+of this section.</p>
+   <p>From the request object the server can produce two codepoint sets:</p>
    <ol>
     <li data-md>
      <p>Codepoints the client has: formed by the union of the codepoint sets specified by <code>codepoints_have</code> and <code>indices_have</code>. <span class="conform server" id="conform-remap-codepoints-have">The indices in <code>indices_have</code> must be mapped to codepoints by the application of the
@@ -2467,7 +2485,7 @@ which carry different types of glyph outlines:</p>
     <li><a href="#ref-for-concept-url-path">4.4.2. Extending the Font Subset</a>
     <li><a href="#ref-for-concept-url-path①">4.4.2.4. Font Load Failed</a>
     <li><a href="#ref-for-concept-url-path②">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
-    <li><a href="#ref-for-concept-url-path③">4.5. Server: Responding to a PatchRequest</a>
+    <li><a href="#ref-for-concept-url-path③">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-concept-url-path④">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-concept-url-query">
@@ -2553,6 +2571,8 @@ which carry different types of glyph outlines:</p>
    <dd><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview"><cite>OpenType Font Variations Overview</cite></a>. 23 October 2020. Note. URL: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview">https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview</a>
    <dt id="biblio-pfe-report">[PFE-report]
    <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/"><cite>Progressive Font Enrichment: Evaluation Report</cite></a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
+   <dt id="biblio-rfc3629">[RFC3629]
+   <dd>F. Yergeau. <a href="https://www.rfc-editor.org/rfc/rfc3629"><cite>UTF-8, a transformation format of ISO 10646</cite></a>. November 2003. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3629">https://www.rfc-editor.org/rfc/rfc3629</a>
    <dt id="biblio-rfc4648">[RFC4648]
    <dd>S. Josefsson. <a href="https://www.rfc-editor.org/rfc/rfc4648"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. October 2006. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>
    <dt id="biblio-rfc7234">[RFC7234]

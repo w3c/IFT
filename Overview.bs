@@ -251,6 +251,9 @@ should be encoded by CBOR are given in the definition of those data types.
     <td>ByteString</td><td>Variable number of bytes.</td><td>2</td>
   </tr>
   <tr>
+    <td>String</td><td>UTF-8 [[rfc3629]] text string.</td><td>3</td>
+  </tr>
+  <tr>
     <td>ArrayOf&lt;Type&gt;</td><td>Array of a variable number of items of Type.</td><td>4</td>
   </tr>
 </table>
@@ -771,6 +774,7 @@ For an <code>AxisInterval</code> object to be well formed:
   <tr><td>10</td><td>ordering_checksum</td><td>Integer</td></tr>
   <tr><td>11</td><td>original_font_checksum</td><td>Integer</td></tr>
   <tr><td>12</td><td>base_checksum</td><td>Integer</td></tr>
+  <tr><td>13</td><td>fragment_id</td><td>String</td></tr>
 </table>
 
 For a PatchRequest object to be well formed:
@@ -857,6 +861,9 @@ This algorithm is used by the client to extends its font subset to cover additio
 features, and/or design-variation space. The inputs to this algorithm are:
 
 * Font URL: a URL where the font to be extended is located.
+
+* Fragement Identifier (optional): if the font at the font url is a collection of fonts, the fragment
+    identifier ([[rfc8081#section-4.2]]) identifies a single font within the collection.
 
 * Client State (optional): previously saved <a href="#client-state">client state</a> for the given
     font url, or null.
@@ -963,6 +970,10 @@ Extend font subset algorithm:
      *  <code>base_checksum</code>:
          Set to the checksum of the font subset byte array saved in the state for this font. See:
          [[#computing-checksums]].
+
+     *  <code>fragment_id</code>:
+         If a fragment identifier was provided as an input then this field must be set to the provided
+         fragment identifier, otherwise it must be left unset.
 
 
      Note: It is allowed for the client to request more codepoints then it strictly needs. For
@@ -1138,7 +1149,12 @@ populated according to the requirements in [[#extend-subset]] then it must respo
 single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</span>
 
 The [=url/path=] in the request [=request/url=] identifies the specific font that a patch is desired
-for. From the request object the server can produce two codepoint sets:
+for. If the request has the <code>fragment_id</code> field set and the file identified by [=url/path=]
+is a collection of fonts, then <code>fragment_id</code> identifies the font within that collection
+that a patch is desired for. The identified font is referred to as the 'original font' in the rest
+of this section.
+
+From the request object the server can produce two codepoint sets:
 
 1.  Codepoints the client has: formed by the union of the codepoint sets specified by
      <code>codepoints_have</code> and <code>indices_have</code>.
