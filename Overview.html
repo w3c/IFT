@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version fb1e763a4, updated Tue Mar 1 13:13:50 2022 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="bfb5280bab3ed8b04afa6a06715f80639ebb0fda" name="document-revision">
+  <meta content="16c72f442b5ce6c8aaf534b304e86ea5938f7de7" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -423,7 +423,7 @@ slow networks, very large fonts, or complex subsetting requirements currently pr
 example, even using WOFF 2 <a data-link-type="biblio" href="#biblio-woff2">[WOFF2]</a>, fonts for CJK languages are too large to be practical.</p>
    <p>There are two different methods which can be used to incrementally transfer fonts.</p>
    <h3 class="heading settled" data-level="1.1" id="patch-subset"><span class="secno">1.1. </span><span class="content">Patch Subset</span><a class="self-link" href="#patch-subset"></a></h3>
-   <p>In the the first method, <a href="patch-incxfer">Patch Subset</a> a server generates binary patches which a
+   <p>In the the first method, <a href="#patch-incxfer">Patch Subset</a> a server generates binary patches which a
 client applies to a subset of the font in order to extend the coverage of that subset. The server
 is stateless, it does not maintain any session data for clients between requests. Thus when a client
 requests the generation of a patch from the server it has to fully describe the current subset of the
@@ -461,9 +461,9 @@ for many uses cases while still providing material improvments to loading perfor
    <p>When a page has indicated that a particular font should utilize IFT technology, the browser must determine which method to use. Different browsers may support different IFT methods, and different servers may support different IFT methods, so a negotation occurs as such:</p>
    <ol>
     <li data-md>
-     <p>The browser makes the first request to the server. If the client prefers the <a href="https://w3c.github.io/IFT/Overview.html#patch-incxfer">patch-subset method</a>, it sends the relevant <a href="https://w3c.github.io/IFT/Overview.html#negotiating-transfer-type">query parameter</a>. If the client prefers the range-request method, it does not send the query parameter.</p>
+     <p>The browser makes the first request to the server. If the client prefers the <a href="#patch-incxfer">patch-subset method</a>, it sends the relevant <a data-link-type="dfn" href="#query-parameter" id="ref-for-query-parameter">query parameter</a>. If the client prefers the range-request method, it does not send the query parameter.</p>
     <li data-md>
-     <p>If the server receives the patch-subset query parameter and wishes to honor it, the server must reply with a valid <a href="https://w3c.github.io/IFT/Overview.html#PatchResponse">patch subset response</a> which includes the <a href="https://w3c.github.io/IFT/Overview.html#handling-patch-response">patch-subset magic number</a>. Otherwise, the server must reply with the <a data-link-type="biblio" href="#biblio-rfc9110">[RFC9110]</a> <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a> header, if it supports HTTP Range Requests.</p>
+     <p>If the server receives the patch-subset query parameter and wishes to honor it, the server must reply with a valid <a href="#PatchResponse">patch subset response</a> which includes the <a href="#handling-patch-response">patch-subset magic number</a>. Otherwise, the server must reply with the <a data-link-type="biblio" href="#biblio-rfc9110">[RFC9110]</a> <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a> header, if it supports HTTP Range Requests.</p>
     <li data-md>
      <p>If the client receives the patch-subset magic number, it commences using the patch-subset method. Otherwise, if the client receives the <code>Accept-Ranges: bytes</code> header, it commences using the range-request method. Otherwise, the whole font file is downloaded, and the current non-incremental loading behavior is used.</p>
    </ol>
@@ -1241,8 +1241,8 @@ can be cached, or null.</p>
       <li data-md>
        <p>If <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method①">method</a> is "POST" then, request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-body" id="ref-for-concept-request-body">body</a> must be a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR.</p>
       <li data-md>
-       <p>Otherwise if <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method②">method</a> is "GET" then, URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-query" id="ref-for-concept-url-query">query</a> must contain a
-  parameter "request" whose value is a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then
+       <p>Otherwise if <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method②">method</a> is "GET" then, URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-query" id="ref-for-concept-url-query">query</a> must contain a <dfn class="dfn-paneled" data-dfn-type="dfn" data-export data-lt="query parameter" id="query-parameter">query
+  parameter</dfn> "request" whose value is a single <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then
   base64url encoding <a data-link-type="biblio" href="#biblio-rfc4648">[rfc4648]</a>.</p>
      </ul>
      <p>Any request and/or url parameters which are not specified here should be set based on
@@ -1702,7 +1702,7 @@ which carry different types of glyph outlines:</p>
    <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑤">range-request optimized font</a> should have only one outline table.</p>
    <p>No two tables in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑥">range-request optimized font</a> should share a tag name.</p>
    <p>The <a data-link-type="dfn" href="#outline-table" id="ref-for-outline-table">outline table</a> data in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑦">range-request optimized font</a> should lie at the end of the file.</p>
-   <p>If a <code>CFF</code> table exists, the <a href="https://wwwimages2.adobe.com/content/dam/acom/en/devnet/font/pdfs/5176.CFF.pdf">CharString</a> data should lie at the end of the <code>CFF</code> table.</p>
+   <p>If a <code>CFF</code> table exists, the <a href="https://adobe-type-tools.github.io/font-tech-notes/pdfs/5176.CFF.pdf">CharString</a> data should lie at the end of the <code>CFF</code> table.</p>
    <p>If a <code>CFF2</code> table exists, the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#charStrings">CharString</a> data should lie at the end of the <code>CFF2</code> table.</p>
    <p class="issue" id="issue-010f4980"><a class="self-link" href="#issue-010f4980"></a> <a href="https://github.com/w3c/IFT/issues/28">Font Collections support</a></p>
    <h4 class="heading settled" data-level="5.2.5" id="font-organization-glyph-independence"><span class="secno">5.2.5. </span><span class="content">Glyph Independence</span><a class="self-link" href="#font-organization-glyph-independence"></a></h4>
@@ -1710,7 +1710,7 @@ which carry different types of glyph outlines:</p>
    <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑧">range-request optimized font</a> should not use <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6glyf.html">Compound glyphs</a>.</p>
    <p class="issue" id="issue-5533a524"><a class="self-link" href="#issue-5533a524"></a> <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with composite glyphs via range-request</a></p>
    <p class="note" role="note"><span>Note:</span> Compound glyphs can be flattened by inlining their component glyphs to become additional contours.</p>
-   <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑨">range-request optimized font</a> should not use <a href="https://wwwimages2.adobe.com/content/dam/acom/en/devnet/font/pdfs/5176.CFF.pdf">Subroutines</a>.</p>
+   <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑨">range-request optimized font</a> should not use <a href="https://adobe-type-tools.github.io/font-tech-notes/pdfs/5176.CFF.pdf">Subroutines</a>.</p>
    <p class="note" role="note"><span>Note:</span> CFF glyph CharStrings can be flattened by inlining subroutines to become additional CharString bytes.</p>
    <h4 class="heading settled" data-level="5.2.6" id="font-organization-glyph-order"><span class="secno">5.2.6. </span><span class="content">Glyph Order</span><a class="self-link" href="#font-organization-glyph-order"></a></h4>
    <p>Glyphs inside a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font①⓪">range-request optimized font</a> should be sorted in the file to keep glyphs often used in the same documents close together in the file.</p>
@@ -1744,7 +1744,7 @@ which carry different types of glyph outlines:</p>
    <p>Servers supporting the range-request IFT method should support compression via the <a data-link-type="biblio" href="#biblio-rfc9110">[RFC9110]</a> <code>Content-Encoding</code> header or the <a data-link-type="biblio" href="#biblio-rfc9112">[RFC9112]</a> <code>Transfer-Encoding</code> header, rather than having the font file itself be statically compressed.</p>
    <h2 class="no-num heading settled" id="priv"><span class="content">Privacy Considerations</span><a class="self-link" href="#priv"></a></h2>
    <h3 class="heading settled" id="content-inference-from-character-set"><span class="content">Content inference from character set</span><a class="self-link" href="#content-inference-from-character-set"></a></h3>
-   <p>IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see <a href="https://w3c.github.io/IFT/Overview.html#extend-subset">Extending the Font Subset</a>.</p>
+   <p>IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see <a href="#extend-subset">Extending the Font Subset</a>.</p>
    <p>The purpose of doing so is to allow the server to compute a binary patch to the existing font, adding more characters. Thus, fonts are transferred incrementally, as needed, which <a href="https://www.w3.org/TR/PFE-evaluation/#analysis-cjk">greatly reduces</a>> the bytes transferred and the overall network cost..</p>
    <p>For some languages, which use a very large character set (Chinese and Japanese are examples) the vast reduction in total bytes transferred means that Web fonts become usable, including on mobile networks, for the first time.</p>
    <p>However, for those languages, it is <em>possible</em> that individual requests might be analyzed by a rogue font server to obtain intelligence about the type of content which is being read. It is unclear how feasible this attack is, or the computational complexity required to exploit it, unless the characters being requested are very unusual.</p>
@@ -2195,6 +2195,7 @@ which carry different types of glyph outlines:</p>
    <li><a href="#conformant-user-agent">conformant user agent</a><span>, in § Unnumbered section</span>
    <li><a href="#corpus">corpus</a><span>, in § 5.2.6</span>
    <li><a href="#outline-table">outline table</a><span>, in § 5.2.4</span>
+   <li><a href="#query-parameter">query parameter</a><span>, in § 4.4.2</span>
    <li><a href="#range-request-optimized-font">range-request optimized font</a><span>, in § 5.2.2</span>
    <li><a href="#range-request-threshold">range-request threshold</a><span>, in § 5.3.1</span>
    <li><a href="#usage-document-frequency">usage document frequency</a><span>, in § 5.2.6</span>
@@ -2361,6 +2362,12 @@ which carry different types of glyph outlines:</p>
    <div class="issue"> <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with composite glyphs via range-request</a> <a class="issue-return" href="#issue-5533a524" title="Jump to section">↵</a></div>
    <div class="issue"> <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a> <a class="issue-return" href="#issue-763d5c98" title="Jump to section">↵</a></div>
   </div>
+  <aside class="dfn-panel" data-for="query-parameter">
+   <b><a href="#query-parameter">#query-parameter</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-query-parameter">3. IFT Method Selection</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="range-request-optimized-font">
    <b><a href="#range-request-optimized-font">#range-request-optimized-font</a></b><b>Referenced in:</b>
    <ul>

@@ -104,7 +104,7 @@ There are two different methods which can be used to incrementally transfer font
 Patch Subset {#patch-subset}
 ----------------------------
 
-In the the first method, <a href="patch-incxfer">Patch Subset</a> a server generates binary patches which a
+In the the first method, <a href="#patch-incxfer">Patch Subset</a> a server generates binary patches which a
 client applies to a subset of the font in order to extend the coverage of that subset. The server
 is stateless, it does not maintain any session data for clients between requests. Thus when a client
 requests the generation of a patch from the server it has to fully describe the current subset of the
@@ -163,8 +163,8 @@ IFT Method Selection {#method-selection}
 
 When a page has indicated that a particular font should utilize IFT technology, the browser must determine which method to use. Different browsers may support different IFT methods, and different servers may support different IFT methods, so a negotation occurs as such:
 
-1. The browser makes the first request to the server. If the client prefers the <a href="https://w3c.github.io/IFT/Overview.html#patch-incxfer">patch-subset method</a>, it sends the relevant <a href="https://w3c.github.io/IFT/Overview.html#negotiating-transfer-type">query parameter</a>. If the client prefers the range-request method, it does not send the query parameter.
-2. If the server receives the patch-subset query parameter and wishes to honor it, the server must reply with a valid <a href="https://w3c.github.io/IFT/Overview.html#PatchResponse">patch subset response</a> which includes the <a href="https://w3c.github.io/IFT/Overview.html#handling-patch-response">patch-subset magic number</a>. Otherwise, the server must reply with the [[!RFC9110]] <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a> header, if it supports HTTP Range Requests.
+1. The browser makes the first request to the server. If the client prefers the <a href="#patch-incxfer">patch-subset method</a>, it sends the relevant [=query parameter=]. If the client prefers the range-request method, it does not send the query parameter.
+2. If the server receives the patch-subset query parameter and wishes to honor it, the server must reply with a valid <a href="#PatchResponse">patch subset response</a> which includes the <a href="#handling-patch-response">patch-subset magic number</a>. Otherwise, the server must reply with the [[!RFC9110]] <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a> header, if it supports HTTP Range Requests.
 3. If the client receives the patch-subset magic number, it commences using the patch-subset method. Otherwise, if the client receives the <code>Accept-Ranges: bytes</code> header, it commences using the range-request method. Otherwise, the whole font file is downloaded, and the current non-incremental loading behavior is used.
 
 IFT Method Fallback {#fallback}
@@ -908,7 +908,8 @@ Extend font subset algorithm:
          <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR.
 
      * Otherwise if [=request/method=] is "GET" then, URL [=url/query=] must contain a
-          parameter "request" whose value is a single
+          <dfn export>query
+          parameter</dfn> "request" whose value is a single
           <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then
           base64url encoding [[rfc4648]].
 
@@ -1483,7 +1484,7 @@ No two tables in a [=range-request optimized font=] should share a tag name.
 
 The [=outline table=] data in a [=range-request optimized font=] should lie at the end of the file.
 
-If a <code>CFF</code> table exists, the <a href="https://wwwimages2.adobe.com/content/dam/acom/en/devnet/font/pdfs/5176.CFF.pdf">CharString</a> data should lie at the end of the <code>CFF</code> table.
+If a <code>CFF</code> table exists, the <a href="https://adobe-type-tools.github.io/font-tech-notes/pdfs/5176.CFF.pdf">CharString</a> data should lie at the end of the <code>CFF</code> table.
 
 If a <code>CFF2</code> table exists, the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#charStrings">CharString</a> data should lie at the end of the <code>CFF2</code> table.
 
@@ -1499,7 +1500,7 @@ Issue: <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with comp
 
 Note: Compound glyphs can be flattened by inlining their component glyphs to become additional contours.
 
-A [=range-request optimized font=] should not use <a href="https://wwwimages2.adobe.com/content/dam/acom/en/devnet/font/pdfs/5176.CFF.pdf">Subroutines</a>.
+A [=range-request optimized font=] should not use <a href="https://adobe-type-tools.github.io/font-tech-notes/pdfs/5176.CFF.pdf">Subroutines</a>.
 
 Note: CFF glyph CharStrings can be flattened by inlining subroutines to become additional CharString bytes.
 
@@ -1570,7 +1571,7 @@ Servers supporting the range-request IFT method should support compression via t
 
 <h3  id="content-inference-from-character-set">Content inference from character set</h3>
 
-IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see <a href="https://w3c.github.io/IFT/Overview.html#extend-subset">Extending the Font Subset</a>.
+IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see <a href="#extend-subset">Extending the Font Subset</a>.
 
 The purpose of doing so is to allow the server to compute a binary patch to the existing font, adding more characters. Thus, fonts are transferred incrementally, as needed, which <a href="https://www.w3.org/TR/PFE-evaluation/#analysis-cjk">greatly reduces</a>> the bytes transferred and the overall network cost..
 
