@@ -133,6 +133,80 @@ The evaluation report found that patch subset was generally more efficient in te
 performance and transferred bytes than range request. However, Range Request is simpler to deploy
 for many uses cases while still providing material improvments to loading performance for large fonts.
 
+Performance Considerations and the use of Incremental Font Transfer {#performance-considerations}
+--------------------------------------------------------
+
+Using incremental transfer may not always be beneficial, depending on the characteristics of the font
+and the content being rendered. This section provides non-normative guidance to help decide:
+
+1. When incremental transfer should be utilized.
+2. When used, which of the two methods should be utilized.
+
+Incrementally loading a font has a fundemental performance tradeoff versus loading the whole font.
+Simplistically, under incremental transfer less bytes may be transferred at the potential cost of
+increasing the total number of network requests being made, and/or increased request processing
+latency. In general incremental font transfer will be beneficial where the reduction in latency from
+sending less bytes outweighs additional latency introduced by the incremental transfer method.
+
+The first factor to consider is the language of the content being rendered. The evaluation report
+contains the results of simulating incremental font transfer across three categories of languages
+([[PFE-report#langtype]]). See it's conclusions [[PFE-report#conclusions]] for a discussion of the
+anticipated performance of incremental font transfer across the language categories.
+
+Next, how much of the font is expected to be needed? If it's expected that most of the font will be
+needed to render the content then incremental font transfer is unlikely to be benificial. In many cases
+however only part of a font is expected to be needed. For example:
+
+* If the font contains support for several languages but a user is expected to only render content
+    in a subset of those languages.
+       
+* If the content being rendered uses a small subset of the total characters in a font. This is
+    often the case for Chinese, Japanese, Korean, Emoji, and Icon fonts.
+
+* Only a small amount of text is being rendered. For example a font that is only used for a
+    headline.
+
+An alternative to incremental transfer is to break a font into distinct subsets (typically by script)
+and use the unicode range feature of @font-face to load only the subsets needed. However, this can
+break rendering [[PFE-report#fail-subset]] if there are layout rules between characters in
+different subsets. Incremental font transfer does not suffer from this issue as it maintains the
+original font and all it's layout rules.
+
+### Reducing the Number of Network Requests ### {#reduce-requests}
+
+The evaluation report found that performance of incremental transfer can be improved by specutalively
+requesting more codepoints than currently needed in order to reduce the need to make
+future requests. See [[PFE-report#codepredict]] for a more detailed discussion.
+
+
+### Deciding between Patch Subset and Range Request ### {#patchsubset-vs-rangerequest}
+
+From a purely performance perspective patch subset is more performant than range request. There are
+three main factors for this:
+
+1. Range request requires an extra round trip on the very first load of a font to fetch the non-outline
+    font data.
+
+2. Patch subset is able to incrementally transfer all tables in the font, while range request is
+    limited to only incrementally transferring glyph outline tables. In many fonts the majority of
+    data is in the glyph outlines, however there are fonts that have significant amounts of data in
+    the non outline tables.
+
+3. Patch subset is able to compress incremental font data against previously loaded data from that
+    font. This leads to better compression overall compared to range request.
+
+See the evaluation report for a quantative assessment of the difference in performance of patch
+subset versus range request [[PFE-report#analysis]].
+
+The downside of using patch subset is that it requires server side processing to produce the patches,
+while range request can work on any standard HTTP server that supports range requests:
+
+*  This means that range request can be deployed easier, and in places such as CDN's where the content
+    owner may not have control over the serving stack.
+    
+*  The server side processing required by patch subset will lead to increased processing costs (eg.
+    CPU, RAM usage) per request vs range request.
+
 Opt-In Mechanism {#opt-in}
 ==========================
 
