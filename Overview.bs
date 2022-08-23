@@ -244,13 +244,15 @@ IFT Method Selection {#method-selection}
 The client selects the IFT method to utilize for a font load using the following procedure:
 
 1. If the content has specified which method to use, such as via the
-    <a href="#opt-in">opt-in mechanism</a>, then that method should be used.
+    <a href="#opt-in">opt-in mechanism</a>, then that method should be used if the client supports
+    it.
 
-2. Otherwise if the client does not know which particular IFT method that the server hosting the font
+2. If the client does not support the specified method then it should fallback to to loading
+    the font non-incrementally.
+
+3. Otherwise if the client does not know which particular IFT method that the server hosting the font
     supports then, <a href="#method-negotiation">method negotiation</a> should be used to determine
     the method.
-
-TODO what happens if the server doesn't actually support the content specified method?
 
 Note: the most recently specified method by the content takes precedence. For example if on a site the
 first page specifies to use the patch subset method for a font URL, but the second page specifies
@@ -288,7 +290,50 @@ IFT Method Fallback {#fallback}
 
 <em>This section is not normative.</em>
 
-This summarizes behaviors that result from the above method selection.
+This summarizes behaviors that result from the above method selection and negotiation sections.
+
+If the content specifies the range request method:
+
+<table class="data">
+    <thead>
+        <tr>
+            <th>&nbsp;
+            <th>Client supports range-request method
+            <th>Client does not support range-request method
+    <tbody>
+	<tr>
+	    <th>Server supports range-request method
+	    <td>Range-request method is used.
+	    <td>Client falls back to non-incremental load of the full font file.
+	<tr>
+	    <th>Server does not support range-request method.
+	    <td>Response is missing accept-ranges header. Client falls back to
+	        non-incremental load of the full font file.
+	    <td>Client falls back to non-incremental load of the full font file.
+</table>
+
+If the content specifies the patch subset method:
+
+<table class="data">
+    <thead>
+        <tr>
+            <th>&nbsp;
+            <th>Client supports patch-subset method
+            <th>Client does not support patch-subset method
+    <tbody>
+	<tr>
+	    <th>Server supports patch-subset method
+	    <td>Patch-subset method is used.
+	    <td>Client falls back to non-incremental load of the full font file.
+	<tr>
+	    <th>Server does not support patch-subset method
+	    <td>Response is missing magic number. Client falls back to non-incremental load of the
+	    full font file.
+	    <td>Client falls back to non-incremental load of the
+	    full font file.
+</table>
+
+If the content does not specify a specific method:
 
 <table class="data">
     <thead>
@@ -299,8 +344,6 @@ This summarizes behaviors that result from the above method selection.
     <tbody>
         <tr><th>Server supports both range-request method and patch-subset method
             <td>Client makes initial request without query parameter, and possibly with the <code>Range</code> header. Because all patch-subset servers must support the range-request method, the server replies with <code>Accept-Ranges</code> and initial font data. Client/server commence using range-request method.
-
-            Issue: <a href="https://github.com/w3c/IFT/issues/56">Server-recommended IFT Method selection</a>
 
             <td>Client makes initial request with query parameter. Server replies with the patch-subset magic number, and client/server commence using patch-subset method.
         <tr><th>Server supports only range-request method
