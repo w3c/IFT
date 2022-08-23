@@ -212,16 +212,24 @@ Opt-In Mechanism {#opt-in}
 
 <em>This section is general to both IFT methods.</em>
 
-The collection of IFT technologies utilizes a single shared opt-in mechanism. Each method does not use its own opt-in mechanism; instead, the webpage opts into the IFT technologies as a whole, and the browser and server negotiate to decide which specific method will be employed.
+Webpage's can choose to opt-in to either patch subset or range request incremental transfer for a font
+via the use of a CSS font tech keyword ([[css-fonts-4#font-tech-definitions]]) inside the
+''@font-face'' block.
 
-The opt-in mechanism is the <code>incremental</code> keyword inside the ''@font-face'' block. Websites specify this keyword inside their <code>@font-face</code> block, and the browser is then responsible for using IFT technologies, and for negotiating with the server to determine which specific IFT method to use.
+There are three tech keywords available:
+
+*  <code>incremental-patch</code>: Load the font incrementally using the patch subset method.
+*  <code>incremental-range</code>: Load the font incrementally using the range request method.
+*  <code>incremental-auto</code>:  Load the font incrementally. The particular method to use is
+    determined by <a href="#method-negotiation">Method Negotiation</a>.
 
 <div class=example>
-The use of the <code>incremental</code> keyword in this CSS rule indicates to the browser they should use IFT.
+The use of the <code>incremental-patch</code> keyword in this CSS rule indicates to the browser they
+should use the patch subset IFT method to load the font.
 <pre>
 @font-face {
     font-family: "MyCoolWebFont";
-    src: url("MyCoolWebFont.otf") tech(incremental);
+    src: url("MyCoolWebFont.otf") tech(incremental-patch);
 }
 </pre>
 </div>
@@ -233,11 +241,47 @@ IFT Method Selection {#method-selection}
 
 <em>This section is general to both IFT methods.</em>
 
-When a page has indicated that a particular font should utilize IFT technology, the browser must determine which method to use. Different browsers may support different IFT methods, and different servers may support different IFT methods, so a negotation occurs as such:
+The client selects the IFT method to utilize for a font load using the following procedure:
 
-1. The browser makes the first request to the server. If the client prefers the <a href="#patch-incxfer">patch-subset method</a>, it sends the relevant [=query parameter=]. If the client prefers the range-request method, it does not send the query parameter.
-2. If the server receives the patch-subset query parameter and wishes to honor it, the server must reply with a valid <a href="#PatchResponse">patch subset response</a> which includes the <a href="#handling-patch-response">patch-subset magic number</a>. Otherwise, the server must reply with the [[RFC9110#range.requests]] <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a> header, if it supports HTTP Range Requests.
-3. If the client receives the patch-subset magic number, it commences using the patch-subset method. Otherwise, if the client receives the <code>Accept-Ranges: bytes</code> header, it commences using the range-request method. Otherwise, the whole font file is downloaded, and the current non-incremental loading behavior is used.
+1. If the content has specified which method to use, such as via the
+    <a href="#opt-in">opt-in mechanism</a>, then that method should be used.
+
+2. Otherwise if the client does not know which particular IFT method that the server hosting the font
+    supports then, <a href="#method-negotiation">method negotiation</a> should be used to determine
+    the method.
+
+TODO what happens if the server doesn't actually support the content specified method?
+
+Note: the most recently specified method by the content takes precedence. For example if on a site the
+first page specifies to use the patch subset method for a font URL, but the second page specifies
+range request for the same font URL then the second page should load the font using range request.
+Such cases will require the client to reset any previously stored state for that URL and start fresh
+with the new method.
+
+
+IFT Method Negotiation {#method-negotiation}
+--------------------------------------------
+
+When the particular IFT method(s) that are supported by a server are not known, the client must
+determine which method to use. Different clients may support different IFT methods, and different
+servers may support different IFT methods, so a negotation occurs as such:
+
+1.  The browser makes the first request to the server using the GET HTTP method ([[rfc9110#name-get]]).
+     If the client prefers the <a href="#patch-incxfer">patch-subset method</a>, it sends the relevant
+     [=patch request header=]. If the client prefers the range-request method, it does not send the
+     header.
+
+2.  If the server receives the patch request header and wishes to honor it, the server must reply with
+     a valid <a href="#PatchResponse">patch subset response</a> which includes the
+     <a href="#handling-patch-response">patch-subset magic number</a>. Otherwise, the server must
+     reply with the [[RFC9110#range.requests]]
+     <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a>
+     header, if it supports HTTP Range Requests.
+     
+3.  If the client receives the patch-subset magic number, it commences using the patch-subset method.
+     Otherwise, if the client receives the <code>Accept-Ranges: bytes</code> header, it commences
+     using the range-request method. Otherwise, the whole font file is downloaded, and the current
+     non-incremental loading behavior is used.
 
 IFT Method Fallback {#fallback}
 -------------------------------
