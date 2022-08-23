@@ -343,15 +343,15 @@ If the content does not specify a specific method:
             <th>Client prefers patch-subset method
     <tbody>
         <tr><th>Server supports both range-request method and patch-subset method
-            <td>Client makes initial request without query parameter, and possibly with the <code>Range</code> header. Because all patch-subset servers must support the range-request method, the server replies with <code>Accept-Ranges</code> and initial font data. Client/server commence using range-request method.
+            <td>Client makes initial request without the patch request header, and possibly with the <code>Range</code> header. Because all patch-subset servers must support the range-request method, the server replies with <code>Accept-Ranges</code> and initial font data. Client/server commence using range-request method.
 
-            <td>Client makes initial request with query parameter. Server replies with the patch-subset magic number, and client/server commence using patch-subset method.
+            <td>Client makes initial request with the patch request header. Server replies with the patch-subset magic number, and client/server commence using patch-subset method.
         <tr><th>Server supports only range-request method
             <td>Same as above.
-            <td>Client makes initial request with query parameter. Server replies with <code>Accept-Ranges</code> and initial font data. Client/server commence using range-request method.
+            <td>Client makes initial request with the patch request header. Server replies with <code>Accept-Ranges</code> and initial font data. Client/server commence using range-request method.
         <tr><th>Server supports neither
-            <td>Client makes initial request without query parameter, and possibly with the <code>Range</code> header. Server replies without <code>Accept-Ranges</code> header, and sends the full font file to the client from beginning to end.
-            <td>Client makes initial request to server with query parameter. Server does not reply with the patch-subset magic number, and sends the full font file to the client from beginning to end.
+            <td>Client makes initial request without the patch request header, and possibly with the <code>Range</code> header. Server replies without <code>Accept-Ranges</code> header, and sends the full font file to the client from beginning to end.
+            <td>Client makes initial request to server with the patch request header. Server does not reply with the patch-subset magic number, and sends the full font file to the client from beginning to end.
 </table>
 
 Patch Based Incremental Transfer {#patch-incxfer}
@@ -1066,11 +1066,11 @@ Extend font subset algorithm:
      * If [=request/method=] is "POST" then, request [=request/body=] must be a single
          <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR.
 
-     * Otherwise if [=request/method=] is "GET" then, URL [=url/query=] must contain a
-          <dfn export>query
-          parameter</dfn> "request" whose value is a single
+     * Otherwise if [=request/method=] is "GET" then, a [=header=] with name
+         <code>Font-Patch-Request</code> (the <dfn export>patch request header</dfn>)
+         and whose value is a single
           <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then
-          base64url encoding [[rfc4648]].
+          base64url encoding [[rfc4648]] must be added to the request's header list.
 
      Any request and/or url parameters which are not specified here should be set based on
      the user agent's normal handling for font requests. For example if this font load is
@@ -1143,6 +1143,9 @@ Extend font subset algorithm:
 
 3. Goto [[#handling-patch-response]].
 
+Note: POST is preferred for the HTTP method since it will not cause a CORS preflight request
+and the request object is more compactly encoded. GET should only be used during
+<a href="#method-negotiation">method negotiation</a>.
 
 #### Handling PatchResponse #### {#handling-patch-response}
 
