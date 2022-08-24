@@ -246,16 +246,14 @@ IFT Method Selection {#method-selection}
 
 The client selects the IFT method to utilize for a font load using the following procedure:
 
-1. If the content has specified which method to use, such as via the
-    <a href="#opt-in">opt-in mechanism</a>, then that method should be used if the client supports
-    it.
+*  If the content has specified which method to use, such as via the <code>incremental-patch</code> or
+    <code>incremental-range</code> font tech keyword (see: <a href="#opt-in">opt-in mechanism</a>),
+    then that method should be used if the client supports it. If the specified method is not supported
+    then the client should fallback to to loading the font non-incrementally.
 
-2. If the client does not support the specified method then it should fallback to to loading
-    the font non-incrementally.
-
-3. Otherwise if the client does not know which particular IFT method that the server hosting the font
-    supports then, <a href="#method-negotiation">method negotiation</a> should be used to determine
-    the method.
+*  Otherwise if the client does not know which particular IFT method(s) that the server hosting the
+    font supports then, <a href="#method-negotiation">method negotiation</a> should be used to
+    determine the method.
 
 Note: the most recently specified method by the content takes precedence. For example if on a site the
 first page specifies to use the patch subset method for a font URL, but the second page specifies
