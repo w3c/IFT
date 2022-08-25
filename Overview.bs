@@ -255,11 +255,13 @@ The client selects the IFT method to utilize for a font load using the following
     font supports, such as when the <code>incremental-auto</code> font tech keyword is used, then
     <a href="#method-negotiation">method negotiation</a> should be used to determine the method.
 
-Note: the most recently specified method by the content takes precedence. For example if on a site the
+The most recently specified method by the content takes precedence. For example if on a site the
 first page specifies to use the patch subset method for a font URL, but the second page specifies
 range request for the same font URL then the second page should load the font using range request.
 Such cases will require the client to reset any previously stored state for that URL and start fresh
-with the new method.
+with the new method. In the case that <code>incremental-auto</code> is encountered where previously a
+specific method was specified then the client can choose to continue using the previously selected
+method.
 
 
 IFT Method Negotiation {#method-negotiation}

@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 37b7e7e68, updated Fri May 27 15:08:11 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="3f0d6bb8b86e14dabfdc1af153a6e5ce18c83b0e" name="document-revision">
+  <meta content="272d183b36e36644a09271531ee0a8f95e533b68" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -553,11 +553,13 @@ then the client should fallback to to loading the font non-incrementally.</p>
      <p>Otherwise if the client does not know which particular IFT method(s) that the server hosting the
 font supports, such as when the <code>incremental-auto</code> font tech keyword is used, then <a href="#method-negotiation">method negotiation</a> should be used to determine the method.</p>
    </ul>
-   <p class="note" role="note"><span>Note:</span> the most recently specified method by the content takes precedence. For example if on a site the
+   <p>The most recently specified method by the content takes precedence. For example if on a site the
 first page specifies to use the patch subset method for a font URL, but the second page specifies
 range request for the same font URL then the second page should load the font using range request.
 Such cases will require the client to reset any previously stored state for that URL and start fresh
-with the new method.</p>
+with the new method. In the case that <code>incremental-auto</code> is encountered where previously a
+specific method was specified then the client can choose to continue using the previously selected
+method.</p>
    <h3 class="heading settled" data-level="3.1" id="method-negotiation"><span class="secno">3.1. </span><span class="content">IFT Method Negotiation</span><a class="self-link" href="#method-negotiation"></a></h3>
    <p>When the particular IFT method(s) that are supported by a server are not known, the client must
 determine which method to use. Different clients may support different IFT methods, and different
