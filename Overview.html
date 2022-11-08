@@ -4,9 +4,9 @@
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <title>Incremental Font Transfer</title>
   <meta content="WD" name="w3c-status">
-  <meta content="Bikeshed version 37b7e7e68, updated Fri May 27 15:08:11 2022 -0700" name="generator">
+  <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="5516b030e2fc4405507c88439a09a28b59669ec0" name="document-revision">
+  <meta content="bc5b5fd23d7241a81888faeaaab41af2ac7dc9b9" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -190,6 +190,14 @@ a.self-link:hover {
 .heading > a.self-link {
     font-size: 83%;
 }
+.example > a.self-link,
+.note > a.self-link,
+.issue > a.self-link {
+    /* These blocks are overflow:auto, so positioning outside
+       doesn't work. */
+    left: auto;
+    right: 0;
+}
 li > a.self-link {
     left: calc(-1 * (3.5rem - 26px) - 2em);
 }
@@ -253,8 +261,8 @@ dfn > a.self-link::before      { content: "#"; }
    <p>This specification defines two methods to incrementally transfer fonts from server to client.
 
           Incremental transfer allows clients to load only the portions of the font they actually need
-	  which speeds up font loads and reduces data transfer needed to load the fonts. A font can
-	  be loaded over multiple requests where each request incrementally adds additional data.</p>
+          which speeds up font loads and reduces data transfer needed to load the fonts. A font can
+          be loaded over multiple requests where each request incrementally adds additional data.</p>
   </div>
   <h2 class="no-num no-toc no-ref heading settled" id="sotd"><span class="content">Status of this document</span></h2>
   <div data-fill-with="status">
@@ -597,7 +605,7 @@ servers may support different IFT methods, so a negotation occurs as such:</p>
      <tr>
       <th>Server does not support range-request method. 
       <td>Response is missing accept-ranges header. Client falls back to
-	        non-incremental load of the full font file. 
+                non-incremental load of the full font file. 
       <td>Client falls back to non-incremental load of the full font file. 
    </table>
    <p>If the content specifies the patch subset method:</p>
@@ -615,9 +623,9 @@ servers may support different IFT methods, so a negotation occurs as such:</p>
      <tr>
       <th>Server does not support patch-subset method 
       <td>Response is missing magic number. Client falls back to non-incremental load of the
-	    full font file. 
+            full font file. 
       <td>Client falls back to non-incremental load of the
-	    full font file. 
+            full font file. 
    </table>
    <p>If the content does not specify a specific method:</p>
    <table class="data">
@@ -2359,6 +2367,12 @@ itself be statically compressed.</p>
     <li><a href="#ref-for-at-font-face-rule">2. Opt-In Mechanism</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-concept-request-body">
+   <a href="https://fetch.spec.whatwg.org/#concept-request-body">https://fetch.spec.whatwg.org/#concept-request-body</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-concept-request-body">4.4.2. Extending the Font Subset</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-concept-response-body">
    <a href="https://fetch.spec.whatwg.org/#concept-response-body">https://fetch.spec.whatwg.org/#concept-response-body</a><b>Referenced in:</b>
    <ul>
@@ -2401,6 +2415,12 @@ itself be statically compressed.</p>
     <li><a href="#ref-for-concept-request-mode①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-concept-status">
+   <a href="https://fetch.spec.whatwg.org/#concept-status">https://fetch.spec.whatwg.org/#concept-status</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-concept-status">4.4.2.2. Handling Invalid Response from the Server</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-concept-response-status">
    <a href="https://fetch.spec.whatwg.org/#concept-response-status">https://fetch.spec.whatwg.org/#concept-response-status</a><b>Referenced in:</b>
    <ul>
@@ -2434,19 +2454,21 @@ itself be statically compressed.</p>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="index">
    <li>
-    <a data-link-type="biblio">[css-fonts-5]</a> defines the following terms:
+    <a data-link-type="biblio">[CSS-FONTS-5]</a> defines the following terms:
     <ul>
      <li><span class="dfn-paneled" id="term-for-at-font-face-rule">@font-face</span>
     </ul>
    <li>
-    <a data-link-type="biblio">[fetch]</a> defines the following terms:
+    <a data-link-type="biblio">[FETCH]</a> defines the following terms:
     <ul>
+     <li><span class="dfn-paneled" id="term-for-concept-request-body">body <small>(for request)</small></span>
      <li><span class="dfn-paneled" id="term-for-concept-response-body">body <small>(for response)</small></span>
      <li><span class="dfn-paneled" id="term-for-concept-request-cache-mode">cache mode</span>
      <li><span class="dfn-paneled" id="term-for-concept-request-destination">destination</span>
      <li><span class="dfn-paneled" id="term-for-concept-header">header</span>
      <li><span class="dfn-paneled" id="term-for-concept-request-method">method</span>
      <li><span class="dfn-paneled" id="term-for-concept-request-mode">mode</span>
+     <li><span class="dfn-paneled" id="term-for-concept-status">status</span>
      <li><span class="dfn-paneled" id="term-for-concept-response-status">status <small>(for response)</small></span>
      <li><span class="dfn-paneled" id="term-for-concept-request-url">url</span>
     </ul>
@@ -2461,7 +2483,7 @@ itself be statically compressed.</p>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
    <dt id="biblio-css-fonts-4">[CSS-FONTS-4]
-   <dd>CSS Fonts Module Level 4 URL: <a href="https://www.w3.org/TR/css-fonts-4/">https://www.w3.org/TR/css-fonts-4/</a>
+   <dd>John Daggett; Myles Maxfield; Chris Lilley. <a href="https://www.w3.org/TR/css-fonts-4/"><cite>CSS Fonts Module Level 4</cite></a>. 21 December 2021. WD. URL: <a href="https://www.w3.org/TR/css-fonts-4/">https://www.w3.org/TR/css-fonts-4/</a>
    <dt id="biblio-css-fonts-5">[CSS-FONTS-5]
    <dd>Myles Maxfield; Chris Lilley. <a href="https://www.w3.org/TR/css-fonts-5/"><cite>CSS Fonts Module Level 5</cite></a>. 21 December 2021. WD. URL: <a href="https://www.w3.org/TR/css-fonts-5/">https://www.w3.org/TR/css-fonts-5/</a>
    <dt id="biblio-fast-hash">[FAST-HASH]
