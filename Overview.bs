@@ -234,10 +234,19 @@ should use the patch subset IFT method to load the font.
 </pre>
 </div>
 
-Note: Each individual <code>@font-face</code> block may or may not opt-in to IFT. This is due to the variety of ways fonts are used on web pages. Authors have control over which fonts they want to use this technology with, and which they do not.
+Note: Each individual <code>@font-face</code> block may or may not opt-in to IFT. This is due to the
+variety of ways fonts are used on web pages. Authors have control over which fonts they want to use
+this technology with, and which they do not.
 
 Note: the use of <code>incremental-auto</code> may incur a CORS preflight request for the initial
 request of method negotiation, as the initial request sets a custom header.
+
+Note: the IFT tech keywords can be used in conjuction with other font tech specifiers to perform
+font feature selection. For example a <code>@font-face</code> could include two urls one with
+<code>tech(incremental-patch, color-COLRv1)</code> and the other with
+<code>tech(incremental-patch, color-COLRv0)</code>. The client would initiate an incremental patch
+subset transfer to one of the URLs depending on which version of COLR is supported.
+
 
 IFT Method Selection {#method-selection}
 ========================================
