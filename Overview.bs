@@ -1074,13 +1074,14 @@ For a PatchResponse object to be well formed:
 Client {#client}
 ----------------
 
-### Client State ### {#client-state}
+### <dfn>Client State</dfn> ### {#client-state}
 
 The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:
 
 *  [=Font subset=]: a byte array containing the binary data for the most recent version of the subset of
     the font being incrementally transferred. For a new font this is initialized to empty byte array.
+    
 *  Original font checksum: the most recent value of [=PatchResponse/original_font_checksum=] received
     from the server for this font.
 
@@ -1113,7 +1114,7 @@ features, and/or design-variation space. The inputs to this algorithm are:
 * Fragement Identifier (optional): if the font at the font url is a collection of fonts, the fragment
     identifier ([[rfc8081#section-4.2]]) identifies a single font within the collection.
 
-* Client State (optional): previously saved <a href="#client-state">client state</a> for the given
+* Client State (optional): previously saved [=client state=] for the given
     font url, or null.
 
 * Desired Subset Definition: a [=font subset definition|description=] of the desired
@@ -1125,8 +1126,8 @@ features, and/or design-variation space. The inputs to this algorithm are:
 
 The algorithm outputs:
 
-* Client State: client state that has been updated to contain a [=font subset=] which covers at least
-    the requested subset definition.
+* Client State: [=client state=] that has been updated to contain a [=font subset=] which covers at
+    least the requested subset definition.
 
 * Cache fields: HTTP cache fields [[rfc9111#name-field-definitions]] describing how client state
     can be cached, or null.
@@ -1152,76 +1153,76 @@ Extend [=font subset=] algorithm:
      * The request URL [=url/path=] is set to the input font URL.
 
      * If [=request/method=] is "POST" then, request [=request/body=] must be a single
-         <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR.
+         [=PatchRequest=] object encoded via CBOR.
 
      * Otherwise if [=request/method=] is "GET" then, a [=header=] with name
          <code>Font-Patch-Request</code> (the <dfn export>patch request header</dfn>)
          and whose value is a single
-          <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then
+          [=PatchRequest=] object encoded via CBOR and then
           base64url encoding [[rfc4648]] must be added to the request's header list.
 
      Any request and/or url parameters which are not specified here should be set based on
      the user agent's normal handling for font requests. For example if this font load is
      from a CSS font face, then [[css-fonts-4#font-fetching-requirements]] should be followed.
 
-     The fields of the <a href="#PatchRequest"><code>PatchRequest</code></a> object should be set
+     The fields of the [=PatchRequest=] object should be set
      as follows:
 
-     *  <code>protocol_version</code>: set to 0.
+     *  [=PatchRequest/protocol_version=]: set to 0.
 
-     *  <code>accept_patch_format</code>: set to the list of [[#patch-formats]] that this client is
+     *  [=PatchRequest/accept_patch_format=]: set to the list of [[#patch-formats]] that this client is
          capable of decoding. Must contain at least one format.
 
-     *  <code>codepoints_have</code>: set to exactly the set of codepoints that the current
+     *  [=PatchRequest/codepoints_have=]: set to exactly the set of codepoints that the current
          [=font subset=] contains data for. If the current [=font subset=] is an empty byte array this
          field is left unset. If the client has a codepoint ordering for this font then this field
          should not be set.
 
-     *  <code>codepoints_needed</code>: set to the set of codepoints that the client wants to
+     *  [=PatchRequest/codepoints_needed=]: set to the set of codepoints that the client wants to
          add to its [=font subset=]. If the client has a codepoint ordering for this font then this
          field should not be set.
 
-     *  <code>indices_have</code>: encodes the set of additional codepoints that the current
+     *  [=PatchRequest/indices_have=]: encodes the set of additional codepoints that the current
          [=font subset=] contains data for. The codepoint values are transformed to indices by applying
          [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
          ordering for this font then this field should not be set.
 
-     *  <code>indices_needed</code>: encodes the set of codepoints that the client wants to add to its
+     *  [=PatchRequest/indices_needed=]: encodes the set of codepoints that the client wants to add to its
          [=font subset=]. The codepoint values are transformed to indices by applying
          [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
          ordering for this font then this field should not be set.
 
-     *  <code>features_have</code>: set to the list of
+     *  [=PatchRequest/features_have=]: set to the list of
          <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">
          opentype layout feature tags</a> that the current [=font subset=] has data for. If the current
          [=font subset=] is an empty byte array this
          field is left unset. Additionally, if the current [=font subset=] has all data for features
          present in the original font then this field can be unset.
 
-     *  <code>features_needed</code>: set to the list of feature tags that the client wants to add
+     *  [=PatchRequest/features_needed=]: set to the list of feature tags that the client wants to add
          to the current [=font subset=]. Alternatively, if the client wishes to add all features from
          the original font to it's subset then this field should be unset.
 
-     *  <code>axis_space_have</code>: set to the current value of <code>subset_axis_space</code>
+     *  [=PatchRequest/axis_space_have=]: set to the current value of <code>subset_axis_space</code>
          saved in the state for this font.
 
-     *  <code>axis_space_needed</code>: set to the intervals of each variable axis in the original
+     *  [=PatchRequest/axis_space_needed=]: set to the intervals of each variable axis in the original
          font that the client wants to add to its [=font subset=]. If the client wants an entire axis
          from the original font then that axis should not be listed.
 
-     *  <code>ordering_checksum</code>: If either of <code>indices_have</code> or
-         <code>indices_needed</code> is set then this must be set to the current value of
+     *  [=PatchRequest/ordering_checksum=]: If either of [=PatchRequest/indices_have=] or
+         [=PatchRequest/indices_needed=] is set then this must be set to the current value of
          <code>ordering_checksum</code> saved in the state for this font.
 
-     *  <code>original_font_checksum</code>:
+     *  [=PatchRequest/original_font_checksum=]:
          Set to saved value for <code>original_font_checksum</code> in the state for this font. If
          there is no saved value leave this field unset.
 
-     *  <code>base_checksum</code>:
+     *  [=PatchRequest/base_checksum=]:
          Set to the checksum of the [=font subset=] byte array saved in the state for this font. See:
          [[#computing-checksums]].
 
-     *  <code>fragment_id</code>:
+     *  [=PatchRequest/fragment_id=]:
          If a fragment identifier was provided as an input then this field must be set to the provided
          fragment identifier, otherwise it must be left unset.
 
@@ -1238,42 +1239,42 @@ and the request object is more compactly encoded. GET should only be used during
 
 #### Handling PatchResponse #### {#handling-patch-response}
 
-If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a>
+If a server is able to succsessfully process a [=PatchRequest=]
 it will respond with HTTP [=response/status=] code 200 and the [=response/body=] of the response will
 be a 4 byte magic number (0x49, 0x46, 0x54, 0x20) followed by a single
-<a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
+[=PatchResponse=] object encoded via CBOR. The client
 should interpret and process the fields of the object as follows:
 
-1.  If field <code>replacement</code> is set then: the byte array in this field is a binary patch
-     in the format specified by <code>patch_format</code>. Apply the binary patch to a base which
+1.  If field [=PatchResponse/replacement=] is set then: the byte array in this field is a binary patch
+     in the format specified by [=PatchResponse/patch_format=]. Apply the binary patch to a base which
      is an empty byte array. Replace the [=font subset=] in the input client state with the result of
      the patch application.
 
-2. If field <code>patch</code> is set then:  the byte array in this field is a binary patch
-    in the format specified by <code>patch_format</code>. Apply the binary patch to the font
+2. If field [=PatchResponse/patch=] is set then:  the byte array in this field is a binary patch
+    in the format specified by [=PatchResponse/patch_format=]. Apply the binary patch to the font
     subset from the input client state. Replace the [=font subset=] in the input client state with the
     result of the patch application.
 
-3. If either <code>replacement</code> or <code>patch</code> is set then:
+3. If either [=PatchResponse/replacement=] or [=PatchResponse/patch=] is set then:
     <a href="#computing-checksums">compute the checksum</a> of the [=font subset=] produced by the patch
-    application in steps 1 or 2. If the computed checksum is not equal to <code>patched_checksum</code>
+    application in steps 1 or 2. If the computed checksum is not equal to [=PatchResponse/patched_checksum=]
     this is a recoverable error. Follow the procedure in [[#client-side-checksum-mismatch]]. Otherwise
     update the original font checksum in the input client state with the value in
-    <code>original_font_checksum</code>.
+    [=PatchResponse/original_font_checksum=].
 
-4. If fields <code>codepoint_ordering</code> and <code>ordering_checksum</code> are set then update
+4. If fields [=PatchResponse/codepoint_ordering=] and [=PatchResponse/ordering_checksum=] are set then update
     the codepoint ordering and checksum in the input client state with the new values specified by
-    these two fields. If neither <code>replacement</code> nor <code>patch</code> are set, then the
+    these two fields. If neither [=PatchResponse/replacement=] nor [=PatchResponse/patch=] are set, then the
     client should resend the request that triggered this response but use the new codepoint ordering
     provided in this response.
 
-5. If <code>original_features</code> is set and the client has opted to save them then replace the
+5. If [=PatchResponse/original_features=] is set and the client has opted to save them then replace the
     original feature list in the input client state with the value from the response.
 
-6. If <code>original_axis_space</code> is set then update the original axis space in the input client
+6. If [=PatchResponse/original_axis_space=] is set then update the original axis space in the input client
     state with the value specified in this field.
 
-7. If <code>subset_axis_space</code> is set then update the subset axis space in the input client
+7. If [=PatchResponse/subset_axis_space=] is set then update the subset axis space in the input client
     state with the value specified in this field.
 
 After processing the response, return the updated input client state and any cache headers that were
@@ -1298,11 +1299,11 @@ is malformed. That is, it is missing the magic number, not decodable with CBOR, 
 #### Client Side Checksum Mismatch #### {#client-side-checksum-mismatch}
 
 If the checksum of the [=font subset=] computed by the client does not match the
-<code>patched_checksum</code> in the server's response then the client should:
+[=PatchResponse/patched_checksum=] in the server's response then the client should:
 
 1. Discard the input client state for this font.
 
-2. <a href="#extend-subset">Resend the request</a>. Set the <code>codepoints_needed</code> field
+2. <a href="#extend-subset">Resend the request</a>. Set the [=PatchRequest/codepoints_needed=] field
     to the union of the codepoints in the discarded [=font subset=] and the set of code points
     that the previous request was trying to add.
 
