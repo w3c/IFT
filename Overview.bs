@@ -948,33 +948,75 @@ For an [=AxisInterval=] object to be well formed:
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
-  <tr><td>0</td><td>protocol_version</td><td>ProtocolVersion (Integer)</td></tr>
-  <tr><td>1</td><td>accept_patch_format</td><td>ArrayOf&ltInteger&gt;</td></tr>
-  <tr><td>2</td><td>codepoints_have</td><td>CompressedSet</td></tr>
-  <tr><td>3</td><td>codepoints_needed</td><td>CompressedSet</td></tr>
-  <tr><td>4</td><td>indices_have</td><td>CompressedSet</td></tr>
-  <tr><td>5</td><td>indices_needed</td><td>CompressedSet</td></tr>
-  <tr><td>6</td><td>features_have</td><td>FeatureTagSet</td></tr>
-  <tr><td>7</td><td>features_needed</td><td>FeatureTagSet</td></tr>
-  <tr><td>8</td><td>axis_space_have</td><td>AxisSpace</td></tr>
-  <tr><td>9</td><td>axis_space_needed</td><td>AxisSpace</td></tr>
-  <tr><td>10</td><td>ordering_checksum</td><td>Integer</td></tr>
-  <tr><td>11</td><td>original_font_checksum</td><td>Integer</td></tr>
-  <tr><td>12</td><td>base_checksum</td><td>Integer</td></tr>
-  <tr><td>13</td><td>fragment_id</td><td>String</td></tr>
+  <tr>
+    <td>0</td>
+    <td><dfn for="PatchRequest">protocol_version</dfn></td>
+    <td>[=ProtocolVersion=] ([=Integer=])</td></tr>
+  <tr>
+    <td>1</td>
+    <td><dfn for="PatchRequest">accept_patch_format</dfn></td>
+    <td>[=ArrayOf=]&lt[=Integer=]&gt;</td></tr>
+  <tr>
+    <td>2</td>
+    <td><dfn for="PatchRequest">codepoints_have</dfn></td>
+    <td>[=CompressedSet=]</td></tr>
+  <tr>
+    <td>3</td>
+    <td><dfn for="PatchRequest">codepoints_needed</dfn></td>
+    <td>[=CompressedSet=]</td></tr>
+  <tr>
+    <td>4</td>
+    <td><dfn for="PatchRequest">indices_have</dfn></td>
+    <td>[=CompressedSet=]</td></tr>
+  <tr>
+    <td>5</td>
+    <td><dfn for="PatchRequest">indices_needed</dfn></td>
+    <td>[=CompressedSet=]</td></tr>
+  <tr>
+    <td>6</td>
+    <td><dfn for="PatchRequest">features_have</dfn></td>
+    <td>[=FeatureTagSet=]</td></tr>
+  <tr>
+    <td>7</td>
+    <td><dfn for="PatchRequest">features_needed</dfn></td>
+    <td>[=FeatureTagSet=]</td></tr>
+  <tr>
+    <td>8</td>
+    <td><dfn for="PatchRequest">axis_space_have</dfn></td>
+    <td>[=AxisSpace=]</td></tr>
+  <tr>
+    <td>9</td>
+    <td><dfn for="PatchRequest">axis_space_needed</dfn></td>
+    <td>[=AxisSpace=]</td></tr>
+  <tr>
+    <td>10</td>
+    <td><dfn for="PatchRequest">ordering_checksum</dfn></td>
+    <td>[=Integer=]</td></tr>
+  <tr>
+    <td>11</td>
+    <td><dfn for="PatchRequest">original_font_checksum</dfn></td>
+    <td>[=Integer=]</td></tr>
+  <tr>
+    <td>12</td>
+    <td><dfn for="PatchRequest">base_checksum</dfn></td>
+    <td>[=Integer=]</td></tr>
+  <tr>
+    <td>13</td>
+    <td><dfn for="PatchRequest">fragment_id</dfn>
+    </td><td>[=String=]</td></tr>
 </table>
 
-For a PatchRequest object to be well formed:
+For a [=PatchRequest=] object to be well formed:
 
 *  <span class="conform client server" id="conform-request-protocol-version">
-    <code>protocol_version</code> must be set to 0.</span>
-*  <code>accept_patch_format</code> can include any of the values listed in [[#patch-formats]].
+    [=PatchRequest/protocol_version=] must be set to 0.</span>
+*  [=PatchRequest/accept_patch_format=] can include any of the values listed in [[#patch-formats]].
 *  <span class="conform client server" id="conform-request-ordering-checksum">
-    If either of <code>indices_have</code> or <code>indices_needed</code> is set to a non-empty set
-    then <code>ordering_checksum</code> must be set.</span>
+    If either of [=PatchRequest/indices_have=] or [=PatchRequest/indices_needed=] is set to a non-empty
+    set then [=PatchRequest/ordering_checksum=] must be set.</span>
 *  <span class="conform client server" id="conform-request-base-checksum">
-    If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then
-    <code>original_font_checksum</code> and <code>base_checksum</code> must be set.</span>
+    If [=PatchRequest/codepoints_have=] or [=PatchRequest/indices_have=] is set to a non-empty set then
+    [=PatchRequest/original_font_checksum=] and [=PatchRequest/base_checksum=] must be set.</span>
 
 ### <dfn>PatchResponse</dfn> ### {#PatchResponse}
 
