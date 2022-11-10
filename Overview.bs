@@ -109,7 +109,7 @@ requests the generation of a patch from the server it has to fully describe the 
 font that it has in a way which allows the server to recreate it.
 
 Generic binary patch algorithms are used which do not need to be aware of the specifics of the font
-format. Typically a server will produce a patch by generating two font subsets: one which matches what
+format. Typically a server will produce a patch by generating two [=font subset|font subsets=]: one which matches what
 the client currently has and one which matches the extended subset the client desires. A binary patch
 is then produced between the two subsets.
 
@@ -370,10 +370,10 @@ If the content does not specify a specific method:
 Patch Based Incremental Transfer {#patch-incxfer}
 =================================================
 
-Font Subset {#font-subset}
+Font Subset {#font-subset-info}
 --------------------------
 
-A subset of a font file is a modified version of the font that contains only the data needed to
+A <dfn dfn>font subset</dfn> is a modified version of a font file that contains only the data needed to
 render a subset of:
 
 *  the codepoints,
@@ -390,10 +390,8 @@ the use of any optional typographic features that a renderer may choose to use f
 such as hinting instructions.
 </span>
 
-### Font Subset Definition ### {#font-subset-definition}
-
-A font subset definition describes the minimum data (codepoints, layout features, variation axis
-space) that a <a href="#font-subset">font subset</a> must possess.
+A <dfn dfn>font subset definition</dfn> describes the minimum data (codepoints, layout features,
+variation axis space) that a [=font subset=] must possess.
 
 Data Types {#data-types}
 ------------------------
@@ -1001,7 +999,7 @@ Client {#client}
 The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:
 
-*  Font subset: a byte array containing the binary data for the most recent version of the subset of
+*  [=Font subset=]: a byte array containing the binary data for the most recent version of the subset of
     the font being incrementally transferred. For a new font this is initialized to empty byte array.
 *  Original font checksum: the most recent value of
     <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> received
@@ -1030,7 +1028,7 @@ Additionally, the client can optionally store:
 
 ### Extending the Font Subset ### {#extend-subset}
 
-This algorithm is used by the client to extends its font subset to cover additional codepoints,
+This algorithm is used by the client to extends its [=font subset=] to cover additional codepoints,
 features, and/or design-variation space. The inputs to this algorithm are:
 
 * Font URL: a URL where the font to be extended is located.
@@ -1041,8 +1039,8 @@ features, and/or design-variation space. The inputs to this algorithm are:
 * Client State (optional): previously saved <a href="#client-state">client state</a> for the given
     font url, or null.
 
-* Desired Subset Definition: a <a href="#font-subset-definition">description</a> of the desired
-    minimum font subset.
+* Desired Subset Definition: a [=font subset definition|description=] of the desired
+    minimum [=font subset=].
 
 * Fetch Algorithm: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder of this
     section is desribed in terms of [[fetch#fetching]], but it is allowed to substitute whatever
@@ -1050,16 +1048,16 @@ features, and/or design-variation space. The inputs to this algorithm are:
 
 The algorithm outputs:
 
-* Client State: client state that has been updated to contain a font subset which covers at least
+* Client State: client state that has been updated to contain a [=font subset=] which covers at least
     the requested subset definition.
 
 * Cache fields: HTTP cache fields [[rfc9111#name-field-definitions]] describing how client state
     can be cached, or null.
 
-Extend font subset algorithm:
+Extend [=font subset=] algorithm:
 
-1. Compare the input font subset definition to the input client state. If the input client state
-     already satisifies the font subset definition. Then return client state, and null for the
+1. Compare the input [=font subset definition=] to the input client state. If the input client state
+     already satisifies the [=font subset definition=]. Then return client state, and null for the
      cache fields.
 
 2. Otherwise make an HTTP request using the input fetching algorithm:
@@ -1097,40 +1095,41 @@ Extend font subset algorithm:
      *  <code>accept_patch_format</code>: set to the list of [[#patch-formats]] that this client is
          capable of decoding. Must contain at least one format.
 
-     *  <code>codepoints_have</code>: set to exactly the set of codepoints that the current font subset
-         contains data for. If the current font subset is an empty byte array this field is left unset.
-         If the client has a codepoint ordering for this font then this field should not be set.
+     *  <code>codepoints_have</code>: set to exactly the set of codepoints that the current
+         [=font subset=] contains data for. If the current [=font subset=] is an empty byte array this
+         field is left unset. If the client has a codepoint ordering for this font then this field
+         should not be set.
 
      *  <code>codepoints_needed</code>: set to the set of codepoints that the client wants to
-         add to its font subset. If the client has a codepoint ordering for this font then this
+         add to its [=font subset=]. If the client has a codepoint ordering for this font then this
          field should not be set.
 
      *  <code>indices_have</code>: encodes the set of additional codepoints that the current
-         font subset contains data for. The codepoint values are transformed to indices by applying
+         [=font subset=] contains data for. The codepoint values are transformed to indices by applying
          [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
          ordering for this font then this field should not be set.
 
      *  <code>indices_needed</code>: encodes the set of codepoints that the client wants to add to its
-         font subset. The codepoint values are transformed to indices by applying
+         [=font subset=]. The codepoint values are transformed to indices by applying
          [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
          ordering for this font then this field should not be set.
 
      *  <code>features_have</code>: set to the list of
          <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">
-         opentype layout feature tags</a> that the current font subset has data for. If the current
-         font subset is an empty byte array this
-         field is left unset. Additionally, if the current font subset has all data for features
+         opentype layout feature tags</a> that the current [=font subset=] has data for. If the current
+         [=font subset=] is an empty byte array this
+         field is left unset. Additionally, if the current [=font subset=] has all data for features
          present in the original font then this field can be unset.
 
      *  <code>features_needed</code>: set to the list of feature tags that the client wants to add
-         to the current font subset. Alternatively, if the client wishes to add all features from
+         to the current [=font subset=]. Alternatively, if the client wishes to add all features from
          the original font to it's subset then this field should be unset.
 
      *  <code>axis_space_have</code>: set to the current value of <code>subset_axis_space</code>
          saved in the state for this font.
 
      *  <code>axis_space_needed</code>: set to the intervals of each variable axis in the original
-         font that the client wants to add to its font subset. If the client wants an entire axis
+         font that the client wants to add to its [=font subset=]. If the client wants an entire axis
          from the original font then that axis should not be listed.
 
      *  <code>ordering_checksum</code>: If either of <code>indices_have</code> or
@@ -1142,7 +1141,7 @@ Extend font subset algorithm:
          there is no saved value leave this field unset.
 
      *  <code>base_checksum</code>:
-         Set to the checksum of the font subset byte array saved in the state for this font. See:
+         Set to the checksum of the [=font subset=] byte array saved in the state for this font. See:
          [[#computing-checksums]].
 
      *  <code>fragment_id</code>:
@@ -1170,16 +1169,16 @@ should interpret and process the fields of the object as follows:
 
 1.  If field <code>replacement</code> is set then: the byte array in this field is a binary patch
      in the format specified by <code>patch_format</code>. Apply the binary patch to a base which
-     is an empty byte array. Replace the font subset in the input client state with the result of the
-     patch application.
+     is an empty byte array. Replace the [=font subset=] in the input client state with the result of
+     the patch application.
 
 2. If field <code>patch</code> is set then:  the byte array in this field is a binary patch
     in the format specified by <code>patch_format</code>. Apply the binary patch to the font
-    subset from the input client state. Replace the font subset in the input client state with the
+    subset from the input client state. Replace the [=font subset=] in the input client state with the
     result of the patch application.
 
 3. If either <code>replacement</code> or <code>patch</code> is set then:
-    <a href="#computing-checksums">compute the checksum</a> of the font subset produced by the patch
+    <a href="#computing-checksums">compute the checksum</a> of the [=font subset=] produced by the patch
     application in steps 1 or 2. If the computed checksum is not equal to <code>patched_checksum</code>
     this is a recoverable error. Follow the procedure in [[#client-side-checksum-mismatch]]. Otherwise
     update the original font checksum in the input client state with the value in
@@ -1211,7 +1210,7 @@ If the response a client receives from the server has a [=response/status=] code
 *  If it is a redirect [=status=]: follow normal redirect handling, such as
      [[fetch#http-redirect-fetch]] and then go back to [[#handling-patch-response]].
 
-*  All other statuses, the font subset extension has failed. Follow [[#font-load-failed]].
+*  All other statuses, the [=font subset=] extension has failed. Follow [[#font-load-failed]].
 
 If the response the client receives has a [=response/status=] code of 200, but the [=response/body=]
 is malformed. That is, it is missing the magic number, not decodable with CBOR, or the
@@ -1221,13 +1220,13 @@ is malformed. That is, it is missing the magic number, not decodable with CBOR, 
 
 #### Client Side Checksum Mismatch #### {#client-side-checksum-mismatch}
 
-If the checksum of the font subset computed by the client does not match the
+If the checksum of the [=font subset=] computed by the client does not match the
 <code>patched_checksum</code> in the server's response then the client should:
 
 1. Discard the input client state for this font.
 
 2. <a href="#extend-subset">Resend the request</a>. Set the <code>codepoints_needed</code> field
-    to the union of the codepoints in the discarded font subset and the set of code points
+    to the union of the codepoints in the discarded [=font subset=] and the set of code points
     that the previous request was trying to add.
 
     If the resent request also results in a checksum mismatch then this is an error. The client
@@ -1237,14 +1236,14 @@ If the checksum of the font subset computed by the client does not match the
 
 If the font load or extension has failed the client should choose one of the following options:
 
-1.  If the client has a saved font subset, it may choose to use that and then use the user
+1.  If the client has a saved [=font subset=], it may choose to use that and then use the user
       agent's existing font fallback mechanism for codepoints not covered by the subset.
 
 2.  The client may re-issue the request as a regular non incremental font fetch to the same
       [=url/path=]. It must not include the patch subset request parameter. This will load
       the entire original font.
 
-3.  Discard the saved font subset, and use the user agent's existing font fallback mechanism.
+3.  Discard the saved [=font subset=], and use the user agent's existing font fallback mechanism.
 
 Regardless of which of the above options are used, the saved client state for this font must be
 discarded.
@@ -1260,12 +1259,12 @@ The inputs to this algorithm:
 
 *  Font URL: a URL where the font to be extended is located.
 
-*  Desired Subset Definition: a <a href="#font-subset-definition">description</a> of the desired
-    minimum font subset.
+*  Desired Subset Definition: a [=font subset definition|description=] of the desired
+    minimum [=font subset=].
 
 The algorithm outputs:
 
-*  A <a href="#font-subset">Font Subset</a> which covers at minimum the input subset definition.
+*  A [=font subset=] which covers at minimum the input subset definition.
 
 The algorithm:
 
@@ -1311,7 +1310,7 @@ The algorithm:
 4.  If the returned cache fields are non-null update the cache entry for the input
      font url with the returned client state and returned cache fields.
 
-5.  Return the font subset contained in the returned client state.
+5.  Return the [=font subset=] contained in the returned client state.
 
 
 Server: Responding to a PatchRequest {#handling-patch-request}
@@ -1372,8 +1371,8 @@ That is the <code>patch</code> and <code>replacement</code> fields must not be s
 
 <span class="conform server" id="conform-response-valid-patch">
 Otherwise when the response is applied by the client following the process in
-[[#handling-patch-response]] to a font subset with checksum <code>base_checksum</code> it must result
-in an extended font subset:
+[[#handling-patch-response]] to a [=font subset=] with checksum <code>base_checksum</code> it must
+result in an extended [=font subset=]:
 </span>
 
 *  <span class="conform server" id="conform-response-subset">That contains data for at least the union
@@ -1417,13 +1416,13 @@ Additionally:
 
 *  <span class="conform server" id="conform-response-patched-checksum">
      If <code>patch</code> or <code>replacement</code> fields are set the value of
-     <code>patched_checksum</code> must be set to the checksum of the extended font subset.
+     <code>patched_checksum</code> must be set to the checksum of the extended [=font subset=].
      The checksum value must be computed by the procedure in [[#computing-checksums]].</span>
 
 *  <span class="conform server" id="conform-response-subset-axis-space-field">
     If <code>patch</code> or <code>replacement</code> fields are set and the original font has
     variation axes, the response must set the <code>subset_axis_space</code> field to the axis space
-    covered by the font subset.</span>
+    covered by the [=font subset=].</span>
 
 *  <span class="conform server" id="conform-response-ignore-unrecognized-formats">
     If <code>accept_patch_format</code> contains any unrecognized patch formats the server must
