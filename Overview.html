@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="d1f0a5181fc46cb5e488c90bcf0d596f9146ade3" name="document-revision">
+  <meta content="bc9b2b8440c874a5670b04667cc706bd86cd9f3b" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -318,28 +318,28 @@ dfn > a.self-link::before      { content: "#"; }
        <ol class="toc">
         <li><a href="#encoding"><span class="secno">4.2.1</span> <span class="content">Encoding</span></a>
         <li><a href="#primitives"><span class="secno">4.2.2</span> <span class="content">Primitives</span></a>
-        <li><a href="#protocol-version"><span class="secno">4.2.3</span> <span class="content">ProtocolVersion</span></a>
-        <li><a href="#sparsebitset"><span class="secno">4.2.4</span> <span class="content">SparseBitSet</span></a>
+        <li><a href="#protocol-version"><span class="secno">4.2.3</span> <span class="content"><span>ProtocolVersion</span></span></a>
+        <li><a href="#sparsebitset"><span class="secno">4.2.4</span> <span class="content"><span>SparseBitSet</span></span></a>
         <li>
-         <a href="#integerlist"><span class="secno">4.2.5</span> <span class="content">IntegerList</span></a>
+         <a href="#integerlist"><span class="secno">4.2.5</span> <span class="content"><span>IntegerList</span></span></a>
          <ol class="toc">
           <li><a href="#integerlist-deltas"><span class="secno">4.2.5.1</span> <span class="content">Delta Encoding</span></a>
           <li><a href="#integerlist-zigzag"><span class="secno">4.2.5.2</span> <span class="content">Zig-Zag Encoding</span></a>
           <li><a href="#integerlist-uintbase128"><span class="secno">4.2.5.3</span> <span class="content">UIntBase128 Encoding</span></a>
          </ol>
-        <li><a href="#sortedintegerlist"><span class="secno">4.2.6</span> <span class="content">SortedIntegerList</span></a>
-        <li><a href="#rangelist"><span class="secno">4.2.7</span> <span class="content">RangeList</span></a>
-        <li><a href="#featuretagset"><span class="secno">4.2.8</span> <span class="content">FeatureTagSet</span></a>
-        <li><a href="#AxisSpace"><span class="secno">4.2.9</span> <span class="content">AxisSpace</span></a>
+        <li><a href="#sortedintegerlist"><span class="secno">4.2.6</span> <span class="content"><span>SortedIntegerList</span></span></a>
+        <li><a href="#rangelist"><span class="secno">4.2.7</span> <span class="content"><span>RangeList</span></span></a>
+        <li><a href="#featuretagset"><span class="secno">4.2.8</span> <span class="content"><span>FeatureTagSet</span></span></a>
+        <li><a href="#AxisSpace"><span class="secno">4.2.9</span> <span class="content"><span>AxisSpace</span></span></a>
         <li><a href="#objects"><span class="secno">4.2.10</span> <span class="content">Objects</span></a>
        </ol>
       <li>
        <a href="#schemas"><span class="secno">4.3</span> <span class="content">Object Schemas</span></a>
        <ol class="toc">
-        <li><a href="#CompressedSet"><span class="secno">4.3.1</span> <span class="content">CompressedSet</span></a>
-        <li><a href="#AxisInterval"><span class="secno">4.3.2</span> <span class="content">AxisInterval</span></a>
-        <li><a href="#PatchRequest"><span class="secno">4.3.3</span> <span class="content">PatchRequest</span></a>
-        <li><a href="#PatchResponse"><span class="secno">4.3.4</span> <span class="content">PatchResponse</span></a>
+        <li><a href="#CompressedSet"><span class="secno">4.3.1</span> <span class="content"><span>CompressedSet</span></span></a>
+        <li><a href="#AxisInterval"><span class="secno">4.3.2</span> <span class="content"><span>AxisInterval</span></span></a>
+        <li><a href="#PatchRequest"><span class="secno">4.3.3</span> <span class="content"><span>PatchRequest</span></span></a>
+        <li><a href="#PatchResponse"><span class="secno">4.3.4</span> <span class="content"><span>PatchResponse</span></span></a>
        </ol>
       <li>
        <a href="#client"><span class="secno">4.4</span> <span class="content">Client</span></a>
@@ -684,37 +684,36 @@ should be encoded by CBOR are given in the definition of those data types.</p>
       <th>Description
       <th>CBOR Major Type
      <tr>
-      <td>Integer
+      <td><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="integer">Integer</dfn>
       <td>An integer value range [-2<sup>63</sup>, 2<sup>63</sup> - 1] inclusive.
       <td>0 or 1
      <tr>
-      <td>Float
+      <td><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="float">Float</dfn>
       <td>IEEE 754 Single-Precision Float.
       <td>7
      <tr>
-      <td>ByteString
+      <td><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="bytestring">ByteString</dfn>
       <td>Variable number of bytes.
       <td>2
      <tr>
-      <td>String
+      <td><dfn data-dfn-type="dfn" data-noexport id="string">String<a class="self-link" href="#string"></a></dfn>
       <td>UTF-8 <a data-link-type="biblio" href="#biblio-rfc3629">[rfc3629]</a> text string.
       <td>3
      <tr>
-      <td>ArrayOf&lt;Type>
+      <td><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="arrayof">ArrayOf</dfn>&lt;Type>
       <td>Array of a variable number of items of Type.
       <td>4
    </table>
-   <h4 class="heading settled" data-level="4.2.3" id="protocol-version"><span class="secno">4.2.3. </span><span class="content">ProtocolVersion</span><a class="self-link" href="#protocol-version"></a></h4>
-   <p>An Integer describing the version of this communication protocol being used by a
-PatchRequest or PatchResponse. This value guides the semantics and interpretation
+   <h4 class="heading settled" data-level="4.2.3" id="protocol-version"><span class="secno">4.2.3. </span><span class="content"><dfn data-dfn-type="dfn" data-noexport id="protocolversion">ProtocolVersion<a class="self-link" href="#protocolversion"></a></dfn></span><a class="self-link" href="#protocol-version"></a></h4>
+   <p>An <a data-link-type="dfn" href="#integer" id="ref-for-integer">Integer</a> describing the version of this communication protocol being used by a <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest">PatchRequest</a> or <a data-link-type="dfn" href="#patchresponse" id="ref-for-patchresponse">PatchResponse</a>. This value guides the semantics and interpretation
 of the fields sent.</p>
    <p>This field is for future expansion. There currently is only one valid value, 0.</p>
-   <h4 class="heading settled" data-level="4.2.4" id="sparsebitset"><span class="secno">4.2.4. </span><span class="content">SparseBitSet</span><a class="self-link" href="#sparsebitset"></a></h4>
+   <h4 class="heading settled" data-level="4.2.4" id="sparsebitset"><span class="secno">4.2.4. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sparsebitset①">SparseBitSet</dfn></span><a class="self-link" href="#sparsebitset"></a></h4>
    <p>A data structure which compactly stores a set of distinct unsigned integers. The set is represented as
 a tree where each node has a fixed number of children that recursively sub-divides an interval into
 equal partitions. A tree of height <i>H</i> with branching factor <i>B</i> can store set membership
 for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree is encoded into
-a ByteString for transport.</p>
+a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring">ByteString</a> for transport.</p>
    <p>To construct the tree <i>T</i> which encodes set <i>S</i> first select the branching factor <i>B</i> (how many children each node has). <i>B</i> can be 4, 8, 16, or 32.</p>
    <p class="note" role="note"><span>Note:</span> the encoder can use any of the possible branching factors, but it is recommended to
 use 4 as that has <a href="https://github.com/w3c/PFE-analysis/blob/main/results/set_encoding_branch_factor.md">been shown</a> to give the smallest encodings for most sets typically encountered.</p>
@@ -904,13 +903,13 @@ ByteString:
       <p>n<sub>3</sub> append 0011. Bit 0 set for value 16, bit 1 set for value 17.</p>
     </ul>
    </div>
-   <h4 class="heading settled" data-level="4.2.5" id="integerlist"><span class="secno">4.2.5. </span><span class="content">IntegerList</span><a class="self-link" href="#integerlist"></a></h4>
+   <h4 class="heading settled" data-level="4.2.5" id="integerlist"><span class="secno">4.2.5. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="integerlist①">IntegerList</dfn></span><a class="self-link" href="#integerlist"></a></h4>
    <p>A data structure which compactly represents a list of non-negative integers
-from 0 to 2<sup>31</sup>-1. The list is encoded into a ByteString for transport.</p>
+from 0 to 2<sup>31</sup>-1. The list is encoded into a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring①">ByteString</a> for transport.</p>
    <p>There are three steps of encoding/compression: first delta, second zig-zag, and finally UIntBase128.
-The final ByteString result is simply the concatenation of the individual UIntBase128
+The final <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring②">ByteString</a> result is simply the concatenation of the individual UIntBase128
 encoded bytes.</p>
-   <p>IntegerList encoding must reject an input list which contains values not in the range
+   <p><a data-link-type="dfn" href="#integerlist①" id="ref-for-integerlist①">IntegerList</a> encoding must reject an input list which contains values not in the range
 0 to 2<sup>31</sup>-1. Likewise if decoding an IntegerList results in values which are not
 in the range 0 to 2<sup>31</sup>-1 the list is invalid and must be rejected.</p>
    <h5 class="heading settled" data-level="4.2.5.1" id="integerlist-deltas"><span class="secno">4.2.5.1. </span><span class="content">Delta Encoding</span><a class="self-link" href="#integerlist-deltas"></a></h5>
@@ -1056,16 +1055,16 @@ bytes = [2E 28 3D 11 81 00 02 02 81 09]
          └┘ └┘ └┘ └┘ └───┘ └┘ └┘ └───┘
 </pre>
    </div>
-   <h4 class="heading settled" data-level="4.2.6" id="sortedintegerlist"><span class="secno">4.2.6. </span><span class="content">SortedIntegerList</span><a class="self-link" href="#sortedintegerlist"></a></h4>
+   <h4 class="heading settled" data-level="4.2.6" id="sortedintegerlist"><span class="secno">4.2.6. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sortedintegerlist①">SortedIntegerList</dfn></span><a class="self-link" href="#sortedintegerlist"></a></h4>
    <p>A data structure which compactly represents a sorted list of ascending non-negative integers
-(0 to 2<sup>32</sup>-1). The list is encoded into a ByteString for transport.</p>
-   <p>This is a variation on IntegerList with better compression. Sorted lists only use two steps of
+(0 to 2<sup>32</sup>-1). The list is encoded into a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring③">ByteString</a> for transport.</p>
+   <p>This is a variation on <a data-link-type="dfn" href="#integerlist①" id="ref-for-integerlist①①">IntegerList</a> with better compression. Sorted lists only use two steps of
 encoding/compression: first deltas and then UIntBase128. The <a href="#integerlist-zigzag">§ 4.2.5.2 Zig-Zag Encoding</a> step is skipped.
 This allows twice the range in UIntBase128, so that single bytes may be used more often.</p>
-   <p>SortedIntegerList encoding must reject an input list which contains values not in the range
-0 to 2<sup>32</sup>-1. <span class="conform server client" id="conform-sorted-integer-list-rejects-illegal"> Likewise if decoding an IntegerList results in values which are not
+   <p><a data-link-type="dfn" href="#sortedintegerlist①" id="ref-for-sortedintegerlist①">SortedIntegerList</a> encoding must reject an input list which contains values not in the range
+0 to 2<sup>32</sup>-1. <span class="conform server client" id="conform-sorted-integer-list-rejects-illegal"> Likewise if decoding an <a data-link-type="dfn" href="#integerlist①" id="ref-for-integerlist①②">IntegerList</a> results in values which are not
 in the range 0 to 2<sup>32</sup>-1 the list is invalid and must be rejected. </span></p>
-   <h4 class="heading settled" data-level="4.2.7" id="rangelist"><span class="secno">4.2.7. </span><span class="content">RangeList</span><a class="self-link" href="#rangelist"></a></h4>
+   <h4 class="heading settled" data-level="4.2.7" id="rangelist"><span class="secno">4.2.7. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="rangelist①">RangeList</dfn></span><a class="self-link" href="#rangelist"></a></h4>
    <p>A RangeList encodes a set of non-negative integers (0 to 2<sup>32</sup>-1). The set is encoded as a
 list of disjoint intervals. Each interval is represented by two integers, a
 start (inclusive) and end (inclusive).</p>
@@ -1075,8 +1074,7 @@ The list must be non-decreasing, i.e. min<sub>i=1..n-1</sub> >= max<sub>i-1<sub>
    <p>To encode this list, we convert it to a list L of 2n integers, where
 L<sub>2i</sub> = min<sub>i</sub> and L<sub>2i+1</sub> = max<sub>i</sub> for
 i = 0..n-1.</p>
-   <p>L is a sorted list of integers, so <a href="#sortedintegerlist">§ 4.2.6 SortedIntegerList</a> is used to encode it as a
-ByteString.</p>
+   <p>L is a sorted list of integers, so a <a data-link-type="dfn" href="#sortedintegerlist①" id="ref-for-sortedintegerlist①①">SortedIntegerList</a> is used to encode it as a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring④">ByteString</a>.</p>
    <div class="example" id="example-228f592b">
     <a class="self-link" href="#example-228f592b"></a> 
 <pre>range_list = [3, 10], [13, 268]
@@ -1085,9 +1083,9 @@ delta_list = [3, 7, 3, 255]
 bytes = [03 07 03 81 7F]
 </pre>
    </div>
-   <h4 class="heading settled" data-level="4.2.8" id="featuretagset"><span class="secno">4.2.8. </span><span class="content">FeatureTagSet</span><a class="self-link" href="#featuretagset"></a></h4>
+   <h4 class="heading settled" data-level="4.2.8" id="featuretagset"><span class="secno">4.2.8. </span><span class="content"><dfn data-dfn-type="dfn" data-noexport id="featuretagset①">FeatureTagSet<a class="self-link" href="#featuretagset①"></a></dfn></span><a class="self-link" href="#featuretagset"></a></h4>
    <p>A FeatureTagSet encodes a set of zero or more <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>.
-Each feature tag is mapped to an integer value and then the set of mapped integers are encoded in a <a href="#sortedintegerlist">§ 4.2.6 SortedIntegerList</a>. Feature tags are mapped to integers as follows:</p>
+Each feature tag is mapped to an integer value and then the set of mapped integers are encoded in a <a data-link-type="dfn" href="#sortedintegerlist①" id="ref-for-sortedintegerlist①②">SortedIntegerList</a>. Feature tags are mapped to integers as follows:</p>
    <ul>
     <li data-md>
      <p>If the tag is found in <a href="#feature-tag-list">Appendix B: Default Feature Tags and Encoding IDs</a>:</p>
@@ -1103,14 +1101,14 @@ not encoded.</p>
 little endian integer.</p>
    </ul>
    <p>The final encoding is produced by sorting the mapped integers (exlcuding tags which are skipped)
-into ascending order and then encoding the sorted list as a <a href="#sortedintegerlist">§ 4.2.6 SortedIntegerList</a>.</p>
+into ascending order and then encoding the sorted list as a <a data-link-type="dfn" href="#sortedintegerlist①" id="ref-for-sortedintegerlist①③">SortedIntegerList</a>.</p>
    <p>When decoding a FeatureTagSet the integer values are mapped back to the original tags by reversing
 the above mapping rules. <span class="conform server client" id="conform-feature-tag-set-defaults">Additionally all
 default features in <a href="#feature-tag-list">Appendix B: Default Feature Tags and Encoding IDs</a> must be added to the decoded set.</span></p>
-   <h4 class="heading settled" data-level="4.2.9" id="AxisSpace"><span class="secno">4.2.9. </span><span class="content">AxisSpace</span><a class="self-link" href="#AxisSpace"></a></h4>
+   <h4 class="heading settled" data-level="4.2.9" id="AxisSpace"><span class="secno">4.2.9. </span><span class="content"><dfn data-dfn-type="dfn" data-noexport id="axisspace">AxisSpace<a class="self-link" href="#axisspace"></a></dfn></span><a class="self-link" href="#AxisSpace"></a></h4>
    <p>Stores a set of intervals on one or more open type variation axes <a data-link-type="biblio" href="#biblio-opentype-variations">[opentype-variations]</a>.
-Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
-pair is an <code>ArrayOf&lt;AxisInterval></code> <a href="#AxisInterval">§ 4.3.2 AxisInterval</a>. <span class="conform client server" id="conform-axis-space-disjoint">The list of intervals for a
+Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑤">ByteString</a> containing exactly 4 ASCII characters. The value in each
+pair is an <a data-link-type="dfn" href="#arrayof" id="ref-for-arrayof">ArrayOf</a>&lt;<a data-link-type="dfn" href="#axisinterval" id="ref-for-axisinterval">AxisInterval</a>>. <span class="conform client server" id="conform-axis-space-disjoint">The list of intervals for a
 each axis tag must be disjoint.</span></p>
    <h4 class="heading settled" data-level="4.2.10" id="objects"><span class="secno">4.2.10. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
    <p>Objects are data structures comprised of key and value pairs. <span class="conform server client" id="conform-object">Objects are encoded via CBOR as maps (major
@@ -1130,10 +1128,9 @@ for a type specifies for each field:</p>
      <p>The type of the value stored in this field. Can be any of the types defined in <a href="#data-types">§ 4.2 Data Types</a> including object types.</p>
    </ul>
    <h3 class="heading settled" data-level="4.3" id="schemas"><span class="secno">4.3. </span><span class="content">Object Schemas</span><a class="self-link" href="#schemas"></a></h3>
-   <h4 class="heading settled" data-level="4.3.1" id="CompressedSet"><span class="secno">4.3.1. </span><span class="content">CompressedSet</span><a class="self-link" href="#CompressedSet"></a></h4>
+   <h4 class="heading settled" data-level="4.3.1" id="CompressedSet"><span class="secno">4.3.1. </span><span class="content"><dfn data-dfn-type="dfn" data-noexport id="compressedset">CompressedSet<a class="self-link" href="#compressedset"></a></dfn></span><a class="self-link" href="#CompressedSet"></a></h4>
    <p>Encodes a set of unsigned integers. The set is not ordered and does not
-allow duplicates. Members of the set are encoded into either a SparseBitSet or a
-RangeList. To obtain the final set the members of the sparse
+allow duplicates. Members of the set are encoded into either a <a data-link-type="dfn" href="#sparsebitset①" id="ref-for-sparsebitset①">SparseBitSet</a> or a <a data-link-type="dfn" href="#rangelist①" id="ref-for-rangelist①">RangeList</a>. To obtain the final set the members of the sparse
 bit set and the list of ranges are unioned together.</p>
    <table>
     <tbody>
@@ -1143,14 +1140,14 @@ bit set and the list of ranges are unioned together.</p>
       <th>Type
      <tr>
       <td>0
-      <td>sparse_bit_set
-      <td>SparseBitSet (ByteString)
+      <td><dfn data-dfn-for="CompressedSet" data-dfn-type="dfn" data-noexport id="compressedset-sparse_bit_set">sparse_bit_set<a class="self-link" href="#compressedset-sparse_bit_set"></a></dfn>
+      <td><a data-link-type="dfn" href="#sparsebitset①" id="ref-for-sparsebitset①①">SparseBitSet</a> (<a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑥">ByteString</a>)
      <tr>
       <td>1
-      <td>range_deltas
-      <td>RangeList (ByteString)
+      <td><dfn data-dfn-for="CompressedSet" data-dfn-type="dfn" data-noexport id="compressedset-range_deltas">range_deltas<a class="self-link" href="#compressedset-range_deltas"></a></dfn>
+      <td><a data-link-type="dfn" href="#rangelist①" id="ref-for-rangelist①①">RangeList</a> (<a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑦">ByteString</a>)
    </table>
-   <h4 class="heading settled" data-level="4.3.2" id="AxisInterval"><span class="secno">4.3.2. </span><span class="content">AxisInterval</span><a class="self-link" href="#AxisInterval"></a></h4>
+   <h4 class="heading settled" data-level="4.3.2" id="AxisInterval"><span class="secno">4.3.2. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="axisinterval">AxisInterval</dfn></span><a class="self-link" href="#AxisInterval"></a></h4>
    <table>
     <tbody>
      <tr>
@@ -1159,23 +1156,23 @@ bit set and the list of ranges are unioned together.</p>
       <th>Value Type
      <tr>
       <td>0
-      <td>start
-      <td>Float
+      <td><dfn class="dfn-paneled" data-dfn-for="AxisInterval" data-dfn-type="dfn" data-noexport id="axisinterval-start">start</dfn>
+      <td><a data-link-type="dfn" href="#float" id="ref-for-float">Float</a>
      <tr>
       <td>1
-      <td>end
-      <td>Float
+      <td><dfn class="dfn-paneled" data-dfn-for="AxisInterval" data-dfn-type="dfn" data-noexport id="axisinterval-end">end</dfn>
+      <td><a data-link-type="dfn" href="#float" id="ref-for-float①">Float</a>
    </table>
-   <p><code>AxisInterval</code> defines an interval (from <code>start</code> to <code>end</code> inclusive)
+   <p><a data-link-type="dfn" href="#axisinterval" id="ref-for-axisinterval①">AxisInterval</a> defines an interval (from <a data-link-type="dfn" href="#axisinterval-start" id="ref-for-axisinterval-start">start</a> to <a data-link-type="dfn" href="#axisinterval-end" id="ref-for-axisinterval-end">end</a> inclusive)
 on some variable axis in a font.</p>
-   <p>For an <code>AxisInterval</code> object to be well formed:</p>
+   <p>For an <a data-link-type="dfn" href="#axisinterval" id="ref-for-axisinterval②">AxisInterval</a> object to be well formed:</p>
    <ul>
     <li data-md>
-     <p><span class="conform client server" id="conform-axis-interval-start"> <code>start</code> must be set. </span></p>
+     <p><span class="conform client server" id="conform-axis-interval-start"> <a data-link-type="dfn" href="#axisinterval-start" id="ref-for-axisinterval-start①">start</a> must be set. </span></p>
     <li data-md>
-     <p><span class="conform client server" id="conform-axis-interval-end"> <code>end</code> is optional, if set it must be greater than <code>start</code>.</span> If <code>end</code> is not set then this interval is a single point, <code>start</code>.</p>
+     <p><span class="conform client server" id="conform-axis-interval-end"> <a data-link-type="dfn" href="#axisinterval-end" id="ref-for-axisinterval-end①">end</a> is optional, if set it must be greater than <a data-link-type="dfn" href="#axisinterval-start" id="ref-for-axisinterval-start②">start</a>.</span> If <a data-link-type="dfn" href="#axisinterval-end" id="ref-for-axisinterval-end②">end</a> is not set then this interval is a single point, <a data-link-type="dfn" href="#axisinterval-start" id="ref-for-axisinterval-start③">start</a>.</p>
    </ul>
-   <h4 class="heading settled" data-level="4.3.3" id="PatchRequest"><span class="secno">4.3.3. </span><span class="content">PatchRequest</span><a class="self-link" href="#PatchRequest"></a></h4>
+   <h4 class="heading settled" data-level="4.3.3" id="PatchRequest"><span class="secno">4.3.3. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patchrequest">PatchRequest</dfn></span><a class="self-link" href="#PatchRequest"></a></h4>
    <table>
     <tbody>
      <tr>
@@ -1251,7 +1248,7 @@ then <code>ordering_checksum</code> must be set.</span></p>
     <li data-md>
      <p><span class="conform client server" id="conform-request-base-checksum"> If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then <code>original_font_checksum</code> and <code>base_checksum</code> must be set.</span></p>
    </ul>
-   <h4 class="heading settled" data-level="4.3.4" id="PatchResponse"><span class="secno">4.3.4. </span><span class="content">PatchResponse</span><a class="self-link" href="#PatchResponse"></a></h4>
+   <h4 class="heading settled" data-level="4.3.4" id="PatchResponse"><span class="secno">4.3.4. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patchresponse">PatchResponse</dfn></span><a class="self-link" href="#PatchResponse"></a></h4>
    <table>
     <tbody>
      <tr>
@@ -2352,13 +2349,33 @@ itself be statically compressed.</p>
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
+   <li><a href="#arrayof">ArrayOf</a><span>, in § 4.2.2</span>
+   <li><a href="#axisinterval">AxisInterval</a><span>, in § 4.3.2</span>
+   <li><a href="#axisspace">AxisSpace</a><span>, in § 4.2.9</span>
+   <li><a href="#bytestring">ByteString</a><span>, in § 4.2.2</span>
+   <li><a href="#compressedset">CompressedSet</a><span>, in § 4.3.1</span>
    <li><a href="#corpus">corpus</a><span>, in § 5.2.6</span>
+   <li><a href="#axisinterval-end">end</a><span>, in § 4.3.2</span>
+   <li><a href="#featuretagset①">FeatureTagSet</a><span>, in § 4.2.8</span>
+   <li><a href="#float">Float</a><span>, in § 4.2.2</span>
    <li><a href="#font-subset">font subset</a><span>, in § 4.1</span>
    <li><a href="#font-subset-definition">font subset definition</a><span>, in § 4.1</span>
+   <li><a href="#integer">Integer</a><span>, in § 4.2.2</span>
+   <li><a href="#integerlist①">IntegerList</a><span>, in § 4.2.5</span>
    <li><a href="#outline-table">outline table</a><span>, in § 5.2.4</span>
+   <li><a href="#patchrequest">PatchRequest</a><span>, in § 4.3.3</span>
    <li><a href="#patch-request-header">patch request header</a><span>, in § 4.4.2</span>
+   <li><a href="#patchresponse">PatchResponse</a><span>, in § 4.3.4</span>
+   <li><a href="#protocolversion">ProtocolVersion</a><span>, in § 4.2.3</span>
+   <li><a href="#compressedset-range_deltas">range_deltas</a><span>, in § 4.3.1</span>
+   <li><a href="#rangelist①">RangeList</a><span>, in § 4.2.7</span>
    <li><a href="#range-request-optimized-font">range-request optimized font</a><span>, in § 5.2.2</span>
    <li><a href="#range-request-threshold">range-request threshold</a><span>, in § 5.3.1</span>
+   <li><a href="#sortedintegerlist①">SortedIntegerList</a><span>, in § 4.2.6</span>
+   <li><a href="#compressedset-sparse_bit_set">sparse_bit_set</a><span>, in § 4.3.1</span>
+   <li><a href="#sparsebitset①">SparseBitSet</a><span>, in § 4.2.4</span>
+   <li><a href="#axisinterval-start">start</a><span>, in § 4.3.2</span>
+   <li><a href="#string">String</a><span>, in § 4.2.2</span>
    <li><a href="#usage-document-frequency">usage document frequency</a><span>, in § 5.2.6</span>
   </ul>
   <aside class="dfn-panel" data-for="term-for-at-font-face-rule">
@@ -2558,6 +2575,93 @@ itself be statically compressed.</p>
    <ul>
     <li><a href="#ref-for-font-subset-definition">4.4.2. Extending the Font Subset</a> <a href="#ref-for-font-subset-definition①">(2)</a> <a href="#ref-for-font-subset-definition②">(3)</a>
     <li><a href="#ref-for-font-subset-definition③">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="integer">
+   <b><a href="#integer">#integer</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-integer">4.2.3. ProtocolVersion</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="float">
+   <b><a href="#float">#float</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-float">4.3.2. AxisInterval</a> <a href="#ref-for-float①">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="bytestring">
+   <b><a href="#bytestring">#bytestring</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-bytestring">4.2.4. SparseBitSet</a>
+    <li><a href="#ref-for-bytestring①">4.2.5. IntegerList</a> <a href="#ref-for-bytestring②">(2)</a>
+    <li><a href="#ref-for-bytestring③">4.2.6. SortedIntegerList</a>
+    <li><a href="#ref-for-bytestring④">4.2.7. RangeList</a>
+    <li><a href="#ref-for-bytestring⑤">4.2.9. AxisSpace</a>
+    <li><a href="#ref-for-bytestring⑥">4.3.1. CompressedSet</a> <a href="#ref-for-bytestring⑦">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="arrayof">
+   <b><a href="#arrayof">#arrayof</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-arrayof">4.2.9. AxisSpace</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="sparsebitset①">
+   <b><a href="#sparsebitset①">#sparsebitset①</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-sparsebitset①">4.3.1. CompressedSet</a> <a href="#ref-for-sparsebitset①①">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="integerlist①">
+   <b><a href="#integerlist①">#integerlist①</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-integerlist①">4.2.5. IntegerList</a>
+    <li><a href="#ref-for-integerlist①①">4.2.6. SortedIntegerList</a> <a href="#ref-for-integerlist①②">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="sortedintegerlist①">
+   <b><a href="#sortedintegerlist①">#sortedintegerlist①</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-sortedintegerlist①">4.2.6. SortedIntegerList</a>
+    <li><a href="#ref-for-sortedintegerlist①①">4.2.7. RangeList</a>
+    <li><a href="#ref-for-sortedintegerlist①②">4.2.8. FeatureTagSet</a> <a href="#ref-for-sortedintegerlist①③">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="rangelist①">
+   <b><a href="#rangelist①">#rangelist①</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-rangelist①">4.3.1. CompressedSet</a> <a href="#ref-for-rangelist①①">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="axisinterval">
+   <b><a href="#axisinterval">#axisinterval</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-axisinterval">4.2.9. AxisSpace</a>
+    <li><a href="#ref-for-axisinterval①">4.3.2. AxisInterval</a> <a href="#ref-for-axisinterval②">(2)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="axisinterval-start">
+   <b><a href="#axisinterval-start">#axisinterval-start</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-axisinterval-start">4.3.2. AxisInterval</a> <a href="#ref-for-axisinterval-start①">(2)</a> <a href="#ref-for-axisinterval-start②">(3)</a> <a href="#ref-for-axisinterval-start③">(4)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="axisinterval-end">
+   <b><a href="#axisinterval-end">#axisinterval-end</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-axisinterval-end">4.3.2. AxisInterval</a> <a href="#ref-for-axisinterval-end①">(2)</a> <a href="#ref-for-axisinterval-end②">(3)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="patchrequest">
+   <b><a href="#patchrequest">#patchrequest</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-patchrequest">4.2.3. ProtocolVersion</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="patchresponse">
+   <b><a href="#patchresponse">#patchresponse</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-patchresponse">4.2.3. ProtocolVersion</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="patch-request-header">

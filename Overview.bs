@@ -412,38 +412,38 @@ should be encoded by CBOR are given in the definition of those data types.
     <th>Data Type</th><th>Description</th><th>CBOR Major Type</th>
   </tr>
   <tr>
-    <td>Integer</td><td>An integer value range [-2<sup>63</sup>, 2<sup>63</sup> - 1] inclusive.</td>
+    <td><dfn>Integer</dfn></td><td>An integer value range [-2<sup>63</sup>, 2<sup>63</sup> - 1] inclusive.</td>
     <td>0 or 1</td>
   </tr>
   <tr>
-    <td>Float</td><td>IEEE 754 Single-Precision Float.</td><td>7</td>
+    <td><dfn>Float</dfn></td><td>IEEE 754 Single-Precision Float.</td><td>7</td>
   </tr>
   <tr>
-    <td>ByteString</td><td>Variable number of bytes.</td><td>2</td>
+    <td><dfn>ByteString</dfn></td><td>Variable number of bytes.</td><td>2</td>
   </tr>
   <tr>
-    <td>String</td><td>UTF-8 [[rfc3629]] text string.</td><td>3</td>
+    <td><dfn>String</dfn></td><td>UTF-8 [[rfc3629]] text string.</td><td>3</td>
   </tr>
   <tr>
-    <td>ArrayOf&lt;Type&gt;</td><td>Array of a variable number of items of Type.</td><td>4</td>
+    <td><dfn>ArrayOf</dfn>&lt;Type&gt;</td><td>Array of a variable number of items of Type.</td><td>4</td>
   </tr>
 </table>
 
-### ProtocolVersion ### {#protocol-version}
+### <dfn>ProtocolVersion</dfn> ### {#protocol-version}
 
-An Integer describing the version of this communication protocol being used by a
-PatchRequest or PatchResponse. This value guides the semantics and interpretation
+An [=Integer=] describing the version of this communication protocol being used by a
+[=PatchRequest=] or [=PatchResponse=]. This value guides the semantics and interpretation
 of the fields sent.
 
 This field is for future expansion. There currently is only one valid value, 0.
 
-### SparseBitSet ### {#sparsebitset}
+### <dfn>SparseBitSet</dfn> ### {#sparsebitset}
 
 A data structure which compactly stores a set of distinct unsigned integers. The set is represented as
 a tree where each node has a fixed number of children that recursively sub-divides an interval into
 equal partitions. A tree of height <i>H</i> with branching factor <i>B</i> can store set membership
 for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree is encoded into
-a ByteString for transport.
+a [=ByteString=] for transport.
 
 To construct the tree <i>T</i> which encodes set <i>S</i> first select the branching factor <i>B</i>
 (how many children each node has). <i>B</i> can be 4, 8, 16, or 32.
@@ -642,16 +642,16 @@ significant bit in the byte and the bit with the largest index is the most signi
 
 </div>
 
-### IntegerList ### {#integerlist}
+### <dfn>IntegerList</dfn> ### {#integerlist}
 
 A data structure which compactly represents a list of non-negative integers
-from 0 to 2<sup>31</sup>-1. The list is encoded into a ByteString for transport.
+from 0 to 2<sup>31</sup>-1. The list is encoded into a [=ByteString=] for transport.
 
 There are three steps of encoding/compression: first delta, second zig-zag, and finally UIntBase128.
-The final ByteString result is simply the concatenation of the individual UIntBase128
+The final [=ByteString=] result is simply the concatenation of the individual UIntBase128
 encoded bytes.
 
-IntegerList encoding must reject an input list which contains values not in the range
+[=IntegerList=] encoding must reject an input list which contains values not in the range
 0 to 2<sup>31</sup>-1. Likewise if decoding an IntegerList results in values which are not
 in the range 0 to 2<sup>31</sup>-1 the list is invalid and must be rejected.
 
@@ -793,23 +793,23 @@ bytes = [2E 28 3D 11 81 00 02 02 81 09]
 </div>
 
 
-### SortedIntegerList ### {#sortedintegerlist}
+### <dfn>SortedIntegerList</dfn> ### {#sortedintegerlist}
 
 A data structure which compactly represents a sorted list of ascending non-negative integers
-(0 to 2<sup>32</sup>-1). The list is encoded into a ByteString for transport.
+(0 to 2<sup>32</sup>-1). The list is encoded into a [=ByteString=] for transport.
 
-This is a variation on IntegerList with better compression. Sorted lists only use two steps of
+This is a variation on [=IntegerList=] with better compression. Sorted lists only use two steps of
 encoding/compression: first deltas and then UIntBase128. The [[#integerlist-zigzag]] step is skipped.
 This allows twice the range in UIntBase128, so that single bytes may be used more often.
 
-SortedIntegerList encoding must reject an input list which contains values not in the range
+[=SortedIntegerList=] encoding must reject an input list which contains values not in the range
 0 to 2<sup>32</sup>-1.
 <span class="conform server client" id="conform-sorted-integer-list-rejects-illegal">
-Likewise if decoding an IntegerList results in values which are not
+Likewise if decoding an [=IntegerList=] results in values which are not
 in the range 0 to 2<sup>32</sup>-1 the list is invalid and must be rejected.
 </span>
 
-### RangeList ### {#rangelist}
+### <dfn>RangeList</dfn> ### {#rangelist}
 
 A RangeList encodes a set of non-negative integers (0 to 2<sup>32</sup>-1). The set is encoded as a
 list of disjoint intervals. Each interval is represented by two integers, a
@@ -823,8 +823,8 @@ To encode this list, we convert it to a list L of 2n integers, where
 L<sub>2i</sub> = min<sub>i</sub> and L<sub>2i+1</sub> = max<sub>i</sub> for
 i = 0..n-1.
 
-L is a sorted list of integers, so [[#sortedintegerlist]] is used to encode it as a
-ByteString.
+L is a sorted list of integers, so a [=SortedIntegerList=] is used to encode it as a
+[=ByteString=].
 
 <div class="example">
 ```
@@ -835,12 +835,12 @@ bytes = [03 07 03 81 7F]
 ```
 </div>
 
-### FeatureTagSet ### {#featuretagset}
+### <dfn>FeatureTagSet</dfn> ### {#featuretagset}
 
 A FeatureTagSet encodes a set of zero or more
 <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>.
 Each feature tag is mapped to an integer value and then the set of mapped integers are encoded in a
-[[#sortedintegerlist]]. Feature tags are mapped to integers as follows:
+[=SortedIntegerList=]. Feature tags are mapped to integers as follows:
 
 *  If the tag is found in [[#feature-tag-list]]:
 
@@ -853,20 +853,20 @@ Each feature tag is mapped to an integer value and then the set of mapped intege
     little endian integer.
 
 The final encoding is produced by sorting the mapped integers (exlcuding tags which are skipped)
-into ascending order and then encoding the sorted list as a [[#sortedintegerlist]].
+into ascending order and then encoding the sorted list as a [=SortedIntegerList=].
 
 When decoding a FeatureTagSet the integer values are mapped back to the original tags by reversing
 the above mapping rules.
 <span class="conform server client" id="conform-feature-tag-set-defaults">Additionally all
 default features in [[#feature-tag-list]] must be added to the decoded set.</span>
 
-### AxisSpace ### {#AxisSpace}
+### <dfn>AxisSpace</dfn> ### {#AxisSpace}
 
 Stores a set of intervals on one or more open type variation axes [[opentype-variations]]</a>.
 Encoded as a CBOR map (major type 5). The key in each pair is an
 <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord">
-axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
-pair is an <code>ArrayOf&lt;AxisInterval&gt;</code> [[#AxisInterval]].
+axis tag</a>. It is encoded as a [=ByteString=] containing exactly 4 ASCII characters. The value in each
+pair is an [=ArrayOf=]&lt;[=AxisInterval=]&gt;.
 <span class="conform client server" id="conform-axis-space-disjoint">The list of intervals for a
 each axis tag must be disjoint.</span>
 
@@ -894,41 +894,57 @@ for a type specifies for each field:
 
 ## Object Schemas ## {#schemas}
 
-### CompressedSet ### {#CompressedSet}
+### <dfn>CompressedSet</dfn> ### {#CompressedSet}
 
 Encodes a set of unsigned integers. The set is not ordered and does not
-allow duplicates. Members of the set are encoded into either a SparseBitSet or a
-RangeList. To obtain the final set the members of the sparse
+allow duplicates. Members of the set are encoded into either a [=SparseBitSet=] or a
+[=RangeList=]. To obtain the final set the members of the sparse
 bit set and the list of ranges are unioned together.
 
 <table>
   <tr><th>ID&nbsp;</th><th>Field Name</th><th>Type</th></tr>
-  <tr><td>0</td><td>sparse_bit_set</td><td>SparseBitSet (ByteString)</td></tr>
-  <tr><td>1</td><td>range_deltas</td><td>RangeList (ByteString)</td></tr>
+  <tr>
+    <td>0</td>
+    <td><dfn for="CompressedSet">sparse_bit_set</dfn></td>
+    <td>[=SparseBitSet=] ([=ByteString=])</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td><dfn for="CompressedSet">range_deltas</dfn></td>
+    <td>[=RangeList=] ([=ByteString=])</td>
+  </tr>
 </table>
 
-### AxisInterval ### {#AxisInterval}
+### <dfn>AxisInterval</dfn> ### {#AxisInterval}
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
-  <tr><td>0</td><td>start</td><td>Float</td></tr>
-  <tr><td>1</td><td>end</td><td>Float</td></tr>
+  <tr>
+    <td>0</td>
+    <td><dfn for="AxisInterval">start</dfn></td>
+    <td>[=Float=]</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td><dfn for="AxisInterval">end</dfn></td>
+    <td>[=Float=]</td>
+  </tr>
 </table>
 
-<code>AxisInterval</code> defines an interval (from <code>start</code> to <code>end</code> inclusive)
+[=AxisInterval=] defines an interval (from [=AxisInterval/start=] to [=AxisInterval/end=] inclusive)
 on some variable axis in a font.
 
-For an <code>AxisInterval</code> object to be well formed:
+For an [=AxisInterval=] object to be well formed:
 
 *  <span class="conform client server" id="conform-axis-interval-start">
-    <code>start</code> must be set.
+    [=AxisInterval/start=] must be set.
     </span>
 
 *  <span class="conform client server" id="conform-axis-interval-end">
-    <code>end</code> is optional, if set it must be greater than <code>start</code>.</span>
-    If <code>end</code> is not set then this interval is a single point, <code>start</code>.
+    [=AxisInterval/end=] is optional, if set it must be greater than [=AxisInterval/start=].</span>
+    If [=AxisInterval/end=] is not set then this interval is a single point, [=AxisInterval/start=].
 
-### PatchRequest ### {#PatchRequest}
+### <dfn>PatchRequest</dfn> ### {#PatchRequest}
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
@@ -960,7 +976,7 @@ For a PatchRequest object to be well formed:
     If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then
     <code>original_font_checksum</code> and <code>base_checksum</code> must be set.</span>
 
-### PatchResponse ### {#PatchResponse}
+### <dfn>PatchResponse</dfn> ### {#PatchResponse}
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
