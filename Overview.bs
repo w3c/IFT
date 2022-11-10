@@ -1197,18 +1197,18 @@ Extend [=font subset=] algorithm:
          opentype layout feature tags</a> that the current [=font subset=] has data for. If the current
          [=font subset=] is an empty byte array this
          field is left unset. Additionally, if the current [=font subset=] has all data for features
-         present in the original font then this field can be unset.
+         present in the [=original font=] then this field can be unset.
 
      *  [=PatchRequest/features_needed=]: set to the list of feature tags that the client wants to add
          to the current [=font subset=]. Alternatively, if the client wishes to add all features from
-         the original font to it's subset then this field should be unset.
+         the [=original font=] to it's subset then this field should be unset.
 
      *  [=PatchRequest/axis_space_have=]: set to the current value of <code>subset_axis_space</code>
          saved in the state for this font.
 
-     *  [=PatchRequest/axis_space_needed=]: set to the intervals of each variable axis in the original
-         font that the client wants to add to its [=font subset=]. If the client wants an entire axis
-         from the original font then that axis should not be listed.
+     *  [=PatchRequest/axis_space_needed=]: set to the intervals of each variable axis in the
+         [=original font=] that the client wants to add to its [=font subset=]. If the client wants an
+         entire axis from the [=original font=] then that axis should not be listed.
 
      *  [=PatchRequest/ordering_checksum=]: If either of [=PatchRequest/indices_have=] or
          [=PatchRequest/indices_needed=] is set then this must be set to the current value of
@@ -1292,7 +1292,7 @@ If the response a client receives from the server has a [=response/status=] code
 
 If the response the client receives has a [=response/status=] code of 200, but the [=response/body=]
 is malformed. That is, it is missing the magic number, not decodable with CBOR, or the
-<a href="#PatchResponse"><code>PatchResponse</code></a> is not well formed:
+[=PatchResponse=] is not well formed:
 
 *  This is an error. Follow [[#font-load-failed]].
 
@@ -1319,7 +1319,7 @@ If the font load or extension has failed the client should choose one of the fol
 
 2.  The client may re-issue the request as a regular non incremental font fetch to the same
       [=url/path=]. It must not include the patch subset request parameter. This will load
-      the entire original font.
+      the entire [=original font=].
 
 3.  Discard the saved [=font subset=], and use the user agent's existing font fallback mechanism.
 
@@ -1395,61 +1395,61 @@ Server: Responding to a PatchRequest {#handling-patch-request}
 --------------------------------------------------------------
 
 <span class="conform server" id="conform-successful-response">If the server receives a well formed
-<a href="#PatchRequest"><code>PatchRequest</code></a> over HTTPS for a font the server has and that was
+[=PatchRequest=] over HTTPS for a font the server has and that was
 populated according to the requirements in [[#extend-subset]] then it must respond with HTTP
 [=response/status=] code 200.</span>
 <span class="conform server" id="conform-magic-number">The first 4 bytes of the response
 [=response/body=] must be set to 0x49, 0x46, 0x54, 0x20 ("IFT " encoded as ASCII) followed by a
-single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</span>
+single [=PatchResponse=] object encoded via CBOR.</span>
 
 The [=url/path=] in the request [=request/url=] identifies the specific font that a patch is desired
-for. If the request has the <code>fragment_id</code> field set and the file identified by [=url/path=]
-is a collection of fonts, then <code>fragment_id</code> identifies the font within that collection
-that a patch is desired for. The identified font is referred to as the 'original font' in the rest
-of this section.
+for. If the request has the [=PatchRequest/fragment_id=] field set and the file identified by
+[=url/path=] is a collection of fonts, then [=PatchRequest/fragment_id=] identifies the font within
+that collection that a patch is desired for. The identified font is referred to as the
+<dfn>original font</dfn> in the rest of this section.
 
 From the request object the server can produce two codepoint sets:
 
 1.  Codepoints the client has: formed by the union of the codepoint sets specified by
-     <code>codepoints_have</code> and <code>indices_have</code>.
+     [=PatchRequest/codepoints_have=] and [=PatchRequest/indices_have=].
      <span class="conform server" id="conform-remap-codepoints-have">The indices in
-     <code>indices_have</code> must be mapped to codepoints by the application of the
-     codepoint reordering with a checksum matching <code>ordering_checksum</code>.</span>
+     [=PatchRequest/indices_have=] must be mapped to codepoints by the application of the
+     codepoint reordering with a checksum matching [=PatchRequest/ordering_checksum=].</span>
 
 2.  Codepoints the client needs: formed by the union of the codepoint sets specified by
-     <code>codepoints_needed</code> and <code>indices_needed</code>.
+     [=PatchRequest/codepoints_needed=] and [=PatchRequest/indices_needed=].
      <span class="conform server" id="conform-remap-codepoints-needed">The indices in
-     <code>indices_needed</code> must be mapped to codepoints by the application of the
-     codepoint reordering with a checksum matching <code>ordering_checksum</code>.</span>
+     [=PatchRequest/indices_needed=] must be mapped to codepoints by the application of the
+     codepoint reordering with a checksum matching [=PatchRequest/ordering_checksum=].</span>
 
 Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>:
 
-1.  Feature tags the client's subset has: specified by <code>features_have</code>. If the field is
-     unset this indicates the client's subset contains all features in the original font.
+1.  Feature tags the client's subset has: specified by [=PatchRequest/features_have=]. If the field is
+     unset this indicates the client's subset contains all features in the [=original font=].
 
-2.  Feature tags the client needs: specified by <code>features_needed</code>. If the field is unset
-     this indicates the client wants all features in the original font.
+2.  Feature tags the client needs: specified by [=PatchRequest/features_needed=]. If the field is unset
+     this indicates the client wants all features in the [=original font=].
 
 Lastly, the server can produce two variable axis spaces:
 
-1.  Axis space the client has: specified by <code>axis_space_have</code>. If any axes in the font are
-     not specified in <code>axis_space_have</code> then for those axes add their entire interval
-     from the original font.
+1.  Axis space the client has: specified by [=PatchRequest/axis_space_have=]. If any axes in the font
+     are not specified in [=PatchRequest/axis_space_have=] then for those axes add their entire
+     interval from the [=original font=].
 
-2. Axis space the client needs: specified by <code>axis_space_needed</code>. If any axes in the font
-     are not specified in <code>axis_space_needed</code> then for those axes add their entire interval
-     from the original font.
+2. Axis space the client needs: specified by [=PatchRequest/axis_space_needed=]. If any axes in the
+     font are not specified in [=PatchRequest/axis_space_needed=] then for those axes add their entire
+     interval from the [=original font=].
 
 <span class="conform server" id="conform-bad-reordering">
 If the server does not recognize the codepoint ordering used by the client, it must respond
 with a response that will cause the client to update it's codepoint ordering to one the server
 will recognize via the process described in [[#handling-patch-response]] and not include any patch.
-That is the <code>patch</code> and <code>replacement</code> fields must not be set.
+That is the [=PatchResponse/patch=] and [=PatchResponse/replacement=] fields must not be set.
 </span>
 
 <span class="conform server" id="conform-response-valid-patch">
 Otherwise when the response is applied by the client following the process in
-[[#handling-patch-response]] to a [=font subset=] with checksum <code>base_checksum</code> it must
+[[#handling-patch-response]] to a [=font subset=] with checksum [=PatchRequest/base_checksum=] it must
 result in an extended [=font subset=]:
 </span>
 
@@ -1463,47 +1463,47 @@ result in an extended [=font subset=]:
     space that covers at least the union of the axis space the client has and the axis space the
     client needs.</span>
 
-If the checksum of the original font computed by the procedure in [[#computing-checksums]] does not
-match the checksum in <code>PatchRequest.original_font_checksum</code> or
-<code>PatchRequest.original_font_checksum</code> is unset, then:
+If the checksum of the [=original font=] computed by the procedure in [[#computing-checksums]] does not
+match the checksum in [=PatchRequest/original_font_checksum=] or
+[=PatchRequest/original_font_checksum=] is unset, then:
 
 *  <span class="conform server" id="conform-response-original-checksum">The value of
-    <code>original_font_checksum</code> must be set to the checksum of the original font
+    [=PatchResponse/original_font_checksum=] must be set to the checksum of the [=original font=]
     computed by the procedure in [[#computing-checksums]].</span>
 
 *  <span class="conform server" id="conform-response-codepoint-ordering">
     The response must set the
-    <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following
+    [=PatchResponse/codepoint_ordering=] and [=PatchResponse/ordering_checksum=] fields following
     [[#codepoint-reordering]].</span>
 
 *  <span class="conform server" id="conform-response-original-features">
-    The response must set the <code>original_features</code> field to the list of
-    <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>
-    that the original font has data for.</span>
+    The response must set the [=PatchResponse/original_features=] field to the list of
+    <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout
+    feature tags</a> that the [=original font=] has data for.</span>
 
 *  <span class="conform server" id="conform-response-original-axis-space">
-    If the original font has variation axes, the
-    response must set the <code>original_axis_space</code> field to the axis space covered by
-    the original font.</span>
+    If the [=original font=] has variation axes, the
+    response must set the [=PatchResponse/original_axis_space=] field to the axis space covered by
+    the [=original font=].</span>
 
 Additionally:
 
 *  <span class="conform server" id="conform-response-patch-format">The format of the patch in the
-    either the <code>patch</code> or <code>replace</code> fields must be one of those listed in
-    <code>accept_patch_format</code></span>.
+    either the [=PatchResponse/patch=] or [=PatchResponse/replace=] fields must be one of those listed
+    in [=PatchResponse/accept_patch_format=]</span>.
 
 *  <span class="conform server" id="conform-response-patched-checksum">
-     If <code>patch</code> or <code>replacement</code> fields are set the value of
-     <code>patched_checksum</code> must be set to the checksum of the extended [=font subset=].
+     If [=PatchResponse/patch=] or [=PatchResponse/replacement=] fields are set the value of
+     [=PatchResponse/patched_checksum=] must be set to the checksum of the extended [=font subset=].
      The checksum value must be computed by the procedure in [[#computing-checksums]].</span>
 
 *  <span class="conform server" id="conform-response-subset-axis-space-field">
-    If <code>patch</code> or <code>replacement</code> fields are set and the original font has
-    variation axes, the response must set the <code>subset_axis_space</code> field to the axis space
-    covered by the [=font subset=].</span>
+    If [=PatchResponse/patch=] or [=PatchResponse/replacement=] fields are set and the
+    [=original font=] has variation axes, the response must set the [=PatchResponse/subset_axis_space=]
+    field to the axis space covered by the [=font subset=].</span>
 
 *  <span class="conform server" id="conform-response-ignore-unrecognized-formats">
-    If <code>accept_patch_format</code> contains any unrecognized patch formats the server must
+    If [=PatchResponse/accept_patch_format=] contains any unrecognized patch formats the server must
     ignore the unrecognized ones.</span>
 
 Note: the server can respond with either a patch or a replacement but should try to produce a patch
@@ -1526,8 +1526,8 @@ Possible error responses:
      If the request is malformed the server must instead respond with http [=response/status=] code 400
      to indicate an error.</span>
 
-*  If the requested font is not recognized by the server it should respond with http [=response/status=]
-     code 404 to indicate a not found error.
+*  If the requested font is not recognized by the server it should respond with http
+    [=response/status=] code 404 to indicate a not found error.
 
 ### Range Request Support ### {#range-request-support}
 
@@ -1599,7 +1599,7 @@ font to a continuous space of [0, number of codepoints in the font). This transf
 to reduce the cost of representing codepoint sets.
 
 <span class="conform server " id="conform-remap-all">A codepoint ordering is encoded into a
-<code>CompressedList</code>. The list must contain all unicode codepoints that are supported by the
+[=CompressedList=]. The list must contain all unicode codepoints that are supported by the
 font.</span> The index of a particular unicode codepoint in the list is
 the new value for that codepoint.
 
