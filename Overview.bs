@@ -1022,32 +1022,54 @@ For a [=PatchRequest=] object to be well formed:
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
-  <tr><td>0</td><td>protocol_version</td><td>ProtocolVersion (Integer)</td>
-  <tr><td>1</td><td>patch_format</td><td>Integer</td></tr>
-  <tr><td>2</td><td>patch</td><td>ByteString</td></tr>
-  <tr><td>3</td><td>replacement</td><td>ByteString</td></tr>
-  <tr><td>4</td><td>original_font_checksum</td><td>Integer</td></tr>
-  <tr><td>5</td><td>patched_checksum</td><td>Integer</td></tr>
-  <tr><td>6</td><td>codepoint_ordering</td><td>IntegerList</td></tr>
-  <tr><td>7</td><td>ordering_checksum</td><td>Integer</td></tr>
-  <tr><td>8</td><td>subset_axis_space</td><td>AxisSpace</td></tr>
-  <tr><td>9</td><td>original_axis_space</td><td>AxisSpace</td></tr>
-  <tr><td>10</td><td>original_features</td><td>FeatureTagSet</td></tr>
+  <tr>
+    <td>0</td>
+    <td><dfn for="PatchResponse">protocol_version</dfn></td><td>[=ProtocolVersion=] ([=Integer=])</td>
+  <tr>
+    <td>1</td>
+    <td><dfn for="PatchResponse">patch_format</dfn></td><td>[=Integer=]</td></tr>
+  <tr>
+    <td>2</td>
+    <td><dfn for="PatchResponse">patch</dfn></td><td>[=ByteString=]</td></tr>
+  <tr>
+    <td>3</td>
+    <td><dfn for="PatchResponse">replacement</dfn></td><td>[=ByteString=]</td></tr>
+  <tr>
+    <td>4</td>
+    <td><dfn for="PatchResponse">original_font_checksum</dfn></td><td>[=Integer=]</td></tr>
+  <tr>
+    <td>5</td>
+    <td><dfn for="PatchResponse">patched_checksum</dfn></td><td>[=Integer=]</td></tr>
+  <tr>
+    <td>6</td>
+    <td><dfn for="PatchResponse">codepoint_ordering</dfn></td><td>[=IntegerList=]</td></tr>
+  <tr>
+    <td>7</td>
+    <td><dfn for="PatchResponse">ordering_checksum</dfn></td><td>[=Integer=]</td></tr>
+  <tr>
+    <td>8</td>
+    <td><dfn for="PatchResponse">subset_axis_space</dfn></td><td>[=AxisSpace=]</td></tr>
+  <tr>
+    <td>9</td>
+    <td><dfn for="PatchResponse">original_axis_space</dfn></td><td>[=AxisSpace=]</td></tr>
+  <tr>
+    <td>10</td>
+    <td><dfn for="PatchResponse">original_features</dfn></td><td>[=FeatureTagSet=]</td></tr>
 </table>
 
 For a PatchResponse object to be well formed:
 *  <span class="conform server" id="conform-response-protocol-version">
-     <code>protocol_version</code> must be set to 0.</span>
+     [=PatchResponse/protocol_version=] must be set to 0.</span>
 *  <span class="conform server" id="conform-response-patch-or-replacement">
-     Only one of <code>patch</code> or <code>replacement</code> must be set.</span>
+     Only one of [=PatchResponse/patch=] or [=PatchResponse/replacement=] must be set.</span>
 *  <span class="conform server" id="conform-response-font-checksums">
-     If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>,
-     and <code>patched_checksum</code> must be set.</span>
+     If either [=PatchResponse/patch=] or [=PatchResponse/replacement=] is set then [=PatchResponse/patch_format=],
+     and [=PatchResponse/patched_checksum=] must be set.</span>
 *  <span class="conform server" id="conform-response-valid-format">
-     If <code>patch_format</code> is set then it must be one of the values listed in
+     If [=PatchResponse/patch_format=] is set then it must be one of the values listed in
      [[#patch-formats]].</span>
 *  <span class="conform server" id="conform-response-ordering-checksum">
-     If <code>codepoint_ordering</code> is set then <code>ordering_checksum</code> must be set.</span>
+     If [=PatchResponse/codepoint_ordering=] is set then [=PatchResponse/ordering_checksum=] must be set.</span>
 
 Client {#client}
 ----------------
