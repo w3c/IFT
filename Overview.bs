@@ -437,7 +437,7 @@ of the fields sent.
 
 This field is for future expansion. There currently is only one valid value, 0.
 
-### <dfn>SparseBitSet</dfn> ### {#sparsebitset}
+### <dfn>SparseBitSet</dfn> ### {#sparsebitset-object}
 
 A data structure which compactly stores a set of distinct unsigned integers. The set is represented as
 a tree where each node has a fixed number of children that recursively sub-divides an interval into
@@ -642,7 +642,7 @@ significant bit in the byte and the bit with the largest index is the most signi
 
 </div>
 
-### <dfn>IntegerList</dfn> ### {#integerlist}
+### <dfn>IntegerList</dfn> ### {#integerlist-object}
 
 A data structure which compactly represents a list of non-negative integers
 from 0 to 2<sup>31</sup>-1. The list is encoded into a [=ByteString=] for transport.
@@ -793,7 +793,7 @@ bytes = [2E 28 3D 11 81 00 02 02 81 09]
 </div>
 
 
-### <dfn>SortedIntegerList</dfn> ### {#sortedintegerlist}
+### <dfn>SortedIntegerList</dfn> ### {#sortedintegerlist-object}
 
 A data structure which compactly represents a sorted list of ascending non-negative integers
 (0 to 2<sup>32</sup>-1). The list is encoded into a [=ByteString=] for transport.
@@ -809,7 +809,7 @@ Likewise if decoding an [=IntegerList=] results in values which are not
 in the range 0 to 2<sup>32</sup>-1 the list is invalid and must be rejected.
 </span>
 
-### <dfn>RangeList</dfn> ### {#rangelist}
+### <dfn>RangeList</dfn> ### {#rangelist-object}
 
 A RangeList encodes a set of non-negative integers (0 to 2<sup>32</sup>-1). The set is encoded as a
 list of disjoint intervals. Each interval is represented by two integers, a
@@ -835,7 +835,7 @@ bytes = [03 07 03 81 7F]
 ```
 </div>
 
-### <dfn>FeatureTagSet</dfn> ### {#featuretagset}
+### <dfn>FeatureTagSet</dfn> ### {#featuretagset-object}
 
 A FeatureTagSet encodes a set of zero or more
 <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>.
@@ -898,8 +898,8 @@ for a type specifies for each field:
 
 Encodes a set of unsigned integers. The set is not ordered and does not
 allow duplicates. Members of the set are encoded into either a [=SparseBitSet=] or a
-[=RangeList=]. To obtain the final set the members of the sparse
-bit set and the list of ranges are unioned together.
+[=RangeList=]. To obtain the final set the members of [=CompressedSet/sparse_bit_set=]
+and the list of ranges in [=CompressedSet/range_deltas=] are unioned together.
 
 <table>
   <tr><th>ID&nbsp;</th><th>Field Name</th><th>Type</th></tr>
@@ -1074,7 +1074,7 @@ For a PatchResponse object to be well formed:
 Client {#client}
 ----------------
 
-### <dfn>Client State</dfn> ### {#client-state}
+### <dfn>Client State</dfn> ### {#client-state-section}
 
 The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:
@@ -1489,8 +1489,8 @@ match the checksum in [=PatchRequest/original_font_checksum=] or
 Additionally:
 
 *  <span class="conform server" id="conform-response-patch-format">The format of the patch in the
-    either the [=PatchResponse/patch=] or [=PatchResponse/replace=] fields must be one of those listed
-    in [=PatchResponse/accept_patch_format=]</span>.
+    either the [=PatchResponse/patch=] or [=PatchResponse/replacement=] fields must be one of those
+    listed in [=PatchRequest/accept_patch_format=]</span>.
 
 *  <span class="conform server" id="conform-response-patched-checksum">
      If [=PatchResponse/patch=] or [=PatchResponse/replacement=] fields are set the value of
@@ -1503,7 +1503,7 @@ Additionally:
     field to the axis space covered by the [=font subset=].</span>
 
 *  <span class="conform server" id="conform-response-ignore-unrecognized-formats">
-    If [=PatchResponse/accept_patch_format=] contains any unrecognized patch formats the server must
+    If [=PatchRequest/accept_patch_format=] contains any unrecognized patch formats the server must
     ignore the unrecognized ones.</span>
 
 Note: the server can respond with either a patch or a replacement but should try to produce a patch
@@ -1599,9 +1599,9 @@ font to a continuous space of [0, number of codepoints in the font). This transf
 to reduce the cost of representing codepoint sets.
 
 <span class="conform server " id="conform-remap-all">A codepoint ordering is encoded into a
-[=CompressedList=]. The list must contain all unicode codepoints that are supported by the
-font.</span> The index of a particular unicode codepoint in the list is
-the new value for that codepoint.
+[=IntegerList=]. The list must contain all unicode codepoints that are supported by the
+font.</span> The index of a particular unicode codepoint in the list is the new value for that
+codepoint.
 
 A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
 size of encoded codepoint sets for that font.

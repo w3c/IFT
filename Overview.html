@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="419a0a14d59bea665fa93e1a40a6d178ad4f3d45" name="document-revision">
+  <meta content="be5d2abda7a4fa10b3e05cb8519a7122fd31fe84" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -319,17 +319,17 @@ dfn > a.self-link::before      { content: "#"; }
         <li><a href="#encoding"><span class="secno">4.2.1</span> <span class="content">Encoding</span></a>
         <li><a href="#primitives"><span class="secno">4.2.2</span> <span class="content">Primitives</span></a>
         <li><a href="#protocol-version"><span class="secno">4.2.3</span> <span class="content"><span>ProtocolVersion</span></span></a>
-        <li><a href="#sparsebitset"><span class="secno">4.2.4</span> <span class="content"><span>SparseBitSet</span></span></a>
+        <li><a href="#sparsebitset-object"><span class="secno">4.2.4</span> <span class="content"><span>SparseBitSet</span></span></a>
         <li>
-         <a href="#integerlist"><span class="secno">4.2.5</span> <span class="content"><span>IntegerList</span></span></a>
+         <a href="#integerlist-object"><span class="secno">4.2.5</span> <span class="content"><span>IntegerList</span></span></a>
          <ol class="toc">
           <li><a href="#integerlist-deltas"><span class="secno">4.2.5.1</span> <span class="content">Delta Encoding</span></a>
           <li><a href="#integerlist-zigzag"><span class="secno">4.2.5.2</span> <span class="content">Zig-Zag Encoding</span></a>
           <li><a href="#integerlist-uintbase128"><span class="secno">4.2.5.3</span> <span class="content">UIntBase128 Encoding</span></a>
          </ol>
-        <li><a href="#sortedintegerlist"><span class="secno">4.2.6</span> <span class="content"><span>SortedIntegerList</span></span></a>
-        <li><a href="#rangelist"><span class="secno">4.2.7</span> <span class="content"><span>RangeList</span></span></a>
-        <li><a href="#featuretagset"><span class="secno">4.2.8</span> <span class="content"><span>FeatureTagSet</span></span></a>
+        <li><a href="#sortedintegerlist-object"><span class="secno">4.2.6</span> <span class="content"><span>SortedIntegerList</span></span></a>
+        <li><a href="#rangelist-object"><span class="secno">4.2.7</span> <span class="content"><span>RangeList</span></span></a>
+        <li><a href="#featuretagset-object"><span class="secno">4.2.8</span> <span class="content"><span>FeatureTagSet</span></span></a>
         <li><a href="#AxisSpace"><span class="secno">4.2.9</span> <span class="content"><span>AxisSpace</span></span></a>
         <li><a href="#objects"><span class="secno">4.2.10</span> <span class="content">Objects</span></a>
        </ol>
@@ -344,7 +344,7 @@ dfn > a.self-link::before      { content: "#"; }
       <li>
        <a href="#client"><span class="secno">4.4</span> <span class="content">Client</span></a>
        <ol class="toc">
-        <li><a href="#client-state"><span class="secno">4.4.1</span> <span class="content"><span>Client State</span></span></a>
+        <li><a href="#client-state-section"><span class="secno">4.4.1</span> <span class="content"><span>Client State</span></span></a>
         <li>
          <a href="#extend-subset"><span class="secno">4.4.2</span> <span class="content">Extending the Font Subset</span></a>
          <ol class="toc">
@@ -708,7 +708,7 @@ should be encoded by CBOR are given in the definition of those data types.</p>
    <p>An <a data-link-type="dfn" href="#integer" id="ref-for-integer">Integer</a> describing the version of this communication protocol being used by a <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest">PatchRequest</a> or <a data-link-type="dfn" href="#patchresponse" id="ref-for-patchresponse">PatchResponse</a>. This value guides the semantics and interpretation
 of the fields sent.</p>
    <p>This field is for future expansion. There currently is only one valid value, 0.</p>
-   <h4 class="heading settled" data-level="4.2.4" id="sparsebitset"><span class="secno">4.2.4. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sparsebitset①">SparseBitSet</dfn></span><a class="self-link" href="#sparsebitset"></a></h4>
+   <h4 class="heading settled" data-level="4.2.4" id="sparsebitset-object"><span class="secno">4.2.4. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sparsebitset">SparseBitSet</dfn></span><a class="self-link" href="#sparsebitset-object"></a></h4>
    <p>A data structure which compactly stores a set of distinct unsigned integers. The set is represented as
 a tree where each node has a fixed number of children that recursively sub-divides an interval into
 equal partitions. A tree of height <i>H</i> with branching factor <i>B</i> can store set membership
@@ -903,13 +903,13 @@ ByteString:
       <p>n<sub>3</sub> append 0011. Bit 0 set for value 16, bit 1 set for value 17.</p>
     </ul>
    </div>
-   <h4 class="heading settled" data-level="4.2.5" id="integerlist"><span class="secno">4.2.5. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="integerlist①">IntegerList</dfn></span><a class="self-link" href="#integerlist"></a></h4>
+   <h4 class="heading settled" data-level="4.2.5" id="integerlist-object"><span class="secno">4.2.5. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="integerlist">IntegerList</dfn></span><a class="self-link" href="#integerlist-object"></a></h4>
    <p>A data structure which compactly represents a list of non-negative integers
 from 0 to 2<sup>31</sup>-1. The list is encoded into a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring①">ByteString</a> for transport.</p>
    <p>There are three steps of encoding/compression: first delta, second zig-zag, and finally UIntBase128.
 The final <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring②">ByteString</a> result is simply the concatenation of the individual UIntBase128
 encoded bytes.</p>
-   <p><a data-link-type="dfn" href="#integerlist①" id="ref-for-integerlist①">IntegerList</a> encoding must reject an input list which contains values not in the range
+   <p><a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist">IntegerList</a> encoding must reject an input list which contains values not in the range
 0 to 2<sup>31</sup>-1. Likewise if decoding an IntegerList results in values which are not
 in the range 0 to 2<sup>31</sup>-1 the list is invalid and must be rejected.</p>
    <h5 class="heading settled" data-level="4.2.5.1" id="integerlist-deltas"><span class="secno">4.2.5.1. </span><span class="content">Delta Encoding</span><a class="self-link" href="#integerlist-deltas"></a></h5>
@@ -1055,16 +1055,16 @@ bytes = [2E 28 3D 11 81 00 02 02 81 09]
          └┘ └┘ └┘ └┘ └───┘ └┘ └┘ └───┘
 </pre>
    </div>
-   <h4 class="heading settled" data-level="4.2.6" id="sortedintegerlist"><span class="secno">4.2.6. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sortedintegerlist①">SortedIntegerList</dfn></span><a class="self-link" href="#sortedintegerlist"></a></h4>
+   <h4 class="heading settled" data-level="4.2.6" id="sortedintegerlist-object"><span class="secno">4.2.6. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sortedintegerlist">SortedIntegerList</dfn></span><a class="self-link" href="#sortedintegerlist-object"></a></h4>
    <p>A data structure which compactly represents a sorted list of ascending non-negative integers
 (0 to 2<sup>32</sup>-1). The list is encoded into a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring③">ByteString</a> for transport.</p>
-   <p>This is a variation on <a data-link-type="dfn" href="#integerlist①" id="ref-for-integerlist①①">IntegerList</a> with better compression. Sorted lists only use two steps of
+   <p>This is a variation on <a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist①">IntegerList</a> with better compression. Sorted lists only use two steps of
 encoding/compression: first deltas and then UIntBase128. The <a href="#integerlist-zigzag">§ 4.2.5.2 Zig-Zag Encoding</a> step is skipped.
 This allows twice the range in UIntBase128, so that single bytes may be used more often.</p>
-   <p><a data-link-type="dfn" href="#sortedintegerlist①" id="ref-for-sortedintegerlist①">SortedIntegerList</a> encoding must reject an input list which contains values not in the range
-0 to 2<sup>32</sup>-1. <span class="conform server client" id="conform-sorted-integer-list-rejects-illegal"> Likewise if decoding an <a data-link-type="dfn" href="#integerlist①" id="ref-for-integerlist①②">IntegerList</a> results in values which are not
+   <p><a data-link-type="dfn" href="#sortedintegerlist" id="ref-for-sortedintegerlist">SortedIntegerList</a> encoding must reject an input list which contains values not in the range
+0 to 2<sup>32</sup>-1. <span class="conform server client" id="conform-sorted-integer-list-rejects-illegal"> Likewise if decoding an <a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist②">IntegerList</a> results in values which are not
 in the range 0 to 2<sup>32</sup>-1 the list is invalid and must be rejected. </span></p>
-   <h4 class="heading settled" data-level="4.2.7" id="rangelist"><span class="secno">4.2.7. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="rangelist①">RangeList</dfn></span><a class="self-link" href="#rangelist"></a></h4>
+   <h4 class="heading settled" data-level="4.2.7" id="rangelist-object"><span class="secno">4.2.7. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="rangelist">RangeList</dfn></span><a class="self-link" href="#rangelist-object"></a></h4>
    <p>A RangeList encodes a set of non-negative integers (0 to 2<sup>32</sup>-1). The set is encoded as a
 list of disjoint intervals. Each interval is represented by two integers, a
 start (inclusive) and end (inclusive).</p>
@@ -1074,7 +1074,7 @@ The list must be non-decreasing, i.e. min<sub>i=1..n-1</sub> >= max<sub>i-1<sub>
    <p>To encode this list, we convert it to a list L of 2n integers, where
 L<sub>2i</sub> = min<sub>i</sub> and L<sub>2i+1</sub> = max<sub>i</sub> for
 i = 0..n-1.</p>
-   <p>L is a sorted list of integers, so a <a data-link-type="dfn" href="#sortedintegerlist①" id="ref-for-sortedintegerlist①①">SortedIntegerList</a> is used to encode it as a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring④">ByteString</a>.</p>
+   <p>L is a sorted list of integers, so a <a data-link-type="dfn" href="#sortedintegerlist" id="ref-for-sortedintegerlist①">SortedIntegerList</a> is used to encode it as a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring④">ByteString</a>.</p>
    <div class="example" id="example-228f592b">
     <a class="self-link" href="#example-228f592b"></a> 
 <pre>range_list = [3, 10], [13, 268]
@@ -1083,9 +1083,9 @@ delta_list = [3, 7, 3, 255]
 bytes = [03 07 03 81 7F]
 </pre>
    </div>
-   <h4 class="heading settled" data-level="4.2.8" id="featuretagset"><span class="secno">4.2.8. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="featuretagset①">FeatureTagSet</dfn></span><a class="self-link" href="#featuretagset"></a></h4>
+   <h4 class="heading settled" data-level="4.2.8" id="featuretagset-object"><span class="secno">4.2.8. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="featuretagset">FeatureTagSet</dfn></span><a class="self-link" href="#featuretagset-object"></a></h4>
    <p>A FeatureTagSet encodes a set of zero or more <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>.
-Each feature tag is mapped to an integer value and then the set of mapped integers are encoded in a <a data-link-type="dfn" href="#sortedintegerlist①" id="ref-for-sortedintegerlist①②">SortedIntegerList</a>. Feature tags are mapped to integers as follows:</p>
+Each feature tag is mapped to an integer value and then the set of mapped integers are encoded in a <a data-link-type="dfn" href="#sortedintegerlist" id="ref-for-sortedintegerlist②">SortedIntegerList</a>. Feature tags are mapped to integers as follows:</p>
    <ul>
     <li data-md>
      <p>If the tag is found in <a href="#feature-tag-list">Appendix B: Default Feature Tags and Encoding IDs</a>:</p>
@@ -1101,7 +1101,7 @@ not encoded.</p>
 little endian integer.</p>
    </ul>
    <p>The final encoding is produced by sorting the mapped integers (exlcuding tags which are skipped)
-into ascending order and then encoding the sorted list as a <a data-link-type="dfn" href="#sortedintegerlist①" id="ref-for-sortedintegerlist①③">SortedIntegerList</a>.</p>
+into ascending order and then encoding the sorted list as a <a data-link-type="dfn" href="#sortedintegerlist" id="ref-for-sortedintegerlist③">SortedIntegerList</a>.</p>
    <p>When decoding a FeatureTagSet the integer values are mapped back to the original tags by reversing
 the above mapping rules. <span class="conform server client" id="conform-feature-tag-set-defaults">Additionally all
 default features in <a href="#feature-tag-list">Appendix B: Default Feature Tags and Encoding IDs</a> must be added to the decoded set.</span></p>
@@ -1130,8 +1130,7 @@ for a type specifies for each field:</p>
    <h3 class="heading settled" data-level="4.3" id="schemas"><span class="secno">4.3. </span><span class="content">Object Schemas</span><a class="self-link" href="#schemas"></a></h3>
    <h4 class="heading settled" data-level="4.3.1" id="CompressedSet"><span class="secno">4.3.1. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="compressedset">CompressedSet</dfn></span><a class="self-link" href="#CompressedSet"></a></h4>
    <p>Encodes a set of unsigned integers. The set is not ordered and does not
-allow duplicates. Members of the set are encoded into either a <a data-link-type="dfn" href="#sparsebitset①" id="ref-for-sparsebitset①">SparseBitSet</a> or a <a data-link-type="dfn" href="#rangelist①" id="ref-for-rangelist①">RangeList</a>. To obtain the final set the members of the sparse
-bit set and the list of ranges are unioned together.</p>
+allow duplicates. Members of the set are encoded into either a <a data-link-type="dfn" href="#sparsebitset" id="ref-for-sparsebitset">SparseBitSet</a> or a <a data-link-type="dfn" href="#rangelist" id="ref-for-rangelist">RangeList</a>. To obtain the final set the members of <a data-link-type="dfn" href="#compressedset-sparse_bit_set" id="ref-for-compressedset-sparse_bit_set">sparse_bit_set</a> and the list of ranges in <a data-link-type="dfn" href="#compressedset-range_deltas" id="ref-for-compressedset-range_deltas">range_deltas</a> are unioned together.</p>
    <table>
     <tbody>
      <tr>
@@ -1140,12 +1139,12 @@ bit set and the list of ranges are unioned together.</p>
       <th>Type
      <tr>
       <td>0
-      <td><dfn data-dfn-for="CompressedSet" data-dfn-type="dfn" data-noexport id="compressedset-sparse_bit_set">sparse_bit_set<a class="self-link" href="#compressedset-sparse_bit_set"></a></dfn>
-      <td><a data-link-type="dfn" href="#sparsebitset①" id="ref-for-sparsebitset①①">SparseBitSet</a> (<a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑥">ByteString</a>)
+      <td><dfn class="dfn-paneled" data-dfn-for="CompressedSet" data-dfn-type="dfn" data-noexport id="compressedset-sparse_bit_set">sparse_bit_set</dfn>
+      <td><a data-link-type="dfn" href="#sparsebitset" id="ref-for-sparsebitset①">SparseBitSet</a> (<a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑥">ByteString</a>)
      <tr>
       <td>1
-      <td><dfn data-dfn-for="CompressedSet" data-dfn-type="dfn" data-noexport id="compressedset-range_deltas">range_deltas<a class="self-link" href="#compressedset-range_deltas"></a></dfn>
-      <td><a data-link-type="dfn" href="#rangelist①" id="ref-for-rangelist①①">RangeList</a> (<a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑦">ByteString</a>)
+      <td><dfn class="dfn-paneled" data-dfn-for="CompressedSet" data-dfn-type="dfn" data-noexport id="compressedset-range_deltas">range_deltas</dfn>
+      <td><a data-link-type="dfn" href="#rangelist" id="ref-for-rangelist①">RangeList</a> (<a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑦">ByteString</a>)
    </table>
    <h4 class="heading settled" data-level="4.3.2" id="AxisInterval"><span class="secno">4.3.2. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="axisinterval">AxisInterval</dfn></span><a class="self-link" href="#AxisInterval"></a></h4>
    <table>
@@ -1206,11 +1205,11 @@ on some variable axis in a font.</p>
      <tr>
       <td>6
       <td><dfn class="dfn-paneled" data-dfn-for="PatchRequest" data-dfn-type="dfn" data-noexport id="patchrequest-features_have">features_have</dfn>
-      <td><a data-link-type="dfn" href="#featuretagset①" id="ref-for-featuretagset①">FeatureTagSet</a>
+      <td><a data-link-type="dfn" href="#featuretagset" id="ref-for-featuretagset">FeatureTagSet</a>
      <tr>
       <td>7
       <td><dfn class="dfn-paneled" data-dfn-for="PatchRequest" data-dfn-type="dfn" data-noexport id="patchrequest-features_needed">features_needed</dfn>
-      <td><a data-link-type="dfn" href="#featuretagset①" id="ref-for-featuretagset①①">FeatureTagSet</a>
+      <td><a data-link-type="dfn" href="#featuretagset" id="ref-for-featuretagset①">FeatureTagSet</a>
      <tr>
       <td>8
       <td><dfn class="dfn-paneled" data-dfn-for="PatchRequest" data-dfn-type="dfn" data-noexport id="patchrequest-axis_space_have">axis_space_have</dfn>
@@ -1282,7 +1281,7 @@ set then <a data-link-type="dfn" href="#patchrequest-ordering_checksum" id="ref-
      <tr>
       <td>6
       <td><dfn class="dfn-paneled" data-dfn-for="PatchResponse" data-dfn-type="dfn" data-noexport id="patchresponse-codepoint_ordering">codepoint_ordering</dfn>
-      <td><a data-link-type="dfn" href="#integerlist①" id="ref-for-integerlist①③">IntegerList</a>
+      <td><a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist③">IntegerList</a>
      <tr>
       <td>7
       <td><dfn class="dfn-paneled" data-dfn-for="PatchResponse" data-dfn-type="dfn" data-noexport id="patchresponse-ordering_checksum">ordering_checksum</dfn>
@@ -1298,7 +1297,7 @@ set then <a data-link-type="dfn" href="#patchrequest-ordering_checksum" id="ref-
      <tr>
       <td>10
       <td><dfn class="dfn-paneled" data-dfn-for="PatchResponse" data-dfn-type="dfn" data-noexport id="patchresponse-original_features">original_features</dfn>
-      <td><a data-link-type="dfn" href="#featuretagset①" id="ref-for-featuretagset①②">FeatureTagSet</a>
+      <td><a data-link-type="dfn" href="#featuretagset" id="ref-for-featuretagset②">FeatureTagSet</a>
    </table>
    <p>For a PatchResponse object to be well formed:</p>
    <ul>
@@ -1315,7 +1314,7 @@ set then <a data-link-type="dfn" href="#patchrequest-ordering_checksum" id="ref-
      <p><span class="conform server" id="conform-response-ordering-checksum"> If <a data-link-type="dfn" href="#patchresponse-codepoint_ordering" id="ref-for-patchresponse-codepoint_ordering">codepoint_ordering</a> is set then <a data-link-type="dfn" href="#patchresponse-ordering_checksum" id="ref-for-patchresponse-ordering_checksum">ordering_checksum</a> must be set.</span></p>
    </ul>
    <h3 class="heading settled" data-level="4.4" id="client"><span class="secno">4.4. </span><span class="content">Client</span><a class="self-link" href="#client"></a></h3>
-   <h4 class="heading settled" data-level="4.4.1" id="client-state"><span class="secno">4.4.1. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="client-state①">Client State</dfn></span><a class="self-link" href="#client-state"></a></h4>
+   <h4 class="heading settled" data-level="4.4.1" id="client-state-section"><span class="secno">4.4.1. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="client-state">Client State</dfn></span><a class="self-link" href="#client-state-section"></a></h4>
    <p>The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:</p>
    <ul>
@@ -1352,7 +1351,7 @@ features, and/or design-variation space. The inputs to this algorithm are:</p>
      <p>Fragement Identifier (optional): if the font at the font url is a collection of fonts, the fragment
 identifier (<a href="https://www.rfc-editor.org/rfc/rfc8081#section-4.2">The "font" Top-Level Media Type § section-4.2</a>) identifies a single font within the collection.</p>
     <li data-md>
-     <p>Client State (optional): previously saved <a data-link-type="dfn" href="#client-state①" id="ref-for-client-state①">client state</a> for the given
+     <p>Client State (optional): previously saved <a data-link-type="dfn" href="#client-state" id="ref-for-client-state">client state</a> for the given
 font url, or null.</p>
     <li data-md>
      <p>Desired Subset Definition: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">description</a> of the desired
@@ -1365,7 +1364,7 @@ HTTP fetching algorithm the user agent supports.</p>
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p>Client State: <a data-link-type="dfn" href="#client-state①" id="ref-for-client-state①①">client state</a> that has been updated to contain a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> which covers at
+     <p>Client State: <a data-link-type="dfn" href="#client-state" id="ref-for-client-state①">client state</a> that has been updated to contain a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> which covers at
 least the requested subset definition.</p>
     <li data-md>
      <p>Cache fields: HTTP cache fields <a href="https://www.rfc-editor.org/rfc/rfc9111#name-field-definitions">HTTP Caching § name-field-definitions</a> describing how client state
@@ -1677,15 +1676,15 @@ the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①�
    <ul>
     <li data-md>
      <p><span class="conform server" id="conform-response-patch-format">The format of the patch in the
-either the <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑥">patch</a> or <a data-link-type="dfn">replace</a> fields must be one of those listed
-in <a data-link-type="dfn">accept_patch_format</a></span>.</p>
+either the <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑥">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑥">replacement</a> fields must be one of those
+listed in <a data-link-type="dfn" href="#patchrequest-accept_patch_format" id="ref-for-patchrequest-accept_patch_format②">accept_patch_format</a></span>.</p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-patched-checksum"> If <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑦">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑥">replacement</a> fields are set the value of <a data-link-type="dfn" href="#patchresponse-patched_checksum" id="ref-for-patchresponse-patched_checksum③">patched_checksum</a> must be set to the checksum of the extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③①">font subset</a>.
+     <p><span class="conform server" id="conform-response-patched-checksum"> If <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑦">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑦">replacement</a> fields are set the value of <a data-link-type="dfn" href="#patchresponse-patched_checksum" id="ref-for-patchresponse-patched_checksum③">patched_checksum</a> must be set to the checksum of the extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③①">font subset</a>.
  The checksum value must be computed by the procedure in <a href="#computing-checksums">§ 4.6 Computing Checksums</a>.</span></p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-subset-axis-space-field"> If <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑧">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑦">replacement</a> fields are set and the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①④">original font</a> has variation axes, the response must set the <a data-link-type="dfn" href="#patchresponse-subset_axis_space" id="ref-for-patchresponse-subset_axis_space②">subset_axis_space</a> field to the axis space covered by the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③②">font subset</a>.</span></p>
+     <p><span class="conform server" id="conform-response-subset-axis-space-field"> If <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑧">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑧">replacement</a> fields are set and the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①④">original font</a> has variation axes, the response must set the <a data-link-type="dfn" href="#patchresponse-subset_axis_space" id="ref-for-patchresponse-subset_axis_space②">subset_axis_space</a> field to the axis space covered by the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③②">font subset</a>.</span></p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-ignore-unrecognized-formats"> If <a data-link-type="dfn">accept_patch_format</a> contains any unrecognized patch formats the server must
+     <p><span class="conform server" id="conform-response-ignore-unrecognized-formats"> If <a data-link-type="dfn" href="#patchrequest-accept_patch_format" id="ref-for-patchrequest-accept_patch_format③">accept_patch_format</a> contains any unrecognized patch formats the server must
 ignore the unrecognized ones.</span></p>
    </ul>
    <p class="note" role="note"><span>Note:</span> the server can respond with either a patch or a replacement but should try to produce a patch
@@ -1761,9 +1760,9 @@ in little endian order.</p>
    <p>A codepoint reordering for a font defines a function which maps unicode codepoint values from the
 font to a continuous space of [0, number of codepoints in the font). This transformation is intended
 to reduce the cost of representing codepoint sets.</p>
-   <p><span class="conform server " id="conform-remap-all">A codepoint ordering is encoded into a <a data-link-type="dfn">CompressedList</a>. The list must contain all unicode codepoints that are supported by the
-font.</span> The index of a particular unicode codepoint in the list is
-the new value for that codepoint.</p>
+   <p><span class="conform server " id="conform-remap-all">A codepoint ordering is encoded into a <a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist④">IntegerList</a>. The list must contain all unicode codepoints that are supported by the
+font.</span> The index of a particular unicode codepoint in the list is the new value for that
+codepoint.</p>
    <p>A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
 size of encoded codepoint sets for that font.</p>
    <h4 class="heading settled" data-level="4.7.1" id="reordering-checksum"><span class="secno">4.7.1. </span><span class="content">Codepoint Reordering Checksum</span><a class="self-link" href="#reordering-checksum"></a></h4>
@@ -2354,7 +2353,7 @@ itself be statically compressed.</p>
    <li><a href="#patchrequest-axis_space_needed">axis_space_needed</a><span>, in § 4.3.3</span>
    <li><a href="#patchrequest-base_checksum">base_checksum</a><span>, in § 4.3.3</span>
    <li><a href="#bytestring">ByteString</a><span>, in § 4.2.2</span>
-   <li><a href="#client-state①">Client State</a><span>, in § 4.4.1</span>
+   <li><a href="#client-state">Client State</a><span>, in § 4.4.1</span>
    <li><a href="#patchresponse-codepoint_ordering">codepoint_ordering</a><span>, in § 4.3.4</span>
    <li><a href="#patchrequest-codepoints_have">codepoints_have</a><span>, in § 4.3.3</span>
    <li><a href="#patchrequest-codepoints_needed">codepoints_needed</a><span>, in § 4.3.3</span>
@@ -2363,7 +2362,7 @@ itself be statically compressed.</p>
    <li><a href="#axisinterval-end">end</a><span>, in § 4.3.2</span>
    <li><a href="#patchrequest-features_have">features_have</a><span>, in § 4.3.3</span>
    <li><a href="#patchrequest-features_needed">features_needed</a><span>, in § 4.3.3</span>
-   <li><a href="#featuretagset①">FeatureTagSet</a><span>, in § 4.2.8</span>
+   <li><a href="#featuretagset">FeatureTagSet</a><span>, in § 4.2.8</span>
    <li><a href="#float">Float</a><span>, in § 4.2.2</span>
    <li><a href="#font-subset">font subset</a><span>, in § 4.1</span>
    <li><a href="#font-subset-definition">font subset definition</a><span>, in § 4.1</span>
@@ -2371,7 +2370,7 @@ itself be statically compressed.</p>
    <li><a href="#patchrequest-indices_have">indices_have</a><span>, in § 4.3.3</span>
    <li><a href="#patchrequest-indices_needed">indices_needed</a><span>, in § 4.3.3</span>
    <li><a href="#integer">Integer</a><span>, in § 4.2.2</span>
-   <li><a href="#integerlist①">IntegerList</a><span>, in § 4.2.5</span>
+   <li><a href="#integerlist">IntegerList</a><span>, in § 4.2.5</span>
    <li>
     ordering_checksum
     <ul>
@@ -2402,13 +2401,13 @@ itself be statically compressed.</p>
     </ul>
    <li><a href="#protocolversion">ProtocolVersion</a><span>, in § 4.2.3</span>
    <li><a href="#compressedset-range_deltas">range_deltas</a><span>, in § 4.3.1</span>
-   <li><a href="#rangelist①">RangeList</a><span>, in § 4.2.7</span>
+   <li><a href="#rangelist">RangeList</a><span>, in § 4.2.7</span>
    <li><a href="#range-request-optimized-font">range-request optimized font</a><span>, in § 5.2.2</span>
    <li><a href="#range-request-threshold">range-request threshold</a><span>, in § 5.3.1</span>
    <li><a href="#patchresponse-replacement">replacement</a><span>, in § 4.3.4</span>
-   <li><a href="#sortedintegerlist①">SortedIntegerList</a><span>, in § 4.2.6</span>
+   <li><a href="#sortedintegerlist">SortedIntegerList</a><span>, in § 4.2.6</span>
    <li><a href="#compressedset-sparse_bit_set">sparse_bit_set</a><span>, in § 4.3.1</span>
-   <li><a href="#sparsebitset①">SparseBitSet</a><span>, in § 4.2.4</span>
+   <li><a href="#sparsebitset">SparseBitSet</a><span>, in § 4.2.4</span>
    <li><a href="#axisinterval-start">start</a><span>, in § 4.3.2</span>
    <li><a href="#string">String</a><span>, in § 4.2.2</span>
    <li><a href="#patchresponse-subset_axis_space">subset_axis_space</a><span>, in § 4.3.4</span>
@@ -2659,39 +2658,40 @@ itself be statically compressed.</p>
     <li><a href="#ref-for-protocolversion①">4.3.4. PatchResponse</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="sparsebitset①">
-   <b><a href="#sparsebitset①">#sparsebitset①</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="sparsebitset">
+   <b><a href="#sparsebitset">#sparsebitset</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-sparsebitset①">4.3.1. CompressedSet</a> <a href="#ref-for-sparsebitset①①">(2)</a>
+    <li><a href="#ref-for-sparsebitset">4.3.1. CompressedSet</a> <a href="#ref-for-sparsebitset①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="integerlist①">
-   <b><a href="#integerlist①">#integerlist①</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="integerlist">
+   <b><a href="#integerlist">#integerlist</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-integerlist①">4.2.5. IntegerList</a>
-    <li><a href="#ref-for-integerlist①①">4.2.6. SortedIntegerList</a> <a href="#ref-for-integerlist①②">(2)</a>
-    <li><a href="#ref-for-integerlist①③">4.3.4. PatchResponse</a>
+    <li><a href="#ref-for-integerlist">4.2.5. IntegerList</a>
+    <li><a href="#ref-for-integerlist①">4.2.6. SortedIntegerList</a> <a href="#ref-for-integerlist②">(2)</a>
+    <li><a href="#ref-for-integerlist③">4.3.4. PatchResponse</a>
+    <li><a href="#ref-for-integerlist④">4.7. Codepoint Reordering</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="sortedintegerlist①">
-   <b><a href="#sortedintegerlist①">#sortedintegerlist①</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="sortedintegerlist">
+   <b><a href="#sortedintegerlist">#sortedintegerlist</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-sortedintegerlist①">4.2.6. SortedIntegerList</a>
-    <li><a href="#ref-for-sortedintegerlist①①">4.2.7. RangeList</a>
-    <li><a href="#ref-for-sortedintegerlist①②">4.2.8. FeatureTagSet</a> <a href="#ref-for-sortedintegerlist①③">(2)</a>
+    <li><a href="#ref-for-sortedintegerlist">4.2.6. SortedIntegerList</a>
+    <li><a href="#ref-for-sortedintegerlist①">4.2.7. RangeList</a>
+    <li><a href="#ref-for-sortedintegerlist②">4.2.8. FeatureTagSet</a> <a href="#ref-for-sortedintegerlist③">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="rangelist①">
-   <b><a href="#rangelist①">#rangelist①</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="rangelist">
+   <b><a href="#rangelist">#rangelist</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-rangelist①">4.3.1. CompressedSet</a> <a href="#ref-for-rangelist①①">(2)</a>
+    <li><a href="#ref-for-rangelist">4.3.1. CompressedSet</a> <a href="#ref-for-rangelist①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="featuretagset①">
-   <b><a href="#featuretagset①">#featuretagset①</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="featuretagset">
+   <b><a href="#featuretagset">#featuretagset</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-featuretagset①">4.3.3. PatchRequest</a> <a href="#ref-for-featuretagset①①">(2)</a>
-    <li><a href="#ref-for-featuretagset①②">4.3.4. PatchResponse</a>
+    <li><a href="#ref-for-featuretagset">4.3.3. PatchRequest</a> <a href="#ref-for-featuretagset①">(2)</a>
+    <li><a href="#ref-for-featuretagset②">4.3.4. PatchResponse</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="axisspace">
@@ -2705,6 +2705,18 @@ itself be statically compressed.</p>
    <b><a href="#compressedset">#compressedset</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-compressedset">4.3.3. PatchRequest</a> <a href="#ref-for-compressedset①">(2)</a> <a href="#ref-for-compressedset②">(3)</a> <a href="#ref-for-compressedset③">(4)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="compressedset-sparse_bit_set">
+   <b><a href="#compressedset-sparse_bit_set">#compressedset-sparse_bit_set</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-compressedset-sparse_bit_set">4.3.1. CompressedSet</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="compressedset-range_deltas">
+   <b><a href="#compressedset-range_deltas">#compressedset-range_deltas</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-compressedset-range_deltas">4.3.1. CompressedSet</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="axisinterval">
@@ -2748,6 +2760,7 @@ itself be statically compressed.</p>
    <ul>
     <li><a href="#ref-for-patchrequest-accept_patch_format">4.3.3. PatchRequest</a>
     <li><a href="#ref-for-patchrequest-accept_patch_format①">4.4.2. Extending the Font Subset</a>
+    <li><a href="#ref-for-patchrequest-accept_patch_format②">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-accept_patch_format③">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="patchrequest-codepoints_have">
@@ -2876,7 +2889,7 @@ itself be statically compressed.</p>
    <ul>
     <li><a href="#ref-for-patchresponse-replacement">4.3.4. PatchResponse</a> <a href="#ref-for-patchresponse-replacement①">(2)</a>
     <li><a href="#ref-for-patchresponse-replacement②">4.4.2.1. Handling PatchResponse</a> <a href="#ref-for-patchresponse-replacement③">(2)</a> <a href="#ref-for-patchresponse-replacement④">(3)</a>
-    <li><a href="#ref-for-patchresponse-replacement⑤">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchresponse-replacement⑥">(2)</a> <a href="#ref-for-patchresponse-replacement⑦">(3)</a>
+    <li><a href="#ref-for-patchresponse-replacement⑤">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchresponse-replacement⑥">(2)</a> <a href="#ref-for-patchresponse-replacement⑦">(3)</a> <a href="#ref-for-patchresponse-replacement⑧">(4)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="patchresponse-original_font_checksum">
@@ -2937,10 +2950,10 @@ itself be statically compressed.</p>
     <li><a href="#ref-for-patchresponse-original_features②">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="client-state①">
-   <b><a href="#client-state①">#client-state①</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="client-state">
+   <b><a href="#client-state">#client-state</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-client-state①">4.4.2. Extending the Font Subset</a> <a href="#ref-for-client-state①①">(2)</a>
+    <li><a href="#ref-for-client-state">4.4.2. Extending the Font Subset</a> <a href="#ref-for-client-state①">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="patch-request-header">
