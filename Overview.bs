@@ -1079,26 +1079,28 @@ Client {#client}
 The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:
 
-*  [=Font subset=]: a byte array containing the binary data for the most recent version of the subset of
-    the font being incrementally transferred. For a new font this is initialized to empty byte array.
+*  <dfn for="Client State">Client font subset</dfn>: a byte array containing the binary data for the
+    most recent version of the [=font subset|subset=] of the font being incrementally transferred. For
+    a new font this is initialized to empty byte array.
     
-*  Original font checksum: the most recent value of [=PatchResponse/original_font_checksum=] received
-    from the server for this font.
+*  <dfn for="Client State">Original font checksum</dfn>: the most recent value of
+    [=PatchResponse/original_font_checksum=] received from the server for this font.
 
-*  Codepoint Reordering Map: The most recent [[#codepoint-reordering]] received from the server
-    for this font.
+*  <dfn for="Client State">Codepoint Reordering Map</dfn>: The most recent [[#codepoint-reordering]]
+    received from the server for this font. Supplied by [=PatchResponse/codepoint_ordering=].
 
-*  Codepoint Reordering Checksum: The most recent [=PatchResponse/ordering_checksum=] for this font.
+*  <dfn for="Client State">Codepoint Reordering Checksum</dfn>: The most recent
+    [=PatchResponse/ordering_checksum=] for this font.
 
-*  Original Font Axis Space: the variations axis space that the original font covers. Supplied
-    by [=PatchResponse/original_axis_space=]</a>.
+*  <dfn for="Client State">Original Font Axis Space</dfn>: the variations axis space that the original
+    font covers. Supplied by [=PatchResponse/original_axis_space=]</a>.
 
-*  Subset Axis Space: the most recent variations axis space that the subsetted font covers. Supplied by
-    [=PatchResponse/subset_axis_space=].
+*  <dfn for="Client State">Subset Axis Space</dfn>: the most recent variations axis space that the
+    subsetted font covers. Supplied by [=PatchResponse/subset_axis_space=].
 
 Additionally, the client can optionally store:
 
-*  Original font feature list: a list of the
+*  <dfn for="Client State">Original font feature list</dfn>: a list of the
     <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>
     that the original font has data for. This information can be used by the client to avoid sending
     unnecessary requests for features which the original font does not contain. Supplied by
@@ -1134,7 +1136,8 @@ The algorithm outputs:
 
 Extend [=font subset=] algorithm:
 
-1. Compare the input [=font subset definition=] to the input client state. If the input client state
+1. Compare the input [=font subset definition=] to the input client state. If the
+     [=Client State/client font subset|font subset=] in the input client state
      already satisifies the [=font subset definition=]. Then return client state, and null for the
      cache fields.
 
@@ -1184,13 +1187,13 @@ Extend [=font subset=] algorithm:
 
      *  [=PatchRequest/indices_have=]: encodes the set of additional codepoints that the current
          [=font subset=] contains data for. The codepoint values are transformed to indices by applying
-         [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
-         ordering for this font then this field should not be set.
+         [=Client State/codepoint reordering map=] to each codepoint value. If the client does not have
+         a codepoint ordering for this font then this field should not be set.
 
-     *  [=PatchRequest/indices_needed=]: encodes the set of codepoints that the client wants to add to its
-         [=font subset=]. The codepoint values are transformed to indices by applying
-         [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
-         ordering for this font then this field should not be set.
+     *  [=PatchRequest/indices_needed=]: encodes the set of codepoints that the client wants to add to
+         its [=font subset=]. The codepoint values are transformed to indices by applying
+         the [=Client State/codepoint reordering map=] to each codepoint value. If the client does not
+         have a codepoint ordering for this font then this field should not be set.
 
      *  [=PatchRequest/features_have=]: set to the list of
          <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">
@@ -1203,7 +1206,7 @@ Extend [=font subset=] algorithm:
          to the current [=font subset=]. Alternatively, if the client wishes to add all features from
          the [=original font=] to it's subset then this field should be unset.
 
-     *  [=PatchRequest/axis_space_have=]: set to the current value of <code>subset_axis_space</code>
+     *  [=PatchRequest/axis_space_have=]: set to the current value of [=Client State/subset axis space=]
          saved in the state for this font.
 
      *  [=PatchRequest/axis_space_needed=]: set to the intervals of each variable axis in the
@@ -1212,15 +1215,15 @@ Extend [=font subset=] algorithm:
 
      *  [=PatchRequest/ordering_checksum=]: If either of [=PatchRequest/indices_have=] or
          [=PatchRequest/indices_needed=] is set then this must be set to the current value of
-         <code>ordering_checksum</code> saved in the state for this font.
+         [=Client State/codepoint reordering checksum=] saved in the state for this font.
 
      *  [=PatchRequest/original_font_checksum=]:
-         Set to saved value for <code>original_font_checksum</code> in the state for this font. If
+         Set to saved value for [=Client State/original font checksum=] in the state for this font. If
          there is no saved value leave this field unset.
 
      *  [=PatchRequest/base_checksum=]:
-         Set to the checksum of the [=font subset=] byte array saved in the state for this font. See:
-         [[#computing-checksums]].
+         Set to the checksum of the [=Client State/client font subset|font subset=] byte array saved in
+         the state for this font. See: [[#computing-checksums]].
 
      *  [=PatchRequest/fragment_id=]:
          If a fragment identifier was provided as an input then this field must be set to the provided
@@ -1247,35 +1250,38 @@ should interpret and process the fields of the object as follows:
 
 1.  If field [=PatchResponse/replacement=] is set then: the byte array in this field is a binary patch
      in the format specified by [=PatchResponse/patch_format=]. Apply the binary patch to a base which
-     is an empty byte array. Replace the [=font subset=] in the input client state with the result of
-     the patch application.
+     is an empty byte array. Replace the [=Client State/client font subset|font subset=] in the input
+     client state with the result of the patch application.
 
 2. If field [=PatchResponse/patch=] is set then:  the byte array in this field is a binary patch
-    in the format specified by [=PatchResponse/patch_format=]. Apply the binary patch to the font
-    subset from the input client state. Replace the [=font subset=] in the input client state with the
-    result of the patch application.
+    in the format specifiedy [=PatchResponse/patch_format=]. Apply the binary patch to the
+    [=Client State/client font subset|font subset=] from the input client state. Replace the
+    [=Client State/client font subset|font subset=] in the input client state with the result of the
+    patch application.
 
 3. If either [=PatchResponse/replacement=] or [=PatchResponse/patch=] is set then:
     <a href="#computing-checksums">compute the checksum</a> of the [=font subset=] produced by the patch
     application in steps 1 or 2. If the computed checksum is not equal to [=PatchResponse/patched_checksum=]
     this is a recoverable error. Follow the procedure in [[#client-side-checksum-mismatch]]. Otherwise
-    update the original font checksum in the input client state with the value in
+    update the [=Client State/original font checksum=] in the input client state with the value in
     [=PatchResponse/original_font_checksum=].
 
-4. If fields [=PatchResponse/codepoint_ordering=] and [=PatchResponse/ordering_checksum=] are set then update
-    the codepoint ordering and checksum in the input client state with the new values specified by
-    these two fields. If neither [=PatchResponse/replacement=] nor [=PatchResponse/patch=] are set, then the
-    client should resend the request that triggered this response but use the new codepoint ordering
-    provided in this response.
+4. If fields [=PatchResponse/codepoint_ordering=] and [=PatchResponse/ordering_checksum=] are set then
+    update the [=Client State/codepoint reordering checksum=] in the input client state with the new
+    values specified by these two fields. If neither [=PatchResponse/replacement=] nor
+    [=PatchResponse/patch=] are set, then the client should resend the request that triggered this
+    response but use the new codepoint ordering provided in this response.
 
 5. If [=PatchResponse/original_features=] is set and the client has opted to save them then replace the
-    original feature list in the input client state with the value from the response.
+    [=Client State/original font feature list=] in the input client state with the value from the
+    response.
 
-6. If [=PatchResponse/original_axis_space=] is set then update the original axis space in the input client
-    state with the value specified in this field.
+6. If [=PatchResponse/original_axis_space=] is set then update the
+    [=Client State/original font axis space=] in the input client state with the value specified in
+    this field.
 
-7. If [=PatchResponse/subset_axis_space=] is set then update the subset axis space in the input client
-    state with the value specified in this field.
+7. If [=PatchResponse/subset_axis_space=] is set then update the
+    [=Client State/subset axis space=] in the input client state with the value specified in this field.
 
 After processing the response, return the updated input client state and any cache headers that were
 set on the response.
