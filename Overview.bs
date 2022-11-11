@@ -1106,25 +1106,29 @@ Additionally, the client can optionally store:
     unnecessary requests for features which the original font does not contain. Supplied by
     [=PatchResponse/original_features=].
 
-### Extending the Font Subset ### {#extend-subset}
+<h4 algorithm id="extend-subset">Extending the Font Subset</h4>
 
 This algorithm is used by the client to extends its [=font subset=] to cover additional codepoints,
-features, and/or design-variation space. The inputs to this algorithm are:
+features, and/or design-variation space.
 
-* Font URL: a URL where the font to be extended is located.
+<dfn abstract-op>Extend the font subset</dfn>
 
-* Fragement Identifier (optional): if the font at the font url is a collection of fonts, the fragment
-    identifier ([[rfc8081#section-4.2]]) identifies a single font within the collection.
+The inputs to this algorithm are:
 
-* Client State (optional): previously saved [=client state=] for the given
+* <var>font URL</var>: a URL where the font to be extended is located.
+
+* <var>fragment identifier</var> (optional): if the font at the font url is a collection of fonts,
+    the fragment identifier ([[rfc8081#section-4.2]]) identifies a single font within the collection.
+
+* <var>client state</var> (optional): previously saved [=client state=] for the given
     font url, or null.
 
-* Desired Subset Definition: a [=font subset definition|description=] of the desired
+* <var>desired subset definition</var>: a [=font subset definition|description=] of the desired
     minimum [=font subset=].
 
-* Fetch Algorithm: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder of this
-    section is desribed in terms of [[fetch#fetching]], but it is allowed to substitute whatever
-    HTTP fetching algorithm the user agent supports.
+* <var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder
+    of this section is desribed in terms of [[fetch#fetching]], but it is allowed to substitute
+    whatever HTTP fetching algorithm the user agent supports.
 
 The algorithm outputs:
 
@@ -1134,14 +1138,14 @@ The algorithm outputs:
 * Cache fields: HTTP cache fields [[rfc9111#name-field-definitions]] describing how client state
     can be cached, or null.
 
-Extend [=font subset=] algorithm:
+The algorithm:
 
-1. Compare the input [=font subset definition=] to the input client state. If the
-     [=Client State/client font subset|font subset=] in the input client state
-     already satisifies the [=font subset definition=]. Then return client state, and null for the
-     cache fields.
+1. Compare the <var>desired subset definition</var> to the <var>client state</var>. If the
+     [=Client State/client font subset|font subset=] in the <var>client state</var>
+     already satisifies the [=font subset definition=]. Then return <var>client state</var>, and null
+     for the cache fields.
 
-2. Otherwise make an HTTP request using the input fetching algorithm:
+2. Otherwise make an HTTP request using the <var>fetch algorithm</var>:
 
      * The request [=request/method=] must be either "GET" or "POST".
 
@@ -1153,7 +1157,7 @@ Extend [=font subset=] algorithm:
 
      * The request URL [=url/scheme=] must be "https".
 
-     * The request URL [=url/path=] is set to the input font URL.
+     * The request URL [=url/path=] is set to the input <var>font URL</var>.
 
      * If [=request/method=] is "POST" then, request [=request/body=] must be a single
          [=PatchRequest=] object encoded via CBOR.
@@ -1177,40 +1181,46 @@ Extend [=font subset=] algorithm:
          capable of decoding. Must contain at least one format.
 
      *  [=PatchRequest/codepoints_have=]: set to exactly the set of codepoints that the current
-         [=font subset=] contains data for. If the current [=font subset=] is an empty byte array this
+         [=Client State/client font subset=] contains data for. If the current
+         [=Client State/client font subset=] is an empty byte array this
          field is left unset. If the client has a codepoint ordering for this font then this field
          should not be set.
 
      *  [=PatchRequest/codepoints_needed=]: set to the set of codepoints that the client wants to
-         add to its [=font subset=]. If the client has a codepoint ordering for this font then this
-         field should not be set.
+         add to its [=font subset=] as defined in the <var>desired subset definition</var>. If the
+         <var>client state</var> has a [=Client State/codepoint reordering map=] for this font then
+         this field should not be set.
 
      *  [=PatchRequest/indices_have=]: encodes the set of additional codepoints that the current
-         [=font subset=] contains data for. The codepoint values are transformed to indices by applying
-         [=Client State/codepoint reordering map=] to each codepoint value. If the client does not have
-         a codepoint ordering for this font then this field should not be set.
+         [=Client State/client font subset=] contains data for. The codepoint values are transformed
+         to indices by applying [=Client State/codepoint reordering map=] to each codepoint value. If
+         the <var>client state</var> does not have a [=Client State/codepoint reordering map=] for this
+         font then this field should not be set.
 
      *  [=PatchRequest/indices_needed=]: encodes the set of codepoints that the client wants to add to
-         its [=font subset=]. The codepoint values are transformed to indices by applying
-         the [=Client State/codepoint reordering map=] to each codepoint value. If the client does not
-         have a codepoint ordering for this font then this field should not be set.
+         its [=font subset=] as defined in the <var>desired subset definition</var>. The codepoint
+         values are transformed to indices by applying the [=Client State/codepoint reordering map=]
+         to each codepoint value. If the client does not have a codepoint ordering for this font then
+         this field should not be set.
 
      *  [=PatchRequest/features_have=]: set to the list of
          <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">
-         opentype layout feature tags</a> that the current [=font subset=] has data for. If the current
-         [=font subset=] is an empty byte array this
-         field is left unset. Additionally, if the current [=font subset=] has all data for features
-         present in the [=original font=] then this field can be unset.
+         opentype layout feature tags</a> that the current [=Client State/client font subset=] has data
+         for. If the current [=Client State/client font subset=] is an empty byte array this
+         field is left unset. Additionally, if the current [=Client State/client font subset=] has all
+         data for features present in the [=original font=] then this field can be unset.
 
      *  [=PatchRequest/features_needed=]: set to the list of feature tags that the client wants to add
-         to the current [=font subset=]. Alternatively, if the client wishes to add all features from
-         the [=original font=] to it's subset then this field should be unset.
+         to the current [=font subset=] as defined in the <var>desired subset definition</var>.
+         Alternatively, if the client wishes to add all features from the [=original font=] to it's
+         subset then this field should be unset.
 
      *  [=PatchRequest/axis_space_have=]: set to the current value of [=Client State/subset axis space=]
-         saved in the state for this font.
+         saved in the <var>client state</var> for this font.
 
      *  [=PatchRequest/axis_space_needed=]: set to the intervals of each variable axis in the
-         [=original font=] that the client wants to add to its [=font subset=]. If the client wants an
+         [=original font=] that the client wants to add to its [=font subset=] as defined in the
+         <var>desired subset definition</var>. If the client wants an
          entire axis from the [=original font=] then that axis should not be listed.
 
      *  [=PatchRequest/ordering_checksum=]: If either of [=PatchRequest/indices_have=] or
@@ -1222,19 +1232,20 @@ Extend [=font subset=] algorithm:
          there is no saved value leave this field unset.
 
      *  [=PatchRequest/base_checksum=]:
-         Set to the checksum of the [=Client State/client font subset|font subset=] byte array saved in
-         the state for this font. See: [[#computing-checksums]].
+         Set to the checksum of the [=Client State/client font subset=] byte array saved in
+         the <var>client state</var> for this font. See: [[#computing-checksums]].
 
      *  [=PatchRequest/fragment_id=]:
-         If a fragment identifier was provided as an input then this field must be set to the provided
-         fragment identifier, otherwise it must be left unset.
+         If a <var>fragment identifier</var> was provided as an input then this field must be set to
+         the provided <var>fragment identifier</var>, otherwise it must be left unset.
 
 
      Note: It is allowed for the client to request more codepoints then it strictly needs. For
      example, on slower connections it may be more performant to request extra codepoints if
      that is likely to prevent a future request from needing to be sent.
 
-3. Goto [[#handling-patch-response]].
+<!-- TODO: change to algorithm ref -->
+3. Invoke [[#handling-patch-response]] with the response from the server and return the result.
 
 Note: POST is preferred for the HTTP method since it will not cause a CORS preflight request
 and the request object is more compactly encoded. GET should only be used during
@@ -1309,9 +1320,10 @@ If the checksum of the [=font subset=] computed by the client does not match the
 
 1. Discard the input client state for this font.
 
-2. <a href="#extend-subset">Resend the request</a>. Set the [=PatchRequest/codepoints_needed=] field
-    to the union of the codepoints in the discarded [=font subset=] and the set of code points
-    that the previous request was trying to add.
+<!-- TODO: specify the arguments to the extension algo -->
+2. Invoke [$Extend the font subset$] to resend the request. Set the
+    [=PatchRequest/codepoints_needed=] field to the union of the codepoints in the discarded
+    [=font subset=] and the set of code points that the previous request was trying to add.
 
     If the resent request also results in a checksum mismatch then this is an error. The client
     must not resend the request again and should follow [[#font-load-failed]]
@@ -1366,6 +1378,7 @@ The algorithm:
 
      * The request [=request/cache mode=] is "only-if-cached".
 
+<!-- TODO: use algorithm ref -->
 2.  If the request is successful and the response is "fresh" ([[RFC9111#name-freshness]])
      then invoke [[#extend-subset]] with:
 
@@ -1379,6 +1392,7 @@ The algorithm:
 
      Once that returns go to step 4.
 
+<!-- TODO: use algorithm ref -->
 3.  Otherwise, invoke [[#extend-subset]] with:
 
      *  Font url set to the input font url.
@@ -1832,7 +1846,7 @@ itself be statically compressed.
 
 <h3  id="content-inference-from-character-set">Content inference from character set</h3>
 
-IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see <a href="#extend-subset">Extending the Font Subset</a>.
+IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see [[#extend-subset]].
 
 The purpose of doing so is to allow the server to compute a binary patch to the existing font, adding more characters. Thus, fonts are transferred incrementally, as needed, which <a href="https://www.w3.org/TR/PFE-evaluation/#analysis-cjk">greatly reduces</a>> the bytes transferred and the overall network cost..
 
