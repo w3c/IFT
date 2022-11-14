@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="80e3fef99cb0d880fed69ab292aaa51d7ff8c1c1" name="document-revision">
+  <meta content="843e56738d50ca0e9e44a4c399e1077715dd0e1e" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -360,8 +360,7 @@ dfn > a.self-link::before      { content: "#"; }
          <a href="#extend-subset"><span class="secno">4.4.2</span> <span class="content">Extending the Font Subset</span></a>
          <ol class="toc">
           <li><a href="#handling-patch-response"><span class="secno">4.4.2.1</span> <span class="content">Handling Server Response</span></a>
-          <li><a href="#client-side-checksum-mismatch"><span class="secno">4.4.2.2</span> <span class="content">Client Side Checksum Mismatch</span></a>
-          <li><a href="#font-load-failed"><span class="secno">4.4.2.3</span> <span class="content">Font Load Failed</span></a>
+          <li><a href="#font-load-failed"><span class="secno">4.4.2.2</span> <span class="content">Font Load Failed</span></a>
          </ol>
         <li><a href="#load-a-font"><span class="secno">4.4.3</span> <span class="content">Load a Font in a User Agent with a HTTP Cache</span></a>
        </ol>
@@ -1506,15 +1505,15 @@ can be cached, or null.</p>
       <li data-md>
        <p>If it is a redirect <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-status" id="ref-for-concept-status">status</a>: follow normal redirect handling, such as <a href="https://fetch.spec.whatwg.org/#http-redirect-fetch"><cite>Fetch Standard</cite> § 4.4 HTTP-redirect fetch</a> and then go back to step 1.</p>
       <li data-md>
-       <p>All other statuses, the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①①">font subset</a> extension has failed. Invoke <a href="#font-load-failed">§ 4.4.2.3 Font Load Failed</a> and return the result.</p>
+       <p>All other statuses, the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①①">font subset</a> extension has failed. Invoke <a href="#font-load-failed">§ 4.4.2.2 Font Load Failed</a> and return the result.</p>
      </ul>
     <li data-md>
      <p>Check the first four bytes of the <var>server response</var> <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body①">body</a>. If they are
  not equal to [0x49, 0x46, 0x54, 0x20] then this response is malformed.
- Invoke <a href="#font-load-failed">§ 4.4.2.3 Font Load Failed</a> and return the result.</p>
+ Invoke <a href="#font-load-failed">§ 4.4.2.2 Font Load Failed</a> and return the result.</p>
     <li data-md>
      <p>Interpret the remaining bytes of the <var>server response</var> <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body②">body</a> as a CBOR
- encoded <a data-link-type="dfn" href="#patchresponse" id="ref-for-patchresponse②">PatchResponse</a>. If the bytes are not decodable with CBOR, or the <a data-link-type="dfn" href="#patchresponse" id="ref-for-patchresponse③">PatchResponse</a> is not well formed, then this is an error. Invoke <a href="#font-load-failed">§ 4.4.2.3 Font Load Failed</a> and
+ encoded <a data-link-type="dfn" href="#patchresponse" id="ref-for-patchresponse②">PatchResponse</a>. If the bytes are not decodable with CBOR, or the <a data-link-type="dfn" href="#patchresponse" id="ref-for-patchresponse③">PatchResponse</a> is not well formed, then this is an error. Invoke <a href="#font-load-failed">§ 4.4.2.2 Font Load Failed</a> and
  return the result.</p>
     <li data-md>
      <p>If field <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement②">replacement</a> is set then: the byte array in this field is a binary patch
@@ -1526,8 +1525,19 @@ in the format specifiedy <a data-link-type="dfn" href="#patchresponse-patch_form
 result of the patch application.</p>
     <li data-md>
      <p>If either <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement③">replacement</a> or <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch③">patch</a> is set then: <a href="#computing-checksums">compute the checksum</a> of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①②">font subset</a> produced by the
-patch application in steps 1 or 2. If the computed checksum is not equal to <a data-link-type="dfn" href="#patchresponse-patched_checksum" id="ref-for-patchresponse-patched_checksum①">patched_checksum</a> this is a recoverable error. Follow the procedure in <a href="#client-side-checksum-mismatch">§ 4.4.2.2 Client Side Checksum Mismatch</a>. Otherwise update the <a data-link-type="dfn" href="#client-state-original-font-checksum" id="ref-for-client-state-original-font-checksum①">original font checksum</a> in
+patch application in steps 1 or 2.</p>
+     <ul>
+      <li data-md>
+       <p>If the computed checksum is not equal to <a data-link-type="dfn" href="#patchresponse-patched_checksum" id="ref-for-patchresponse-patched_checksum①">patched_checksum</a> this is a
+recoverable error. Discard the saved client state and invoke <a data-link-type="abstract-op" href="#abstract-opdef-extend-the-font-subset" id="ref-for-abstract-opdef-extend-the-font-subset">Extend the font subset</a> to
+resend the request with the same arguments as the original request, except client state is set
+to null. If the resent request also results in a checksum mismatch then this is an error. The
+client must not resend the request again and should invoke <a href="#font-load-failed">§ 4.4.2.2 Font Load Failed</a> and return the
+result. Otherwise return the result from the call to <a data-link-type="abstract-op" href="#abstract-opdef-extend-the-font-subset" id="ref-for-abstract-opdef-extend-the-font-subset①">Extend the font subset</a>.</p>
+      <li data-md>
+       <p>Otherwise update the <a data-link-type="dfn" href="#client-state-original-font-checksum" id="ref-for-client-state-original-font-checksum①">original font checksum</a> in
 the input <var>client state</var> with the value in <a data-link-type="dfn" href="#patchresponse-original_font_checksum" id="ref-for-patchresponse-original_font_checksum①">original_font_checksum</a>.</p>
+     </ul>
     <li data-md>
      <p>If fields <a data-link-type="dfn" href="#patchresponse-codepoint_ordering" id="ref-for-patchresponse-codepoint_ordering②">codepoint_ordering</a> and <a data-link-type="dfn" href="#patchresponse-ordering_checksum" id="ref-for-patchresponse-ordering_checksum②">ordering_checksum</a> are set then
 update the <a data-link-type="dfn" href="#client-state-codepoint-reordering-checksum" id="ref-for-client-state-codepoint-reordering-checksum①">codepoint reordering checksum</a> in the input <var>client state</var> with
@@ -1546,27 +1556,17 @@ specified in this field.</p>
    </ol>
    <p>After processing the response, return the updated input <var>client state</var> and any cache headers
 that were set on the response.</p>
-   <h5 class="heading settled" data-level="4.4.2.2" id="client-side-checksum-mismatch"><span class="secno">4.4.2.2. </span><span class="content">Client Side Checksum Mismatch</span><a class="self-link" href="#client-side-checksum-mismatch"></a></h5>
-   <p>If the checksum of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a> computed by the client does not match the <a data-link-type="dfn" href="#patchresponse-patched_checksum" id="ref-for-patchresponse-patched_checksum②">patched_checksum</a> in the server’s response then the client should:</p>
-   <ol>
-    <li data-md>
-     <p>Discard the input client state for this font.</p>
-    <li data-md>
-     <p>Invoke <a data-link-type="abstract-op" href="#abstract-opdef-extend-the-font-subset" id="ref-for-abstract-opdef-extend-the-font-subset">Extend the font subset</a> to resend the request. Set the <a data-link-type="dfn" href="#patchrequest-codepoints_needed" id="ref-for-patchrequest-codepoints_needed①">codepoints_needed</a> field to the union of the codepoints in the discarded <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a> and the set of code points that the previous request was trying to add.</p>
-     <p>If the resent request also results in a checksum mismatch then this is an error. The client
-must not resend the request again and should follow <a href="#font-load-failed">§ 4.4.2.3 Font Load Failed</a></p>
-   </ol>
-   <h5 class="heading settled" data-level="4.4.2.3" id="font-load-failed"><span class="secno">4.4.2.3. </span><span class="content">Font Load Failed</span><a class="self-link" href="#font-load-failed"></a></h5>
+   <h5 class="heading settled" data-level="4.4.2.2" id="font-load-failed"><span class="secno">4.4.2.2. </span><span class="content">Font Load Failed</span><a class="self-link" href="#font-load-failed"></a></h5>
    <p>If the font load or extension has failed the client should choose one of the following options:</p>
    <ol>
     <li data-md>
-     <p>If the client has a saved <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a>, it may choose to use that and then use the user
+     <p>If the client has a saved <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a>, it may choose to use that and then use the user
   agent’s existing font fallback mechanism for codepoints not covered by the subset.</p>
     <li data-md>
      <p>The client may re-issue the request as a regular non incremental font fetch to the same <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path①">path</a>. It must not include the patch subset request parameter. This will load
   the entire <a data-link-type="dfn" href="#original-font" id="ref-for-original-font④">original font</a>.</p>
     <li data-md>
-     <p>Discard the saved <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a>, and use the user agent’s existing font fallback mechanism.</p>
+     <p>Discard the saved <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a>, and use the user agent’s existing font fallback mechanism.</p>
    </ol>
    <p>Regardless of which of the above options are used, the saved client state for this font must be
 discarded.</p>
@@ -1581,12 +1581,12 @@ agent’s HTTP cache (<a data-link-type="biblio" href="#biblio-rfc9111">[RFC9111
      <p>Font URL: a URL where the font to be extended is located.</p>
     <li data-md>
      <p>Desired Subset Definition: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition②">description</a> of the desired
-minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑦">font subset</a>.</p>
+minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a>.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p>A <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑧">font subset</a> which covers at minimum the input subset definition.</p>
+     <p>A <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a> which covers at minimum the input subset definition.</p>
    </ul>
    <p>The algorithm:</p>
    <ol>
@@ -1637,7 +1637,7 @@ minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①�
      <p>If the returned cache fields are non-null update the cache entry for the input
  font url with the returned client state and returned cache fields.</p>
     <li data-md>
-     <p>Return the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑨">font subset</a> contained in the returned client state.</p>
+     <p>Return the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑦">font subset</a> contained in the returned client state.</p>
    </ol>
    <h3 class="heading settled" data-level="4.5" id="handling-patch-request"><span class="secno">4.5. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
    <p><span class="conform server" id="conform-successful-response">If the server receives a well formed <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest⑥">PatchRequest</a> over HTTPS for a font the server has and that was
@@ -1652,7 +1652,7 @@ that collection that a patch is desired for. The identified font is referred to 
      <p>Codepoints the client has: formed by the union of the codepoint sets specified by <a data-link-type="dfn" href="#patchrequest-codepoints_have" id="ref-for-patchrequest-codepoints_have②">codepoints_have</a> and <a data-link-type="dfn" href="#patchrequest-indices_have" id="ref-for-patchrequest-indices_have④">indices_have</a>. <span class="conform server" id="conform-remap-codepoints-have">The indices in <a data-link-type="dfn" href="#patchrequest-indices_have" id="ref-for-patchrequest-indices_have⑤">indices_have</a> must be mapped to codepoints by the application of the
  codepoint reordering with a checksum matching <a data-link-type="dfn" href="#patchrequest-ordering_checksum" id="ref-for-patchrequest-ordering_checksum②">ordering_checksum</a>.</span></p>
     <li data-md>
-     <p>Codepoints the client needs: formed by the union of the codepoint sets specified by <a data-link-type="dfn" href="#patchrequest-codepoints_needed" id="ref-for-patchrequest-codepoints_needed②">codepoints_needed</a> and <a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed③">indices_needed</a>. <span class="conform server" id="conform-remap-codepoints-needed">The indices in <a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed④">indices_needed</a> must be mapped to codepoints by the application of the
+     <p>Codepoints the client needs: formed by the union of the codepoint sets specified by <a data-link-type="dfn" href="#patchrequest-codepoints_needed" id="ref-for-patchrequest-codepoints_needed①">codepoints_needed</a> and <a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed③">indices_needed</a>. <span class="conform server" id="conform-remap-codepoints-needed">The indices in <a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed④">indices_needed</a> must be mapped to codepoints by the application of the
  codepoint reordering with a checksum matching <a data-link-type="dfn" href="#patchrequest-ordering_checksum" id="ref-for-patchrequest-ordering_checksum③">ordering_checksum</a>.</span></p>
    </ol>
    <p>Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>:</p>
@@ -1679,8 +1679,8 @@ that collection that a patch is desired for. The identified font is referred to 
 with a response that will cause the client to update it’s codepoint ordering to one the server
 will recognize via the process described in <a href="#handling-patch-response">§ 4.4.2.1 Handling Server Response</a> and not include any patch.
 That is the <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑤">patch</a> and <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑤">replacement</a> fields must not be set. </span></p>
-   <p><span class="conform server" id="conform-response-valid-patch"> Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 4.4.2.1 Handling Server Response</a> to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⓪">font subset</a> with checksum <a data-link-type="dfn" href="#patchrequest-base_checksum" id="ref-for-patchrequest-base_checksum②">base_checksum</a> it must
-result in an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②①">font subset</a>: </span></p>
+   <p><span class="conform server" id="conform-response-valid-patch"> Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 4.4.2.1 Handling Server Response</a> to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑧">font subset</a> with checksum <a data-link-type="dfn" href="#patchrequest-base_checksum" id="ref-for-patchrequest-base_checksum②">base_checksum</a> it must
+result in an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑨">font subset</a>: </span></p>
    <ul>
     <li data-md>
      <p><span class="conform server" id="conform-response-subset">That contains data for at least the union
@@ -1715,10 +1715,10 @@ the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①�
 either the <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑥">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑥">replacement</a> fields must be one of those
 listed in <a data-link-type="dfn" href="#patchrequest-accept_patch_format" id="ref-for-patchrequest-accept_patch_format②">accept_patch_format</a></span>.</p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-patched-checksum"> If <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑦">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑦">replacement</a> fields are set the value of <a data-link-type="dfn" href="#patchresponse-patched_checksum" id="ref-for-patchresponse-patched_checksum③">patched_checksum</a> must be set to the checksum of the extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a>.
+     <p><span class="conform server" id="conform-response-patched-checksum"> If <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑦">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑦">replacement</a> fields are set the value of <a data-link-type="dfn" href="#patchresponse-patched_checksum" id="ref-for-patchresponse-patched_checksum②">patched_checksum</a> must be set to the checksum of the extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⓪">font subset</a>.
  The checksum value must be computed by the procedure in <a href="#computing-checksums">§ 4.6 Computing Checksums</a>.</span></p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-subset-axis-space-field"> If <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑧">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑧">replacement</a> fields are set and the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①④">original font</a> has variation axes, the response must set the <a data-link-type="dfn" href="#patchresponse-subset_axis_space" id="ref-for-patchresponse-subset_axis_space②">subset_axis_space</a> field to the axis space covered by the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②③">font subset</a>.</span></p>
+     <p><span class="conform server" id="conform-response-subset-axis-space-field"> If <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑧">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑧">replacement</a> fields are set and the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①④">original font</a> has variation axes, the response must set the <a data-link-type="dfn" href="#patchresponse-subset_axis_space" id="ref-for-patchresponse-subset_axis_space②">subset_axis_space</a> field to the axis space covered by the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②①">font subset</a>.</span></p>
     <li data-md>
      <p><span class="conform server" id="conform-response-ignore-unrecognized-formats"> If <a data-link-type="dfn" href="#patchrequest-accept_patch_format" id="ref-for-patchrequest-accept_patch_format③">accept_patch_format</a> contains any unrecognized patch formats the server must
 ignore the unrecognized ones.</span></p>
@@ -2540,7 +2540,7 @@ itself be statically compressed.</p>
    <a href="https://url.spec.whatwg.org/#concept-url-path">https://url.spec.whatwg.org/#concept-url-path</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-url-path">4.4.2. Extending the Font Subset</a>
-    <li><a href="#ref-for-concept-url-path①">4.4.2.3. Font Load Failed</a>
+    <li><a href="#ref-for-concept-url-path①">4.4.2.2. Font Load Failed</a>
     <li><a href="#ref-for-concept-url-path②">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
     <li><a href="#ref-for-concept-url-path③">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-concept-url-path④">(2)</a>
    </ul>
@@ -2648,10 +2648,9 @@ itself be statically compressed.</p>
     <li><a href="#ref-for-font-subset②">4.4.1. Client State</a>
     <li><a href="#ref-for-font-subset③">4.4.2. Extending the Font Subset</a> <a href="#ref-for-font-subset④">(2)</a> <a href="#ref-for-font-subset⑤">(3)</a> <a href="#ref-for-font-subset⑥">(4)</a> <a href="#ref-for-font-subset⑦">(5)</a> <a href="#ref-for-font-subset⑧">(6)</a> <a href="#ref-for-font-subset⑨">(7)</a>
     <li><a href="#ref-for-font-subset①⓪">4.4.2.1. Handling Server Response</a> <a href="#ref-for-font-subset①①">(2)</a> <a href="#ref-for-font-subset①②">(3)</a>
-    <li><a href="#ref-for-font-subset①③">4.4.2.2. Client Side Checksum Mismatch</a> <a href="#ref-for-font-subset①④">(2)</a>
-    <li><a href="#ref-for-font-subset①⑤">4.4.2.3. Font Load Failed</a> <a href="#ref-for-font-subset①⑥">(2)</a>
-    <li><a href="#ref-for-font-subset①⑦">4.4.3. Load a Font in a User Agent with a HTTP Cache</a> <a href="#ref-for-font-subset①⑧">(2)</a> <a href="#ref-for-font-subset①⑨">(3)</a>
-    <li><a href="#ref-for-font-subset②⓪">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-font-subset②①">(2)</a> <a href="#ref-for-font-subset②②">(3)</a> <a href="#ref-for-font-subset②③">(4)</a>
+    <li><a href="#ref-for-font-subset①③">4.4.2.2. Font Load Failed</a> <a href="#ref-for-font-subset①④">(2)</a>
+    <li><a href="#ref-for-font-subset①⑤">4.4.3. Load a Font in a User Agent with a HTTP Cache</a> <a href="#ref-for-font-subset①⑥">(2)</a> <a href="#ref-for-font-subset①⑦">(3)</a>
+    <li><a href="#ref-for-font-subset①⑧">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-font-subset①⑨">(2)</a> <a href="#ref-for-font-subset②⓪">(3)</a> <a href="#ref-for-font-subset②①">(4)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="font-subset-definition">
@@ -2824,8 +2823,7 @@ itself be statically compressed.</p>
    <b><a href="#patchrequest-codepoints_needed">#patchrequest-codepoints_needed</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-codepoints_needed">4.4.2. Extending the Font Subset</a>
-    <li><a href="#ref-for-patchrequest-codepoints_needed①">4.4.2.2. Client Side Checksum Mismatch</a>
-    <li><a href="#ref-for-patchrequest-codepoints_needed②">4.5. Server: Responding to a PatchRequest</a>
+    <li><a href="#ref-for-patchrequest-codepoints_needed①">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="patchrequest-indices_have">
@@ -2953,8 +2951,7 @@ itself be statically compressed.</p>
    <ul>
     <li><a href="#ref-for-patchresponse-patched_checksum">4.3.4. PatchResponse</a>
     <li><a href="#ref-for-patchresponse-patched_checksum①">4.4.2.1. Handling Server Response</a>
-    <li><a href="#ref-for-patchresponse-patched_checksum②">4.4.2.2. Client Side Checksum Mismatch</a>
-    <li><a href="#ref-for-patchresponse-patched_checksum③">4.5. Server: Responding to a PatchRequest</a>
+    <li><a href="#ref-for-patchresponse-patched_checksum②">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="patchresponse-codepoint_ordering">
@@ -3055,7 +3052,7 @@ itself be statically compressed.</p>
   <aside class="dfn-panel" data-for="abstract-opdef-extend-the-font-subset">
    <b><a href="#abstract-opdef-extend-the-font-subset">#abstract-opdef-extend-the-font-subset</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-abstract-opdef-extend-the-font-subset">4.4.2.2. Client Side Checksum Mismatch</a>
+    <li><a href="#ref-for-abstract-opdef-extend-the-font-subset">4.4.2.1. Handling Server Response</a> <a href="#ref-for-abstract-opdef-extend-the-font-subset①">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="patch-request-header">
@@ -3074,7 +3071,7 @@ itself be statically compressed.</p>
    <b><a href="#original-font">#original-font</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-original-font">4.4.2. Extending the Font Subset</a> <a href="#ref-for-original-font①">(2)</a> <a href="#ref-for-original-font②">(3)</a> <a href="#ref-for-original-font③">(4)</a>
-    <li><a href="#ref-for-original-font④">4.4.2.3. Font Load Failed</a>
+    <li><a href="#ref-for-original-font④">4.4.2.2. Font Load Failed</a>
     <li><a href="#ref-for-original-font⑤">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-original-font⑥">(2)</a> <a href="#ref-for-original-font⑦">(3)</a> <a href="#ref-for-original-font⑧">(4)</a> <a href="#ref-for-original-font⑨">(5)</a> <a href="#ref-for-original-font①⓪">(6)</a> <a href="#ref-for-original-font①①">(7)</a> <a href="#ref-for-original-font①②">(8)</a> <a href="#ref-for-original-font①③">(9)</a> <a href="#ref-for-original-font①④">(10)</a>
    </ul>
   </aside>
