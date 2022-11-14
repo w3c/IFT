@@ -109,7 +109,7 @@ requests the generation of a patch from the server it has to fully describe the 
 font that it has in a way which allows the server to recreate it.
 
 Generic binary patch algorithms are used which do not need to be aware of the specifics of the font
-format. Typically a server will produce a patch by generating two font subsets: one which matches what
+format. Typically a server will produce a patch by generating two [=font subset|font subsets=]: one which matches what
 the client currently has and one which matches the extended subset the client desires. A binary patch
 is then produced between the two subsets.
 
@@ -370,10 +370,10 @@ If the content does not specify a specific method:
 Patch Based Incremental Transfer {#patch-incxfer}
 =================================================
 
-Font Subset {#font-subset}
+Font Subset {#font-subset-info}
 --------------------------
 
-A subset of a font file is a modified version of the font that contains only the data needed to
+A <dfn dfn>font subset</dfn> is a modified version of a font file that contains only the data needed to
 render a subset of:
 
 *  the codepoints,
@@ -390,10 +390,8 @@ the use of any optional typographic features that a renderer may choose to use f
 such as hinting instructions.
 </span>
 
-### Font Subset Definition ### {#font-subset-definition}
-
-A font subset definition describes the minimum data (codepoints, layout features, variation axis
-space) that a <a href="#font-subset">font subset</a> must possess.
+A <dfn dfn>font subset definition</dfn> describes the minimum data (codepoints, layout features,
+variation axis space) that a [=font subset=] must possess.
 
 Data Types {#data-types}
 ------------------------
@@ -414,38 +412,38 @@ should be encoded by CBOR are given in the definition of those data types.
     <th>Data Type</th><th>Description</th><th>CBOR Major Type</th>
   </tr>
   <tr>
-    <td>Integer</td><td>An integer value range [-2<sup>63</sup>, 2<sup>63</sup> - 1] inclusive.</td>
+    <td><dfn>Integer</dfn></td><td>An integer value range [-2<sup>63</sup>, 2<sup>63</sup> - 1] inclusive.</td>
     <td>0 or 1</td>
   </tr>
   <tr>
-    <td>Float</td><td>IEEE 754 Single-Precision Float.</td><td>7</td>
+    <td><dfn>Float</dfn></td><td>IEEE 754 Single-Precision Float.</td><td>7</td>
   </tr>
   <tr>
-    <td>ByteString</td><td>Variable number of bytes.</td><td>2</td>
+    <td><dfn>ByteString</dfn></td><td>Variable number of bytes.</td><td>2</td>
   </tr>
   <tr>
-    <td>String</td><td>UTF-8 [[rfc3629]] text string.</td><td>3</td>
+    <td><dfn>String</dfn></td><td>UTF-8 [[rfc3629]] text string.</td><td>3</td>
   </tr>
   <tr>
-    <td>ArrayOf&lt;Type&gt;</td><td>Array of a variable number of items of Type.</td><td>4</td>
+    <td><dfn>ArrayOf</dfn>&lt;Type&gt;</td><td>Array of a variable number of items of Type.</td><td>4</td>
   </tr>
 </table>
 
-### ProtocolVersion ### {#protocol-version}
+### <dfn>ProtocolVersion</dfn> ### {#protocol-version}
 
-An Integer describing the version of this communication protocol being used by a
-PatchRequest or PatchResponse. This value guides the semantics and interpretation
+An [=Integer=] describing the version of this communication protocol being used by a
+[=PatchRequest=] or [=PatchResponse=]. This value guides the semantics and interpretation
 of the fields sent.
 
 This field is for future expansion. There currently is only one valid value, 0.
 
-### SparseBitSet ### {#sparsebitset}
+### <dfn>SparseBitSet</dfn> ### {#sparsebitset-object}
 
 A data structure which compactly stores a set of distinct unsigned integers. The set is represented as
 a tree where each node has a fixed number of children that recursively sub-divides an interval into
 equal partitions. A tree of height <i>H</i> with branching factor <i>B</i> can store set membership
 for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree is encoded into
-a ByteString for transport.
+a [=ByteString=] for transport.
 
 To construct the tree <i>T</i> which encodes set <i>S</i> first select the branching factor <i>B</i>
 (how many children each node has). <i>B</i> can be 4, 8, 16, or 32.
@@ -644,16 +642,16 @@ significant bit in the byte and the bit with the largest index is the most signi
 
 </div>
 
-### IntegerList ### {#integerlist}
+### <dfn>IntegerList</dfn> ### {#integerlist-object}
 
 A data structure which compactly represents a list of non-negative integers
-from 0 to 2<sup>31</sup>-1. The list is encoded into a ByteString for transport.
+from 0 to 2<sup>31</sup>-1. The list is encoded into a [=ByteString=] for transport.
 
 There are three steps of encoding/compression: first delta, second zig-zag, and finally UIntBase128.
-The final ByteString result is simply the concatenation of the individual UIntBase128
+The final [=ByteString=] result is simply the concatenation of the individual UIntBase128
 encoded bytes.
 
-IntegerList encoding must reject an input list which contains values not in the range
+[=IntegerList=] encoding must reject an input list which contains values not in the range
 0 to 2<sup>31</sup>-1. Likewise if decoding an IntegerList results in values which are not
 in the range 0 to 2<sup>31</sup>-1 the list is invalid and must be rejected.
 
@@ -795,23 +793,23 @@ bytes = [2E 28 3D 11 81 00 02 02 81 09]
 </div>
 
 
-### SortedIntegerList ### {#sortedintegerlist}
+### <dfn>SortedIntegerList</dfn> ### {#sortedintegerlist-object}
 
 A data structure which compactly represents a sorted list of ascending non-negative integers
-(0 to 2<sup>32</sup>-1). The list is encoded into a ByteString for transport.
+(0 to 2<sup>32</sup>-1). The list is encoded into a [=ByteString=] for transport.
 
-This is a variation on IntegerList with better compression. Sorted lists only use two steps of
+This is a variation on [=IntegerList=] with better compression. Sorted lists only use two steps of
 encoding/compression: first deltas and then UIntBase128. The [[#integerlist-zigzag]] step is skipped.
 This allows twice the range in UIntBase128, so that single bytes may be used more often.
 
-SortedIntegerList encoding must reject an input list which contains values not in the range
+[=SortedIntegerList=] encoding must reject an input list which contains values not in the range
 0 to 2<sup>32</sup>-1.
 <span class="conform server client" id="conform-sorted-integer-list-rejects-illegal">
-Likewise if decoding an IntegerList results in values which are not
+Likewise if decoding an [=IntegerList=] results in values which are not
 in the range 0 to 2<sup>32</sup>-1 the list is invalid and must be rejected.
 </span>
 
-### RangeList ### {#rangelist}
+### <dfn>RangeList</dfn> ### {#rangelist-object}
 
 A RangeList encodes a set of non-negative integers (0 to 2<sup>32</sup>-1). The set is encoded as a
 list of disjoint intervals. Each interval is represented by two integers, a
@@ -825,8 +823,8 @@ To encode this list, we convert it to a list L of 2n integers, where
 L<sub>2i</sub> = min<sub>i</sub> and L<sub>2i+1</sub> = max<sub>i</sub> for
 i = 0..n-1.
 
-L is a sorted list of integers, so [[#sortedintegerlist]] is used to encode it as a
-ByteString.
+L is a sorted list of integers, so a [=SortedIntegerList=] is used to encode it as a
+[=ByteString=].
 
 <div class="example">
 ```
@@ -837,12 +835,12 @@ bytes = [03 07 03 81 7F]
 ```
 </div>
 
-### FeatureTagSet ### {#featuretagset}
+### <dfn>FeatureTagSet</dfn> ### {#featuretagset-object}
 
 A FeatureTagSet encodes a set of zero or more
 <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>.
 Each feature tag is mapped to an integer value and then the set of mapped integers are encoded in a
-[[#sortedintegerlist]]. Feature tags are mapped to integers as follows:
+[=SortedIntegerList=]. Feature tags are mapped to integers as follows:
 
 *  If the tag is found in [[#feature-tag-list]]:
 
@@ -855,20 +853,20 @@ Each feature tag is mapped to an integer value and then the set of mapped intege
     little endian integer.
 
 The final encoding is produced by sorting the mapped integers (exlcuding tags which are skipped)
-into ascending order and then encoding the sorted list as a [[#sortedintegerlist]].
+into ascending order and then encoding the sorted list as a [=SortedIntegerList=].
 
 When decoding a FeatureTagSet the integer values are mapped back to the original tags by reversing
 the above mapping rules.
 <span class="conform server client" id="conform-feature-tag-set-defaults">Additionally all
 default features in [[#feature-tag-list]] must be added to the decoded set.</span>
 
-### AxisSpace ### {#AxisSpace}
+### <dfn>AxisSpace</dfn> ### {#AxisSpace}
 
 Stores a set of intervals on one or more open type variation axes [[opentype-variations]]</a>.
 Encoded as a CBOR map (major type 5). The key in each pair is an
 <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord">
-axis tag</a>. It is encoded as a ByteString containing exactly 4 ASCII characters. The value in each
-pair is an <code>ArrayOf&lt;AxisInterval&gt;</code> [[#AxisInterval]].
+axis tag</a>. It is encoded as a [=ByteString=] containing exactly 4 ASCII characters. The value in each
+pair is an [=ArrayOf=]&lt;[=AxisInterval=]&gt;.
 <span class="conform client server" id="conform-axis-space-disjoint">The list of intervals for a
 each axis tag must be disjoint.</span>
 
@@ -896,173 +894,258 @@ for a type specifies for each field:
 
 ## Object Schemas ## {#schemas}
 
-### CompressedSet ### {#CompressedSet}
+### <dfn>CompressedSet</dfn> ### {#CompressedSet}
 
 Encodes a set of unsigned integers. The set is not ordered and does not
-allow duplicates. Members of the set are encoded into either a SparseBitSet or a
-RangeList. To obtain the final set the members of the sparse
-bit set and the list of ranges are unioned together.
+allow duplicates. Members of the set are encoded into either a [=SparseBitSet=] or a
+[=RangeList=]. To obtain the final set the members of [=CompressedSet/sparse_bit_set=]
+and the list of ranges in [=CompressedSet/range_deltas=] are unioned together.
 
 <table>
   <tr><th>ID&nbsp;</th><th>Field Name</th><th>Type</th></tr>
-  <tr><td>0</td><td>sparse_bit_set</td><td>SparseBitSet (ByteString)</td></tr>
-  <tr><td>1</td><td>range_deltas</td><td>RangeList (ByteString)</td></tr>
+  <tr>
+    <td>0</td>
+    <td><dfn for="CompressedSet">sparse_bit_set</dfn></td>
+    <td>[=SparseBitSet=] ([=ByteString=])</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td><dfn for="CompressedSet">range_deltas</dfn></td>
+    <td>[=RangeList=] ([=ByteString=])</td>
+  </tr>
 </table>
 
-### AxisInterval ### {#AxisInterval}
+### <dfn>AxisInterval</dfn> ### {#AxisInterval}
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
-  <tr><td>0</td><td>start</td><td>Float</td></tr>
-  <tr><td>1</td><td>end</td><td>Float</td></tr>
+  <tr>
+    <td>0</td>
+    <td><dfn for="AxisInterval">start</dfn></td>
+    <td>[=Float=]</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td><dfn for="AxisInterval">end</dfn></td>
+    <td>[=Float=]</td>
+  </tr>
 </table>
 
-<code>AxisInterval</code> defines an interval (from <code>start</code> to <code>end</code> inclusive)
+[=AxisInterval=] defines an interval (from [=AxisInterval/start=] to [=AxisInterval/end=] inclusive)
 on some variable axis in a font.
 
-For an <code>AxisInterval</code> object to be well formed:
+For an [=AxisInterval=] object to be well formed:
 
 *  <span class="conform client server" id="conform-axis-interval-start">
-    <code>start</code> must be set.
+    [=AxisInterval/start=] must be set.
     </span>
 
 *  <span class="conform client server" id="conform-axis-interval-end">
-    <code>end</code> is optional, if set it must be greater than <code>start</code>.</span>
-    If <code>end</code> is not set then this interval is a single point, <code>start</code>.
+    [=AxisInterval/end=] is optional, if set it must be greater than [=AxisInterval/start=].</span>
+    If [=AxisInterval/end=] is not set then this interval is a single point, [=AxisInterval/start=].
 
-### PatchRequest ### {#PatchRequest}
+### <dfn>PatchRequest</dfn> ### {#PatchRequest}
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
-  <tr><td>0</td><td>protocol_version</td><td>ProtocolVersion (Integer)</td></tr>
-  <tr><td>1</td><td>accept_patch_format</td><td>ArrayOf&ltInteger&gt;</td></tr>
-  <tr><td>2</td><td>codepoints_have</td><td>CompressedSet</td></tr>
-  <tr><td>3</td><td>codepoints_needed</td><td>CompressedSet</td></tr>
-  <tr><td>4</td><td>indices_have</td><td>CompressedSet</td></tr>
-  <tr><td>5</td><td>indices_needed</td><td>CompressedSet</td></tr>
-  <tr><td>6</td><td>features_have</td><td>FeatureTagSet</td></tr>
-  <tr><td>7</td><td>features_needed</td><td>FeatureTagSet</td></tr>
-  <tr><td>8</td><td>axis_space_have</td><td>AxisSpace</td></tr>
-  <tr><td>9</td><td>axis_space_needed</td><td>AxisSpace</td></tr>
-  <tr><td>10</td><td>ordering_checksum</td><td>Integer</td></tr>
-  <tr><td>11</td><td>original_font_checksum</td><td>Integer</td></tr>
-  <tr><td>12</td><td>base_checksum</td><td>Integer</td></tr>
-  <tr><td>13</td><td>fragment_id</td><td>String</td></tr>
+  <tr>
+    <td>0</td>
+    <td><dfn for="PatchRequest">protocol_version</dfn></td>
+    <td>[=ProtocolVersion=] ([=Integer=])</td></tr>
+  <tr>
+    <td>1</td>
+    <td><dfn for="PatchRequest">accept_patch_format</dfn></td>
+    <td>[=ArrayOf=]&lt[=Integer=]&gt;</td></tr>
+  <tr>
+    <td>2</td>
+    <td><dfn for="PatchRequest">codepoints_have</dfn></td>
+    <td>[=CompressedSet=]</td></tr>
+  <tr>
+    <td>3</td>
+    <td><dfn for="PatchRequest">codepoints_needed</dfn></td>
+    <td>[=CompressedSet=]</td></tr>
+  <tr>
+    <td>4</td>
+    <td><dfn for="PatchRequest">indices_have</dfn></td>
+    <td>[=CompressedSet=]</td></tr>
+  <tr>
+    <td>5</td>
+    <td><dfn for="PatchRequest">indices_needed</dfn></td>
+    <td>[=CompressedSet=]</td></tr>
+  <tr>
+    <td>6</td>
+    <td><dfn for="PatchRequest">features_have</dfn></td>
+    <td>[=FeatureTagSet=]</td></tr>
+  <tr>
+    <td>7</td>
+    <td><dfn for="PatchRequest">features_needed</dfn></td>
+    <td>[=FeatureTagSet=]</td></tr>
+  <tr>
+    <td>8</td>
+    <td><dfn for="PatchRequest">axis_space_have</dfn></td>
+    <td>[=AxisSpace=]</td></tr>
+  <tr>
+    <td>9</td>
+    <td><dfn for="PatchRequest">axis_space_needed</dfn></td>
+    <td>[=AxisSpace=]</td></tr>
+  <tr>
+    <td>10</td>
+    <td><dfn for="PatchRequest">ordering_checksum</dfn></td>
+    <td>[=Integer=]</td></tr>
+  <tr>
+    <td>11</td>
+    <td><dfn for="PatchRequest">original_font_checksum</dfn></td>
+    <td>[=Integer=]</td></tr>
+  <tr>
+    <td>12</td>
+    <td><dfn for="PatchRequest">base_checksum</dfn></td>
+    <td>[=Integer=]</td></tr>
+  <tr>
+    <td>13</td>
+    <td><dfn for="PatchRequest">fragment_id</dfn>
+    </td><td>[=String=]</td></tr>
 </table>
 
-For a PatchRequest object to be well formed:
+For a [=PatchRequest=] object to be well formed:
 
 *  <span class="conform client server" id="conform-request-protocol-version">
-    <code>protocol_version</code> must be set to 0.</span>
-*  <code>accept_patch_format</code> can include any of the values listed in [[#patch-formats]].
+    [=PatchRequest/protocol_version=] must be set to 0.</span>
+*  [=PatchRequest/accept_patch_format=] can include any of the values listed in [[#patch-formats]].
 *  <span class="conform client server" id="conform-request-ordering-checksum">
-    If either of <code>indices_have</code> or <code>indices_needed</code> is set to a non-empty set
-    then <code>ordering_checksum</code> must be set.</span>
+    If either of [=PatchRequest/indices_have=] or [=PatchRequest/indices_needed=] is set to a non-empty
+    set then [=PatchRequest/ordering_checksum=] must be set.</span>
 *  <span class="conform client server" id="conform-request-base-checksum">
-    If <code>codepoints_have</code> or <code>indices_have</code> is set to a non-empty set then
-    <code>original_font_checksum</code> and <code>base_checksum</code> must be set.</span>
+    If [=PatchRequest/codepoints_have=] or [=PatchRequest/indices_have=] is set to a non-empty set then
+    [=PatchRequest/original_font_checksum=] and [=PatchRequest/base_checksum=] must be set.</span>
 
-### PatchResponse ### {#PatchResponse}
+### <dfn>PatchResponse</dfn> ### {#PatchResponse}
 
 <table>
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
-  <tr><td>0</td><td>protocol_version</td><td>ProtocolVersion (Integer)</td>
-  <tr><td>1</td><td>patch_format</td><td>Integer</td></tr>
-  <tr><td>2</td><td>patch</td><td>ByteString</td></tr>
-  <tr><td>3</td><td>replacement</td><td>ByteString</td></tr>
-  <tr><td>4</td><td>original_font_checksum</td><td>Integer</td></tr>
-  <tr><td>5</td><td>patched_checksum</td><td>Integer</td></tr>
-  <tr><td>6</td><td>codepoint_ordering</td><td>IntegerList</td></tr>
-  <tr><td>7</td><td>ordering_checksum</td><td>Integer</td></tr>
-  <tr><td>8</td><td>subset_axis_space</td><td>AxisSpace</td></tr>
-  <tr><td>9</td><td>original_axis_space</td><td>AxisSpace</td></tr>
-  <tr><td>10</td><td>original_features</td><td>FeatureTagSet</td></tr>
+  <tr>
+    <td>0</td>
+    <td><dfn for="PatchResponse">protocol_version</dfn></td><td>[=ProtocolVersion=] ([=Integer=])</td>
+  <tr>
+    <td>1</td>
+    <td><dfn for="PatchResponse">patch_format</dfn></td><td>[=Integer=]</td></tr>
+  <tr>
+    <td>2</td>
+    <td><dfn for="PatchResponse">patch</dfn></td><td>[=ByteString=]</td></tr>
+  <tr>
+    <td>3</td>
+    <td><dfn for="PatchResponse">replacement</dfn></td><td>[=ByteString=]</td></tr>
+  <tr>
+    <td>4</td>
+    <td><dfn for="PatchResponse">original_font_checksum</dfn></td><td>[=Integer=]</td></tr>
+  <tr>
+    <td>5</td>
+    <td><dfn for="PatchResponse">patched_checksum</dfn></td><td>[=Integer=]</td></tr>
+  <tr>
+    <td>6</td>
+    <td><dfn for="PatchResponse">codepoint_ordering</dfn></td><td>[=IntegerList=]</td></tr>
+  <tr>
+    <td>7</td>
+    <td><dfn for="PatchResponse">ordering_checksum</dfn></td><td>[=Integer=]</td></tr>
+  <tr>
+    <td>8</td>
+    <td><dfn for="PatchResponse">subset_axis_space</dfn></td><td>[=AxisSpace=]</td></tr>
+  <tr>
+    <td>9</td>
+    <td><dfn for="PatchResponse">original_axis_space</dfn></td><td>[=AxisSpace=]</td></tr>
+  <tr>
+    <td>10</td>
+    <td><dfn for="PatchResponse">original_features</dfn></td><td>[=FeatureTagSet=]</td></tr>
 </table>
 
 For a PatchResponse object to be well formed:
 *  <span class="conform server" id="conform-response-protocol-version">
-     <code>protocol_version</code> must be set to 0.</span>
+     [=PatchResponse/protocol_version=] must be set to 0.</span>
 *  <span class="conform server" id="conform-response-patch-or-replacement">
-     Only one of <code>patch</code> or <code>replacement</code> must be set.</span>
+     Only one of [=PatchResponse/patch=] or [=PatchResponse/replacement=] must be set.</span>
 *  <span class="conform server" id="conform-response-font-checksums">
-     If either <code>patch</code> or <code>replacement</code> is set then <code>patch_format</code>,
-     and <code>patched_checksum</code> must be set.</span>
+     If either [=PatchResponse/patch=] or [=PatchResponse/replacement=] is set then [=PatchResponse/patch_format=],
+     and [=PatchResponse/patched_checksum=] must be set.</span>
 *  <span class="conform server" id="conform-response-valid-format">
-     If <code>patch_format</code> is set then it must be one of the values listed in
+     If [=PatchResponse/patch_format=] is set then it must be one of the values listed in
      [[#patch-formats]].</span>
 *  <span class="conform server" id="conform-response-ordering-checksum">
-     If <code>codepoint_ordering</code> is set then <code>ordering_checksum</code> must be set.</span>
+     If [=PatchResponse/codepoint_ordering=] is set then [=PatchResponse/ordering_checksum=] must be set.</span>
 
 Client {#client}
 ----------------
 
-### Client State ### {#client-state}
+### <dfn>Client State</dfn> ### {#client-state-section}
 
 The client will need to maintain at minimum the following state for each font file being incrementally
 transferred:
 
-*  Font subset: a byte array containing the binary data for the most recent version of the subset of
-    the font being incrementally transferred. For a new font this is initialized to empty byte array.
-*  Original font checksum: the most recent value of
-    <a href="#PatchResponse"><code>PatchResponse.original_font_checksum</code></a> received
-    from the server for this font.
+*  <dfn for="Client State">Client font subset</dfn>: a byte array containing the binary data for the
+    most recent version of the [=font subset|subset=] of the font being incrementally transferred. For
+    a new font this is initialized to empty byte array.
+    
+*  <dfn for="Client State">Original font checksum</dfn>: the most recent value of
+    [=PatchResponse/original_font_checksum=] received from the server for this font.
 
-*  Codepoint Reordering Map: The most recent [[#codepoint-reordering]] received from the server
-    for this font.
+*  <dfn for="Client State">Codepoint Reordering Map</dfn>: The most recent [[#codepoint-reordering]]
+    received from the server for this font. Supplied by [=PatchResponse/codepoint_ordering=].
 
-*  Codepoint Reordering Checksum: The most recent
-    <a href="#PatchResponse"><code>PatchResponse.ordering_checksum</code></a>
-    for this font.
+*  <dfn for="Client State">Codepoint Reordering Checksum</dfn>: The most recent
+    [=PatchResponse/ordering_checksum=] for this font.
 
-*  Original Font Axis Space: the variations axis space that the original font covers. Supplied
-    by <a href="#PatchResponse"><code>PatchResponse.original_axis_space</code></a>.
+*  <dfn for="Client State">Original Font Axis Space</dfn>: the variations axis space that the original
+    font covers. Supplied by [=PatchResponse/original_axis_space=]</a>.
 
-*  Subset Axis Space: the most recent variations axis space that the subsetted font covers. Supplied by
-    <a href="#PatchResponse"><code>PatchResponse.subset_axis_space</code></a>.
+*  <dfn for="Client State">Subset Axis Space</dfn>: the most recent variations axis space that the
+    subsetted font covers. Supplied by [=PatchResponse/subset_axis_space=].
 
 Additionally, the client can optionally store:
 
-*  Original font feature list: a list of the
+*  <dfn for="Client State">Original font feature list</dfn>: a list of the
     <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>
     that the original font has data for. This information can be used by the client to avoid sending
     unnecessary requests for features which the original font does not contain. Supplied by
-    <a href="#PatchResponse"><code>PatchResponse.original_features</code></a>.
+    [=PatchResponse/original_features=].
 
-### Extending the Font Subset ### {#extend-subset}
+<h4 algorithm id="extend-subset">Extending the Font Subset</h4>
 
-This algorithm is used by the client to extends its font subset to cover additional codepoints,
-features, and/or design-variation space. The inputs to this algorithm are:
+This algorithm is used by the client to extends its [=font subset=] to cover additional codepoints,
+features, and/or design-variation space.
 
-* Font URL: a URL where the font to be extended is located.
+<dfn abstract-op>Extend the font subset</dfn>
 
-* Fragement Identifier (optional): if the font at the font url is a collection of fonts, the fragment
-    identifier ([[rfc8081#section-4.2]]) identifies a single font within the collection.
+The inputs to this algorithm are:
 
-* Client State (optional): previously saved <a href="#client-state">client state</a> for the given
+* <var>font URL</var>: a URL where the font to be extended is located.
+
+* <var>fragment identifier</var> (optional): if the font at the font url is a collection of fonts,
+    the fragment identifier ([[rfc8081#section-4.2]]) identifies a single font within the collection.
+
+* <var>client state</var> (optional): previously saved [=client state=] for the given
     font url, or null.
 
-* Desired Subset Definition: a <a href="#font-subset-definition">description</a> of the desired
-    minimum font subset.
+* <var>desired subset definition</var>: a [=font subset definition|description=] of the desired
+    minimum [=font subset=].
 
-* Fetch Algorithm: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder of this
-    section is desribed in terms of [[fetch#fetching]], but it is allowed to substitute whatever
-    HTTP fetching algorithm the user agent supports.
+* <var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder
+    of this section is desribed in terms of [[fetch#fetching]], but it is allowed to substitute
+    whatever HTTP fetching algorithm the user agent supports.
 
 The algorithm outputs:
 
-* Client State: client state that has been updated to contain a font subset which covers at least
-    the requested subset definition.
+* Client State: [=client state=] that has been updated to contain a [=font subset=] which covers at
+    least the requested subset definition.
 
 * Cache fields: HTTP cache fields [[rfc9111#name-field-definitions]] describing how client state
     can be cached, or null.
 
-Extend font subset algorithm:
+The algorithm:
 
-1. Compare the input font subset definition to the input client state. If the input client state
-     already satisifies the font subset definition. Then return client state, and null for the
-     cache fields.
+1. Compare the <var>desired subset definition</var> to the <var>client state</var>. If the
+     [=Client State/client font subset|font subset=] in the <var>client state</var>
+     already satisifies the [=font subset definition=]. Then return <var>client state</var>, and null
+     for the cache fields.
 
-2. Otherwise make an HTTP request using the input fetching algorithm:
+2. Otherwise make an HTTP request using the <var>fetch algorithm</var>:
 
      * The request [=request/method=] must be either "GET" or "POST".
 
@@ -1074,87 +1157,95 @@ Extend font subset algorithm:
 
      * The request URL [=url/scheme=] must be "https".
 
-     * The request URL [=url/path=] is set to the input font URL.
+     * The request URL [=url/path=] is set to the input <var>font URL</var>.
 
      * If [=request/method=] is "POST" then, request [=request/body=] must be a single
-         <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR.
+         [=PatchRequest=] object encoded via CBOR.
 
      * Otherwise if [=request/method=] is "GET" then, a [=header=] with name
          <code>Font-Patch-Request</code> (the <dfn export>patch request header</dfn>)
          and whose value is a single
-          <a href="#PatchRequest"><code>PatchRequest</code></a> object encoded via CBOR and then
+          [=PatchRequest=] object encoded via CBOR and then
           base64url encoding [[rfc4648]] must be added to the request's header list.
 
      Any request and/or url parameters which are not specified here should be set based on
      the user agent's normal handling for font requests. For example if this font load is
      from a CSS font face, then [[css-fonts-4#font-fetching-requirements]] should be followed.
 
-     The fields of the <a href="#PatchRequest"><code>PatchRequest</code></a> object should be set
+     The fields of the [=PatchRequest=] object should be set
      as follows:
 
-     *  <code>protocol_version</code>: set to 0.
+     *  [=PatchRequest/protocol_version=]: set to 0.
 
-     *  <code>accept_patch_format</code>: set to the list of [[#patch-formats]] that this client is
+     *  [=PatchRequest/accept_patch_format=]: set to the list of [[#patch-formats]] that this client is
          capable of decoding. Must contain at least one format.
 
-     *  <code>codepoints_have</code>: set to exactly the set of codepoints that the current font subset
-         contains data for. If the current font subset is an empty byte array this field is left unset.
-         If the client has a codepoint ordering for this font then this field should not be set.
+     *  [=PatchRequest/codepoints_have=]: set to exactly the set of codepoints that the current
+         [=Client State/client font subset=] contains data for. If the current
+         [=Client State/client font subset=] is an empty byte array this
+         field is left unset. If the client has a codepoint ordering for this font then this field
+         should not be set.
 
-     *  <code>codepoints_needed</code>: set to the set of codepoints that the client wants to
-         add to its font subset. If the client has a codepoint ordering for this font then this
-         field should not be set.
+     *  [=PatchRequest/codepoints_needed=]: set to the set of codepoints that the client wants to
+         add to its [=font subset=] as defined in the <var>desired subset definition</var>. If the
+         <var>client state</var> has a [=Client State/codepoint reordering map=] for this font then
+         this field should not be set.
 
-     *  <code>indices_have</code>: encodes the set of additional codepoints that the current
-         font subset contains data for. The codepoint values are transformed to indices by applying
-         [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
-         ordering for this font then this field should not be set.
+     *  [=PatchRequest/indices_have=]: encodes the set of additional codepoints that the current
+         [=Client State/client font subset=] contains data for. The codepoint values are transformed
+         to indices by applying [=Client State/codepoint reordering map=] to each codepoint value. If
+         the <var>client state</var> does not have a [=Client State/codepoint reordering map=] for this
+         font then this field should not be set.
 
-     *  <code>indices_needed</code>: encodes the set of codepoints that the client wants to add to its
-         font subset. The codepoint values are transformed to indices by applying
-         [[#codepoint-reordering]] to each codepoint value. If the client does not have a codepoint
-         ordering for this font then this field should not be set.
+     *  [=PatchRequest/indices_needed=]: encodes the set of codepoints that the client wants to add to
+         its [=font subset=] as defined in the <var>desired subset definition</var>. The codepoint
+         values are transformed to indices by applying the [=Client State/codepoint reordering map=]
+         to each codepoint value. If the client does not have a codepoint ordering for this font then
+         this field should not be set.
 
-     *  <code>features_have</code>: set to the list of
+     *  [=PatchRequest/features_have=]: set to the list of
          <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">
-         opentype layout feature tags</a> that the current font subset has data for. If the current
-         font subset is an empty byte array this
-         field is left unset. Additionally, if the current font subset has all data for features
-         present in the original font then this field can be unset.
+         opentype layout feature tags</a> that the current [=Client State/client font subset=] has data
+         for. If the current [=Client State/client font subset=] is an empty byte array this
+         field is left unset. Additionally, if the current [=Client State/client font subset=] has all
+         data for features present in the [=original font=] then this field can be unset.
 
-     *  <code>features_needed</code>: set to the list of feature tags that the client wants to add
-         to the current font subset. Alternatively, if the client wishes to add all features from
-         the original font to it's subset then this field should be unset.
+     *  [=PatchRequest/features_needed=]: set to the list of feature tags that the client wants to add
+         to the current [=font subset=] as defined in the <var>desired subset definition</var>.
+         Alternatively, if the client wishes to add all features from the [=original font=] to it's
+         subset then this field should be unset.
 
-     *  <code>axis_space_have</code>: set to the current value of <code>subset_axis_space</code>
-         saved in the state for this font.
+     *  [=PatchRequest/axis_space_have=]: set to the current value of [=Client State/subset axis space=]
+         saved in the <var>client state</var> for this font.
 
-     *  <code>axis_space_needed</code>: set to the intervals of each variable axis in the original
-         font that the client wants to add to its font subset. If the client wants an entire axis
-         from the original font then that axis should not be listed.
+     *  [=PatchRequest/axis_space_needed=]: set to the intervals of each variable axis in the
+         [=original font=] that the client wants to add to its [=font subset=] as defined in the
+         <var>desired subset definition</var>. If the client wants an
+         entire axis from the [=original font=] then that axis should not be listed.
 
-     *  <code>ordering_checksum</code>: If either of <code>indices_have</code> or
-         <code>indices_needed</code> is set then this must be set to the current value of
-         <code>ordering_checksum</code> saved in the state for this font.
+     *  [=PatchRequest/ordering_checksum=]: If either of [=PatchRequest/indices_have=] or
+         [=PatchRequest/indices_needed=] is set then this must be set to the current value of
+         [=Client State/codepoint reordering checksum=] saved in the state for this font.
 
-     *  <code>original_font_checksum</code>:
-         Set to saved value for <code>original_font_checksum</code> in the state for this font. If
+     *  [=PatchRequest/original_font_checksum=]:
+         Set to saved value for [=Client State/original font checksum=] in the state for this font. If
          there is no saved value leave this field unset.
 
-     *  <code>base_checksum</code>:
-         Set to the checksum of the font subset byte array saved in the state for this font. See:
-         [[#computing-checksums]].
+     *  [=PatchRequest/base_checksum=]:
+         Set to the checksum of the [=Client State/client font subset=] byte array saved in
+         the <var>client state</var> for this font. See: [[#computing-checksums]].
 
-     *  <code>fragment_id</code>:
-         If a fragment identifier was provided as an input then this field must be set to the provided
-         fragment identifier, otherwise it must be left unset.
+     *  [=PatchRequest/fragment_id=]:
+         If a <var>fragment identifier</var> was provided as an input then this field must be set to
+         the provided <var>fragment identifier</var>, otherwise it must be left unset.
 
 
      Note: It is allowed for the client to request more codepoints then it strictly needs. For
      example, on slower connections it may be more performant to request extra codepoints if
      that is likely to prevent a future request from needing to be sent.
 
-3. Goto [[#handling-patch-response]].
+<!-- TODO: change to algorithm ref -->
+3. Invoke [[#handling-patch-response]] with the response from the server and return the result.
 
 Note: POST is preferred for the HTTP method since it will not cause a CORS preflight request
 and the request object is more compactly encoded. GET should only be used during
@@ -1162,43 +1253,46 @@ and the request object is more compactly encoded. GET should only be used during
 
 #### Handling PatchResponse #### {#handling-patch-response}
 
-If a server is able to succsessfully process a <a href="#PatchRequest"><code>PatchRequest</code></a>
+If a server is able to succsessfully process a [=PatchRequest=]
 it will respond with HTTP [=response/status=] code 200 and the [=response/body=] of the response will
 be a 4 byte magic number (0x49, 0x46, 0x54, 0x20) followed by a single
-<a href="#PatchResponse"><code>PatchResponse</code></a> object encoded via CBOR. The client
+[=PatchResponse=] object encoded via CBOR. The client
 should interpret and process the fields of the object as follows:
 
-1.  If field <code>replacement</code> is set then: the byte array in this field is a binary patch
-     in the format specified by <code>patch_format</code>. Apply the binary patch to a base which
-     is an empty byte array. Replace the font subset in the input client state with the result of the
-     patch application.
+1.  If field [=PatchResponse/replacement=] is set then: the byte array in this field is a binary patch
+     in the format specified by [=PatchResponse/patch_format=]. Apply the binary patch to a base which
+     is an empty byte array. Replace the [=Client State/client font subset|font subset=] in the input
+     client state with the result of the patch application.
 
-2. If field <code>patch</code> is set then:  the byte array in this field is a binary patch
-    in the format specified by <code>patch_format</code>. Apply the binary patch to the font
-    subset from the input client state. Replace the font subset in the input client state with the
-    result of the patch application.
+2. If field [=PatchResponse/patch=] is set then:  the byte array in this field is a binary patch
+    in the format specifiedy [=PatchResponse/patch_format=]. Apply the binary patch to the
+    [=Client State/client font subset|font subset=] from the input client state. Replace the
+    [=Client State/client font subset|font subset=] in the input client state with the result of the
+    patch application.
 
-3. If either <code>replacement</code> or <code>patch</code> is set then:
-    <a href="#computing-checksums">compute the checksum</a> of the font subset produced by the patch
-    application in steps 1 or 2. If the computed checksum is not equal to <code>patched_checksum</code>
+3. If either [=PatchResponse/replacement=] or [=PatchResponse/patch=] is set then:
+    <a href="#computing-checksums">compute the checksum</a> of the [=font subset=] produced by the patch
+    application in steps 1 or 2. If the computed checksum is not equal to [=PatchResponse/patched_checksum=]
     this is a recoverable error. Follow the procedure in [[#client-side-checksum-mismatch]]. Otherwise
-    update the original font checksum in the input client state with the value in
-    <code>original_font_checksum</code>.
+    update the [=Client State/original font checksum=] in the input client state with the value in
+    [=PatchResponse/original_font_checksum=].
 
-4. If fields <code>codepoint_ordering</code> and <code>ordering_checksum</code> are set then update
-    the codepoint ordering and checksum in the input client state with the new values specified by
-    these two fields. If neither <code>replacement</code> nor <code>patch</code> are set, then the
-    client should resend the request that triggered this response but use the new codepoint ordering
-    provided in this response.
+4. If fields [=PatchResponse/codepoint_ordering=] and [=PatchResponse/ordering_checksum=] are set then
+    update the [=Client State/codepoint reordering checksum=] in the input client state with the new
+    values specified by these two fields. If neither [=PatchResponse/replacement=] nor
+    [=PatchResponse/patch=] are set, then the client should resend the request that triggered this
+    response but use the new codepoint ordering provided in this response.
 
-5. If <code>original_features</code> is set and the client has opted to save them then replace the
-    original feature list in the input client state with the value from the response.
+5. If [=PatchResponse/original_features=] is set and the client has opted to save them then replace the
+    [=Client State/original font feature list=] in the input client state with the value from the
+    response.
 
-6. If <code>original_axis_space</code> is set then update the original axis space in the input client
-    state with the value specified in this field.
+6. If [=PatchResponse/original_axis_space=] is set then update the
+    [=Client State/original font axis space=] in the input client state with the value specified in
+    this field.
 
-7. If <code>subset_axis_space</code> is set then update the subset axis space in the input client
-    state with the value specified in this field.
+7. If [=PatchResponse/subset_axis_space=] is set then update the
+    [=Client State/subset axis space=] in the input client state with the value specified in this field.
 
 After processing the response, return the updated input client state and any cache headers that were
 set on the response.
@@ -1211,24 +1305,25 @@ If the response a client receives from the server has a [=response/status=] code
 *  If it is a redirect [=status=]: follow normal redirect handling, such as
      [[fetch#http-redirect-fetch]] and then go back to [[#handling-patch-response]].
 
-*  All other statuses, the font subset extension has failed. Follow [[#font-load-failed]].
+*  All other statuses, the [=font subset=] extension has failed. Follow [[#font-load-failed]].
 
 If the response the client receives has a [=response/status=] code of 200, but the [=response/body=]
 is malformed. That is, it is missing the magic number, not decodable with CBOR, or the
-<a href="#PatchResponse"><code>PatchResponse</code></a> is not well formed:
+[=PatchResponse=] is not well formed:
 
 *  This is an error. Follow [[#font-load-failed]].
 
 #### Client Side Checksum Mismatch #### {#client-side-checksum-mismatch}
 
-If the checksum of the font subset computed by the client does not match the
-<code>patched_checksum</code> in the server's response then the client should:
+If the checksum of the [=font subset=] computed by the client does not match the
+[=PatchResponse/patched_checksum=] in the server's response then the client should:
 
 1. Discard the input client state for this font.
 
-2. <a href="#extend-subset">Resend the request</a>. Set the <code>codepoints_needed</code> field
-    to the union of the codepoints in the discarded font subset and the set of code points
-    that the previous request was trying to add.
+<!-- TODO: specify the arguments to the extension algo -->
+2. Invoke [$Extend the font subset$] to resend the request. Set the
+    [=PatchRequest/codepoints_needed=] field to the union of the codepoints in the discarded
+    [=font subset=] and the set of code points that the previous request was trying to add.
 
     If the resent request also results in a checksum mismatch then this is an error. The client
     must not resend the request again and should follow [[#font-load-failed]]
@@ -1237,14 +1332,14 @@ If the checksum of the font subset computed by the client does not match the
 
 If the font load or extension has failed the client should choose one of the following options:
 
-1.  If the client has a saved font subset, it may choose to use that and then use the user
+1.  If the client has a saved [=font subset=], it may choose to use that and then use the user
       agent's existing font fallback mechanism for codepoints not covered by the subset.
 
 2.  The client may re-issue the request as a regular non incremental font fetch to the same
       [=url/path=]. It must not include the patch subset request parameter. This will load
-      the entire original font.
+      the entire [=original font=].
 
-3.  Discard the saved font subset, and use the user agent's existing font fallback mechanism.
+3.  Discard the saved [=font subset=], and use the user agent's existing font fallback mechanism.
 
 Regardless of which of the above options are used, the saved client state for this font must be
 discarded.
@@ -1260,12 +1355,12 @@ The inputs to this algorithm:
 
 *  Font URL: a URL where the font to be extended is located.
 
-*  Desired Subset Definition: a <a href="#font-subset-definition">description</a> of the desired
-    minimum font subset.
+*  Desired Subset Definition: a [=font subset definition|description=] of the desired
+    minimum [=font subset=].
 
 The algorithm outputs:
 
-*  A <a href="#font-subset">Font Subset</a> which covers at minimum the input subset definition.
+*  A [=font subset=] which covers at minimum the input subset definition.
 
 The algorithm:
 
@@ -1283,6 +1378,7 @@ The algorithm:
 
      * The request [=request/cache mode=] is "only-if-cached".
 
+<!-- TODO: use algorithm ref -->
 2.  If the request is successful and the response is "fresh" ([[RFC9111#name-freshness]])
      then invoke [[#extend-subset]] with:
 
@@ -1296,6 +1392,7 @@ The algorithm:
 
      Once that returns go to step 4.
 
+<!-- TODO: use algorithm ref -->
 3.  Otherwise, invoke [[#extend-subset]] with:
 
      *  Font url set to the input font url.
@@ -1311,69 +1408,69 @@ The algorithm:
 4.  If the returned cache fields are non-null update the cache entry for the input
      font url with the returned client state and returned cache fields.
 
-5.  Return the font subset contained in the returned client state.
+5.  Return the [=font subset=] contained in the returned client state.
 
 
 Server: Responding to a PatchRequest {#handling-patch-request}
 --------------------------------------------------------------
 
 <span class="conform server" id="conform-successful-response">If the server receives a well formed
-<a href="#PatchRequest"><code>PatchRequest</code></a> over HTTPS for a font the server has and that was
+[=PatchRequest=] over HTTPS for a font the server has and that was
 populated according to the requirements in [[#extend-subset]] then it must respond with HTTP
 [=response/status=] code 200.</span>
 <span class="conform server" id="conform-magic-number">The first 4 bytes of the response
 [=response/body=] must be set to 0x49, 0x46, 0x54, 0x20 ("IFT " encoded as ASCII) followed by a
-single <a href="#PatchRequest"><code>PatchResponse</code></a> object encoded via CBOR.</span>
+single [=PatchResponse=] object encoded via CBOR.</span>
 
 The [=url/path=] in the request [=request/url=] identifies the specific font that a patch is desired
-for. If the request has the <code>fragment_id</code> field set and the file identified by [=url/path=]
-is a collection of fonts, then <code>fragment_id</code> identifies the font within that collection
-that a patch is desired for. The identified font is referred to as the 'original font' in the rest
-of this section.
+for. If the request has the [=PatchRequest/fragment_id=] field set and the file identified by
+[=url/path=] is a collection of fonts, then [=PatchRequest/fragment_id=] identifies the font within
+that collection that a patch is desired for. The identified font is referred to as the
+<dfn>original font</dfn> in the rest of this section.
 
 From the request object the server can produce two codepoint sets:
 
 1.  Codepoints the client has: formed by the union of the codepoint sets specified by
-     <code>codepoints_have</code> and <code>indices_have</code>.
+     [=PatchRequest/codepoints_have=] and [=PatchRequest/indices_have=].
      <span class="conform server" id="conform-remap-codepoints-have">The indices in
-     <code>indices_have</code> must be mapped to codepoints by the application of the
-     codepoint reordering with a checksum matching <code>ordering_checksum</code>.</span>
+     [=PatchRequest/indices_have=] must be mapped to codepoints by the application of the
+     codepoint reordering with a checksum matching [=PatchRequest/ordering_checksum=].</span>
 
 2.  Codepoints the client needs: formed by the union of the codepoint sets specified by
-     <code>codepoints_needed</code> and <code>indices_needed</code>.
+     [=PatchRequest/codepoints_needed=] and [=PatchRequest/indices_needed=].
      <span class="conform server" id="conform-remap-codepoints-needed">The indices in
-     <code>indices_needed</code> must be mapped to codepoints by the application of the
-     codepoint reordering with a checksum matching <code>ordering_checksum</code>.</span>
+     [=PatchRequest/indices_needed=] must be mapped to codepoints by the application of the
+     codepoint reordering with a checksum matching [=PatchRequest/ordering_checksum=].</span>
 
 Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>:
 
-1.  Feature tags the client's subset has: specified by <code>features_have</code>. If the field is
-     unset this indicates the client's subset contains all features in the original font.
+1.  Feature tags the client's subset has: specified by [=PatchRequest/features_have=]. If the field is
+     unset this indicates the client's subset contains all features in the [=original font=].
 
-2.  Feature tags the client needs: specified by <code>features_needed</code>. If the field is unset
-     this indicates the client wants all features in the original font.
+2.  Feature tags the client needs: specified by [=PatchRequest/features_needed=]. If the field is unset
+     this indicates the client wants all features in the [=original font=].
 
 Lastly, the server can produce two variable axis spaces:
 
-1.  Axis space the client has: specified by <code>axis_space_have</code>. If any axes in the font are
-     not specified in <code>axis_space_have</code> then for those axes add their entire interval
-     from the original font.
+1.  Axis space the client has: specified by [=PatchRequest/axis_space_have=]. If any axes in the font
+     are not specified in [=PatchRequest/axis_space_have=] then for those axes add their entire
+     interval from the [=original font=].
 
-2. Axis space the client needs: specified by <code>axis_space_needed</code>. If any axes in the font
-     are not specified in <code>axis_space_needed</code> then for those axes add their entire interval
-     from the original font.
+2. Axis space the client needs: specified by [=PatchRequest/axis_space_needed=]. If any axes in the
+     font are not specified in [=PatchRequest/axis_space_needed=] then for those axes add their entire
+     interval from the [=original font=].
 
 <span class="conform server" id="conform-bad-reordering">
 If the server does not recognize the codepoint ordering used by the client, it must respond
 with a response that will cause the client to update it's codepoint ordering to one the server
 will recognize via the process described in [[#handling-patch-response]] and not include any patch.
-That is the <code>patch</code> and <code>replacement</code> fields must not be set.
+That is the [=PatchResponse/patch=] and [=PatchResponse/replacement=] fields must not be set.
 </span>
 
 <span class="conform server" id="conform-response-valid-patch">
 Otherwise when the response is applied by the client following the process in
-[[#handling-patch-response]] to a font subset with checksum <code>base_checksum</code> it must result
-in an extended font subset:
+[[#handling-patch-response]] to a [=font subset=] with checksum [=PatchRequest/base_checksum=] it must
+result in an extended [=font subset=]:
 </span>
 
 *  <span class="conform server" id="conform-response-subset">That contains data for at least the union
@@ -1386,47 +1483,47 @@ in an extended font subset:
     space that covers at least the union of the axis space the client has and the axis space the
     client needs.</span>
 
-If the checksum of the original font computed by the procedure in [[#computing-checksums]] does not
-match the checksum in <code>PatchRequest.original_font_checksum</code> or
-<code>PatchRequest.original_font_checksum</code> is unset, then:
+If the checksum of the [=original font=] computed by the procedure in [[#computing-checksums]] does not
+match the checksum in [=PatchRequest/original_font_checksum=] or
+[=PatchRequest/original_font_checksum=] is unset, then:
 
 *  <span class="conform server" id="conform-response-original-checksum">The value of
-    <code>original_font_checksum</code> must be set to the checksum of the original font
+    [=PatchResponse/original_font_checksum=] must be set to the checksum of the [=original font=]
     computed by the procedure in [[#computing-checksums]].</span>
 
 *  <span class="conform server" id="conform-response-codepoint-ordering">
     The response must set the
-    <code>codepoint_ordering</code> and <code>ordering_checksum</code> fields following
+    [=PatchResponse/codepoint_ordering=] and [=PatchResponse/ordering_checksum=] fields following
     [[#codepoint-reordering]].</span>
 
 *  <span class="conform server" id="conform-response-original-features">
-    The response must set the <code>original_features</code> field to the list of
-    <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>
-    that the original font has data for.</span>
+    The response must set the [=PatchResponse/original_features=] field to the list of
+    <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout
+    feature tags</a> that the [=original font=] has data for.</span>
 
 *  <span class="conform server" id="conform-response-original-axis-space">
-    If the original font has variation axes, the
-    response must set the <code>original_axis_space</code> field to the axis space covered by
-    the original font.</span>
+    If the [=original font=] has variation axes, the
+    response must set the [=PatchResponse/original_axis_space=] field to the axis space covered by
+    the [=original font=].</span>
 
 Additionally:
 
 *  <span class="conform server" id="conform-response-patch-format">The format of the patch in the
-    either the <code>patch</code> or <code>replace</code> fields must be one of those listed in
-    <code>accept_patch_format</code></span>.
+    either the [=PatchResponse/patch=] or [=PatchResponse/replacement=] fields must be one of those
+    listed in [=PatchRequest/accept_patch_format=]</span>.
 
 *  <span class="conform server" id="conform-response-patched-checksum">
-     If <code>patch</code> or <code>replacement</code> fields are set the value of
-     <code>patched_checksum</code> must be set to the checksum of the extended font subset.
+     If [=PatchResponse/patch=] or [=PatchResponse/replacement=] fields are set the value of
+     [=PatchResponse/patched_checksum=] must be set to the checksum of the extended [=font subset=].
      The checksum value must be computed by the procedure in [[#computing-checksums]].</span>
 
 *  <span class="conform server" id="conform-response-subset-axis-space-field">
-    If <code>patch</code> or <code>replacement</code> fields are set and the original font has
-    variation axes, the response must set the <code>subset_axis_space</code> field to the axis space
-    covered by the font subset.</span>
+    If [=PatchResponse/patch=] or [=PatchResponse/replacement=] fields are set and the
+    [=original font=] has variation axes, the response must set the [=PatchResponse/subset_axis_space=]
+    field to the axis space covered by the [=font subset=].</span>
 
 *  <span class="conform server" id="conform-response-ignore-unrecognized-formats">
-    If <code>accept_patch_format</code> contains any unrecognized patch formats the server must
+    If [=PatchRequest/accept_patch_format=] contains any unrecognized patch formats the server must
     ignore the unrecognized ones.</span>
 
 Note: the server can respond with either a patch or a replacement but should try to produce a patch
@@ -1449,8 +1546,8 @@ Possible error responses:
      If the request is malformed the server must instead respond with http [=response/status=] code 400
      to indicate an error.</span>
 
-*  If the requested font is not recognized by the server it should respond with http [=response/status=]
-     code 404 to indicate a not found error.
+*  If the requested font is not recognized by the server it should respond with http
+    [=response/status=] code 404 to indicate a not found error.
 
 ### Range Request Support ### {#range-request-support}
 
@@ -1522,9 +1619,9 @@ font to a continuous space of [0, number of codepoints in the font). This transf
 to reduce the cost of representing codepoint sets.
 
 <span class="conform server " id="conform-remap-all">A codepoint ordering is encoded into a
-<code>CompressedList</code>. The list must contain all unicode codepoints that are supported by the
-font.</span> The index of a particular unicode codepoint in the list is
-the new value for that codepoint.
+[=IntegerList=]. The list must contain all unicode codepoints that are supported by the
+font.</span> The index of a particular unicode codepoint in the list is the new value for that
+codepoint.
 
 A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
 size of encoded codepoint sets for that font.
@@ -1749,7 +1846,7 @@ itself be statically compressed.
 
 <h3  id="content-inference-from-character-set">Content inference from character set</h3>
 
-IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see <a href="#extend-subset">Extending the Font Subset</a>.
+IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see [[#extend-subset]].
 
 The purpose of doing so is to allow the server to compute a binary patch to the existing font, adding more characters. Thus, fonts are transferred incrementally, as needed, which <a href="https://www.w3.org/TR/PFE-evaluation/#analysis-cjk">greatly reduces</a>> the bytes transferred and the overall network cost..
 
