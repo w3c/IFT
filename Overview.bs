@@ -1124,10 +1124,9 @@ The inputs to this algorithm are:
 * <var>client state</var> (optional): previously saved [=client state=] for the given
     font url, or null.
 
-<!-- TODO specify this must be a super set of what's in client state -->
-<!-- TODO update *_have definitions to specify the subtraction of this and client state -->
 * <var>desired subset definition</var>: a [=font subset definition|description=] of the desired
-    minimum [=font subset=].
+    minimum [=font subset=]. The subset definition must be a superset of the [=font subset=] in
+    <var>client state</var>.
 
 * <var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder
     of this section is desribed in terms of [[fetch#fetching]], but it is allowed to substitute
@@ -1190,7 +1189,8 @@ The algorithm:
          should not be set.
 
      *  [=PatchRequest/codepoints_needed=]: set to the set of codepoints that the client wants to
-         add to its [=font subset=] as defined in the <var>desired subset definition</var>. If the
+         add to its [=font subset=]. That is the codepoint set from <var>desired subset
+         definition</var> minus the codepoints already in [=Client State/Client font subset=]. If the
          <var>client state</var> has a [=Client State/codepoint reordering map=] for this font then
          this field should not be set.
 
@@ -1201,10 +1201,11 @@ The algorithm:
          font then this field should not be set.
 
      *  [=PatchRequest/indices_needed=]: encodes the set of codepoints that the client wants to add to
-         its [=font subset=] as defined in the <var>desired subset definition</var>. The codepoint
-         values are transformed to indices by applying the [=Client State/codepoint reordering map=]
-         to each codepoint value. If the client does not have a codepoint ordering for this font then
-         this field should not be set.
+         its [=font subset=]. That is the codepoint set from <var>desired subset
+         definition</var> minus the codepoints already in [=Client State/Client font subset=]. The
+         codepoint values are transformed to indices by applying the [=Client State/codepoint
+         reordering map=] to each codepoint value. If the client does not have a codepoint ordering
+         for this font then this field should not be set.
 
      *  [=PatchRequest/features_have=]: set to the list of
          <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">
@@ -1214,12 +1215,13 @@ The algorithm:
          data for features present in the [=original font=] then this field can be unset.
 
      *  [=PatchRequest/features_needed=]: set to the list of feature tags that the client wants to add
-         to the current [=font subset=] as defined in the <var>desired subset definition</var>.
-         Alternatively, if the client wishes to add all features from the [=original font=] to it's
+         to the current [=font subset=]. That is the feature set from <var>desired subset
+         definition</var> minus the set of features already in [=Client State/Client font subset=].
+         If the client wishes to add all remaining layout features from the [=original font=] to it's
          subset then this field should be unset.
 
-     *  [=PatchRequest/axis_space_have=]: set to the current value of [=Client State/subset axis space=]
-         saved in the <var>client state</var> for this font.
+     *  [=PatchRequest/axis_space_have=]: set to the current value of
+         [=Client State/subset axis space=] saved in the <var>client state</var> for this font.
 
      *  [=PatchRequest/axis_space_needed=]: set to the intervals of each variable axis in the
          [=original font=] that the client wants to add to its [=font subset=] as defined in the
