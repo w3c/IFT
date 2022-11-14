@@ -1255,7 +1255,7 @@ Note: POST is preferred for the HTTP method since it will not cause a CORS prefl
 and the request object is more compactly encoded. GET should only be used during
 <a href="#method-negotiation">method negotiation</a>.
 
-<h5 algorithm id="handling-patch-response">Handling Server Response</h5>
+<h4 algorithm id="handling-patch-response">Handling Server Response</h4>
 
 If a server is able to succsessfully process a [=PatchRequest=]
 it will respond with HTTP [=response/status=] code 200 and the [=response/body=] of the response will
@@ -1286,20 +1286,17 @@ The algorithm:
      *  If it is a redirect [=status=]: follow normal redirect handling, such as
          [[fetch#http-redirect-fetch]] and then go back to step 1.
 
-     <!-- TODO algorithm ref -->
-     *  All other statuses, the [=font subset=] extension has failed. Invoke [[#font-load-failed]]
-         and return the result.
+     *  All other statuses, the [=font subset=] extension has failed. Invoke
+         [$Handle failed font load$] and return the result.
 
 2.  Check the first four bytes of the <var>server response</var> [=response/body=]. If they are
      not equal to [0x49, 0x46, 0x54, 0x20] then this response is malformed.
-     <!-- TODO algorithm ref -->
-     Invoke [[#font-load-failed]] and return the result.
+     Invoke [$Handle failed font load$] and return the result.
 
 3.  Interpret the remaining bytes of the <var>server response</var> [=response/body=] as a CBOR
      encoded [=PatchResponse=]. If the bytes are not decodable with CBOR, or the
-     <!-- TODO algorithm ref -->
-     [=PatchResponse=] is not well formed, then this is an error. Invoke [[#font-load-failed]] and
-     return the result.
+     [=PatchResponse=] is not well formed, then this is an error. Invoke [$Handle failed font load$]
+     and return the result.
 
 4.  If field [=PatchResponse/replacement=] is set then: the byte array in this field is a binary patch
      in the format specified by [=PatchResponse/patch_format=]. Apply the binary patch to a base which
@@ -1320,9 +1317,8 @@ The algorithm:
         recoverable error. Discard the saved client state and invoke [$Extend the font subset$] to
         resend the request with the same arguments as the original request, except client state is set
         to null. If the resent request also results in a checksum mismatch then this is an error. The
-        <!-- TODO algorithm ref -->
-        client must not resend the request again and should invoke [[#font-load-failed]] and return the
-        result. Otherwise return the result from the call to [$Extend the font subset$].
+        client must not resend the request again and should invoke [$Handle failed font load$] and
+        return the result. Otherwise return the result from the call to [$Extend the font subset$].
 
     *  Otherwise update the [=Client State/original font checksum=] in
         the input <var>client state</var> with the value in [=PatchResponse/original_font_checksum=].
@@ -1347,9 +1343,9 @@ The algorithm:
      in this field.
 
 After processing the response, return the updated input <var>client state</var> and any cache headers
-that were set on the response.
+that were set on the <var>server response</var>.
 
-#### Font Load Failed #### {#font-load-failed}
+<dfn abstract-op>Handle failed font load</dfn>
 
 If the font load or extension has failed the client should choose one of the following options:
 
@@ -1357,7 +1353,7 @@ If the font load or extension has failed the client should choose one of the fol
       agent's existing font fallback mechanism for codepoints not covered by the subset.
 
 2.  The client may re-issue the request as a regular non incremental font fetch to the same
-      [=url/path=]. It must not include the patch subset request parameter. This will load
+      [=url/path=]. It must not include the patch subset request parameter or header. This will load
       the entire [=original font=].
 
 3.  Discard the saved [=font subset=], and use the user agent's existing font fallback mechanism.
