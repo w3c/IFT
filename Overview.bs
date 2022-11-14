@@ -1244,64 +1244,87 @@ The algorithm:
      example, on slower connections it may be more performant to request extra codepoints if
      that is likely to prevent a future request from needing to be sent.
 
-<!-- TODO: change to algorithm ref -->
-3. Invoke [[#handling-patch-response]] with the response from the server and return the result.
+3. Invoke [$Handling PatchResponse$] with the response from the server and return the result.
 
 Note: POST is preferred for the HTTP method since it will not cause a CORS preflight request
 and the request object is more compactly encoded. GET should only be used during
 <a href="#method-negotiation">method negotiation</a>.
 
-#### Handling PatchResponse #### {#handling-patch-response}
+<h5 algorithm id="handling-patch-response">Handling PatchResponse</h5>
 
 If a server is able to succsessfully process a [=PatchRequest=]
 it will respond with HTTP [=response/status=] code 200 and the [=response/body=] of the response will
-be a 4 byte magic number (0x49, 0x46, 0x54, 0x20) followed by a single
-[=PatchResponse=] object encoded via CBOR. The client
-should interpret and process the fields of the object as follows:
+be a 4 byte magic number (0x49, 0x46, 0x54, 0x20) followed by a single [=PatchResponse=] object encoded
+via CBOR. The client should use the following algorithm to interpret and process the fields of the
+object.
+
+<dfn abstract-op>Handling PatchResponse</dfn>
+
+Inputs:
+
+<!-- TODO: take the whole response, not just the object -->
+
+* <var>patch response</var>: a PatchResponse object from a successful [=PatchRequest=].
+
+* <var>client state</var> (optional): previously saved [=client state=].
+
+The algorithm outputs:
+
+* Client State: [=client state=] that has been updated to contain a [=font subset=] which covers at
+    least the requested subset definition.
+
+* Cache fields: HTTP cache fields [[rfc9111#name-field-definitions]] describing how client state
+    can be cached, or null.
+
+The algorithm:
+<!-- TODO: Redirect to error handling on non-200 response code -->
 
 1.  If field [=PatchResponse/replacement=] is set then: the byte array in this field is a binary patch
      in the format specified by [=PatchResponse/patch_format=]. Apply the binary patch to a base which
      is an empty byte array. Replace the [=Client State/client font subset|font subset=] in the input
-     client state with the result of the patch application.
+     <var>client state</var> with the result of the patch application.
 
 2. If field [=PatchResponse/patch=] is set then:  the byte array in this field is a binary patch
     in the format specifiedy [=PatchResponse/patch_format=]. Apply the binary patch to the
     [=Client State/client font subset|font subset=] from the input client state. Replace the
-    [=Client State/client font subset|font subset=] in the input client state with the result of the
-    patch application.
+    [=Client State/client font subset|font subset=] in the input <var>client state</var> with the
+    result of the patch application.
 
+<!-- TODO: use algorithm ref for error handling -->
 3. If either [=PatchResponse/replacement=] or [=PatchResponse/patch=] is set then:
     <a href="#computing-checksums">compute the checksum</a> of the [=font subset=] produced by the patch
-    application in steps 1 or 2. If the computed checksum is not equal to [=PatchResponse/patched_checksum=]
-    this is a recoverable error. Follow the procedure in [[#client-side-checksum-mismatch]]. Otherwise
-    update the [=Client State/original font checksum=] in the input client state with the value in
-    [=PatchResponse/original_font_checksum=].
+    application in steps 1 or 2. If the computed checksum is not equal to
+    [=PatchResponse/patched_checksum=] this is a recoverable error. Follow the procedure in
+    [[#client-side-checksum-mismatch]]. Otherwise update the [=Client State/original font checksum=] in
+    the input <var>client state</var> with the value in [=PatchResponse/original_font_checksum=].
 
 4. If fields [=PatchResponse/codepoint_ordering=] and [=PatchResponse/ordering_checksum=] are set then
-    update the [=Client State/codepoint reordering checksum=] in the input client state with the new
-    values specified by these two fields. If neither [=PatchResponse/replacement=] nor
+    update the [=Client State/codepoint reordering checksum=] in the input <var>client state</var> with
+    the new values specified by these two fields. If neither [=PatchResponse/replacement=] nor
     [=PatchResponse/patch=] are set, then the client should resend the request that triggered this
-    response but use the new codepoint ordering provided in this response.
+    response but use the new codepoint ordering provided in this response. Go back to step 1 to process
+    the response.
 
 5. If [=PatchResponse/original_features=] is set and the client has opted to save them then replace the
-    [=Client State/original font feature list=] in the input client state with the value from the
-    response.
+    [=Client State/original font feature list=] in the input <var>client state</var> with the value from    the response.
 
 6. If [=PatchResponse/original_axis_space=] is set then update the
-    [=Client State/original font axis space=] in the input client state with the value specified in
-    this field.
+    [=Client State/original font axis space=] in the input <var>client state</var> with the value
+    specified in this field.
 
 7. If [=PatchResponse/subset_axis_space=] is set then update the
-    [=Client State/subset axis space=] in the input client state with the value specified in this field.
+    [=Client State/subset axis space=] in the input <var>client state</var> with the value specified in
+    this field.
 
-After processing the response, return the updated input client state and any cache headers that were
-set on the response.
+After processing the response, return the updated input <var>client state</var> and any cache headers
+that were set on the response.
 
 #### Handling Invalid Response from the Server #### {#invalid-server-response}
 
 
 If the response a client receives from the server has a [=response/status=] code other than 200:
 
+<!-- TODO: use aglorithm ref -->
 *  If it is a redirect [=status=]: follow normal redirect handling, such as
      [[fetch#http-redirect-fetch]] and then go back to [[#handling-patch-response]].
 
