@@ -1361,19 +1361,28 @@ If the font load or extension has failed the client should choose one of the fol
 Regardless of which of the above options are used, the saved client state for this font must be
 discarded.
 
-### Load a Font in a User Agent with a HTTP Cache ### {#load-a-font}
+<h4 algorithm id="load-a-font">Load a Font in a User Agent with a HTTP Cache</h4>
 
 The previous section [[#extend-subset]] provides no guidance on how a user agent should handle
 saving client state between invocations of the subset extension algorithm. This section provides an
 algorithm that user agents which implement [[fetch]] should use to save client state to the user
 agent's HTTP cache ([[RFC9111]]).
 
+<dfn abstract-op>Load a font with a HTTP Cache</h4>
+
 The inputs to this algorithm:
 
-*  Font URL: a URL where the font to be extended is located.
+* <var>font URL</var>: a URL where the font to be extended is located.
 
-*  Desired Subset Definition: a [=font subset definition|description=] of the desired
+* <var>fragment identifier</var> (optional): if the font at the font url is a collection of fonts,
+    the fragment identifier ([[rfc8081#section-4.2]]) identifies a single font within the collection.
+
+* <var>desired subset definition</var>: a [=font subset definition|description=] of the desired
     minimum [=font subset=].
+
+* <var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder
+    of this section is desribed in terms of [[fetch#fetching]], but it is allowed to substitute
+    whatever HTTP fetching algorithm the user agent supports.
 
 The algorithm outputs:
 
@@ -1395,30 +1404,32 @@ The algorithm:
 
      * The request [=request/cache mode=] is "only-if-cached".
 
-<!-- TODO: use algorithm ref -->
 2.  If the request is successful and the response is "fresh" ([[RFC9111#name-freshness]])
-     then invoke [[#extend-subset]] with:
+     then invoke [$Extend the font subset$] with:
 
-     *  Font url set to the input font url.
+     *  Font url set to the input <var>font URL</var>.
+
+     *  Fragment identifier set to the input <var>fragment identifier</var>
 
      *  Client state set to the response.
 
-     *  Desired subset definition set to the input subset definition.
+     *  Desired subset definition set to the input <var>desired subset definition</var>.
 
-     *  Fetch algorithm set to [[fetch]].
+     *  Fetch algorithm set to the input <var>fetch algorithm</var>.
 
      Once that returns go to step 4.
 
-<!-- TODO: use algorithm ref -->
-3.  Otherwise, invoke [[#extend-subset]] with:
+3.  Otherwise, invoke [$Extend the font subset$] with:
 
-     *  Font url set to the input font url.
+     *  Font url set to the input <var>font URL</var>.
+
+     *  Fragment identifier set to the input <var>fragment identifier</var>
 
      *  Client state set to null.
 
-     *  Desired subset definition set to the input subset definition.
+     *  Desired subset definition set to the input <var>desired subset definition</var>.
 
-     *  Fetch algorithm set to [[fetch]].
+     *  Fetch algorithm set to the input <var>fetch algorithm</var>.
 
      Once that returns go to step 4.
 

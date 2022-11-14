@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="4866719ba4a4b1d5e204b5ce68dde6d2c14f5e79" name="document-revision">
+  <meta content="035ed3d0a30d2b124b8cc7ace9b4bfc135f93631" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -1569,18 +1569,26 @@ that were set on the <var>server response</var>.</p>
    </ol>
    <p>Regardless of which of the above options are used, the saved client state for this font must be
 discarded.</p>
-   <h4 class="heading settled" data-level="4.4.4" id="load-a-font"><span class="secno">4.4.4. </span><span class="content">Load a Font in a User Agent with a HTTP Cache</span><a class="self-link" href="#load-a-font"></a></h4>
+   <h4 class="heading settled algorithm" data-algorithm="Load a Font in a User Agent with a HTTP Cache" data-level="4.4.4" id="load-a-font"><span class="secno">4.4.4. </span><span class="content">Load a Font in a User Agent with a HTTP Cache</span><a class="self-link" href="#load-a-font"></a></h4>
    <p>The previous section <a href="#extend-subset">§ 4.4.2 Extending the Font Subset</a> provides no guidance on how a user agent should handle
 saving client state between invocations of the subset extension algorithm. This section provides an
 algorithm that user agents which implement <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a> should use to save client state to the user
 agent’s HTTP cache (<a data-link-type="biblio" href="#biblio-rfc9111">[RFC9111]</a>).</p>
+   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-load-a-font-with-a-http-cache">Load a font with a HTTP Cache<a class="self-link" href="#abstract-opdef-load-a-font-with-a-http-cache"></a></dfn></p>
    <p>The inputs to this algorithm:</p>
    <ul>
     <li data-md>
-     <p>Font URL: a URL where the font to be extended is located.</p>
+     <p><var>font URL</var>: a URL where the font to be extended is located.</p>
     <li data-md>
-     <p>Desired Subset Definition: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition②">description</a> of the desired
+     <p><var>fragment identifier</var> (optional): if the font at the font url is a collection of fonts,
+the fragment identifier (<a href="https://www.rfc-editor.org/rfc/rfc8081#section-4.2">The "font" Top-Level Media Type § section-4.2</a>) identifies a single font within the collection.</p>
+    <li data-md>
+     <p><var>desired subset definition</var>: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition②">description</a> of the desired
 minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a>.</p>
+    <li data-md>
+     <p><var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a>. The remainder
+of this section is desribed in terms of <a href="https://fetch.spec.whatwg.org/#fetching"><cite>Fetch Standard</cite> § 4 Fetching</a>, but it is allowed to substitute
+whatever HTTP fetching algorithm the user agent supports.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -1607,29 +1615,33 @@ minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①�
      </ul>
     <li data-md>
      <p>If the request is successful and the response is "fresh" (<a href="https://www.rfc-editor.org/rfc/rfc9111#name-freshness">HTTP Caching § name-freshness</a>)
- then invoke <a href="#extend-subset">§ 4.4.2 Extending the Font Subset</a> with:</p>
+ then invoke <a data-link-type="abstract-op" href="#abstract-opdef-extend-the-font-subset" id="ref-for-abstract-opdef-extend-the-font-subset②">Extend the font subset</a> with:</p>
      <ul>
       <li data-md>
-       <p>Font url set to the input font url.</p>
+       <p>Font url set to the input <var>font URL</var>.</p>
+      <li data-md>
+       <p>Fragment identifier set to the input <var>fragment identifier</var></p>
       <li data-md>
        <p>Client state set to the response.</p>
       <li data-md>
-       <p>Desired subset definition set to the input subset definition.</p>
+       <p>Desired subset definition set to the input <var>desired subset definition</var>.</p>
       <li data-md>
-       <p>Fetch algorithm set to <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a>.</p>
+       <p>Fetch algorithm set to the input <var>fetch algorithm</var>.</p>
      </ul>
      <p>Once that returns go to step 4.</p>
     <li data-md>
-     <p>Otherwise, invoke <a href="#extend-subset">§ 4.4.2 Extending the Font Subset</a> with:</p>
+     <p>Otherwise, invoke <a data-link-type="abstract-op" href="#abstract-opdef-extend-the-font-subset" id="ref-for-abstract-opdef-extend-the-font-subset③">Extend the font subset</a> with:</p>
      <ul>
       <li data-md>
-       <p>Font url set to the input font url.</p>
+       <p>Font url set to the input <var>font URL</var>.</p>
+      <li data-md>
+       <p>Fragment identifier set to the input <var>fragment identifier</var></p>
       <li data-md>
        <p>Client state set to null.</p>
       <li data-md>
-       <p>Desired subset definition set to the input subset definition.</p>
+       <p>Desired subset definition set to the input <var>desired subset definition</var>.</p>
       <li data-md>
-       <p>Fetch algorithm set to <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a>.</p>
+       <p>Fetch algorithm set to the input <var>fetch algorithm</var>.</p>
      </ul>
      <p>Once that returns go to step 4.</p>
     <li data-md>
@@ -2412,6 +2424,7 @@ itself be statically compressed.</p>
    <li><a href="#patchrequest-indices_needed">indices_needed</a><span>, in § 4.3.3</span>
    <li><a href="#integer">Integer</a><span>, in § 4.2.2</span>
    <li><a href="#integerlist">IntegerList</a><span>, in § 4.2.5</span>
+   <li><a href="#abstract-opdef-load-a-font-with-a-http-cache">Load a font with a HTTP Cache</a><span>, in § 4.4.4</span>
    <li>
     ordering_checksum
     <ul>
@@ -3052,6 +3065,7 @@ itself be statically compressed.</p>
    <b><a href="#abstract-opdef-extend-the-font-subset">#abstract-opdef-extend-the-font-subset</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-abstract-opdef-extend-the-font-subset">4.4.3. Handling Server Response</a> <a href="#ref-for-abstract-opdef-extend-the-font-subset①">(2)</a>
+    <li><a href="#ref-for-abstract-opdef-extend-the-font-subset②">4.4.4. Load a Font in a User Agent with a HTTP Cache</a> <a href="#ref-for-abstract-opdef-extend-the-font-subset③">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="patch-request-header">
