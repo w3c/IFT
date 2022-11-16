@@ -1046,15 +1046,12 @@ For a [=PatchRequest=] object to be well formed:
     <td><dfn for="PatchResponse">codepoint_ordering</dfn></td><td>[=IntegerList=]</td></tr>
   <tr>
     <td>7</td>
-    <td><dfn for="PatchResponse">ordering_checksum</dfn></td><td>[=Integer=]</td></tr>
-  <tr>
-    <td>8</td>
     <td><dfn for="PatchResponse">subset_axis_space</dfn></td><td>[=AxisSpace=]</td></tr>
   <tr>
-    <td>9</td>
+    <td>8</td>
     <td><dfn for="PatchResponse">original_axis_space</dfn></td><td>[=AxisSpace=]</td></tr>
   <tr>
-    <td>10</td>
+    <td>9</td>
     <td><dfn for="PatchResponse">original_features</dfn></td><td>[=FeatureTagSet=]</td></tr>
 </table>
 
@@ -1069,8 +1066,6 @@ For a PatchResponse object to be well formed:
 *  <span class="conform server" id="conform-response-valid-format">
      If [=PatchResponse/patch_format=] is set then it must be one of the values listed in
      [[#patch-formats]].</span>
-*  <span class="conform server" id="conform-response-ordering-checksum">
-     If [=PatchResponse/codepoint_ordering=] is set then [=PatchResponse/ordering_checksum=] must be set.</span>
 
 Client {#client}
 ----------------
@@ -1089,9 +1084,6 @@ transferred:
 
 *  <dfn for="Client State">Codepoint Reordering Map</dfn>: The most recent [[#codepoint-reordering]]
     received from the server for this font. Supplied by [=PatchResponse/codepoint_ordering=].
-
-*  <dfn for="Client State">Codepoint Reordering Checksum</dfn>: The most recent
-    [=PatchResponse/ordering_checksum=] for this font.
 
 *  <dfn for="Client State">Original Font Axis Space</dfn>: the variations axis space that the original
     font covers. Supplied by [=PatchResponse/original_axis_space=]</a>.
@@ -1229,8 +1221,9 @@ The algorithm:
          entire axis from the [=original font=] then that axis should not be listed.
 
      *  [=PatchRequest/ordering_checksum=]: If either of [=PatchRequest/indices_have=] or
-         [=PatchRequest/indices_needed=] is set then this must be set to the current value of
-         [=Client State/codepoint reordering checksum=] saved in the state for this font.
+         [=PatchRequest/indices_needed=] is set then this must be set to the checksum of the
+         [=Client State/codepoint reordering map=] saved in the state for this font. The checksum
+         is computed via [[#reordering-checksum]].
 
      *  [=PatchRequest/original_font_checksum=]:
          Set to saved value for [=Client State/original font checksum=] in the state for this font. If
@@ -1323,9 +1316,9 @@ The algorithm:
     *  Otherwise update the [=Client State/original font checksum=] in
         the input <var>client state</var> with the value in [=PatchResponse/original_font_checksum=].
 
-7. If fields [=PatchResponse/codepoint_ordering=] and [=PatchResponse/ordering_checksum=] are set then
-    update the [=Client State/codepoint reordering checksum=] in the input <var>client state</var> with
-    the new values specified by these two fields. If neither [=PatchResponse/replacement=] nor
+7. If the field [=PatchResponse/codepoint_ordering=] is set then update the
+    [=Client State/codepoint reordering map=] in the input <var>client state</var> with
+    the new values specified the field. If neither [=PatchResponse/replacement=] nor
     [=PatchResponse/patch=] are set, then the client should resend the request that triggered this
     response but use the new codepoint ordering provided in this response. Go back to step 1 to process
     the response.
@@ -1520,8 +1513,7 @@ match the checksum in [=PatchRequest/original_font_checksum=] or
     computed by the procedure in [[#computing-checksums]].</span>
 
 *  <span class="conform server" id="conform-response-codepoint-ordering">
-    The response must set the
-    [=PatchResponse/codepoint_ordering=] and [=PatchResponse/ordering_checksum=] fields following
+    The response must set the [=PatchResponse/codepoint_ordering=] field following
     [[#codepoint-reordering]].</span>
 
 *  <span class="conform server" id="conform-response-original-features">
