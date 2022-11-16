@@ -1040,18 +1040,15 @@ For a [=PatchRequest=] object to be well formed:
     <td><dfn for="PatchResponse">original_font_checksum</dfn></td><td>[=Integer=]</td></tr>
   <tr>
     <td>5</td>
-    <td><dfn for="PatchResponse">patched_checksum</dfn></td><td>[=Integer=]</td></tr>
-  <tr>
-    <td>6</td>
     <td><dfn for="PatchResponse">codepoint_ordering</dfn></td><td>[=IntegerList=]</td></tr>
   <tr>
-    <td>7</td>
+    <td>6</td>
     <td><dfn for="PatchResponse">subset_axis_space</dfn></td><td>[=AxisSpace=]</td></tr>
   <tr>
-    <td>8</td>
+    <td>7</td>
     <td><dfn for="PatchResponse">original_axis_space</dfn></td><td>[=AxisSpace=]</td></tr>
   <tr>
-    <td>9</td>
+    <td>8</td>
     <td><dfn for="PatchResponse">original_features</dfn></td><td>[=FeatureTagSet=]</td></tr>
 </table>
 
@@ -1060,9 +1057,6 @@ For a PatchResponse object to be well formed:
      [=PatchResponse/protocol_version=] must be set to 0.</span>
 *  <span class="conform server" id="conform-response-patch-or-replacement">
      Only one of [=PatchResponse/patch=] or [=PatchResponse/replacement=] must be set.</span>
-*  <span class="conform server" id="conform-response-font-checksums">
-     If either [=PatchResponse/patch=] or [=PatchResponse/replacement=] is set then [=PatchResponse/patch_format=],
-     and [=PatchResponse/patched_checksum=] must be set.</span>
 *  <span class="conform server" id="conform-response-valid-format">
      If [=PatchResponse/patch_format=] is set then it must be one of the values listed in
      [[#patch-formats]].</span>
@@ -1302,19 +1296,10 @@ The algorithm:
     [=Client State/client font subset|font subset=] in the input <var>client state</var> with the
     result of the patch application.
 
-6. If either [=PatchResponse/replacement=] or [=PatchResponse/patch=] is set then:
-    <a href="#computing-checksums">compute the checksum</a> of the [=font subset=] produced by the
-    patch application in steps 1 or 2.
 
-    *  If the computed checksum is not equal to [=PatchResponse/patched_checksum=] this is a
-        recoverable error. Discard the saved client state and invoke [$Extend the font subset$] to
-        resend the request with the same arguments as the original request, except client state is set
-        to null. If the resent request also results in a checksum mismatch then this is an error. The
-        client must not resend the request again and should invoke [$Handle failed font load$] and
-        return the result. Otherwise return the result from the call to [$Extend the font subset$].
-
-    *  Otherwise update the [=Client State/original font checksum=] in
-        the input <var>client state</var> with the value in [=PatchResponse/original_font_checksum=].
+6. If [=PatchResponse/original_font_checksum=] is set then update the
+    [=Client State/original font checksum=] in the input <var>client state</var> with the value in
+    [=PatchResponse/original_font_checksum=].
 
 7. If the field [=PatchResponse/codepoint_ordering=] is set then update the
     [=Client State/codepoint reordering map=] in the input <var>client state</var> with
@@ -1531,11 +1516,6 @@ Additionally:
 *  <span class="conform server" id="conform-response-patch-format">The format of the patch in the
     either the [=PatchResponse/patch=] or [=PatchResponse/replacement=] fields must be one of those
     listed in [=PatchRequest/accept_patch_format=]</span>.
-
-*  <span class="conform server" id="conform-response-patched-checksum">
-     If [=PatchResponse/patch=] or [=PatchResponse/replacement=] fields are set the value of
-     [=PatchResponse/patched_checksum=] must be set to the checksum of the extended [=font subset=].
-     The checksum value must be computed by the procedure in [[#computing-checksums]].</span>
 
 *  <span class="conform server" id="conform-response-subset-axis-space-field">
     If [=PatchResponse/patch=] or [=PatchResponse/replacement=] fields are set and the
