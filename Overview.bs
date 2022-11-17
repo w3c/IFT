@@ -24,6 +24,7 @@ Abstract: This specification defines two methods to incrementally transfer fonts
 
 <pre class=link-defaults>
 spec:fetch; type:dfn; for:/; text:status
+spec:fetch; type:dfn; for:/; text:response
 </pre>
 
 <pre class=biblio>
@@ -1124,7 +1125,8 @@ The inputs to this algorithm are:
     font url, or null.
 
 * <var>desired subset definition</var>: a [=font subset definition|description=] of the desired
-    minimum [=font subset=].
+    minimum [=font subset=]. The subset definition must be a superset of the [=font subset=] in
+    <var>client state</var>.
 
 * <var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder
     of this section is desribed in terms of [[fetch#fetching]], but it is allowed to substitute
@@ -1187,7 +1189,8 @@ The algorithm:
          should not be set.
 
      *  [=PatchRequest/codepoints_needed=]: set to the set of codepoints that the client wants to
-         add to its [=font subset=] as defined in the <var>desired subset definition</var>. If the
+         add to its [=font subset=]. That is the codepoint set from <var>desired subset
+         definition</var> minus the codepoints already in [=Client State/Client font subset=]. If the
          <var>client state</var> has a [=Client State/codepoint reordering map=] for this font then
          this field should not be set.
 
@@ -1198,10 +1201,11 @@ The algorithm:
          font then this field should not be set.
 
      *  [=PatchRequest/indices_needed=]: encodes the set of codepoints that the client wants to add to
-         its [=font subset=] as defined in the <var>desired subset definition</var>. The codepoint
-         values are transformed to indices by applying the [=Client State/codepoint reordering map=]
-         to each codepoint value. If the client does not have a codepoint ordering for this font then
-         this field should not be set.
+         its [=font subset=]. That is the codepoint set from <var>desired subset
+         definition</var> minus the codepoints already in [=Client State/Client font subset=]. The
+         codepoint values are transformed to indices by applying the [=Client State/codepoint
+         reordering map=] to each codepoint value. If the client does not have a codepoint ordering
+         for this font then this field should not be set.
 
      *  [=PatchRequest/features_have=]: set to the list of
          <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">
@@ -1211,12 +1215,13 @@ The algorithm:
          data for features present in the [=original font=] then this field can be unset.
 
      *  [=PatchRequest/features_needed=]: set to the list of feature tags that the client wants to add
-         to the current [=font subset=] as defined in the <var>desired subset definition</var>.
-         Alternatively, if the client wishes to add all features from the [=original font=] to it's
+         to the current [=font subset=]. That is the feature set from <var>desired subset
+         definition</var> minus the set of features already in [=Client State/Client font subset=].
+         If the client wishes to add all remaining layout features from the [=original font=] to it's
          subset then this field should be unset.
 
-     *  [=PatchRequest/axis_space_have=]: set to the current value of [=Client State/subset axis space=]
-         saved in the <var>client state</var> for this font.
+     *  [=PatchRequest/axis_space_have=]: set to the current value of
+         [=Client State/subset axis space=] saved in the <var>client state</var> for this font.
 
      *  [=PatchRequest/axis_space_needed=]: set to the intervals of each variable axis in the
          [=original font=] that the client wants to add to its [=font subset=] as defined in the
@@ -1244,91 +1249,103 @@ The algorithm:
      example, on slower connections it may be more performant to request extra codepoints if
      that is likely to prevent a future request from needing to be sent.
 
-<!-- TODO: change to algorithm ref -->
-3. Invoke [[#handling-patch-response]] with the response from the server and return the result.
+3. Invoke [$Handle server response$] with the response from the server and return the result.
 
 Note: POST is preferred for the HTTP method since it will not cause a CORS preflight request
 and the request object is more compactly encoded. GET should only be used during
 <a href="#method-negotiation">method negotiation</a>.
 
-#### Handling PatchResponse #### {#handling-patch-response}
+<h4 algorithm id="handling-patch-response">Handling Server Response</h4>
 
 If a server is able to succsessfully process a [=PatchRequest=]
 it will respond with HTTP [=response/status=] code 200 and the [=response/body=] of the response will
-be a 4 byte magic number (0x49, 0x46, 0x54, 0x20) followed by a single
-[=PatchResponse=] object encoded via CBOR. The client
-should interpret and process the fields of the object as follows:
+be a 4 byte magic number (0x49, 0x46, 0x54, 0x20) followed by a single [=PatchResponse=] object encoded
+via CBOR. The client uses the following algorithm to interpret and process the fields of the
+object.
 
-1.  If field [=PatchResponse/replacement=] is set then: the byte array in this field is a binary patch
+<dfn abstract-op>Handle server response</dfn>
+
+Inputs:
+
+* <var>server response</var>: HTTP [=response=] to a patch request.
+
+* <var>client state</var> (optional): previously saved [=client state=].
+
+The algorithm outputs:
+
+* Client State: [=client state=] that has been updated to contain a [=font subset=] which covers at
+    least the requested subset definition.
+
+* Cache fields: HTTP cache fields [[rfc9111#name-field-definitions]] describing how client state
+    can be cached, or null.
+
+The algorithm:
+
+1.  If the <var>server response</var> has [=response/status=] other than 200:
+
+     *  If it is a redirect [=status=]: follow normal redirect handling, such as
+         [[fetch#http-redirect-fetch]] and then go back to step 1.
+
+     *  All other statuses, the [=font subset=] extension has failed. Invoke
+         [$Handle failed font load$] and return the result.
+
+2.  Check the first four bytes of the <var>server response</var> [=response/body=]. If they are
+     not equal to [0x49, 0x46, 0x54, 0x20] then this response is malformed.
+     Invoke [$Handle failed font load$] and return the result.
+
+3.  Interpret the remaining bytes of the <var>server response</var> [=response/body=] as a CBOR
+     encoded [=PatchResponse=]. If the bytes are not decodable with CBOR, or the
+     [=PatchResponse=] is not well formed, then this is an error. Invoke [$Handle failed font load$]
+     and return the result.
+
+4.  If field [=PatchResponse/replacement=] is set then: the byte array in this field is a binary patch
      in the format specified by [=PatchResponse/patch_format=]. Apply the binary patch to a base which
      is an empty byte array. Replace the [=Client State/client font subset|font subset=] in the input
-     client state with the result of the patch application.
+     <var>client state</var> with the result of the patch application.
 
-2. If field [=PatchResponse/patch=] is set then:  the byte array in this field is a binary patch
+5. If field [=PatchResponse/patch=] is set then:  the byte array in this field is a binary patch
     in the format specifiedy [=PatchResponse/patch_format=]. Apply the binary patch to the
     [=Client State/client font subset|font subset=] from the input client state. Replace the
-    [=Client State/client font subset|font subset=] in the input client state with the result of the
-    patch application.
+    [=Client State/client font subset|font subset=] in the input <var>client state</var> with the
+    result of the patch application.
 
-3. If either [=PatchResponse/replacement=] or [=PatchResponse/patch=] is set then:
-    <a href="#computing-checksums">compute the checksum</a> of the [=font subset=] produced by the patch
-    application in steps 1 or 2. If the computed checksum is not equal to [=PatchResponse/patched_checksum=]
-    this is a recoverable error. Follow the procedure in [[#client-side-checksum-mismatch]]. Otherwise
-    update the [=Client State/original font checksum=] in the input client state with the value in
-    [=PatchResponse/original_font_checksum=].
+6. If either [=PatchResponse/replacement=] or [=PatchResponse/patch=] is set then:
+    <a href="#computing-checksums">compute the checksum</a> of the [=font subset=] produced by the
+    patch application in steps 1 or 2.
 
-4. If fields [=PatchResponse/codepoint_ordering=] and [=PatchResponse/ordering_checksum=] are set then
-    update the [=Client State/codepoint reordering checksum=] in the input client state with the new
-    values specified by these two fields. If neither [=PatchResponse/replacement=] nor
+    *  If the computed checksum is not equal to [=PatchResponse/patched_checksum=] this is a
+        recoverable error. Discard the saved client state and invoke [$Extend the font subset$] to
+        resend the request with the same arguments as the original request, except client state is set
+        to null. If the resent request also results in a checksum mismatch then this is an error. The
+        client must not resend the request again and should invoke [$Handle failed font load$] and
+        return the result. Otherwise return the result from the call to [$Extend the font subset$].
+
+    *  Otherwise update the [=Client State/original font checksum=] in
+        the input <var>client state</var> with the value in [=PatchResponse/original_font_checksum=].
+
+7. If fields [=PatchResponse/codepoint_ordering=] and [=PatchResponse/ordering_checksum=] are set then
+    update the [=Client State/codepoint reordering checksum=] in the input <var>client state</var> with
+    the new values specified by these two fields. If neither [=PatchResponse/replacement=] nor
     [=PatchResponse/patch=] are set, then the client should resend the request that triggered this
-    response but use the new codepoint ordering provided in this response.
+    response but use the new codepoint ordering provided in this response. Go back to step 1 to process
+    the response.
 
-5. If [=PatchResponse/original_features=] is set and the client has opted to save them then replace the
-    [=Client State/original font feature list=] in the input client state with the value from the
-    response.
+8. If [=PatchResponse/original_features=] is set and the client has opted to save them then replace the
+    [=Client State/original font feature list=] in the input <var>client state</var> with the value
+    from the response.
 
-6. If [=PatchResponse/original_axis_space=] is set then update the
-    [=Client State/original font axis space=] in the input client state with the value specified in
-    this field.
+9. If [=PatchResponse/original_axis_space=] is set then update the
+    [=Client State/original font axis space=] in the input <var>client state</var> with the value
+    specified in this field.
 
-7. If [=PatchResponse/subset_axis_space=] is set then update the
-    [=Client State/subset axis space=] in the input client state with the value specified in this field.
+10. If [=PatchResponse/subset_axis_space=] is set then update the
+     [=Client State/subset axis space=] in the input <var>client state</var> with the value specified
+     in this field.
 
-After processing the response, return the updated input client state and any cache headers that were
-set on the response.
+After processing the response, return the updated input <var>client state</var> and any cache headers
+that were set on the <var>server response</var>.
 
-#### Handling Invalid Response from the Server #### {#invalid-server-response}
-
-
-If the response a client receives from the server has a [=response/status=] code other than 200:
-
-*  If it is a redirect [=status=]: follow normal redirect handling, such as
-     [[fetch#http-redirect-fetch]] and then go back to [[#handling-patch-response]].
-
-*  All other statuses, the [=font subset=] extension has failed. Follow [[#font-load-failed]].
-
-If the response the client receives has a [=response/status=] code of 200, but the [=response/body=]
-is malformed. That is, it is missing the magic number, not decodable with CBOR, or the
-[=PatchResponse=] is not well formed:
-
-*  This is an error. Follow [[#font-load-failed]].
-
-#### Client Side Checksum Mismatch #### {#client-side-checksum-mismatch}
-
-If the checksum of the [=font subset=] computed by the client does not match the
-[=PatchResponse/patched_checksum=] in the server's response then the client should:
-
-1. Discard the input client state for this font.
-
-<!-- TODO: specify the arguments to the extension algo -->
-2. Invoke [$Extend the font subset$] to resend the request. Set the
-    [=PatchRequest/codepoints_needed=] field to the union of the codepoints in the discarded
-    [=font subset=] and the set of code points that the previous request was trying to add.
-
-    If the resent request also results in a checksum mismatch then this is an error. The client
-    must not resend the request again and should follow [[#font-load-failed]]
-
-#### Font Load Failed #### {#font-load-failed}
+<dfn abstract-op>Handle failed font load</dfn>
 
 If the font load or extension has failed the client should choose one of the following options:
 
@@ -1336,7 +1353,7 @@ If the font load or extension has failed the client should choose one of the fol
       agent's existing font fallback mechanism for codepoints not covered by the subset.
 
 2.  The client may re-issue the request as a regular non incremental font fetch to the same
-      [=url/path=]. It must not include the patch subset request parameter. This will load
+      [=url/path=]. It must not include the patch subset request parameter or header. This will load
       the entire [=original font=].
 
 3.  Discard the saved [=font subset=], and use the user agent's existing font fallback mechanism.
@@ -1344,19 +1361,28 @@ If the font load or extension has failed the client should choose one of the fol
 Regardless of which of the above options are used, the saved client state for this font must be
 discarded.
 
-### Load a Font in a User Agent with a HTTP Cache ### {#load-a-font}
+<h4 algorithm id="load-a-font">Load a Font in a User Agent with a HTTP Cache</h4>
 
 The previous section [[#extend-subset]] provides no guidance on how a user agent should handle
 saving client state between invocations of the subset extension algorithm. This section provides an
 algorithm that user agents which implement [[fetch]] should use to save client state to the user
 agent's HTTP cache ([[RFC9111]]).
 
+<dfn abstract-op>Load a font with a HTTP Cache</h4>
+
 The inputs to this algorithm:
 
-*  Font URL: a URL where the font to be extended is located.
+* <var>font URL</var>: a URL where the font to be extended is located.
 
-*  Desired Subset Definition: a [=font subset definition|description=] of the desired
+* <var>fragment identifier</var> (optional): if the font at the font url is a collection of fonts,
+    the fragment identifier ([[rfc8081#section-4.2]]) identifies a single font within the collection.
+
+* <var>desired subset definition</var>: a [=font subset definition|description=] of the desired
     minimum [=font subset=].
+
+* <var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder
+    of this section is desribed in terms of [[fetch#fetching]], but it is allowed to substitute
+    whatever HTTP fetching algorithm the user agent supports.
 
 The algorithm outputs:
 
@@ -1378,30 +1404,32 @@ The algorithm:
 
      * The request [=request/cache mode=] is "only-if-cached".
 
-<!-- TODO: use algorithm ref -->
 2.  If the request is successful and the response is "fresh" ([[RFC9111#name-freshness]])
-     then invoke [[#extend-subset]] with:
+     then invoke [$Extend the font subset$] with:
 
-     *  Font url set to the input font url.
+     *  Font url set to the input <var>font URL</var>.
+
+     *  Fragment identifier set to the input <var>fragment identifier</var>
 
      *  Client state set to the response.
 
-     *  Desired subset definition set to the input subset definition.
+     *  Desired subset definition set to the input <var>desired subset definition</var>.
 
-     *  Fetch algorithm set to [[fetch]].
+     *  Fetch algorithm set to the input <var>fetch algorithm</var>.
 
      Once that returns go to step 4.
 
-<!-- TODO: use algorithm ref -->
-3.  Otherwise, invoke [[#extend-subset]] with:
+3.  Otherwise, invoke [$Extend the font subset$] with:
 
-     *  Font url set to the input font url.
+     *  Font url set to the input <var>font URL</var>.
+
+     *  Fragment identifier set to the input <var>fragment identifier</var>
 
      *  Client state set to null.
 
-     *  Desired subset definition set to the input subset definition.
+     *  Desired subset definition set to the input <var>desired subset definition</var>.
 
-     *  Fetch algorithm set to [[fetch]].
+     *  Fetch algorithm set to the input <var>fetch algorithm</var>.
 
      Once that returns go to step 4.
 
