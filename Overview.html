@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="8ef78e2c408dee90b63bfb3aac43644906391f73" name="document-revision">
+  <meta content="7cf4ac62d44684e373f41d83891eb61264f6fea9" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -493,9 +493,23 @@ break rendering <a href="https://www.w3.org/TR/PFE-evaluation/#fail-subset">Prog
 different subsets. Incremental font transfer does not suffer from this issue as it maintains the
 original font and all it’s layout rules.</p>
    <h4 class="heading settled" data-level="1.4.1" id="reduce-requests"><span class="secno">1.4.1. </span><span class="content">Reducing the Number of Network Requests</span><a class="self-link" href="#reduce-requests"></a></h4>
-   <p>The evaluation report found that performance of incremental transfer can be improved by specutalively
-requesting more codepoints than currently needed in order to reduce the need to make
-future requests. See <a href="https://www.w3.org/TR/PFE-evaluation/#codepredict">Progressive Font Enrichment: Evaluation Report § codepredict</a> for a more detailed discussion.</p>
+   <p>As discussed in the previous section the most basic implementation of incremental font transfer will
+tend to increase the total number of requests made vs traditional font loading. Since each request
+will require at least one round trip time, performance can be negatively impacted if too many requests
+are made. Both range request and patch subset allow for more codepoints then needed to be requested.
+Intelligent use of this feature by an implementation can help reduce the total number of requests
+being made. The evaluation report explored this by testing the performance of a basic character
+frequency based <a href="https://www.w3.org/TR/PFE-evaluation/#codepredict">codepoint prediction</a> scheme and found it improved overall
+performance.</p>
+   <p>Performant implementations should incorporate a similar mechanism which can select codepoints which are
+likely to be needed in the future and preemptively load them. This will improve performance by reducing
+the need to make additional requests for missing codepoints. The set of codepoints the client has and
+the set they are requesting can be used in conjuction with codepoint occurence frequency and codepoint
+usage in languages/scripts  to make predictions on which additional codepoints are likely to be needed.</p>
+   <p>Under range request the prediction mechanism will need to be part of the client implementation. In
+patch subset either the client and/or server implementation can include a prediction mechanism. A side
+benefit to a client side prediction mechanism is providing some obfuscation of the specific codepoints
+required by the client. This is further discussed in <a href="#content-inference-from-character-set">Content inference from character set</a>.</p>
    <h4 class="heading settled" data-level="1.4.2" id="patchsubset-vs-rangerequest"><span class="secno">1.4.2. </span><span class="content">Deciding between Patch Subset and Range Request</span><a class="self-link" href="#patchsubset-vs-rangerequest"></a></h4>
    <p>From a purely performance perspective patch subset is more performant than range request. There are
 three main factors for this:</p>
