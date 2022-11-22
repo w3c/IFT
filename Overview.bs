@@ -39,7 +39,7 @@ spec:fetch; type:dfn; for:/; text:response
   },
 
   "Shared-Brotli": {
-    "href": "https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09",
+    "href": "https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2",
     "authors": [
       "J. Alakuijala",
       "T. Duong",
@@ -1684,9 +1684,12 @@ and a target file:
   </tr>
   <tr>
     <td>Brotli Shared Dictionary</td><td>1</td>
-    <td>Uses brotli compression [[!RFC7932]] to produce the patch. The source file is used as a shared
-    dictionary
-    [[!Shared-Brotli]] given to the brotli compressor and decompressor.</td>
+    <td>
+      The target file is encoded with [[!RFC7932|brotli compression]] using the
+      source file as a [[!Shared-Brotli|shared LZ77 dictionary]]. If the source file is empty then
+      the target file is just compressed using [[!RFC7932|brotli compression]] with no shared
+      dictionary.
+   </td>
   </tr>
 </table>
 
