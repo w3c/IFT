@@ -383,6 +383,17 @@ If the content does not specify a specific method:
             <td>Client makes initial request to server with the patch request header. Server does not reply with the patch-subset magic number, and sends the full font file to the client from beginning to end.
 </table>
 
+
+Offline Usage
+-------------
+
+Special consideration must be taken when saving a page for offline usage that uses an incrementally
+transferred font since the saved page won't be able to increment the font if content changes (eg.
+due to javascript execution). In these cases the page saving mechanism should download the full font
+by making a normal GET request without the [=patch request header=] to the font url. Additionally
+when URL's are rewritten to point to the saved full font any of the incremental tech specifiers should
+be removed.
+
 Patch Based Incremental Transfer {#patch-incxfer}
 =================================================
 
