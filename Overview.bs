@@ -1031,6 +1031,9 @@ For an [=AxisInterval=] object to be well formed:
     <td>13</td>
     <td><dfn for="PatchRequest">fragment_id</dfn>
     </td><td>[=String=]</td></tr>
+  <tr>
+    <td>14</td>
+    <td><dfn for="PatchRequest">codepoint_ordering</dfn></td><td>[=IntegerList=]</td></tr>
 </table>
 
 For a [=PatchRequest=] object to be well formed:
@@ -1063,29 +1066,45 @@ For a [=PatchRequest=] object to be well formed:
     <td><dfn for="PatchResponse">replacement</dfn></td><td>[=ByteString=]</td></tr>
   <tr>
     <td>4</td>
-    <td><dfn for="PatchResponse">original_font_checksum</dfn></td><td>[=Integer=]</td></tr>
-  <tr>
-    <td>5</td>
-    <td><dfn for="PatchResponse">codepoint_ordering</dfn></td><td>[=IntegerList=]</td></tr>
-  <tr>
-    <td>6</td>
-    <td><dfn for="PatchResponse">subset_axis_space</dfn></td><td>[=AxisSpace=]</td></tr>
-  <tr>
-    <td>7</td>
-    <td><dfn for="PatchResponse">original_axis_space</dfn></td><td>[=AxisSpace=]</td></tr>
-  <tr>
-    <td>8</td>
-    <td><dfn for="PatchResponse">original_features</dfn></td><td>[=FeatureTagSet=]</td></tr>
+    <td><dfn for="PatchResponse">unrecognized_ordering</dfn></td><td>[=Integer=]</td></tr>
 </table>
 
 For a PatchResponse object to be well formed:
 *  <span class="conform server" id="conform-response-protocol-version">
      [=PatchResponse/protocol_version=] must be set to 0.</span>
 *  <span class="conform server" id="conform-response-patch-or-replacement">
-     Only one of [=PatchResponse/patch=] or [=PatchResponse/replacement=] must be set.</span>
+     Only one of [=PatchResponse/patch=], [=PatchResponse/replacement=], or
+     [=PatchResponse/unrecognized_ordering=] must be set.</span>
 *  <span class="conform server" id="conform-response-valid-format">
      If [=PatchResponse/patch_format=] is set then it must be one of the values listed in
      [[#patch-formats]].</span>
+
+### <dfn>ClientState</dfn> ### {#ClientState}
+
+<table>
+  <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
+
+  <tr>
+    <td>0</td>
+    <td><dfn for="ClientState">original_font_checksum</dfn></td><td>[=Integer=]</td></tr>
+
+  <tr>
+    <td>1</td>
+    <td><dfn for="ClientState">codepoint_ordering</dfn></td><td>[=IntegerList=]</td></tr>
+
+  <tr>
+    <td>2</td>
+    <td><dfn for="ClientState">subset_axis_space</dfn></td><td>[=AxisSpace=]</td></tr>
+
+  <tr>
+    <td>3</td>
+    <td><dfn for="ClientState">original_axis_space</dfn></td><td>[=AxisSpace=]</td></tr>
+
+  <tr>
+    <td>4</td>
+    <td><dfn for="ClientState">original_features</dfn></td><td>[=FeatureTagSet=]</td></tr>
+
+</table>
 
 Client {#client}
 ----------------

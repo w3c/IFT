@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="2f4835b6f6a3480d6ecdb832b2e50064f4806324" name="document-revision">
+  <meta content="4886f2d6375040852822113813dffc2965b41cd8" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -352,6 +352,7 @@ dfn > a.self-link::before      { content: "#"; }
         <li><a href="#AxisInterval"><span class="secno">4.3.2</span> <span class="content"><span>AxisInterval</span></span></a>
         <li><a href="#PatchRequest"><span class="secno">4.3.3</span> <span class="content"><span>PatchRequest</span></span></a>
         <li><a href="#PatchResponse"><span class="secno">4.3.4</span> <span class="content"><span>PatchResponse</span></span></a>
+        <li><a href="#ClientState"><span class="secno">4.3.5</span> <span class="content"><span>ClientState</span></span></a>
        </ol>
       <li>
        <a href="#client"><span class="secno">4.4</span> <span class="content">Client</span></a>
@@ -1261,6 +1262,10 @@ on some variable axis in a font.</p>
       <td>13
       <td><dfn class="dfn-paneled" data-dfn-for="PatchRequest" data-dfn-type="dfn" data-noexport id="patchrequest-fragment_id">fragment_id</dfn> 
       <td><a data-link-type="dfn" href="#string" id="ref-for-string">String</a>
+     <tr>
+      <td>14
+      <td><dfn data-dfn-for="PatchRequest" data-dfn-type="dfn" data-noexport id="patchrequest-codepoint_ordering">codepoint_ordering<a class="self-link" href="#patchrequest-codepoint_ordering"></a></dfn>
+      <td><a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist③">IntegerList</a>
    </table>
    <p>For a <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest①">PatchRequest</a> object to be well formed:</p>
    <ul>
@@ -1299,34 +1304,46 @@ set then <a data-link-type="dfn" href="#patchrequest-ordering_checksum" id="ref-
       <td><a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑨">ByteString</a>
      <tr>
       <td>4
-      <td><dfn class="dfn-paneled" data-dfn-for="PatchResponse" data-dfn-type="dfn" data-noexport id="patchresponse-original_font_checksum">original_font_checksum</dfn>
+      <td><dfn class="dfn-paneled" data-dfn-for="PatchResponse" data-dfn-type="dfn" data-noexport id="patchresponse-unrecognized_ordering">unrecognized_ordering</dfn>
       <td><a data-link-type="dfn" href="#integer" id="ref-for-integer⑧">Integer</a>
-     <tr>
-      <td>5
-      <td><dfn class="dfn-paneled" data-dfn-for="PatchResponse" data-dfn-type="dfn" data-noexport id="patchresponse-codepoint_ordering">codepoint_ordering</dfn>
-      <td><a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist③">IntegerList</a>
-     <tr>
-      <td>6
-      <td><dfn class="dfn-paneled" data-dfn-for="PatchResponse" data-dfn-type="dfn" data-noexport id="patchresponse-subset_axis_space">subset_axis_space</dfn>
-      <td><a data-link-type="dfn" href="#axisspace" id="ref-for-axisspace②">AxisSpace</a>
-     <tr>
-      <td>7
-      <td><dfn class="dfn-paneled" data-dfn-for="PatchResponse" data-dfn-type="dfn" data-noexport id="patchresponse-original_axis_space">original_axis_space</dfn>
-      <td><a data-link-type="dfn" href="#axisspace" id="ref-for-axisspace③">AxisSpace</a>
-     <tr>
-      <td>8
-      <td><dfn class="dfn-paneled" data-dfn-for="PatchResponse" data-dfn-type="dfn" data-noexport id="patchresponse-original_features">original_features</dfn>
-      <td><a data-link-type="dfn" href="#featuretagset" id="ref-for-featuretagset②">FeatureTagSet</a>
    </table>
    <p>For a PatchResponse object to be well formed:</p>
    <ul>
     <li data-md>
      <p><span class="conform server" id="conform-response-protocol-version"> <a data-link-type="dfn" href="#patchresponse-protocol_version" id="ref-for-patchresponse-protocol_version">protocol_version</a> must be set to 0.</span></p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-patch-or-replacement"> Only one of <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement">replacement</a> must be set.</span></p>
+     <p><span class="conform server" id="conform-response-patch-or-replacement"> Only one of <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch">patch</a>, <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement">replacement</a>, or <a data-link-type="dfn" href="#patchresponse-unrecognized_ordering" id="ref-for-patchresponse-unrecognized_ordering">unrecognized_ordering</a> must be set.</span></p>
     <li data-md>
      <p><span class="conform server" id="conform-response-valid-format"> If <a data-link-type="dfn" href="#patchresponse-patch_format" id="ref-for-patchresponse-patch_format">patch_format</a> is set then it must be one of the values listed in <a href="#patch-formats">§ 4.8 Patch Formats</a>.</span></p>
    </ul>
+   <h4 class="heading settled" data-level="4.3.5" id="ClientState"><span class="secno">4.3.5. </span><span class="content"><dfn data-dfn-type="dfn" data-noexport id="clientstate">ClientState<a class="self-link" href="#clientstate"></a></dfn></span><a class="self-link" href="#ClientState"></a></h4>
+   <table>
+    <tbody>
+     <tr>
+      <th>ID
+      <th>Field Name
+      <th>Value Type
+     <tr>
+      <td>0
+      <td><dfn data-dfn-for="ClientState" data-dfn-type="dfn" data-noexport id="clientstate-original_font_checksum">original_font_checksum<a class="self-link" href="#clientstate-original_font_checksum"></a></dfn>
+      <td><a data-link-type="dfn" href="#integer" id="ref-for-integer⑨">Integer</a>
+     <tr>
+      <td>1
+      <td><dfn data-dfn-for="ClientState" data-dfn-type="dfn" data-noexport id="clientstate-codepoint_ordering">codepoint_ordering<a class="self-link" href="#clientstate-codepoint_ordering"></a></dfn>
+      <td><a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist④">IntegerList</a>
+     <tr>
+      <td>2
+      <td><dfn data-dfn-for="ClientState" data-dfn-type="dfn" data-noexport id="clientstate-subset_axis_space">subset_axis_space<a class="self-link" href="#clientstate-subset_axis_space"></a></dfn>
+      <td><a data-link-type="dfn" href="#axisspace" id="ref-for-axisspace②">AxisSpace</a>
+     <tr>
+      <td>3
+      <td><dfn data-dfn-for="ClientState" data-dfn-type="dfn" data-noexport id="clientstate-original_axis_space">original_axis_space<a class="self-link" href="#clientstate-original_axis_space"></a></dfn>
+      <td><a data-link-type="dfn" href="#axisspace" id="ref-for-axisspace③">AxisSpace</a>
+     <tr>
+      <td>4
+      <td><dfn data-dfn-for="ClientState" data-dfn-type="dfn" data-noexport id="clientstate-original_features">original_features<a class="self-link" href="#clientstate-original_features"></a></dfn>
+      <td><a data-link-type="dfn" href="#featuretagset" id="ref-for-featuretagset②">FeatureTagSet</a>
+   </table>
    <h3 class="heading settled" data-level="4.4" id="client"><span class="secno">4.4. </span><span class="content">Client</span><a class="self-link" href="#client"></a></h3>
    <h4 class="heading settled" data-level="4.4.1" id="client-state-section"><span class="secno">4.4.1. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="client-state">Client State</dfn></span><a class="self-link" href="#client-state-section"></a></h4>
    <p>The client will need to maintain at minimum the following state for each font file being incrementally
@@ -1337,21 +1354,21 @@ transferred:</p>
 most recent version of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②">subset</a> of the font being incrementally transferred. For
 a new font this is initialized to empty byte array.</p>
     <li data-md>
-     <p><dfn class="dfn-paneled" data-dfn-for="Client State" data-dfn-type="dfn" data-noexport id="client-state-original-font-checksum">Original font checksum</dfn>: the most recent value of <a data-link-type="dfn" href="#patchresponse-original_font_checksum" id="ref-for-patchresponse-original_font_checksum">original_font_checksum</a> received from the server for this font.</p>
+     <p><dfn class="dfn-paneled" data-dfn-for="Client State" data-dfn-type="dfn" data-noexport id="client-state-original-font-checksum">Original font checksum</dfn>: the most recent value of <a data-link-type="dfn">original_font_checksum</a> received from the server for this font.</p>
     <li data-md>
-     <p><dfn class="dfn-paneled" data-dfn-for="Client State" data-dfn-type="dfn" data-noexport id="client-state-codepoint-reordering-map">Codepoint Reordering Map</dfn>: The most recent <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a> received from the server for this font. Supplied by <a data-link-type="dfn" href="#patchresponse-codepoint_ordering" id="ref-for-patchresponse-codepoint_ordering">codepoint_ordering</a>.</p>
+     <p><dfn class="dfn-paneled" data-dfn-for="Client State" data-dfn-type="dfn" data-noexport id="client-state-codepoint-reordering-map">Codepoint Reordering Map</dfn>: The most recent <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a> received from the server for this font. Supplied by <a data-link-type="dfn">codepoint_ordering</a>.</p>
     <li data-md>
      <p><dfn class="dfn-paneled" data-dfn-for="Client State" data-dfn-type="dfn" data-noexport id="client-state-original-font-axis-space">Original Font Axis Space</dfn>: the variations axis space that the original
-font covers. Supplied by <a data-link-type="dfn" href="#patchresponse-original_axis_space" id="ref-for-patchresponse-original_axis_space">original_axis_space</a>.</p>
+font covers. Supplied by <a data-link-type="dfn">original_axis_space</a>.</p>
     <li data-md>
      <p><dfn class="dfn-paneled" data-dfn-for="Client State" data-dfn-type="dfn" data-noexport id="client-state-subset-axis-space">Subset Axis Space</dfn>: the most recent variations axis space that the
-subsetted font covers. Supplied by <a data-link-type="dfn" href="#patchresponse-subset_axis_space" id="ref-for-patchresponse-subset_axis_space">subset_axis_space</a>.</p>
+subsetted font covers. Supplied by <a data-link-type="dfn">subset_axis_space</a>.</p>
    </ul>
    <p>Additionally, the client can optionally store:</p>
    <ul>
     <li data-md>
      <p><dfn class="dfn-paneled" data-dfn-for="Client State" data-dfn-type="dfn" data-noexport id="client-state-original-font-feature-list">Original font feature list</dfn>: a list of the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a> that the original font has data for. This information can be used by the client to avoid sending
-unnecessary requests for features which the original font does not contain. Supplied by <a data-link-type="dfn" href="#patchresponse-original_features" id="ref-for-patchresponse-original_features">original_features</a>.</p>
+unnecessary requests for features which the original font does not contain. Supplied by <a data-link-type="dfn">original_features</a>.</p>
    </ul>
    <h4 class="heading settled algorithm" data-algorithm="Extending the Font Subset" data-level="4.4.2" id="extend-subset"><span class="secno">4.4.2. </span><span class="content">Extending the Font Subset</span><a class="self-link" href="#extend-subset"></a></h4>
    <p>This algorithm is used by the client to extends its <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③">font subset</a> to cover additional codepoints,
@@ -1531,20 +1548,20 @@ can be cached, or null.</p>
 in the format specifiedy <a data-link-type="dfn" href="#patchresponse-patch_format" id="ref-for-patchresponse-patch_format②">patch_format</a>. Apply the binary patch to the <a data-link-type="dfn" href="#client-state-client-font-subset" id="ref-for-client-state-client-font-subset①②">font subset</a> from the input client state. Replace the <a data-link-type="dfn" href="#client-state-client-font-subset" id="ref-for-client-state-client-font-subset①③">font subset</a> in the input <var>client state</var> with the
 result of the patch application.</p>
     <li data-md>
-     <p>If <a data-link-type="dfn" href="#patchresponse-original_font_checksum" id="ref-for-patchresponse-original_font_checksum①">original_font_checksum</a> is set then update the <a data-link-type="dfn" href="#client-state-original-font-checksum" id="ref-for-client-state-original-font-checksum①">original font checksum</a> in the input <var>client state</var> with the value in <a data-link-type="dfn" href="#patchresponse-original_font_checksum" id="ref-for-patchresponse-original_font_checksum②">original_font_checksum</a>.</p>
+     <p>If <a data-link-type="dfn">original_font_checksum</a> is set then update the <a data-link-type="dfn" href="#client-state-original-font-checksum" id="ref-for-client-state-original-font-checksum①">original font checksum</a> in the input <var>client state</var> with the value in <a data-link-type="dfn">original_font_checksum</a>.</p>
     <li data-md>
-     <p>If the field <a data-link-type="dfn" href="#patchresponse-codepoint_ordering" id="ref-for-patchresponse-codepoint_ordering①">codepoint_ordering</a> is set then update the <a data-link-type="dfn" href="#client-state-codepoint-reordering-map" id="ref-for-client-state-codepoint-reordering-map⑤">codepoint reordering map</a> in the input <var>client state</var> with
+     <p>If the field <a data-link-type="dfn">codepoint_ordering</a> is set then update the <a data-link-type="dfn" href="#client-state-codepoint-reordering-map" id="ref-for-client-state-codepoint-reordering-map⑤">codepoint reordering map</a> in the input <var>client state</var> with
 the new values specified the field. If neither <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement②">replacement</a> nor <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch②">patch</a> are set, then the client should resend the request that triggered this
 response but use the new codepoint ordering provided in this response. Go back to step 1 to process
 the response.</p>
     <li data-md>
-     <p>If <a data-link-type="dfn" href="#patchresponse-original_features" id="ref-for-patchresponse-original_features①">original_features</a> is set and the client has opted to save them then replace the <a data-link-type="dfn" href="#client-state-original-font-feature-list" id="ref-for-client-state-original-font-feature-list">original font feature list</a> in the input <var>client state</var> with the value
+     <p>If <a data-link-type="dfn">original_features</a> is set and the client has opted to save them then replace the <a data-link-type="dfn" href="#client-state-original-font-feature-list" id="ref-for-client-state-original-font-feature-list">original font feature list</a> in the input <var>client state</var> with the value
 from the response.</p>
     <li data-md>
-     <p>If <a data-link-type="dfn" href="#patchresponse-original_axis_space" id="ref-for-patchresponse-original_axis_space①">original_axis_space</a> is set then update the <a data-link-type="dfn" href="#client-state-original-font-axis-space" id="ref-for-client-state-original-font-axis-space">original font axis space</a> in the input <var>client state</var> with the value
+     <p>If <a data-link-type="dfn">original_axis_space</a> is set then update the <a data-link-type="dfn" href="#client-state-original-font-axis-space" id="ref-for-client-state-original-font-axis-space">original font axis space</a> in the input <var>client state</var> with the value
 specified in this field.</p>
     <li data-md>
-     <p>If <a data-link-type="dfn" href="#patchresponse-subset_axis_space" id="ref-for-patchresponse-subset_axis_space①">subset_axis_space</a> is set then update the <a data-link-type="dfn" href="#client-state-subset-axis-space" id="ref-for-client-state-subset-axis-space①">subset axis space</a> in the input <var>client state</var> with the value specified
+     <p>If <a data-link-type="dfn">subset_axis_space</a> is set then update the <a data-link-type="dfn" href="#client-state-subset-axis-space" id="ref-for-client-state-subset-axis-space①">subset axis space</a> in the input <var>client state</var> with the value specified
  in this field.</p>
    </ol>
    <p>After processing the response, return the updated input <var>client state</var> and any cache headers
@@ -1702,15 +1719,15 @@ client needs.</span></p>
 match the checksum in <a data-link-type="dfn" href="#patchrequest-original_font_checksum" id="ref-for-patchrequest-original_font_checksum②">original_font_checksum</a> or <a data-link-type="dfn" href="#patchrequest-original_font_checksum" id="ref-for-patchrequest-original_font_checksum③">original_font_checksum</a> is unset, then:</p>
    <ul>
     <li data-md>
-     <p><span class="conform server" id="conform-response-original-checksum">The value of <a data-link-type="dfn" href="#patchresponse-original_font_checksum" id="ref-for-patchresponse-original_font_checksum③">original_font_checksum</a> must be set to the checksum of the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①⓪">original font</a> computed by the procedure in <a href="#computing-checksums">§ 4.6 Computing Checksums</a>.</span></p>
+     <p><span class="conform server" id="conform-response-original-checksum">The value of <a data-link-type="dfn">original_font_checksum</a> must be set to the checksum of the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①⓪">original font</a> computed by the procedure in <a href="#computing-checksums">§ 4.6 Computing Checksums</a>.</span></p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-codepoint-ordering"> The response must set the <a data-link-type="dfn" href="#patchresponse-codepoint_ordering" id="ref-for-patchresponse-codepoint_ordering②">codepoint_ordering</a> field following <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a>.</span></p>
+     <p><span class="conform server" id="conform-response-codepoint-ordering"> The response must set the <a data-link-type="dfn">codepoint_ordering</a> field following <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a>.</span></p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-original-features"> The response must set the <a data-link-type="dfn" href="#patchresponse-original_features" id="ref-for-patchresponse-original_features②">original_features</a> field to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout
+     <p><span class="conform server" id="conform-response-original-features"> The response must set the <a data-link-type="dfn">original_features</a> field to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout
 feature tags</a> that the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①①">original font</a> has data for.</span></p>
     <li data-md>
      <p><span class="conform server" id="conform-response-original-axis-space"> If the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①②">original font</a> has variation axes, the
-response must set the <a data-link-type="dfn" href="#patchresponse-original_axis_space" id="ref-for-patchresponse-original_axis_space②">original_axis_space</a> field to the axis space covered by
+response must set the <a data-link-type="dfn">original_axis_space</a> field to the axis space covered by
 the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①③">original font</a>.</span></p>
    </ul>
    <p>Additionally:</p>
@@ -1720,7 +1737,7 @@ the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①�
 either the <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch④">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement④">replacement</a> fields must be one of those
 listed in <a data-link-type="dfn" href="#patchrequest-accept_patch_format" id="ref-for-patchrequest-accept_patch_format②">accept_patch_format</a></span>.</p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-subset-axis-space-field"> If <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑤">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑤">replacement</a> fields are set and the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①④">original font</a> has variation axes, the response must set the <a data-link-type="dfn" href="#patchresponse-subset_axis_space" id="ref-for-patchresponse-subset_axis_space②">subset_axis_space</a> field to the axis space covered by the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⓪">font subset</a>.</span></p>
+     <p><span class="conform server" id="conform-response-subset-axis-space-field"> If <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch⑤">patch</a> or <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement⑤">replacement</a> fields are set and the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①④">original font</a> has variation axes, the response must set the <a data-link-type="dfn">subset_axis_space</a> field to the axis space covered by the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⓪">font subset</a>.</span></p>
     <li data-md>
      <p><span class="conform server" id="conform-response-ignore-unrecognized-formats"> If <a data-link-type="dfn" href="#patchrequest-accept_patch_format" id="ref-for-patchrequest-accept_patch_format③">accept_patch_format</a> contains any unrecognized patch formats the server must
 ignore the unrecognized ones.</span></p>
@@ -1798,7 +1815,7 @@ in little endian order.</p>
    <p>A codepoint reordering for a font defines a function which maps unicode codepoint values from the
 font to a continuous space of [0, number of codepoints in the font). This transformation is intended
 to reduce the cost of representing codepoint sets.</p>
-   <p><span class="conform server " id="conform-remap-all">A codepoint ordering is encoded into a <a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist④">IntegerList</a>. The list must contain all unicode codepoints that are supported by the
+   <p><span class="conform server " id="conform-remap-all">A codepoint ordering is encoded into a <a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist⑤">IntegerList</a>. The list must contain all unicode codepoints that are supported by the
 font.</span> The index of a particular unicode codepoint in the list is the new value for that
 codepoint.</p>
    <p>A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
@@ -2395,7 +2412,13 @@ itself be statically compressed.</p>
    <li><a href="#bytestring">ByteString</a><span>, in § 4.2.2</span>
    <li><a href="#client-state-client-font-subset">Client font subset</a><span>, in § 4.4.1</span>
    <li><a href="#client-state">Client State</a><span>, in § 4.4.1</span>
-   <li><a href="#patchresponse-codepoint_ordering">codepoint_ordering</a><span>, in § 4.3.4</span>
+   <li><a href="#clientstate">ClientState</a><span>, in § 4.3.5</span>
+   <li>
+    codepoint_ordering
+    <ul>
+     <li><a href="#clientstate-codepoint_ordering">dfn for ClientState</a><span>, in § 4.3.5</span>
+     <li><a href="#patchrequest-codepoint_ordering">dfn for PatchRequest</a><span>, in § 4.3.3</span>
+    </ul>
    <li><a href="#client-state-codepoint-reordering-map">Codepoint Reordering Map</a><span>, in § 4.4.1</span>
    <li><a href="#patchrequest-codepoints_have">codepoints_have</a><span>, in § 4.3.3</span>
    <li><a href="#patchrequest-codepoints_needed">codepoints_needed</a><span>, in § 4.3.3</span>
@@ -2418,16 +2441,16 @@ itself be statically compressed.</p>
    <li><a href="#integerlist">IntegerList</a><span>, in § 4.2.5</span>
    <li><a href="#abstract-opdef-load-a-font-with-a-http-cache">Load a font with a HTTP Cache</a><span>, in § 4.4.4</span>
    <li><a href="#patchrequest-ordering_checksum">ordering_checksum</a><span>, in § 4.3.3</span>
-   <li><a href="#patchresponse-original_axis_space">original_axis_space</a><span>, in § 4.3.4</span>
-   <li><a href="#patchresponse-original_features">original_features</a><span>, in § 4.3.4</span>
+   <li><a href="#clientstate-original_axis_space">original_axis_space</a><span>, in § 4.3.5</span>
+   <li><a href="#clientstate-original_features">original_features</a><span>, in § 4.3.5</span>
    <li><a href="#original-font">original font</a><span>, in § 4.5</span>
    <li><a href="#client-state-original-font-axis-space">Original Font Axis Space</a><span>, in § 4.4.1</span>
    <li><a href="#client-state-original-font-checksum">Original font checksum</a><span>, in § 4.4.1</span>
    <li>
     original_font_checksum
     <ul>
+     <li><a href="#clientstate-original_font_checksum">dfn for ClientState</a><span>, in § 4.3.5</span>
      <li><a href="#patchrequest-original_font_checksum">dfn for PatchRequest</a><span>, in § 4.3.3</span>
-     <li><a href="#patchresponse-original_font_checksum">dfn for PatchResponse</a><span>, in § 4.3.4</span>
     </ul>
    <li><a href="#client-state-original-font-feature-list">Original font feature list</a><span>, in § 4.4.1</span>
    <li><a href="#outline-table">outline table</a><span>, in § 5.2.4</span>
@@ -2454,7 +2477,8 @@ itself be statically compressed.</p>
    <li><a href="#axisinterval-start">start</a><span>, in § 4.3.2</span>
    <li><a href="#string">String</a><span>, in § 4.2.2</span>
    <li><a href="#client-state-subset-axis-space">Subset Axis Space</a><span>, in § 4.4.1</span>
-   <li><a href="#patchresponse-subset_axis_space">subset_axis_space</a><span>, in § 4.3.4</span>
+   <li><a href="#clientstate-subset_axis_space">subset_axis_space</a><span>, in § 4.3.5</span>
+   <li><a href="#patchresponse-unrecognized_ordering">unrecognized_ordering</a><span>, in § 4.3.4</span>
    <li><a href="#usage-document-frequency">usage document frequency</a><span>, in § 5.2.6</span>
   </ul>
   <aside class="dfn-panel" data-for="term-for-at-font-face-rule">
@@ -2664,6 +2688,7 @@ itself be statically compressed.</p>
     <li><a href="#ref-for-integer">4.2.3. ProtocolVersion</a>
     <li><a href="#ref-for-integer①">4.3.3. PatchRequest</a> <a href="#ref-for-integer②">(2)</a> <a href="#ref-for-integer③">(3)</a> <a href="#ref-for-integer④">(4)</a> <a href="#ref-for-integer⑤">(5)</a>
     <li><a href="#ref-for-integer⑥">4.3.4. PatchResponse</a> <a href="#ref-for-integer⑦">(2)</a> <a href="#ref-for-integer⑧">(3)</a>
+    <li><a href="#ref-for-integer⑨">4.3.5. ClientState</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="float">
@@ -2715,8 +2740,9 @@ itself be statically compressed.</p>
    <ul>
     <li><a href="#ref-for-integerlist">4.2.5. IntegerList</a>
     <li><a href="#ref-for-integerlist①">4.2.6. SortedIntegerList</a> <a href="#ref-for-integerlist②">(2)</a>
-    <li><a href="#ref-for-integerlist③">4.3.4. PatchResponse</a>
-    <li><a href="#ref-for-integerlist④">4.7. Codepoint Reordering</a>
+    <li><a href="#ref-for-integerlist③">4.3.3. PatchRequest</a>
+    <li><a href="#ref-for-integerlist④">4.3.5. ClientState</a>
+    <li><a href="#ref-for-integerlist⑤">4.7. Codepoint Reordering</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="sortedintegerlist">
@@ -2737,14 +2763,14 @@ itself be statically compressed.</p>
    <b><a href="#featuretagset">#featuretagset</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-featuretagset">4.3.3. PatchRequest</a> <a href="#ref-for-featuretagset①">(2)</a>
-    <li><a href="#ref-for-featuretagset②">4.3.4. PatchResponse</a>
+    <li><a href="#ref-for-featuretagset②">4.3.5. ClientState</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="axisspace">
    <b><a href="#axisspace">#axisspace</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-axisspace">4.3.3. PatchRequest</a> <a href="#ref-for-axisspace①">(2)</a>
-    <li><a href="#ref-for-axisspace②">4.3.4. PatchResponse</a> <a href="#ref-for-axisspace③">(2)</a>
+    <li><a href="#ref-for-axisspace②">4.3.5. ClientState</a> <a href="#ref-for-axisspace③">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="compressedset">
@@ -2936,44 +2962,10 @@ itself be statically compressed.</p>
     <li><a href="#ref-for-patchresponse-replacement③">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchresponse-replacement④">(2)</a> <a href="#ref-for-patchresponse-replacement⑤">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchresponse-original_font_checksum">
-   <b><a href="#patchresponse-original_font_checksum">#patchresponse-original_font_checksum</a></b><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="patchresponse-unrecognized_ordering">
+   <b><a href="#patchresponse-unrecognized_ordering">#patchresponse-unrecognized_ordering</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-patchresponse-original_font_checksum">4.4.1. Client State</a>
-    <li><a href="#ref-for-patchresponse-original_font_checksum①">4.4.3. Handling Server Response</a> <a href="#ref-for-patchresponse-original_font_checksum②">(2)</a>
-    <li><a href="#ref-for-patchresponse-original_font_checksum③">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="patchresponse-codepoint_ordering">
-   <b><a href="#patchresponse-codepoint_ordering">#patchresponse-codepoint_ordering</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchresponse-codepoint_ordering">4.4.1. Client State</a>
-    <li><a href="#ref-for-patchresponse-codepoint_ordering①">4.4.3. Handling Server Response</a>
-    <li><a href="#ref-for-patchresponse-codepoint_ordering②">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="patchresponse-subset_axis_space">
-   <b><a href="#patchresponse-subset_axis_space">#patchresponse-subset_axis_space</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchresponse-subset_axis_space">4.4.1. Client State</a>
-    <li><a href="#ref-for-patchresponse-subset_axis_space①">4.4.3. Handling Server Response</a>
-    <li><a href="#ref-for-patchresponse-subset_axis_space②">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="patchresponse-original_axis_space">
-   <b><a href="#patchresponse-original_axis_space">#patchresponse-original_axis_space</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchresponse-original_axis_space">4.4.1. Client State</a>
-    <li><a href="#ref-for-patchresponse-original_axis_space①">4.4.3. Handling Server Response</a>
-    <li><a href="#ref-for-patchresponse-original_axis_space②">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="patchresponse-original_features">
-   <b><a href="#patchresponse-original_features">#patchresponse-original_features</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchresponse-original_features">4.4.1. Client State</a>
-    <li><a href="#ref-for-patchresponse-original_features①">4.4.3. Handling Server Response</a>
-    <li><a href="#ref-for-patchresponse-original_features②">4.5. Server: Responding to a PatchRequest</a>
+    <li><a href="#ref-for-patchresponse-unrecognized_ordering">4.3.4. PatchResponse</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="client-state">
