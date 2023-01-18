@@ -1109,35 +1109,6 @@ For a PatchResponse object to be well formed:
 Client {#client}
 ----------------
 
-### <dfn>Client State</dfn> ### {#client-state-section}
-
-The client will need to maintain at minimum the following state for each font file being incrementally
-transferred:
-
-*  <dfn for="Client State">Client font subset</dfn>: a byte array containing the binary data for the
-    most recent version of the [=font subset|subset=] of the font being incrementally transferred. For
-    a new font this is initialized to empty byte array.
-    
-*  <dfn for="Client State">Original font checksum</dfn>: the most recent value of
-    [=PatchResponse/original_font_checksum=] received from the server for this font.
-
-*  <dfn for="Client State">Codepoint Reordering Map</dfn>: The most recent [[#codepoint-reordering]]
-    received from the server for this font. Supplied by [=PatchResponse/codepoint_ordering=].
-
-*  <dfn for="Client State">Original Font Axis Space</dfn>: the variations axis space that the original
-    font covers. Supplied by [=PatchResponse/original_axis_space=]</a>.
-
-*  <dfn for="Client State">Subset Axis Space</dfn>: the most recent variations axis space that the
-    subsetted font covers. Supplied by [=PatchResponse/subset_axis_space=].
-
-Additionally, the client can optionally store:
-
-*  <dfn for="Client State">Original font feature list</dfn>: a list of the
-    <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>
-    that the original font has data for. This information can be used by the client to avoid sending
-    unnecessary requests for features which the original font does not contain. Supplied by
-    [=PatchResponse/original_features=].
-
 <h4 algorithm id="extend-subset">Extending the Font Subset</h4>
 
 This algorithm is used by the client to extends its [=font subset=] to cover additional codepoints,
@@ -1152,7 +1123,7 @@ The inputs to this algorithm are:
 * <var>fragment identifier</var> (optional): if the font at the font url is a collection of fonts,
     the fragment identifier ([[rfc8081#section-4.2]]) identifies a single font within the collection.
 
-* <var>client state</var> (optional): previously saved [=client state=] for the given
+* <var>font subset</var> (optional): previously loaded [=font subset=] for the given
     font url, or null.
 
 * <var>desired subset definition</var>: a [=font subset definition|description=] of the desired
@@ -1165,20 +1136,25 @@ The inputs to this algorithm are:
 
 The algorithm outputs:
 
-* Client State: [=client state=] that has been updated to contain a [=font subset=] which covers at
-    least the requested subset definition.
+* Extended Font Subset: [=font subset=] that has been updated to cover at least the requested subset
+    definition.
 
 * Cache fields: HTTP cache fields [[rfc9111#name-field-definitions]] describing how client state
     can be cached, or null.
 
 The algorithm:
 
-1. Compare the <var>desired subset definition</var> to the <var>client state</var>. If the
-     [=Client State/client font subset|font subset=] in the <var>client state</var>
-     already satisifies the [=font subset definition=]. Then return <var>client state</var>, and null
-     for the cache fields.
+1. Compare the <var>desired subset definition</var> to the <var>font subset</var>. If the
+     <var>font subset</var> already satisifies the <var>desired subset definition</var>. Then return
+     <var>font subset</var>, and null for the cache fields.
 
-2. Otherwise make an HTTP request using the <var>fetch algorithm</var>:
+2. If <var>font subset</var> is set then load the <var>client state</var> from the
+    <var>font subset</var>. Client state is stored in the <var>font subset</var> as a
+    <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>
+    identified by the 4-byte tag "IFTP". The contents of the table are a single [=ClientState=] object
+    encoded via CBOR.
+
+3. Otherwise make an HTTP request using the <var>fetch algorithm</var>:
 
      * The request [=request/method=] must be either "GET" or "POST".
 
@@ -1214,63 +1190,65 @@ The algorithm:
          capable of decoding. Must contain at least one format.
 
      *  [=PatchRequest/codepoints_have=]: set to exactly the set of codepoints that the current
-         [=Client State/client font subset=] contains data for. If the current
-         [=Client State/client font subset=] is an empty byte array this
-         field is left unset. If the client has a codepoint ordering for this font then this field
-         should not be set.
+         <var>font subset</var> contains data for. If the current
+         <var>font subset</var> is not set then this field is left unset. If
+         <var>client state</var> is available and has a [=ClientState/codepoint_ordering=] then
+         this field should not be set.
 
      *  [=PatchRequest/codepoints_needed=]: set to the set of codepoints that the client wants to
          add to its [=font subset=]. That is the codepoint set from <var>desired subset
-         definition</var> minus the codepoints already in [=Client State/Client font subset=]. If the
-         <var>client state</var> has a [=Client State/codepoint reordering map=] for this font then
+         definition</var> minus the codepoints already in the <var>font subset</var>. If
+         <var>client state</var> is available and has a [=ClientState/codepoint_ordering=] then
          this field should not be set.
 
      *  [=PatchRequest/indices_have=]: encodes the set of additional codepoints that the current
-         [=Client State/client font subset=] contains data for. The codepoint values are transformed
-         to indices by applying [=Client State/codepoint reordering map=] to each codepoint value. If
-         the <var>client state</var> does not have a [=Client State/codepoint reordering map=] for this
-         font then this field should not be set.
+         <var>font subset</var> contains data for. The codepoint values are transformed
+         to indices by applying the [[#codepoint-reordering]] specified by
+         [=ClientState/codepoint_ordering=] to each codepoint value. If
+         the <var>client state</var> is not available or it does not have a
+         [=ClientState/codepoint_ordering=] then this field should not be set.
 
      *  [=PatchRequest/indices_needed=]: encodes the set of codepoints that the client wants to add to
          its [=font subset=]. That is the codepoint set from <var>desired subset
-         definition</var> minus the codepoints already in [=Client State/Client font subset=]. The
-         codepoint values are transformed to indices by applying the [=Client State/codepoint
-         reordering map=] to each codepoint value. If the client does not have a codepoint ordering
-         for this font then this field should not be set.
+         definition</var> minus the codepoints already in <var>font subset</var>.
+         The codepoint values are transformed to indices by applying the [[#codepoint-reordering]]
+         specified by [=ClientState/codepoint_ordering=] to each codepoint value. If
+         the <var>client state</var> is not available or it does not have a
+         [=ClientState/codepoint_ordering=] then this field should not be set.
 
      *  [=PatchRequest/features_have=]: set to the list of
          <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">
-         opentype layout feature tags</a> that the current [=Client State/client font subset=] has data
-         for. If the current [=Client State/client font subset=] is an empty byte array this
-         field is left unset. Additionally, if the current [=Client State/client font subset=] has all
+         opentype layout feature tags</a> that the current <var>font subset</var> has data
+         for. If the current <var>font subset</var> is not set then this
+         field is left unset. Additionally, if the current <var>font subset</var> has all
          data for features present in the [=original font=] then this field can be unset.
 
      *  [=PatchRequest/features_needed=]: set to the list of feature tags that the client wants to add
-         to the current [=font subset=]. That is the feature set from <var>desired subset
-         definition</var> minus the set of features already in [=Client State/Client font subset=].
+         to the current <var>font subset</var>. That is the feature set from <var>desired subset
+         definition</var> minus the set of features already in <var>font subset</var>.
          If the client wishes to add all remaining layout features from the [=original font=] to it's
          subset then this field should be unset.
 
      *  [=PatchRequest/axis_space_have=]: set to the current value of
-         [=Client State/subset axis space=] saved in the <var>client state</var> for this font.
+         [=ClientState/subset_axis_space=] saved in the <var>client state</var> for this font. If
+         <var>client state</var> is not available then this field is unset.
 
      *  [=PatchRequest/axis_space_needed=]: set to the intervals of each variable axis in the
-         [=original font=] that the client wants to add to its [=font subset=] as defined in the
+         [=original font=] that the client wants to add to its <var>font subset</var> as defined in the
          <var>desired subset definition</var>. If the client wants an
          entire axis from the [=original font=] then that axis should not be listed.
 
      *  [=PatchRequest/ordering_checksum=]: If either of [=PatchRequest/indices_have=] or
          [=PatchRequest/indices_needed=] is set then this must be set to the checksum of the
-         [=Client State/codepoint reordering map=] saved in the state for this font. The checksum
+         [=ClientState/codepoint_ordering=] saved in the <var>client state</var>. The checksum
          is computed via [[#reordering-checksum]].
 
      *  [=PatchRequest/original_font_checksum=]:
-         Set to saved value for [=Client State/original font checksum=] in the state for this font. If
-         there is no saved value leave this field unset.
+         Set to saved value for [=ClientState/original_font_checksum=] in the <var>client state</var>
+         for this font. If there is no <var>client state</var> leave this field unset.
 
      *  [=PatchRequest/base_checksum=]:
-         Set to the checksum of the [=Client State/client font subset=] byte array saved in
-         the <var>client state</var> for this font. See: [[#computing-checksums]].
+         Set to the checksum of the <var>font subset</var>. See: [[#computing-checksums]].
 
      *  [=PatchRequest/fragment_id=]:
          If a <var>fragment identifier</var> was provided as an input then this field must be set to
@@ -1281,7 +1259,7 @@ The algorithm:
      example, on slower connections it may be more performant to request extra codepoints if
      that is likely to prevent a future request from needing to be sent.
 
-3. Invoke [$Handle server response$] with the response from the server and return the result.
+4. Invoke [$Handle server response$] with the response from the server and return the result.
 
 Note: POST is preferred for the HTTP method since it will not cause a CORS preflight request
 and the request object is more compactly encoded. GET should only be used during
