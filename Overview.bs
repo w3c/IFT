@@ -1319,13 +1319,14 @@ The algorithm:
      <var>font subset</var>. This produces the extended font subset. Return the extended font subset
      and any cache headers that were set on the <var>server response</var>.
 
-6. TODO handle new field unrecognized_ordering.
-    <!-- If the field [=PatchResponse/codepoint_ordering=] is set then update the
-    [=Client State/codepoint reordering map=] in the input <var>client state</var> with
-    the new values specified the field. If neither [=PatchResponse/replacement=] nor
-    [=PatchResponse/patch=] are set, then the client should resend the request that triggered this
-    response but use the new codepoint ordering provided in this response. Go back to step 1 to process
-    the response. -->
+6.  If field [=PatchResponse/unrecognized_ordering=] is set to a non-zero value then the client should
+     resend the request that triggered this response but also set the
+     [=PatchRequest/codepoint_ordering=] field on the request to the [=ClientState/codepoint_ordering=]
+     in the client state table within <var>font subset</var>.
+
+7.  Otherwise if none of [=PatchResponse/replacement=], [=PatchResponse/patch=], or
+     [=PatchResponse/unrecognized_ordering=] this is an error, invoke [$Handle failed font load$] and
+     return the result.
 
 <dfn abstract-op>Handle failed font load</dfn>
 <!-- TODO update for client state, and proceeding sections -->
