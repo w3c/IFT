@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="ed25d092ddcd81bdd575b8ef8f301c3b5759bfc5" name="document-revision">
+  <meta content="4b9c5a97001b6daf78e6af884df9cc52522425b9" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -1538,13 +1538,11 @@ can be cached, or null.</p>
     <li data-md>
      <p>Discard the saved <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a>, and use the user agent’s existing font fallback mechanism.</p>
    </ol>
-   <p>Regardless of which of the above options are used, the saved client state for this font must be
-discarded.</p>
    <h4 class="heading settled algorithm" data-algorithm="Load a Font in a User Agent with a HTTP Cache" data-level="4.4.3" id="load-a-font"><span class="secno">4.4.3. </span><span class="content">Load a Font in a User Agent with a HTTP Cache</span><a class="self-link" href="#load-a-font"></a></h4>
    <p>The previous section <a href="#extend-subset">§ 4.4.1 Extending the Font Subset</a> provides no guidance on how a user agent should handle
-saving client state between invocations of the subset extension algorithm. This section provides an
-algorithm that user agents which implement <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a> should use to save client state to the user
-agent’s HTTP cache (<a data-link-type="biblio" href="#biblio-rfc9111">[RFC9111]</a>).</p>
+saving the font subset and client state between invocations of the subset extension algorithm. This
+section provides an algorithm that user agents which implement <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a> should use to save the font
+subset to the user agent’s HTTP cache (<a data-link-type="biblio" href="#biblio-rfc9111">[RFC9111]</a>).</p>
    <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-load-a-font-with-a-http-cache">Load a font with a HTTP Cache<a class="self-link" href="#abstract-opdef-load-a-font-with-a-http-cache"></a></dfn></p>
    <p>The inputs to this algorithm:</p>
    <ul>
@@ -1593,7 +1591,7 @@ whatever HTTP fetching algorithm the user agent supports.</p>
       <li data-md>
        <p>Fragment identifier set to the input <var>fragment identifier</var></p>
       <li data-md>
-       <p>Client state set to the response.</p>
+       <p>Font subset set to the response.</p>
       <li data-md>
        <p>Desired subset definition set to the input <var>desired subset definition</var>.</p>
       <li data-md>
@@ -1608,7 +1606,7 @@ whatever HTTP fetching algorithm the user agent supports.</p>
       <li data-md>
        <p>Fragment identifier set to the input <var>fragment identifier</var></p>
       <li data-md>
-       <p>Client state set to null.</p>
+       <p>Font subset set to null.</p>
       <li data-md>
        <p>Desired subset definition set to the input <var>desired subset definition</var>.</p>
       <li data-md>
@@ -1619,7 +1617,7 @@ whatever HTTP fetching algorithm the user agent supports.</p>
      <p>If the returned cache fields are non-null update the cache entry for the input
  font url with the returned client state and returned cache fields.</p>
     <li data-md>
-     <p>Return the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a> contained in the returned client state.</p>
+     <p>Return the returned <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a>.</p>
    </ol>
    <h3 class="heading settled" data-level="4.5" id="handling-patch-request"><span class="secno">4.5. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
    <p><span class="conform server" id="conform-successful-response">If the server receives a well formed <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest⑥">PatchRequest</a> over HTTPS for a font the server has and that was
