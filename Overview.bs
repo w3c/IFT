@@ -1329,7 +1329,6 @@ The algorithm:
      return the result.
 
 <dfn abstract-op>Handle failed font load</dfn>
-<!-- TODO update for client state, and proceeding sections -->
 
 If the font load or extension has failed the client should choose one of the following options:
 
@@ -1342,15 +1341,12 @@ If the font load or extension has failed the client should choose one of the fol
 
 3.  Discard the saved [=font subset=], and use the user agent's existing font fallback mechanism.
 
-Regardless of which of the above options are used, the saved client state for this font must be
-discarded.
-
 <h4 algorithm id="load-a-font">Load a Font in a User Agent with a HTTP Cache</h4>
 
 The previous section [[#extend-subset]] provides no guidance on how a user agent should handle
-saving client state between invocations of the subset extension algorithm. This section provides an
-algorithm that user agents which implement [[fetch]] should use to save client state to the user
-agent's HTTP cache ([[RFC9111]]).
+saving the font subset and client state between invocations of the subset extension algorithm. This
+section provides an algorithm that user agents which implement [[fetch]] should use to save the font
+subset to the user agent's HTTP cache ([[RFC9111]]).
 
 <dfn abstract-op>Load a font with a HTTP Cache</h4>
 
@@ -1395,7 +1391,7 @@ The algorithm:
 
      *  Fragment identifier set to the input <var>fragment identifier</var>
 
-     *  Client state set to the response.
+     *  Font subset set to the response.
 
      *  Desired subset definition set to the input <var>desired subset definition</var>.
 
@@ -1409,7 +1405,7 @@ The algorithm:
 
      *  Fragment identifier set to the input <var>fragment identifier</var>
 
-     *  Client state set to null.
+     *  Font subset set to null.
 
      *  Desired subset definition set to the input <var>desired subset definition</var>.
 
@@ -1420,11 +1416,14 @@ The algorithm:
 4.  If the returned cache fields are non-null update the cache entry for the input
      font url with the returned client state and returned cache fields.
 
-5.  Return the [=font subset=] contained in the returned client state.
+5.  Return the returned [=font subset=].
 
 
 Server: Responding to a PatchRequest {#handling-patch-request}
 --------------------------------------------------------------
+
+<!-- TODO update for client state, and proceeding sections -->
+<!-- TODO add details of populating the client state table -->
 
 <span class="conform server" id="conform-successful-response">If the server receives a well formed
 [=PatchRequest=] over HTTPS for a font the server has and that was
