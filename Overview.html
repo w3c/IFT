@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="e41d34fa2a18d5da2f1b107ab848ce715e96a821" name="document-revision">
+  <meta content="a13c645ececfa54279f02d6d23abe2dab8db90a8" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -370,7 +370,7 @@ dfn > a.self-link::before      { content: "#"; }
        <ol class="toc">
         <li><a href="#reordering-checksum"><span class="secno">4.7.1</span> <span class="content">Codepoint Reordering Checksum</span></a>
        </ol>
-      <li><a href="#patch-formats"><span class="secno">4.8</span> <span class="content">Patch Formats</span></a>
+      <li><a href="#patch-encodings"><span class="secno">4.8</span> <span class="content">Patch Encodings</span></a>
      </ol>
     <li>
      <a href="#range-request-incxfer"><span class="secno">5</span> <span class="content">Range Request Incremental Transfer</span></a>
@@ -1247,10 +1247,6 @@ on some variable axis in a font.</p>
       <td>11
       <td><dfn class="dfn-paneled" data-dfn-for="PatchRequest" data-dfn-type="dfn" data-noexport id="patchrequest-fragment_id">fragment_id</dfn> 
       <td><a data-link-type="dfn" href="#string" id="ref-for-string">String</a>
-     <tr>
-      <td>12
-      <td><dfn data-dfn-for="PatchRequest" data-dfn-type="dfn" data-noexport id="patchrequest-codepoint_ordering">codepoint_ordering<a class="self-link" href="#patchrequest-codepoint_ordering"></a></dfn>
-      <td><a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist③">IntegerList</a>
    </table>
    <p>For a <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest">PatchRequest</a> object to be well formed:</p>
    <ul>
@@ -1274,7 +1270,7 @@ set then <a data-link-type="dfn" href="#patchrequest-ordering_checksum" id="ref-
      <tr>
       <td>1
       <td><dfn class="dfn-paneled" data-dfn-for="ClientState" data-dfn-type="dfn" data-noexport id="clientstate-codepoint_ordering">codepoint_ordering</dfn>
-      <td><a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist④">IntegerList</a>
+      <td><a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist③">IntegerList</a>
      <tr>
       <td>2
       <td><dfn class="dfn-paneled" data-dfn-for="ClientState" data-dfn-type="dfn" data-noexport id="clientstate-subset_axis_space">subset_axis_space</dfn>
@@ -1349,7 +1345,7 @@ encoded via CBOR.</p>
        <p>The request URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path">path</a> is set to the input <var>font URL</var>.</p>
       <li data-md>
        <p>The request must include an <a href="https://www.rfc-editor.org/rfc/rfc9110#name-accept-encoding">Accept-Encoding</a> header which lists
- at minimum one of the encodings from <a href="#patch-formats">§ 4.8 Patch Formats</a>.</p>
+ at minimum one of the encodings from <a href="#patch-encodings">§ 4.8 Patch Encodings</a>.</p>
       <li data-md>
        <p>If <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method①">method</a> is "POST" then, request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-body" id="ref-for-concept-request-body">body</a> must be a single <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest①">PatchRequest</a> object encoded via CBOR.</p>
       <li data-md>
@@ -1452,7 +1448,7 @@ can be cached, or null.</p>
      </ul>
     <li data-md>
      <p>Decode the <var>server response</var> <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body①">body</a> by applying the appropriate decoding as
- specified by the <a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-encoding">Content-Encoding</a> header. If the <a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-encoding">Content-Encoding</a> is one of those from <a href="#patch-formats">§ 4.8 Patch Formats</a> then
+ specified by the <a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-encoding">Content-Encoding</a> header. If the <a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-encoding">Content-Encoding</a> is one of those from <a href="#patch-encodings">§ 4.8 Patch Encodings</a> then
  the input <var>font subset</var> will be used as the source file for the decoding operation. The
  decoded response is the new extended font subset. Return the extended font subset and any cache
  headers that were set on the <var>server response</var>.</p>
@@ -1552,8 +1548,7 @@ whatever HTTP fetching algorithm the user agent supports.</p>
    </ol>
    <h3 class="heading settled" data-level="4.5" id="handling-patch-request"><span class="secno">4.5. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
    <p><span class="conform server" id="conform-successful-response">If the server receives a well formed <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest⑤">PatchRequest</a> over HTTPS for a font the server has and that was
-populated according to the requirements in <a href="#extend-subset">§ 4.4.1 Extending the Font Subset</a> then it must respond with HTTP <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status②">status</a> code 200.</span> <span class="conform server" id="conform-magic-number">The first 4 bytes of the response <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body②">body</a> must be set to 0x49, 0x46, 0x54, 0x20 ("IFT " encoded as ASCII) followed by a
-single <a data-link-type="dfn">PatchResponse</a> object encoded via CBOR.</span></p>
+populated according to the requirements in <a href="#extend-subset">§ 4.4.1 Extending the Font Subset</a> then it must respond with HTTP <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status②">status</a> code 200.</span></p>
    <p>The <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path③">path</a> in the request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-url" id="ref-for-concept-request-url">url</a> identifies the specific font that a patch is desired
 for. If the request has the <a data-link-type="dfn" href="#patchrequest-fragment_id" id="ref-for-patchrequest-fragment_id①">fragment_id</a> field set and the file identified by <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path④">path</a> is a font collection, then <a data-link-type="dfn" href="#patchrequest-fragment_id" id="ref-for-patchrequest-fragment_id②">fragment_id</a> identifies the font within
 that collection that a patch is desired for. The identified font is referred to as the <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="original-font">original font</dfn> in the rest of this section.</p>
@@ -1586,12 +1581,8 @@ that collection that a patch is desired for. The identified font is referred to 
  font are not specified in <a data-link-type="dfn" href="#patchrequest-axis_space_needed" id="ref-for-patchrequest-axis_space_needed②">axis_space_needed</a> then for those axes add their entire
  interval from the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font⑧">original font</a>.</p>
    </ol>
-   <p><span class="conform server" id="conform-bad-reordering"> If the server does not recognize the codepoint ordering used by the client, it must respond
-with a response that will cause the client to update it’s codepoint ordering to one the server
-will recognize via the process described in <a href="#handling-patch-response">§ 4.4.2 Handling Server Response</a> and not include any patch.
-That is the <a data-link-type="dfn">patch</a> and <a data-link-type="dfn">replacement</a> fields must not be set.
-The <a data-link-type="dfn">unrecognized_ordering</a> field must be set to a non-zero value.</span></p>
-   <p><span class="conform server" id="conform-response-valid-patch"> Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 4.4.2 Handling Server Response</a> to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a> with checksum <a data-link-type="dfn" href="#patchrequest-base_checksum" id="ref-for-patchrequest-base_checksum②">base_checksum</a> it must
+   <p><span class="conform server" id="conform-bad-reordering"> If the server does not recognize the codepoint ordering used by the client (identified by the <a data-link-type="dfn" href="#patchrequest-ordering_checksum" id="ref-for-patchrequest-ordering_checksum④">ordering_checksum</a>), it must respond with the full original font.</span></p>
+   <p><span class="conform server" id="conform-response-valid-patch"> Otherwise when the response is decoded by the client following the process in <a href="#handling-patch-response">§ 4.4.2 Handling Server Response</a> to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a> with checksum <a data-link-type="dfn" href="#patchrequest-base_checksum" id="ref-for-patchrequest-base_checksum②">base_checksum</a> it must
 result in an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑦">font subset</a>: </span></p>
    <ul>
     <li data-md>
@@ -1625,16 +1616,12 @@ feature tags</a> that the <a data-link-type="dfn" href="#original-font" id="ref-
    <p>Additionally:</p>
    <ul>
     <li data-md>
-     <p><span class="conform server" id="conform-response-patch-format">The format of the patch in the
-either the <a data-link-type="dfn">patch</a> or <a data-link-type="dfn">replacement</a> fields must be one of those
-listed in <a data-link-type="dfn">accept_patch_format</a></span>.</p>
-    <li data-md>
-     <p><span class="conform server" id="conform-response-ignore-unrecognized-formats"> If <a data-link-type="dfn">accept_patch_format</a> contains any unrecognized patch formats the server must
-ignore the unrecognized ones.</span></p>
+     <p>The response <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body②">body</a> should be encoded by one of the content encodings listed
+    in the <a href="https://www.rfc-editor.org/rfc/rfc9110#name-accept-encoding">Accept-Encoding</a> header of the request. When possible
+    the server should utilize one of the patch based encodings from <a href="#patch-encodings">§ 4.8 Patch Encodings</a>. Non-patch
+    based encodings should only be used where the server is unable to recreate the client’s state
+    in order to generate a patch against it.</p>
    </ul>
-   <p class="note" role="note"><span>Note:</span> the server can respond with either a patch or a replacement but should try to produce a patch
-where possible. Replacement’s should only be used in situations where the server is unable to recreate
-the client’s state in order to generate a patch against it.</p>
    <p class="note" role="note"><span>Note:</span> if a patch subset service is composed of more than one server task and some subset of those
 tasks are using a subsetter version which produces different binary results than the rest, there is
 a risk that consecutive extend requests may result in unnecessary replacement responses. For example if
@@ -1705,7 +1692,7 @@ in little endian order.</p>
    <p>A codepoint reordering for a font defines a function which maps unicode codepoint values from the
 font to a continuous space of [0, number of codepoints in the font). This transformation is intended
 to reduce the cost of representing codepoint sets.</p>
-   <p><span class="conform server " id="conform-remap-all">A codepoint ordering is encoded into a <a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist⑤">IntegerList</a>. The list must contain all unicode codepoints that are supported by the
+   <p><span class="conform server " id="conform-remap-all">A codepoint ordering is encoded into a <a data-link-type="dfn" href="#integerlist" id="ref-for-integerlist④">IntegerList</a>. The list must contain all unicode codepoints that are supported by the
 font.</span> The index of a particular unicode codepoint in the list is the new value for that
 codepoint.</p>
    <p>A server is free to choose any codepoint ordering, but should try to pick one that will minimize the
@@ -1742,26 +1729,28 @@ in little endian order.</p>
        <td>0x6986dc19f4e621e
     </table>
    </div>
-   <h3 class="heading settled" data-level="4.8" id="patch-formats"><span class="secno">4.8. </span><span class="content">Patch Formats</span><a class="self-link" href="#patch-formats"></a></h3>
-   <p>The following patch formats may be used by the server to create binary diffs between a source file
-and a target file:</p>
+   <h3 class="heading settled" data-level="4.8" id="patch-encodings"><span class="secno">4.8. </span><span class="content">Patch Encodings</span><a class="self-link" href="#patch-encodings"></a></h3>
+   <p>The following <a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-encoding">content encodings</a> can be used to encode a target
+file as a patch against a source file:</p>
    <table>
     <tbody>
      <tr>
-      <th>Format
-      <th>Value
+      <th>Name
+      <th>Description
       <th>Notes
      <tr>
-      <td>VCDIFF
-      <td>0
-      <td> Uses VCDIFF format <a data-link-type="biblio" href="#biblio-rfc3284">[RFC3284]</a> to produce the patch. <span class="conform server client" id="conform-vcdiff"> All client and server implementations must support this format. </span> 
-     <tr>
+      <td>brdiff
       <td>Brotli Shared Dictionary
-      <td>1
-      <td> The target file is encoded with <a data-link-type="biblio" href="#biblio-rfc7932">brotli compression</a> using the
+      <td>
+        The target file is encoded with <a data-link-type="biblio" href="#biblio-rfc7932">brotli compression</a> using the
       source file as a <a data-link-type="biblio" href="#biblio-shared-brotli">shared LZ77 dictionary</a>. If the source file is empty then
       the target file is just compressed using <a data-link-type="biblio" href="#biblio-rfc7932">brotli compression</a> with no shared
       dictionary. 
+       <p><span class="conform server client" id="conform-brdiff"> All client and server implementations must support this format. </span></p>
+     <tr>
+      <td>vcdiff
+      <td>VCDIFF Patch
+      <td> Uses VCDIFF format <a data-link-type="biblio" href="#biblio-rfc3284">[RFC3284]</a> to produce the patch. 
    </table>
    <h2 class="heading settled" data-level="5" id="range-request-incxfer"><span class="secno">5. </span><span class="content">Range Request Incremental Transfer</span><a class="self-link" href="#range-request-incxfer"></a></h2>
    <h3 class="heading settled" data-level="5.1" id="range-request-intro"><span class="secno">5.1. </span><span class="content">Introduction to Range Request</span><a class="self-link" href="#range-request-intro"></a></h3>
@@ -2300,12 +2289,7 @@ itself be statically compressed.</p>
    <li><a href="#patchrequest-base_checksum">base_checksum</a><span>, in § 4.3.3</span>
    <li><a href="#bytestring">ByteString</a><span>, in § 4.2.2</span>
    <li><a href="#clientstate">ClientState</a><span>, in § 4.3.4</span>
-   <li>
-    codepoint_ordering
-    <ul>
-     <li><a href="#clientstate-codepoint_ordering">dfn for ClientState</a><span>, in § 4.3.4</span>
-     <li><a href="#patchrequest-codepoint_ordering">dfn for PatchRequest</a><span>, in § 4.3.3</span>
-    </ul>
+   <li><a href="#clientstate-codepoint_ordering">codepoint_ordering</a><span>, in § 4.3.4</span>
    <li><a href="#patchrequest-codepoints_have">codepoints_have</a><span>, in § 4.3.3</span>
    <li><a href="#patchrequest-codepoints_needed">codepoints_needed</a><span>, in § 4.3.3</span>
    <li><a href="#compressedset">CompressedSet</a><span>, in § 4.3.1</span>
@@ -2585,9 +2569,8 @@ itself be statically compressed.</p>
    <ul>
     <li><a href="#ref-for-integerlist">4.2.4. IntegerList</a>
     <li><a href="#ref-for-integerlist①">4.2.5. SortedIntegerList</a> <a href="#ref-for-integerlist②">(2)</a>
-    <li><a href="#ref-for-integerlist③">4.3.3. PatchRequest</a>
-    <li><a href="#ref-for-integerlist④">4.3.4. ClientState</a>
-    <li><a href="#ref-for-integerlist⑤">4.7. Codepoint Reordering</a>
+    <li><a href="#ref-for-integerlist③">4.3.4. ClientState</a>
+    <li><a href="#ref-for-integerlist④">4.7. Codepoint Reordering</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="sortedintegerlist">
@@ -2728,7 +2711,7 @@ itself be statically compressed.</p>
    <ul>
     <li><a href="#ref-for-patchrequest-ordering_checksum">4.3.3. PatchRequest</a>
     <li><a href="#ref-for-patchrequest-ordering_checksum①">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-patchrequest-ordering_checksum②">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-ordering_checksum③">(2)</a>
+    <li><a href="#ref-for-patchrequest-ordering_checksum②">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-ordering_checksum③">(2)</a> <a href="#ref-for-patchrequest-ordering_checksum④">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="patchrequest-original_font_checksum">

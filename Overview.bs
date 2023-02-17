@@ -1017,9 +1017,6 @@ For an [=AxisInterval=] object to be well formed:
     <td>11</td>
     <td><dfn for="PatchRequest">fragment_id</dfn>
     </td><td>[=String=]</td></tr>
-  <tr>
-    <td>12</td>
-    <td><dfn for="PatchRequest">codepoint_ordering</dfn></td><td>[=IntegerList=]</td></tr>
 </table>
 
 For a [=PatchRequest=] object to be well formed:
@@ -1123,7 +1120,7 @@ The algorithm:
      * The request URL [=url/path=] is set to the input <var>font URL</var>.
 
      * The request must include an [[rfc9110#name-accept-encoding|Accept-Encoding]] header which lists
-         at minimum one of the encodings from [[#patch-formats]].
+         at minimum one of the encodings from [[#patch-encodings]].
 
      * If [=request/method=] is "POST" then, request [=request/body=] must be a single
          [=PatchRequest=] object encoded via CBOR.
@@ -1253,7 +1250,7 @@ The algorithm:
 
 2.  Decode the <var>server response</var> [=response/body=] by applying the appropriate decoding as
      specified by the [[rfc9110#name-content-encoding|Content-Encoding]] header. If the
-     [[rfc9110#name-content-encoding|Content-Encoding]] is one of those from [[#patch-formats]] then
+     [[rfc9110#name-content-encoding|Content-Encoding]] is one of those from [[#patch-encodings]] then
      the input <var>font subset</var> will be used as the source file for the decoding operation. The
      decoded response is the new extended font subset. Return the extended font subset and any cache
      headers that were set on the <var>server response</var>.
@@ -1356,9 +1353,6 @@ Server: Responding to a PatchRequest {#handling-patch-request}
 [=PatchRequest=] over HTTPS for a font the server has and that was
 populated according to the requirements in [[#extend-subset]] then it must respond with HTTP
 [=response/status=] code 200.</span>
-<span class="conform server" id="conform-magic-number">The first 4 bytes of the response
-[=response/body=] must be set to 0x49, 0x46, 0x54, 0x20 ("IFT " encoded as ASCII) followed by a
-single [=PatchResponse=] object encoded via CBOR.</span>
 
 The [=url/path=] in the request [=request/url=] identifies the specific font that a patch is desired
 for. If the request has the [=PatchRequest/fragment_id=] field set and the file identified by
@@ -1398,15 +1392,13 @@ Lastly, the server can produce two variable axis spaces:
      font are not specified in [=PatchRequest/axis_space_needed=] then for those axes add their entire
      interval from the [=original font=].
 
+
 <span class="conform server" id="conform-bad-reordering">
-If the server does not recognize the codepoint ordering used by the client, it must respond
-with a response that will cause the client to update it's codepoint ordering to one the server
-will recognize via the process described in [[#handling-patch-response]] and not include any patch.
-That is the [=PatchResponse/patch=] and [=PatchResponse/replacement=] fields must not be set.
-The [=PatchResponse/unrecognized_ordering=] field must be set to a non-zero value.</span>
+If the server does not recognize the codepoint ordering used by the client (identified by the
+[=PatchRequest/ordering_checksum=]), it must respond with the full original font.</span>
 
 <span class="conform server" id="conform-response-valid-patch">
-Otherwise when the response is applied by the client following the process in
+Otherwise when the response is decoded by the client following the process in
 [[#handling-patch-response]] to a [=font subset=] with checksum [=PatchRequest/base_checksum=] it must
 result in an extended [=font subset=]:
 </span>
@@ -1452,17 +1444,11 @@ result in an extended [=font subset=]:
 
 Additionally:
 
-*  <span class="conform server" id="conform-response-patch-format">The format of the patch in the
-    either the [=PatchResponse/patch=] or [=PatchResponse/replacement=] fields must be one of those
-    listed in [=PatchRequest/accept_patch_format=]</span>.
-
-*  <span class="conform server" id="conform-response-ignore-unrecognized-formats">
-    If [=PatchRequest/accept_patch_format=] contains any unrecognized patch formats the server must
-    ignore the unrecognized ones.</span>
-
-Note: the server can respond with either a patch or a replacement but should try to produce a patch
-where possible. Replacement's should only be used in situations where the server is unable to recreate
-the client's state in order to generate a patch against it.
+   *  The response [=response/body=] should be encoded by one of the content encodings listed
+        in the [[rfc9110#name-accept-encoding|Accept-Encoding]] header of the request. When possible
+        the server should utilize one of the patch based encodings from [[#patch-encodings]]. Non-patch
+        based encodings should only be used where the server is unable to recreate the client's state
+        in order to generate a patch against it.
 
 Note: if a patch subset service is composed of more than one server task and some subset of those
 tasks are using a subsetter version which produces different binary results than the rest, there is
@@ -1597,33 +1583,36 @@ in little endian order.
 
 </div>
 
-Patch Formats {#patch-formats}
-------------------------------
+Patch Encodings {#patch-encodings}
+----------------------------------
 
-The following patch formats may be used by the server to create binary diffs between a source file
-and a target file:
+The following [[rfc9110#name-content-encoding|content encodings]] can be used to encode a target
+file as a patch against a source file:
 
 <table>
   <tr>
-    <th>Format</th><th>Value</th><th>Notes</th>
+    <th>Name</th><th>Description</th><th>Notes</th>
   </tr>
   <tr>
-    <td>VCDIFF</td><td>0</td>
-    <td>
-      Uses VCDIFF format [[!RFC3284]] to produce the patch.
-      <span class="conform server client" id="conform-vcdiff">
-      All client and server implementations must support this format.
-    </span>
-    </td>
-  </tr>
-  <tr>
-    <td>Brotli Shared Dictionary</td><td>1</td>
+    <td>brdiff</td>
+    <td>Brotli Shared Dictionary</td>
     <td>
       The target file is encoded with [[!RFC7932|brotli compression]] using the
       source file as a [[!Shared-Brotli|shared LZ77 dictionary]]. If the source file is empty then
       the target file is just compressed using [[!RFC7932|brotli compression]] with no shared
       dictionary.
+      
+      <span class="conform server client" id="conform-brdiff">
+      All client and server implementations must support this format.
+      </span>
    </td>
+  </tr>
+  <tr>
+    <td>vcdiff</td>
+    <td>VCDIFF Patch</td>
+    <td>
+      Uses VCDIFF format [[!RFC3284]] to produce the patch.
+    </td>
   </tr>
 </table>
 
