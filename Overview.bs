@@ -1104,6 +1104,9 @@ The algorithm:
     identified by the 4-byte tag 'IFTP'. The contents of the table are a single [=ClientState=] object
     encoded via CBOR.
 
+     * If <var>font subset</var> does not have and "IFTP" table, then this is not an incrementally
+         loaded font and cannot be extended any further. Return <var>font subset</var>.
+
 3. Otherwise make an HTTP request using the <var>fetch algorithm</var>:
 
      * The request [=request/method=] must be either "GET" or "POST".
@@ -1218,9 +1221,8 @@ and the request object is more compactly encoded. GET should only be used during
 
 If a server is able to succsessfully process a [=PatchRequest=]
 it will respond with HTTP [=response/status=] code 200 and the [=response/body=] of the response will
-be a 4 byte magic number (0x49, 0x46, 0x54, 0x20) followed by a single [=PatchResponse=] object encoded
-via CBOR. The client uses the following algorithm to interpret and process the fields of the
-object.
+be an encoded representation of the extended font subset. The encoded representation may be a binary
+patch against the current font subset.
 
 <dfn abstract-op>Handle server response</dfn>
 
@@ -1248,42 +1250,12 @@ The algorithm:
      *  All other statuses, the [=font subset=] extension has failed. Invoke
          [$Handle failed font load$] and return the result.
 
-<!-- TODO new handling:
-   1. decode the response, using the specified content-encoding (ref fetch?). If one of the patch
-      encodings is specified then the font subset is used during decoding. This produces the extended
-      font subset.
-   2. Otherwise on error code go to handle failed font load.
--->
-      
-
-
-2.  Check the first four bytes of the <var>server response</var> [=response/body=]. If they are
-     not equal to [0x49, 0x46, 0x54, 0x20] then this response is malformed.
-     Invoke [$Handle failed font load$] and return the result.
-
-3.  Interpret the remaining bytes of the <var>server response</var> [=response/body=] as a CBOR
-     encoded [=PatchResponse=]. If the bytes are not decodable with CBOR, or the
-     [=PatchResponse=] is not well formed, then this is an error. Invoke [$Handle failed font load$]
-     and return the result.
-
-4.  If field [=PatchResponse/replacement=] is set then: the byte array in this field is a binary patch
-     in the format specified by [=PatchResponse/patch_format=]. Apply the binary patch to a base which
-     is an empty byte array. This produces the extended font subset. Return the extended font subset
-     and any cache headers that were set on the <var>server response</var>.
-
-5.  If field [=PatchResponse/patch=] is set then:  the byte array in this field is a binary patch
-     in the format specifiedy [=PatchResponse/patch_format=]. Apply the binary patch to the input
-     <var>font subset</var>. This produces the extended font subset. Return the extended font subset
-     and any cache headers that were set on the <var>server response</var>.
-
-6.  If field [=PatchResponse/unrecognized_ordering=] is set to a non-zero value then the client should
-     resend the request that triggered this response but also set the
-     [=PatchRequest/codepoint_ordering=] field on the request to the [=ClientState/codepoint_ordering=]
-     in the client state table within <var>font subset</var>.
-
-7.  Otherwise if none of [=PatchResponse/replacement=], [=PatchResponse/patch=], or
-     [=PatchResponse/unrecognized_ordering=] this is an error, invoke [$Handle failed font load$] and
-     return the result.
+2.  Decode the <var>server response</var> [=response/body=] by applying the appropriate decoding as
+     specified by the [[rfc9110#name-content-encoding]] header. If the
+     [[rfc9110#name-content-encoding]] is one of those from [[#patch-formats]] then the input
+     <var>font subset</var> will be used as the source file for the decoding operation. The decoded
+     response is the new extended font subset. Return the extended font subset and any cache headers
+     that were set on the <var>server response</var>.
 
 <dfn abstract-op>Handle failed font load</dfn>
 
