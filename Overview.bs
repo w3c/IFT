@@ -303,14 +303,15 @@ servers may support different IFT methods, so a negotation occurs as such:
      [=patch request header=]. If the client prefers the range-request method, it does not send the
      header.
 
-2.  If the server receives the patch request header and wishes to honor it, the server must reply with
-     a valid <a href="#PatchResponse">patch subset response</a> which includes the
-     <a href="#handling-patch-response">patch-subset magic number</a>. Otherwise, the server must
-     reply with the [[RFC9110#range.requests]]
+2.  If the server receives the patch request header and wishes to honor it, the server must reply
+     according to [[#handling-patch-request]]. Otherwise, the server must reply with the
+     [[RFC9110#range.requests]]
      <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a>
      header, if it supports HTTP Range Requests.
      
-3.  If the client receives the patch-subset magic number, it commences using the patch-subset method.
+3.  If the client receives a font with a
+     <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>
+     identified by the 4-byte tag "IFTP", it commences using the patch-subset method.
      Otherwise, if the client receives the <code>Accept-Ranges: bytes</code> header, it commences
      using the range-request method. Otherwise, the whole font file is downloaded, and the current
      non-incremental loading behavior is used.
@@ -1104,7 +1105,7 @@ The algorithm:
     identified by the 4-byte tag 'IFTP'. The contents of the table are a single [=ClientState=] object
     encoded via CBOR.
 
-     * If <var>font subset</var> does not have and "IFTP" table, then this is not an incrementally
+     * If <var>font subset</var> does not have an "IFTP" table, then this is not an incrementally
          loaded font and cannot be extended any further. Return <var>font subset</var>.
 
 3. Otherwise make an HTTP request using the <var>fetch algorithm</var>:
@@ -1121,8 +1122,8 @@ The algorithm:
 
      * The request URL [=url/path=] is set to the input <var>font URL</var>.
 
-     * The request must include an [[rfc9110#name-accept-encoding]] header which lists at minimum
-         one of the encodings from [[#patch-formats]].
+     * The request must include an [[rfc9110#name-accept-encoding|Accept-Encoding]] header which lists
+         at minimum one of the encodings from [[#patch-formats]].
 
      * If [=request/method=] is "POST" then, request [=request/body=] must be a single
          [=PatchRequest=] object encoded via CBOR.
@@ -1251,11 +1252,11 @@ The algorithm:
          [$Handle failed font load$] and return the result.
 
 2.  Decode the <var>server response</var> [=response/body=] by applying the appropriate decoding as
-     specified by the [[rfc9110#name-content-encoding]] header. If the
-     [[rfc9110#name-content-encoding]] is one of those from [[#patch-formats]] then the input
-     <var>font subset</var> will be used as the source file for the decoding operation. The decoded
-     response is the new extended font subset. Return the extended font subset and any cache headers
-     that were set on the <var>server response</var>.
+     specified by the [[rfc9110#name-content-encoding|Content-Encoding]] header. If the
+     [[rfc9110#name-content-encoding|Content-Encoding]] is one of those from [[#patch-formats]] then
+     the input <var>font subset</var> will be used as the source file for the decoding operation. The
+     decoded response is the new extended font subset. Return the extended font subset and any cache
+     headers that were set on the <var>server response</var>.
 
 <dfn abstract-op>Handle failed font load</dfn>
 
