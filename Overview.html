@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="2da4fa904b91368179ff00b884ef4ad14a2e0692" name="document-revision">
+  <meta content="f0b0e28bf148d4a0cf2a64206a53fa7ff399be18" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -1361,7 +1361,7 @@ the fragment identifier (<a href="https://www.rfc-editor.org/rfc/rfc8081#section
 font url, or null.</p>
     <li data-md>
      <p><var>desired subset definition</var>: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">description</a> of the desired
-minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a>. The subset definition must be a superset of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> in <var>client state</var>.</p>
+minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a>.</p>
     <li data-md>
      <p><var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a>. The remainder
 of this section is desribed in terms of <a href="https://fetch.spec.whatwg.org/#fetching"><cite>Fetch Standard</cite> § 4 Fetching</a>, but it is allowed to substitute
@@ -1370,7 +1370,7 @@ whatever HTTP fetching algorithm the user agent supports.</p>
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p>Extended Font Subset: <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a> that has been updated to cover at least the requested subset
+     <p>Extended Font Subset: <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> that has been updated to cover at least the requested subset
 definition.</p>
     <li data-md>
      <p>Cache fields: HTTP cache fields <a href="https://www.rfc-editor.org/rfc/rfc9111#name-field-definitions">HTTP Caching § name-field-definitions</a> describing how client state
@@ -1379,7 +1379,7 @@ can be cached, or null.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Compare the <var>desired subset definition</var> to the <var>font subset</var>. If the <var>font subset</var> already satisifies the <var>desired subset definition</var>. Then return <var>font subset</var>, and null for the cache fields.</p>
+     <p>Compare the <var>desired subset definition</var> to the <var>font subset</var>. If the <var>font subset</var> is a superset of <var>desired subset definition</var> then return <var>font subset</var>, and null for the cache fields.</p>
     <li data-md>
      <p>If <var>font subset</var> is set then load the <var>client state</var> from the <var>font subset</var>. Client state is stored in the <var>font subset</var> as a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by the 4-byte tag 'IFTP'. The contents of the table are a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate">ClientState</a> object
 encoded via CBOR.</p>
@@ -1421,7 +1421,7 @@ encoded via CBOR.</p>
  this field should not be set.</p>
       <li data-md>
        <p><a data-link-type="dfn" href="#patchrequest-codepoints_needed" id="ref-for-patchrequest-codepoints_needed">codepoints_needed</a>: set to the set of codepoints that the client wants to
- add to its <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font subset</a>. That is the codepoint set from <var>desired subset
+ add to its <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a>. That is the codepoint set from <var>desired subset
  definition</var> minus the codepoints already in the <var>font subset</var>. If <var>client state</var> is available and has a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering①">codepoint_ordering</a> then
  this field should not be set.</p>
       <li data-md>
@@ -1430,7 +1430,7 @@ encoded via CBOR.</p>
  the <var>client state</var> is not available or it does not have a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering③">codepoint_ordering</a> then this field should not be set.</p>
       <li data-md>
        <p><a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed①">indices_needed</a>: encodes the set of codepoints that the client wants to add to
- its <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑧">font subset</a>. That is the codepoint set from <var>desired subset
+ its <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font subset</a>. That is the codepoint set from <var>desired subset
  definition</var> minus the codepoints already in <var>font subset</var>.
  The codepoint values are transformed to indices by applying the <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a> specified by <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering④">codepoint_ordering</a> to each codepoint value. If
  the <var>client state</var> is not available or it does not have a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑤">codepoint_ordering</a> then this field should not be set.</p>
@@ -1483,12 +1483,12 @@ object.</p>
     <li data-md>
      <p><var>server response</var>: HTTP <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response" id="ref-for-concept-response">response</a> to a patch request.</p>
     <li data-md>
-     <p><var>font subset</var> (optional): existing <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑨">font subset</a> which is  being extended. May be null.</p>
+     <p><var>font subset</var> (optional): existing <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑧">font subset</a> which is  being extended. May be null.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p>Extended Font Subset: <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⓪">font subset</a> that has been updated to cover at least the requested subset
+     <p>Extended Font Subset: <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑨">font subset</a> that has been updated to cover at least the requested subset
 definition.</p>
     <li data-md>
      <p>Cache fields: HTTP cache fields <a href="https://www.rfc-editor.org/rfc/rfc9111#name-field-definitions">HTTP Caching § name-field-definitions</a> describing how client state
@@ -1502,7 +1502,7 @@ can be cached, or null.</p>
       <li data-md>
        <p>If it is a redirect <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-status" id="ref-for-concept-status">status</a>: follow normal redirect handling, such as <a href="https://fetch.spec.whatwg.org/#http-redirect-fetch"><cite>Fetch Standard</cite> § 4.4 HTTP-redirect fetch</a> and then go back to step 1.</p>
       <li data-md>
-       <p>All other statuses, the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①①">font subset</a> extension has failed. Invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-failed-font-load" id="ref-for-abstract-opdef-handle-failed-font-load">Handle failed font load</a> and return the result.</p>
+       <p>All other statuses, the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⓪">font subset</a> extension has failed. Invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-failed-font-load" id="ref-for-abstract-opdef-handle-failed-font-load">Handle failed font load</a> and return the result.</p>
      </ul>
     <li data-md>
      <p>Check the first four bytes of the <var>server response</var> <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body①">body</a>. If they are
@@ -1531,13 +1531,13 @@ can be cached, or null.</p>
    <p>If the font load or extension has failed the client should choose one of the following options:</p>
    <ol>
     <li data-md>
-     <p>If the client has a saved <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①②">font subset</a>, it may choose to use that and then use the user
+     <p>If the client has a saved <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①①">font subset</a>, it may choose to use that and then use the user
   agent’s existing font fallback mechanism for codepoints not covered by the subset.</p>
     <li data-md>
      <p>The client may re-issue the request as a regular non incremental font fetch to the same <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path①">path</a>. It must not include the patch subset request parameter or header. This will load
   the entire <a data-link-type="dfn" href="#original-font" id="ref-for-original-font④">original font</a>.</p>
     <li data-md>
-     <p>Discard the saved <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a>, and use the user agent’s existing font fallback mechanism.</p>
+     <p>Discard the saved <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①②">font subset</a>, and use the user agent’s existing font fallback mechanism.</p>
    </ol>
    <h4 class="heading settled algorithm" data-algorithm="Load a Font in a User Agent with a HTTP Cache" data-level="4.4.3" id="load-a-font"><span class="secno">4.4.3. </span><span class="content">Load a Font in a User Agent with a HTTP Cache</span><a class="self-link" href="#load-a-font"></a></h4>
    <p>The previous section <a href="#extend-subset">§ 4.4.1 Extending the Font Subset</a> provides no guidance on how a user agent should handle
@@ -1554,7 +1554,7 @@ subset to the user agent’s HTTP cache (<a data-link-type="biblio" href="#bibli
 the fragment identifier (<a href="https://www.rfc-editor.org/rfc/rfc8081#section-4.2">The "font" Top-Level Media Type § section-4.2</a>) identifies a single font within the collection.</p>
     <li data-md>
      <p><var>desired subset definition</var>: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">description</a> of the desired
-minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a>.</p>
+minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a>.</p>
     <li data-md>
      <p><var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a>. The remainder
 of this section is desribed in terms of <a href="https://fetch.spec.whatwg.org/#fetching"><cite>Fetch Standard</cite> § 4 Fetching</a>, but it is allowed to substitute
@@ -1563,7 +1563,7 @@ whatever HTTP fetching algorithm the user agent supports.</p>
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p>A <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a> which covers at minimum the input subset definition.</p>
+     <p>A <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a> which covers at minimum the input subset definition.</p>
    </ul>
    <p>The algorithm:</p>
    <ol>
@@ -1618,7 +1618,7 @@ whatever HTTP fetching algorithm the user agent supports.</p>
      <p>If the returned cache fields are non-null update the cache entry for the input
  font url with the returned client state and returned cache fields.</p>
     <li data-md>
-     <p>Return the returned <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a>.</p>
+     <p>Return the returned <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a>.</p>
    </ol>
    <h3 class="heading settled" data-level="4.5" id="handling-patch-request"><span class="secno">4.5. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
    <p><span class="conform server" id="conform-successful-response">If the server receives a well formed <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest⑥">PatchRequest</a> over HTTPS for a font the server has and that was
@@ -1661,8 +1661,8 @@ with a response that will cause the client to update it’s codepoint ordering t
 will recognize via the process described in <a href="#handling-patch-response">§ 4.4.2 Handling Server Response</a> and not include any patch.
 That is the <a data-link-type="dfn" href="#patchresponse-patch" id="ref-for-patchresponse-patch③">patch</a> and <a data-link-type="dfn" href="#patchresponse-replacement" id="ref-for-patchresponse-replacement③">replacement</a> fields must not be set.
 The <a data-link-type="dfn" href="#patchresponse-unrecognized_ordering" id="ref-for-patchresponse-unrecognized_ordering③">unrecognized_ordering</a> field must be set to a non-zero value.</span></p>
-   <p><span class="conform server" id="conform-response-valid-patch"> Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 4.4.2 Handling Server Response</a> to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑦">font subset</a> with checksum <a data-link-type="dfn" href="#patchrequest-base_checksum" id="ref-for-patchrequest-base_checksum②">base_checksum</a> it must
-result in an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑧">font subset</a>: </span></p>
+   <p><span class="conform server" id="conform-response-valid-patch"> Otherwise when the response is applied by the client following the process in <a href="#handling-patch-response">§ 4.4.2 Handling Server Response</a> to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a> with checksum <a data-link-type="dfn" href="#patchrequest-base_checksum" id="ref-for-patchrequest-base_checksum②">base_checksum</a> it must
+result in an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑦">font subset</a>: </span></p>
    <ul>
     <li data-md>
      <p><span class="conform server" id="conform-response-subset">That contains data for at least the union
@@ -1683,7 +1683,7 @@ CBOR:</span></p>
       <li data-md>
        <p><span class="conform server" id="conform-response-client-state-codepoint-ordering"> The <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑧">codepoint_ordering</a> field must be set following <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a>.</span></p>
       <li data-md>
-       <p><span class="conform server" id="conform-response-client-state-subset-axis-space-field"> If the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①⓪">original font</a> has variation axes, the <a data-link-type="dfn" href="#clientstate-subset_axis_space" id="ref-for-clientstate-subset_axis_space①">subset_axis_space</a> field must be set to the axis space covered by the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑨">font subset</a>.</span></p>
+       <p><span class="conform server" id="conform-response-client-state-subset-axis-space-field"> If the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①⓪">original font</a> has variation axes, the <a data-link-type="dfn" href="#clientstate-subset_axis_space" id="ref-for-clientstate-subset_axis_space①">subset_axis_space</a> field must be set to the axis space covered by the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑧">font subset</a>.</span></p>
       <li data-md>
        <p><span class="conform server" id="conform-response-client-state-original-axis-space"> If the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①①">original font</a> has variation axes, the <a data-link-type="dfn" href="#clientstate-original_axis_space" id="ref-for-clientstate-original_axis_space">original_axis_space</a> field must be set to the axis space covered by
  the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①②">original font</a>.</span></p>
@@ -2608,10 +2608,10 @@ itself be statically compressed.</p>
    <ul>
     <li><a href="#ref-for-font-subset">1.1. Patch Subset</a>
     <li><a href="#ref-for-font-subset①">4.1. Font Subset</a>
-    <li><a href="#ref-for-font-subset②">4.4.1. Extending the Font Subset</a> <a href="#ref-for-font-subset③">(2)</a> <a href="#ref-for-font-subset④">(3)</a> <a href="#ref-for-font-subset⑤">(4)</a> <a href="#ref-for-font-subset⑥">(5)</a> <a href="#ref-for-font-subset⑦">(6)</a> <a href="#ref-for-font-subset⑧">(7)</a>
-    <li><a href="#ref-for-font-subset⑨">4.4.2. Handling Server Response</a> <a href="#ref-for-font-subset①⓪">(2)</a> <a href="#ref-for-font-subset①①">(3)</a> <a href="#ref-for-font-subset①②">(4)</a> <a href="#ref-for-font-subset①③">(5)</a>
-    <li><a href="#ref-for-font-subset①④">4.4.3. Load a Font in a User Agent with a HTTP Cache</a> <a href="#ref-for-font-subset①⑤">(2)</a> <a href="#ref-for-font-subset①⑥">(3)</a>
-    <li><a href="#ref-for-font-subset①⑦">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-font-subset①⑧">(2)</a> <a href="#ref-for-font-subset①⑨">(3)</a>
+    <li><a href="#ref-for-font-subset②">4.4.1. Extending the Font Subset</a> <a href="#ref-for-font-subset③">(2)</a> <a href="#ref-for-font-subset④">(3)</a> <a href="#ref-for-font-subset⑤">(4)</a> <a href="#ref-for-font-subset⑥">(5)</a> <a href="#ref-for-font-subset⑦">(6)</a>
+    <li><a href="#ref-for-font-subset⑧">4.4.2. Handling Server Response</a> <a href="#ref-for-font-subset⑨">(2)</a> <a href="#ref-for-font-subset①⓪">(3)</a> <a href="#ref-for-font-subset①①">(4)</a> <a href="#ref-for-font-subset①②">(5)</a>
+    <li><a href="#ref-for-font-subset①③">4.4.3. Load a Font in a User Agent with a HTTP Cache</a> <a href="#ref-for-font-subset①④">(2)</a> <a href="#ref-for-font-subset①⑤">(3)</a>
+    <li><a href="#ref-for-font-subset①⑥">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-font-subset①⑦">(2)</a> <a href="#ref-for-font-subset①⑧">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="font-subset-definition">
