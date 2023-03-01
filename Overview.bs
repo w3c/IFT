@@ -6,6 +6,7 @@ Prepare for TR: yes
 Date: 2022-06-28
 Group: webfontswg
 Level: none
+Markup Shorthands: css no
 TR: https://www.w3.org/TR/IFT/
 ED: https://w3c.github.io/IFT/Overview.html
 Editor: Chris Lilley, W3C, https://svgees.us/, w3cid 1438
@@ -1120,7 +1121,7 @@ The inputs to this algorithm are:
 
 * <var>font URL</var>: a URL where the font to be extended is located.
 
-* <var>fragment identifier</var> (optional): if the font at the font url is a collection of fonts,
+* <var>fragment identifier</var> (optional): if the font at the font url is a font collection,
     the fragment identifier ([[rfc8081#section-4.2]]) identifies a single font within the collection.
 
 * <var>font subset</var> (optional): previously loaded [=font subset=] for the given
@@ -1151,7 +1152,7 @@ The algorithm:
 2. If <var>font subset</var> is set then load the <var>client state</var> from the
     <var>font subset</var>. Client state is stored in the <var>font subset</var> as a
     <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>
-    identified by the 4-byte tag "IFTP". The contents of the table are a single [=ClientState=] object
+    identified by the 4-byte tag 'IFTP'. The contents of the table are a single [=ClientState=] object
     encoded via CBOR.
 
 3. Otherwise make an HTTP request using the <var>fetch algorithm</var>:
@@ -1354,7 +1355,7 @@ The inputs to this algorithm:
 
 * <var>font URL</var>: a URL where the font to be extended is located.
 
-* <var>fragment identifier</var> (optional): if the font at the font url is a collection of fonts,
+* <var>fragment identifier</var> (optional): if the font at the font url is a font collection,
     the fragment identifier ([[rfc8081#section-4.2]]) identifies a single font within the collection.
 
 * <var>desired subset definition</var>: a [=font subset definition|description=] of the desired
@@ -1432,7 +1433,7 @@ single [=PatchResponse=] object encoded via CBOR.</span>
 
 The [=url/path=] in the request [=request/url=] identifies the specific font that a patch is desired
 for. If the request has the [=PatchRequest/fragment_id=] field set and the file identified by
-[=url/path=] is a collection of fonts, then [=PatchRequest/fragment_id=] identifies the font within
+[=url/path=] is a font collection, then [=PatchRequest/fragment_id=] identifies the font within
 that collection that a patch is desired for. The identified font is referred to as the
 <dfn>original font</dfn> in the rest of this section.
 
@@ -1494,7 +1495,7 @@ result in an extended [=font subset=]:
 
 *  <span class="conform server" id="conform-response-client-state">That has a
     <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>
-    which is mapped to the tag "IFTP" whose content is a single [=ClientState=] object encoded via
+    which is identified by the tag 'IFTP' whose content is a single [=ClientState=] object encoded via
     CBOR:</span>
 
     *  <span class="conform server" id="conform-response-client-state-original-checksum">The
