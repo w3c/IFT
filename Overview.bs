@@ -1017,6 +1017,9 @@ For an [=AxisInterval=] object to be well formed:
     <td>11</td>
     <td><dfn for="PatchRequest">fragment_id</dfn>
     </td><td>[=String=]</td></tr>
+  <tr>
+    <td>12</td>
+    <td><dfn for="PatchRequest">codepoint_ordering</dfn></td><td>[=IntegerList=]</td></tr>
 </table>
 
 For a [=PatchRequest=] object to be well formed:
@@ -1245,6 +1248,11 @@ The algorithm:
      *  If it is a redirect [=status=]: follow normal redirect handling, such as
          [[fetch#http-redirect-fetch]] and then go back to step 1.
 
+     *  If [=response/status=] is 412, then the server does not recognize the codepoint ordering
+         used by the client. The client should resend the request that triggered this response but also
+         set the [=PatchRequest/codepoint_ordering=] field on the request to the
+         [=ClientState/codepoint_ordering=] in the client state table within <var>font subset</var>.
+
      *  All other statuses, the [=font subset=] extension has failed. Invoke
          [$Handle failed font load$] and return the result.
 
@@ -1374,6 +1382,10 @@ From the request object the server can produce two codepoint sets:
      [=PatchRequest/indices_needed=] must be mapped to codepoints by the application of the
      codepoint reordering with a checksum matching [=PatchRequest/ordering_checksum=].</span>
 
+Note: the request may optionally set [=PatchRequest/codepoint_ordering=] which is used by the client to
+provide the exact codepoint ordering that was used to encode [=PatchRequest/indices_have=] and
+[=PatchRequest/indices_needed=].
+
 Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>:
 
 1.  Feature tags the client's subset has: specified by [=PatchRequest/features_have=]. If the field is
@@ -1392,10 +1404,11 @@ Lastly, the server can produce two variable axis spaces:
      font are not specified in [=PatchRequest/axis_space_needed=] then for those axes add their entire
      interval from the [=original font=].
 
-
 <span class="conform server" id="conform-bad-reordering">
-If the server does not recognize the codepoint ordering used by the client (identified by the
-[=PatchRequest/ordering_checksum=]), it must respond with the full original font.</span>
+If the server does not recognize the codepoint ordering used by the client, it must respond
+with [=response/status=] code 412. This will instruct the client to resend the request including
+the codepoint ordering it has.
+</span>
 
 <span class="conform server" id="conform-response-valid-patch">
 Otherwise when the response is decoded by the client following the process in
