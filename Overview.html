@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="c60721b47a468239f3e56d9848b43ff4662c798a" name="document-revision">
+  <meta content="b9697c93664b95a0ab8f77bc41b7e05a98dfd9d4" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -255,7 +255,6 @@ dfn > a.self-link::before      { content: "#"; }
       <dt>Feedback:
       <dd><span><a href="mailto:public-webfonts-wg@w3.org?subject=%5BIFT%5D%20YOUR%20TOPIC%20HERE">public-webfonts-wg@w3.org</a> with subject line “<kbd>[IFT] <i data-lt>… message topic …</i></kbd>” (<a href="https://lists.w3.org/Archives/Public/public-webfonts-wg/" rel="discussion">archives</a>)</span>
       <dd><a href="https://github.com/w3c/PFE/issues/">GitHub</a>
-      <dd><a href="#issues-index">Inline In Spec</a>
       <dt class="editor">Editors:
       <dd class="editor p-author h-card vcard" data-editor-id="1438"><a class="p-name fn u-url url" href="https://svgees.us/">Chris Lilley</a> (<span class="p-org org">W3C</span>)
       <dd class="editor p-author h-card vcard" data-editor-id="77180"><a class="p-name fn u-email email" href="mailto:mmaxfield@apple.com">Myles C. Maxfield</a> (<span class="p-org org">Apple Inc.</span>)
@@ -372,28 +371,7 @@ dfn > a.self-link::before      { content: "#"; }
        </ol>
       <li><a href="#patch-encodings"><span class="secno">4.8</span> <span class="content">Patch Encodings</span></a>
      </ol>
-    <li>
-     <a href="#range-request-incxfer"><span class="secno">5</span> <span class="content">Range Request Incremental Transfer</span></a>
-     <ol class="toc">
-      <li><a href="#range-request-intro"><span class="secno">5.1</span> <span class="content">Introduction to Range Request</span></a>
-      <li>
-       <a href="#font-organization"><span class="secno">5.2</span> <span class="content">Font organization</span></a>
-       <ol class="toc">
-        <li><a href="#font-organization-background"><span class="secno">5.2.1</span> <span class="content">Background</span></a>
-        <li><a href="#font-organization-introduction"><span class="secno">5.2.2</span> <span class="content">Introduction</span></a>
-        <li><a href="#font-organization-compression"><span class="secno">5.2.3</span> <span class="content">Compression</span></a>
-        <li><a href="#font-organization-table-ordering"><span class="secno">5.2.4</span> <span class="content">Table Ordering</span></a>
-        <li><a href="#font-organization-glyph-independence"><span class="secno">5.2.5</span> <span class="content">Glyph Independence</span></a>
-        <li><a href="#font-organization-glyph-order"><span class="secno">5.2.6</span> <span class="content">Glyph Order</span></a>
-       </ol>
-      <li>
-       <a href="#browser-behaviors"><span class="secno">5.3</span> <span class="content">Browser Behaviors</span></a>
-       <ol class="toc">
-        <li><a href="#browser-behaviors-first-request"><span class="secno">5.3.1</span> <span class="content">First Request</span></a>
-        <li><a href="#browser-behaviors-subsequent-requests"><span class="secno">5.3.2</span> <span class="content">Subsequent Requests</span></a>
-       </ol>
-      <li><a href="#server-behaviors"><span class="secno">5.4</span> <span class="content">Server Behaviors</span></a>
-     </ol>
+    <li><a href="#range-request-incxfer"><span class="secno">5</span> <span class="content">Range Request Incremental Transfer</span></a>
     <li>
      <a href="#priv"><span class="secno"></span> <span class="content">Privacy Considerations</span></a>
      <ol class="toc">
@@ -402,8 +380,7 @@ dfn > a.self-link::before      { content: "#"; }
       <li><a href="#per-origin"><span class="secno"></span> <span class="content">Per-origin restriction avoids fingerprinting</span></a>
      </ol>
     <li><a href="#sec"><span class="secno"></span> <span class="content">Security Considerations</span></a>
-    <li><a href="#suggested-glyph-character-ordering"><span class="secno"></span> <span class="content"> Appendix A: Suggested glyph/character ordering</span></a>
-    <li><a href="#feature-tag-list"><span class="secno"></span> <span class="content"> Appendix B: Default Feature Tags and Encoding IDs</span></a>
+    <li><a href="#feature-tag-list"><span class="secno"></span> <span class="content"> Appendix A: Default Feature Tags and Encoding IDs</span></a>
     <li>
      <a href="#w3c-conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
      <ol class="toc">
@@ -422,7 +399,6 @@ dfn > a.self-link::before      { content: "#"; }
       <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
       <li><a href="#informative"><span class="secno"></span> <span class="content">Informative References</span></a>
      </ol>
-    <li><a href="#issues-index"><span class="secno"></span> <span class="content">Issues Index</span></a>
    </ol>
   </nav>
   <main>
@@ -1109,7 +1085,7 @@ bytes = [03 07 03 81 7F]
 Each feature tag is mapped to an integer value and then the set of mapped integers are encoded in a <a data-link-type="dfn" href="#sortedintegerlist" id="ref-for-sortedintegerlist②">SortedIntegerList</a>. Feature tags are mapped to integers as follows:</p>
    <ul>
     <li data-md>
-     <p>If the tag is found in <a href="#feature-tag-list">Appendix B: Default Feature Tags and Encoding IDs</a>:</p>
+     <p>If the tag is found in <a href="#feature-tag-list">Appendix A: Default Feature Tags and Encoding IDs</a>:</p>
      <ul>
       <li data-md>
        <p>If the "Encoded As" column corresponding to the tag is "default" then the tag is skipped and
@@ -1125,7 +1101,7 @@ little endian integer.</p>
 into ascending order and then encoding the sorted list as a <a data-link-type="dfn" href="#sortedintegerlist" id="ref-for-sortedintegerlist③">SortedIntegerList</a>.</p>
    <p>When decoding a FeatureTagSet the integer values are mapped back to the original tags by reversing
 the above mapping rules. <span class="conform server client" id="conform-feature-tag-set-defaults">Additionally all
-default features in <a href="#feature-tag-list">Appendix B: Default Feature Tags and Encoding IDs</a> must be added to the decoded set.</span></p>
+default features in <a href="#feature-tag-list">Appendix A: Default Feature Tags and Encoding IDs</a> must be added to the decoded set.</span></p>
    <h4 class="heading settled" data-level="4.2.8" id="AxisSpace"><span class="secno">4.2.8. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="axisspace">AxisSpace</dfn></span><a class="self-link" href="#AxisSpace"></a></h4>
    <p>Stores a set of intervals on one or more open type variation axes <a data-link-type="biblio" href="#biblio-opentype-variations">[opentype-variations]</a>.
 Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑤">ByteString</a> containing exactly 4 ASCII characters. The value in each
@@ -1765,82 +1741,7 @@ file as a patch against a source file:</p>
       <td> Uses VCDIFF format <a data-link-type="biblio" href="#biblio-rfc3284">[RFC3284]</a> to produce the patch. 
    </table>
    <h2 class="heading settled" data-level="5" id="range-request-incxfer"><span class="secno">5. </span><span class="content">Range Request Incremental Transfer</span><a class="self-link" href="#range-request-incxfer"></a></h2>
-   <h3 class="heading settled" data-level="5.1" id="range-request-intro"><span class="secno">5.1. </span><span class="content">Introduction to Range Request</span><a class="self-link" href="#range-request-intro"></a></h3>
-   <p><em>This section is not normative.</em></p>
-   <p>The Range Request method is a very simple method of incremental transfer, and has no server-side requirements (other than the server should be able to respond to byte-based range requests). The browser simply makes range requests to the server for the specific bytes in the font file that it needs. In order to know which bytes are necessary, the browser makes one initial special request for the beginning of the file.</p>
-   <p>In order for the range request method to be as effective as possible, the font file itself should be internally arranged in a particular way, in order to decrease the number of requests the browser needs to make. Therefore, it is expected that web developers wishing to use the range request method will use font files that have had their contents already arranged optimally.</p>
-   <p>This method was modelled after video playback on the web, where seeking in a video causes the browser to send a range request to the server.</p>
-   <h3 class="heading settled" data-level="5.2" id="font-organization"><span class="secno">5.2. </span><span class="content">Font organization</span><a class="self-link" href="#font-organization"></a></h3>
-   <h4 class="heading settled" data-level="5.2.1" id="font-organization-background"><span class="secno">5.2.1. </span><span class="content">Background</span><a class="self-link" href="#font-organization-background"></a></h4>
-   <p><em>This section is not normative.</em></p>
-   <p>A particular organization of font files is beneficial for improving the performance of the range-request IFT method. The range-request IFT method only works with <a data-link-type="biblio" href="#biblio-truetype">[TRUETYPE]</a>, <a data-link-type="biblio" href="#biblio-opentype">[OPENTYPE]</a>, <a data-link-type="biblio" href="#biblio-woff">[WOFF]</a>, or <a data-link-type="biblio" href="#biblio-woff2">[WOFF2]</a> files. All of these file formats use an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#organization-of-an-opentype-font"><code>sfnt</code> wrapper</a> which provides a directory of tables inside the font file. A <code>sfnt</code>-based font file is mainly composed of a collection of independent tables.</p>
-   <p class="issue" id="issue-73fb8795"><a class="self-link" href="#issue-73fb8795"></a> <a href="https://github.com/w3c/IFT/issues/59">Using WOFF2 files with range-request mechanism doesn’t seem to be a viable option</a></p>
-   <h4 class="heading settled" data-level="5.2.2" id="font-organization-introduction"><span class="secno">5.2.2. </span><span class="content">Introduction</span><a class="self-link" href="#font-organization-introduction"></a></h4>
-   <p>The term <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="range-request-optimized-font">range-request optimized font</dfn> is used to describe a font file organized for use with the range-request IFT method. Optimizing a font for the range-request IFT method does not change the file format of the font.</p>
-   <p class="note" role="note"><span>Note:</span> Because optimizing a font does not change its file format, no new additional tooling is necessary to interact with these optimized fonts. They are still valid fonts, but with a particular internal organization.</p>
-   <div class="example" id="example-85584618"><a class="self-link" href="#example-85584618"></a> The result of optimizing an OpenType font for the range-request IFT method is still a valid OpenType font. The resulting file may be larger (by byte count) than it was before optimizing it, but fewer of those bytes should be necessary for a client to download in order to render a target text. </div>
-   <p class="note" role="note"><span>Note:</span> There are no <code>MUST</code>-level requirements on the organization of a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font">range-request optimized font</a>. Any arbitrary font file may be considered to be a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font①">range-request optimized font</a>. However, additional optimizations should increase the performance of loading in a browser via the range-request IFT method. Font creators are encouraged to enact as many of the optimizations listed in this section as are reasonable for the fonts they create.</p>
-   <h4 class="heading settled" data-level="5.2.3" id="font-organization-compression"><span class="secno">5.2.3. </span><span class="content">Compression</span><a class="self-link" href="#font-organization-compression"></a></h4>
-   <p>Servers supporting the range-request IFT method should support compression via the <code>Content-Encoding</code> header (<a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-encoding">HTTP Semantics § name-content-encoding</a>), rather than having the font file itself be statically compressed.</p>
-   <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font②">range-request optimized font</a> file (the file itself) should not use any kind of compression other than <a data-link-type="biblio" href="#biblio-rfc7932">[RFC7932]</a> (commonly referred to as "Brotli") compression.</p>
-   <p>If Brotli compression is used in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font③">range-request optimized font</a>, it should use only one <a href="https://datatracker.ietf.org/doc/html/rfc7932#section-9.2">meta-block</a>.</p>
-   <p>If Brotli compression is used in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font④">range-request optimized font</a>, its one meta-block should have the <a href="https://datatracker.ietf.org/doc/html/rfc7932#section-9.2"><code>ISUNCOMPRESSED</code></a> bit set to 1.</p>
-   <p class="issue" id="issue-6786fd81"><a class="self-link" href="#issue-6786fd81"></a> <a href="https://github.com/w3c/IFT/issues/60">Static file compression compatibility with range-request method</a></p>
-   <h4 class="heading settled" data-level="5.2.4" id="font-organization-table-ordering"><span class="secno">5.2.4. </span><span class="content">Table Ordering</span><a class="self-link" href="#font-organization-table-ordering"></a></h4>
-   <p>The term <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="outline-table">outline table</dfn> is used to describe these three tables,
-which carry different types of glyph outlines:</p>
-   <ul>
-    <li data-md>
-     <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff"><code>CFF</code></a> table</p>
-    <li data-md>
-     <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>CFF2</code></a> table</p>
-    <li data-md>
-     <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf"><code>glyf</code></a> table</p>
-   </ul>
-   <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑤">range-request optimized font</a> should have only one outline table.</p>
-   <p>No two tables in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑥">range-request optimized font</a> should share a tag name.</p>
-   <p>The <a data-link-type="dfn" href="#outline-table" id="ref-for-outline-table">outline table</a> data in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑦">range-request optimized font</a> should lie at the end of the file.</p>
-   <p>If a <code>CFF</code> table exists, the <a href="https://adobe-type-tools.github.io/font-tech-notes/pdfs/5176.CFF.pdf">CharString</a> data should lie at the end of the <code>CFF</code> table.</p>
-   <p>If a <code>CFF2</code> table exists, the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#charStrings">CharString</a> data should lie at the end of the <code>CFF2</code> table.</p>
-   <p class="issue" id="issue-010f4980"><a class="self-link" href="#issue-010f4980"></a> <a href="https://github.com/w3c/IFT/issues/28">Font Collections support</a></p>
-   <h4 class="heading settled" data-level="5.2.5" id="font-organization-glyph-independence"><span class="secno">5.2.5. </span><span class="content">Glyph Independence</span><a class="self-link" href="#font-organization-glyph-independence"></a></h4>
-   <p class="note" role="note"><span>Note:</span> The goal of this section is to make every glyph independent from each other.</p>
-   <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑧">range-request optimized font</a> should not use <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6glyf.html">Compound glyphs</a>.</p>
-   <p class="issue" id="issue-5533a524"><a class="self-link" href="#issue-5533a524"></a> <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with composite glyphs via range-request</a></p>
-   <p class="note" role="note"><span>Note:</span> Compound glyphs can be flattened by inlining their component glyphs to become additional contours.</p>
-   <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑨">range-request optimized font</a> should not use <a href="https://adobe-type-tools.github.io/font-tech-notes/pdfs/5176.CFF.pdf">Subroutines</a>.</p>
-   <p class="note" role="note"><span>Note:</span> CFF glyph CharStrings can be flattened by inlining subroutines to become additional CharString bytes.</p>
-   <h4 class="heading settled" data-level="5.2.6" id="font-organization-glyph-order"><span class="secno">5.2.6. </span><span class="content">Glyph Order</span><a class="self-link" href="#font-organization-glyph-order"></a></h4>
-   <p>Glyphs inside a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font①⓪">range-request optimized font</a> should be sorted in the file to keep glyphs often used in the same documents close together in the file.</p>
-   <p class="note" role="note"><span>Note:</span> Putting the most frequently used glyphs together in the font increases the likelihood that the browser can download a contiguous sequence of necessary glyphs in a single range-request, thereby minimizing overhead.</p>
-   <p class="note" role="note"><span>Note:</span> Reordering glyphs in a font is the same conceptual operation as renaming glyphs to have different glyph IDs. Therefore, this operation cannot be completed if glyph IDs must be preserved. Because glyph IDs are internal to text processing procedures and are not persisted, this requirement is not expected to be particularly burdensome.</p>
-   <p>One suggested method of sorting the glyphs in the file is by <a data-link-type="dfn" href="#usage-document-frequency" id="ref-for-usage-document-frequency">usage document frequency</a> inside a relevant <a data-link-type="dfn" href="#corpus" id="ref-for-corpus">corpus</a>.</p>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="corpus">corpus</dfn> is defined to be a collection of documents, where a documents includes a collection of glyphs necessary to render some textual content.</p>
-   <p class="note" role="note"><span>Note:</span> For a particular website, a corpus might be defined to be individual page loads of pages on that website.</p>
-   <p>The <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="usage-document-frequency">usage document frequency</dfn> of a particular glyph inside a <a data-link-type="dfn" href="#corpus" id="ref-for-corpus①">corpus</a> is defined by the number of documents in the <a data-link-type="dfn" href="#corpus" id="ref-for-corpus②">corpus</a> which use that glyph, divided by the number of documents in the <a data-link-type="dfn" href="#corpus" id="ref-for-corpus③">corpus</a>.</p>
-   <p class="note" role="note"><span>Note:</span> This is distinct, but similar, to the number of times the glyph is used throughout the entire corpus.</p>
-   <p>The <a data-link-type="dfn" href="#usage-document-frequency" id="ref-for-usage-document-frequency①">usage document frequency</a> of the glyphs in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font①①">range-request optimized font</a> should be decreasing throughout the font; that is, the most frequently used glyphs should have the lowest glyph IDs.</p>
-   <p class="note" role="note"><span>Note:</span> Glyph ID 0 cannot be renamed in OpenType, TrueType, WOFF, and WOFF 2 fonts. All other glyphs can be renamed.</p>
-   <p class="note" role="note"><span>Note:</span> Because the goal is simply to minimize overhead by placing similarly-used glyphs together, it may actually be possible to do better than ordering by simple frequency for a particular corpus. For example, some corpuses may have cliques of glyphs which have different frequencies but which nevertheless always seem to be used together.</p>
-   <p>A suggested ordering is included in <a href="#suggested-glyph-character-ordering">Appendix A</a> below.</p>
-   <h3 class="heading settled" data-level="5.3" id="browser-behaviors"><span class="secno">5.3. </span><span class="content">Browser Behaviors</span><a class="self-link" href="#browser-behaviors"></a></h3>
-   <h4 class="heading settled" data-level="5.3.1" id="browser-behaviors-first-request"><span class="secno">5.3.1. </span><span class="content">First Request</span><a class="self-link" href="#browser-behaviors-first-request"></a></h4>
-   <p>When a browser encounters the CSS opt-in mechanism, it is instructed to use IFT to load the fonts. First, it follows the steps in the <a href="#method-selection">IFT method selection</a> section above. If those steps result in using the range-request method, the rest of this section applies.</p>
-   <p>The IFT method selection involves a single round-trip to the server, and if the range-request method is being used, the server’s response starts sending the font file to the browser. The browser should start parsing the partial font data as it is being loaded from the server. The browser should not wait until the entire file has been received before parsing its contents.</p>
-   <p>There is a certain amount of data from the beginning of the font file which the browser should unconditionally download. The boundary at the end of this data is called the <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="range-request-threshold">range-request threshold</dfn>.</p>
-   <p class="note" role="note"><span>Note:</span> The first request does not have to be a range request. If the browser expects the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold">range-request threshold</a> to lie within the first <code>n</code> bytes of the font, the first request may be a range request for the first <code>n</code> bytes of the font. However, a browser may instead make a non-range request, parse the data as it is being streamed from the server, and discover that it has reached the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold①">range-request threshold</a> while data is still being streamed.</p>
-   <p>Once all the data before the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold②">range-request threshold</a> has been loaded by the browser, the browser may either close this connection to the server, or it may choose to leave the connection open and let the font data continue loading in the background.</p>
-   <p>A browser may choose to add a <code>Range</code> header (<a href="https://www.rfc-editor.org/rfc/rfc9110#name-range">HTTP Semantics § name-range</a>) to the initial request during the IFT method selection if it has reason to believe the range it requests will be large enough and it prefers to not close this connection to the server.</p>
-   <p class="note" role="note"><span>Note:</span> Different browsers may choose different <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold③">range-request thresholds</a>. Some browsers may treat this threshold as occuring at the end of the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">sfnt tableDirectory</a>. Other browsers may treat this threshold as occurring just before any outline data, provided the outline data appears at the end of the font. Other browsers may place this threshold at the very beginning of the file, thereby treating the whole file as able to be downloaded with range-requests.</p>
-   <h4 class="heading settled" data-level="5.3.2" id="browser-behaviors-subsequent-requests"><span class="secno">5.3.2. </span><span class="content">Subsequent Requests</span><a class="self-link" href="#browser-behaviors-subsequent-requests"></a></h4>
-   <p>After all the data before the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold④">range-request threshold</a> has been loaded by the browser, the browser will determine which additional byte ranges in the file are necessary to load. It will then issue HTTP Range Requests (<a href="https://www.rfc-editor.org/rfc/rfc9110#range.requests">HTTP Semantics § range.requests</a>) for at least those ranges.</p>
-   <p class="note" role="note"><span>Note:</span> Browsers are encouraged to coalesce range requests for nearby areas of the file, to minimize the amount of range-request overhead required. Browsers are encouraged to inform these coalescing decisions from network configuration parameters and bandwidth / latency observations.</p>
-   <p class="note" role="note"><span>Note:</span> If the font file has followed all of the organization guidelines above, all information required for laying out content and performing shaping will lie before any of the outline data in the file, and every glyph’s outline will be independent from every other glyph. Therefore, the browser can treat the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold⑤">range-request threshold</a> as being just before outline data begins, and once it has loaded up to that threshold, it can lay out page content. After laying out the page, downloading all the necessary outlines can be done with a collection of independent and parallel range requests. This works particularly well for Chinese, Japanese, and Korean fonts, where 90% or more of the font data is outline data.</p>
-   <p class="note" role="note"><span>Note:</span> Another valid alternative is to treat the entire font as residing on an asynchronous virtual filesystem, and have the browser track which ranges of the font it ended up reading during its normal operation. The browser could then request those regions in range requests.</p>
-   <h3 class="heading settled" data-level="5.4" id="server-behaviors"><span class="secno">5.4. </span><span class="content">Server Behaviors</span><a class="self-link" href="#server-behaviors"></a></h3>
-   <p>Servers supporting the range-request IFT method must support range requests (<a href="https://www.rfc-editor.org/rfc/rfc9110#range.requests">HTTP Semantics § range.requests</a>).</p>
-   <p>Servers supporting the range-request IFT method should support compression via the <code>Content-Encoding</code> (<a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-encoding">HTTP Semantics § name-content-encoding</a>) header or the <code>Transfer-Encoding</code> header (<a href="https://www.rfc-editor.org/rfc/rfc9112#section-6.1">HTTP/1.1 § section-6.1</a>), rather than having the font file
-itself be statically compressed.</p>
+   <p>Range request incremental font transfer is specified in a separate document: <a data-biblio-obsolete data-link-type="biblio" href="#biblio-rangerequest">[RangeRequest]</a></p>
    <h2 class="no-num heading settled" id="priv"><span class="content">Privacy Considerations</span><a class="self-link" href="#priv"></a></h2>
    <h3 class="heading settled" id="content-inference-from-character-set"><span class="content">Content inference from character set</span><a class="self-link" href="#content-inference-from-character-set"></a></h3>
    <p>IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see <a href="#extend-subset">§ 4.4.1 Extending the Font Subset</a>.</p>
@@ -1865,10 +1766,7 @@ itself be statically compressed.</p>
   something an attacker could use as an attack vector.</p>
    <h2 class="no-num heading settled" id="sec"><span class="content">Security Considerations</span><a class="self-link" href="#sec"></a></h2>
    <p>No Security issues have been raised against this document</p>
-   <h2 class="heading settled" id="suggested-glyph-character-ordering"><span class="content"> Appendix A: Suggested glyph/character ordering</span><a class="self-link" href="#suggested-glyph-character-ordering"></a></h2>
-   <p class="note" role="note"><span>Note:</span> This section describes ordering of characters, not glyph IDs, because the meaning of glyph IDs are not consistent across different fonts. To optimize a particular font according to the ordering listed here, the characters will have to be mapped to glyph IDs inside the font. This approach of mapping characters to glyphs for ordering purposes works particularly well for ideographic languages with large character sets.</p>
-   <p class="issue" id="issue-763d5c98"><a class="self-link" href="#issue-763d5c98"></a> <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a></p>
-   <h2 class="heading settled" id="feature-tag-list"><span class="content"> Appendix B: Default Feature Tags and Encoding IDs</span><a class="self-link" href="#feature-tag-list"></a></h2>
+   <h2 class="heading settled" id="feature-tag-list"><span class="content"> Appendix A: Default Feature Tags and Encoding IDs</span><a class="self-link" href="#feature-tag-list"></a></h2>
    <table>
     <tbody>
      <tr>
@@ -2310,7 +2208,6 @@ itself be statically compressed.</p>
    <li><a href="#patchrequest-codepoints_have">codepoints_have</a><span>, in § 4.3.3</span>
    <li><a href="#patchrequest-codepoints_needed">codepoints_needed</a><span>, in § 4.3.3</span>
    <li><a href="#compressedset">CompressedSet</a><span>, in § 4.3.1</span>
-   <li><a href="#corpus">corpus</a><span>, in § 5.2.6</span>
    <li><a href="#axisinterval-end">end</a><span>, in § 4.3.2</span>
    <li><a href="#abstract-opdef-extend-the-font-subset">Extend the font subset</a><span>, in § 4.4.1</span>
    <li><a href="#patchrequest-features_have">features_have</a><span>, in § 4.3.3</span>
@@ -2337,20 +2234,16 @@ itself be statically compressed.</p>
      <li><a href="#clientstate-original_font_checksum">dfn for ClientState</a><span>, in § 4.3.4</span>
      <li><a href="#patchrequest-original_font_checksum">dfn for PatchRequest</a><span>, in § 4.3.3</span>
     </ul>
-   <li><a href="#outline-table">outline table</a><span>, in § 5.2.4</span>
    <li><a href="#patchrequest">PatchRequest</a><span>, in § 4.3.3</span>
    <li><a href="#patch-request-header">patch request header</a><span>, in § 4.4.1</span>
    <li><a href="#compressedset-range_deltas">range_deltas</a><span>, in § 4.3.1</span>
    <li><a href="#rangelist">RangeList</a><span>, in § 4.2.6</span>
-   <li><a href="#range-request-optimized-font">range-request optimized font</a><span>, in § 5.2.2</span>
-   <li><a href="#range-request-threshold">range-request threshold</a><span>, in § 5.3.1</span>
    <li><a href="#sortedintegerlist">SortedIntegerList</a><span>, in § 4.2.5</span>
    <li><a href="#compressedset-sparse_bit_set">sparse_bit_set</a><span>, in § 4.3.1</span>
    <li><a href="#sparsebitset">SparseBitSet</a><span>, in § 4.2.3</span>
    <li><a href="#axisinterval-start">start</a><span>, in § 4.3.2</span>
    <li><a href="#string">String</a><span>, in § 4.2.2</span>
    <li><a href="#clientstate-subset_axis_space">subset_axis_space</a><span>, in § 4.3.4</span>
-   <li><a href="#usage-document-frequency">usage document frequency</a><span>, in § 5.2.6</span>
   </ul>
   <aside class="dfn-panel" data-for="term-for-concept-request-body">
    <a href="https://fetch.spec.whatwg.org/#concept-request-body">https://fetch.spec.whatwg.org/#concept-request-body</a><b>Referenced in:</b>
@@ -2473,8 +2366,6 @@ itself be statically compressed.</p>
    <dd>ztanml. <a href="https://github.com/ztanml/fast-hash"><cite>fast-hash</cite></a>. 22 October 2018. Note. URL: <a href="https://github.com/ztanml/fast-hash">https://github.com/ztanml/fast-hash</a>
    <dt id="biblio-fetch">[FETCH]
    <dd><a href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. 13 December 2021. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
-   <dt id="biblio-opentype">[OPENTYPE]
-   <dd><a href="http://www.microsoft.com/typography/otspec/default.htm"><cite>OpenType specification</cite></a>. URL: <a href="http://www.microsoft.com/typography/otspec/default.htm">http://www.microsoft.com/typography/otspec/default.htm</a>
    <dt id="biblio-pfe-report">[PFE-report]
    <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/"><cite>Progressive Font Enrichment: Evaluation Report</cite></a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
    <dt id="biblio-rfc2119">[RFC2119]
@@ -2491,36 +2382,24 @@ itself be statically compressed.</p>
    <dd>R. Fielding, Ed.; M. Nottingham, Ed.; J. Reschke, Ed.. <a href="https://www.rfc-editor.org/rfc/rfc9110"><cite>HTTP Semantics</cite></a>. June 2022. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>
    <dt id="biblio-rfc9111">[RFC9111]
    <dd>R. Fielding, Ed.; M. Nottingham, Ed.; J. Reschke, Ed.. <a href="https://www.rfc-editor.org/rfc/rfc9111"><cite>HTTP Caching</cite></a>. June 2022. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc9111">https://www.rfc-editor.org/rfc/rfc9111</a>
-   <dt id="biblio-rfc9112">[RFC9112]
-   <dd>R. Fielding, Ed.; M. Nottingham, Ed.; J. Reschke, Ed.. <a href="https://www.rfc-editor.org/rfc/rfc9112"><cite>HTTP/1.1</cite></a>. June 2022. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc9112">https://www.rfc-editor.org/rfc/rfc9112</a>
    <dt id="biblio-shared-brotli">[Shared-Brotli]
    <dd>J. Alakuijala; et al. <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2"><cite>Shared Brotli Compressed Data Format</cite></a>. 27 Jul 2021. Internet Draft. URL: <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2</a>
-   <dt id="biblio-truetype">[TRUETYPE]
-   <dd><a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/"><cite>TrueType™ Reference Manual</cite></a>. URL: <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/">https://developer.apple.com/fonts/TrueType-Reference-Manual/</a>
    <dt id="biblio-url">[URL]
    <dd>Anne van Kesteren. <a href="https://url.spec.whatwg.org/"><cite>URL Standard</cite></a>. Living Standard. URL: <a href="https://url.spec.whatwg.org/">https://url.spec.whatwg.org/</a>
-   <dt id="biblio-woff">[WOFF]
-   <dd>Jonathan Kew; Tal Leming; Erik van Blokland. <a href="https://www.w3.org/TR/WOFF/"><cite>WOFF File Format 1.0</cite></a>. 13 December 2012. REC. URL: <a href="https://www.w3.org/TR/WOFF/">https://www.w3.org/TR/WOFF/</a>
-   <dt id="biblio-woff2">[WOFF2]
-   <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/"><cite>WOFF File Format 2.0</cite></a>. 10 March 2022. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
    <dt id="biblio-opentype-variations">[OPENTYPE-VARIATIONS]
    <dd><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview"><cite>OpenType Font Variations Overview</cite></a>. 23 October 2020. Note. URL: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview">https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview</a>
+   <dt id="biblio-rangerequest">[RangeRequest]
+   <dd>Chris Lilley; Myles Maxfield; Garret Rieger. <a href="https://www.w3.org/TR/RangeRequest/"><cite>Incremental Font Transfer via Range Request</cite></a>. 25 January 2022. WD. URL: <a href="https://www.w3.org/TR/RangeRequest/">https://www.w3.org/TR/RangeRequest/</a>
    <dt id="biblio-rfc3629">[RFC3629]
    <dd>F. Yergeau. <a href="https://www.rfc-editor.org/rfc/rfc3629"><cite>UTF-8, a transformation format of ISO 10646</cite></a>. November 2003. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3629">https://www.rfc-editor.org/rfc/rfc3629</a>
    <dt id="biblio-rfc4648">[RFC4648]
    <dd>S. Josefsson. <a href="https://www.rfc-editor.org/rfc/rfc4648"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. October 2006. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>
+   <dt id="biblio-woff2">[WOFF2]
+   <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/"><cite>WOFF File Format 2.0</cite></a>. 10 March 2022. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
   </dl>
-  <h2 class="no-num no-ref heading settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
-  <div style="counter-reset:issue">
-   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/59">Using WOFF2 files with range-request mechanism doesn’t seem to be a viable option</a> <a class="issue-return" href="#issue-73fb8795" title="Jump to section">↵</a></div>
-   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/60">Static file compression compatibility with range-request method</a> <a class="issue-return" href="#issue-6786fd81" title="Jump to section">↵</a></div>
-   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/28">Font Collections support</a> <a class="issue-return" href="#issue-010f4980" title="Jump to section">↵</a></div>
-   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with composite glyphs via range-request</a> <a class="issue-return" href="#issue-5533a524" title="Jump to section">↵</a></div>
-   <div class="issue"> <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a> <a class="issue-return" href="#issue-763d5c98" title="Jump to section">↵</a></div>
-  </div>
   <aside class="dfn-panel" data-for="font-subset">
    <b><a href="#font-subset">#font-subset</a></b><b>Referenced in:</b>
    <ul>
@@ -2833,41 +2712,6 @@ itself be statically compressed.</p>
     <li><a href="#ref-for-original-font">4.4.1. Extending the Font Subset</a> <a href="#ref-for-original-font①">(2)</a> <a href="#ref-for-original-font②">(3)</a> <a href="#ref-for-original-font③">(4)</a>
     <li><a href="#ref-for-original-font④">4.4.2. Handling Server Response</a>
     <li><a href="#ref-for-original-font⑤">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-original-font⑥">(2)</a> <a href="#ref-for-original-font⑦">(3)</a> <a href="#ref-for-original-font⑧">(4)</a> <a href="#ref-for-original-font⑨">(5)</a> <a href="#ref-for-original-font①⓪">(6)</a> <a href="#ref-for-original-font①①">(7)</a> <a href="#ref-for-original-font①②">(8)</a> <a href="#ref-for-original-font①③">(9)</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="range-request-optimized-font">
-   <b><a href="#range-request-optimized-font">#range-request-optimized-font</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-range-request-optimized-font">5.2.2. Introduction</a> <a href="#ref-for-range-request-optimized-font①">(2)</a>
-    <li><a href="#ref-for-range-request-optimized-font②">5.2.3. Compression</a> <a href="#ref-for-range-request-optimized-font③">(2)</a> <a href="#ref-for-range-request-optimized-font④">(3)</a>
-    <li><a href="#ref-for-range-request-optimized-font⑤">5.2.4. Table Ordering</a> <a href="#ref-for-range-request-optimized-font⑥">(2)</a> <a href="#ref-for-range-request-optimized-font⑦">(3)</a>
-    <li><a href="#ref-for-range-request-optimized-font⑧">5.2.5. Glyph Independence</a> <a href="#ref-for-range-request-optimized-font⑨">(2)</a>
-    <li><a href="#ref-for-range-request-optimized-font①⓪">5.2.6. Glyph Order</a> <a href="#ref-for-range-request-optimized-font①①">(2)</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="outline-table">
-   <b><a href="#outline-table">#outline-table</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-outline-table">5.2.4. Table Ordering</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="corpus">
-   <b><a href="#corpus">#corpus</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-corpus">5.2.6. Glyph Order</a> <a href="#ref-for-corpus①">(2)</a> <a href="#ref-for-corpus②">(3)</a> <a href="#ref-for-corpus③">(4)</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="usage-document-frequency">
-   <b><a href="#usage-document-frequency">#usage-document-frequency</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-usage-document-frequency">5.2.6. Glyph Order</a> <a href="#ref-for-usage-document-frequency①">(2)</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="range-request-threshold">
-   <b><a href="#range-request-threshold">#range-request-threshold</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-range-request-threshold">5.3.1. First Request</a> <a href="#ref-for-range-request-threshold①">(2)</a> <a href="#ref-for-range-request-threshold②">(3)</a> <a href="#ref-for-range-request-threshold③">(4)</a>
-    <li><a href="#ref-for-range-request-threshold④">5.3.2. Subsequent Requests</a> <a href="#ref-for-range-request-threshold⑤">(2)</a>
    </ul>
   </aside>
 <script>/* script-dfn-panel */

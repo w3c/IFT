@@ -1,0 +1,204 @@
+<pre class='metadata'>
+Title: Range Request Incremental Font Transfer
+Shortname: Range Request IFT
+Status: WD
+Prepare for TR: yes
+Date: 2023-03-10
+Group: webfontswg
+Level: none
+Markup Shorthands: css no
+TR: https://www.w3.org/TR/RangeRequest/
+ED: https://w3c.github.io/IFT/RangeRequest.html
+Editor: Chris Lilley, W3C, https://svgees.us/, w3cid 1438
+Editor: Myles C. Maxfield, Apple Inc., mmaxfield@apple.com, w3cid 77180
+Editor: Garret Rieger, Google Inc., grieger@google.com, w3cid 73905
+Abstract: This specification defines the range request variant of incremental font transfer.
+          Incremental transfer allows clients to load only the portions of the font they actually need
+          which speeds up font loads and reduces data transfer needed to load the fonts. A font can
+          be loaded over multiple requests where each request incrementally adds additional data.
+</pre>
+
+<!--
+    for things that are not in specref
+    https://www.specref.org/
+-->
+
+<pre class=link-defaults>
+spec:fetch; type:dfn; for:/; text:status
+spec:fetch; type:dfn; for:/; text:response
+</pre>
+
+<style>
+.conform:hover {background: #31668f}
+.conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
+</style>
+
+
+Range Request Incremental Transfer {#range-request-incxfer}
+===========================================================
+
+Introduction to Range Request {#range-request-intro}
+-----------------------------
+
+<em>This section is not normative.</em>
+
+The Range Request method is a very simple method of
+[[IFT#title|incremental font transfer]], and has no server-side requirements (other than
+the server should be able to respond to byte-based range requests). The browser simply makes range
+requests to the server for the specific bytes in the font file that it needs. In order to know which
+bytes are necessary, the browser makes one initial special request for the beginning of the file.
+
+In order for the range request method to be as effective as possible, the font file itself should be internally arranged in a particular way, in order to decrease the number of requests the browser needs to make. Therefore, it is expected that web developers wishing to use the range request method will use font files that have had their contents already arranged optimally.
+
+This method was modelled after video playback on the web, where seeking in a video causes the browser to send a range request to the server.
+
+Font organization {#font-organization}
+--------------------------------------
+
+### Background ### {#font-organization-background}
+
+<em>This section is not normative.</em>
+
+A particular organization of font files is beneficial for improving the performance of the range-request IFT method. The range-request IFT method only works with [[!TRUETYPE]], [[!OPENTYPE]], [[!WOFF]], or [[!WOFF2]] files. All of these file formats use an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#organization-of-an-opentype-font"><code>sfnt</code> wrapper</a> which provides a directory of tables inside the font file. A <code>sfnt</code>-based font file is mainly composed of a collection of independent tables.
+
+Issue: <a href="https://github.com/w3c/IFT/issues/59">Using WOFF2 files with range-request mechanism doesn't seem to be a viable option</a>
+
+### Introduction ### {#font-organization-introduction}
+
+The term <dfn>range-request optimized font</dfn> is used to describe a font file organized for use with the range-request IFT method. Optimizing a font for the range-request IFT method does not change the file format of the font.
+
+Note: Because optimizing a font does not change its file format, no new additional tooling is necessary to interact with these optimized fonts. They are still valid fonts, but with a particular internal organization.
+
+<div class=example>
+The result of optimizing an OpenType font for the range-request IFT method is still a valid OpenType font. The resulting file may be larger (by byte count) than it was before optimizing it, but fewer of those bytes should be necessary for a client to download in order to render a target text.
+</div>
+
+Note: There are no <code>MUST</code>-level requirements on the organization of a [=range-request optimized font=]. Any arbitrary font file may be considered to be a [=range-request optimized font=]. However, additional optimizations should increase the performance of loading in a browser via the range-request IFT method. Font creators are encouraged to enact as many of the optimizations listed in this section as are reasonable for the fonts they create.
+
+### Compression ### {#font-organization-compression}
+
+Servers supporting the range-request IFT method should support compression via the <code>Content-Encoding</code> header ([[RFC9110#name-content-encoding]]), rather than having the font file itself be statically compressed.
+
+A [=range-request optimized font=] file (the file itself) should not use any kind of compression other than [[!RFC7932]] (commonly referred to as "Brotli") compression.
+
+If Brotli compression is used in a [=range-request optimized font=], it should use only one <a href="https://datatracker.ietf.org/doc/html/rfc7932#section-9.2">meta-block</a>.
+
+If Brotli compression is used in a [=range-request optimized font=], its one meta-block should have the <a href="https://datatracker.ietf.org/doc/html/rfc7932#section-9.2"><code>ISUNCOMPRESSED</code></a> bit set to 1.
+
+Issue: <a href="https://github.com/w3c/IFT/issues/60">Static file compression compatibility with range-request method</a>
+
+### Table Ordering ### {#font-organization-table-ordering}
+
+The term <dfn>outline table</dfn> is used to describe these three tables,
+which carry different types of glyph outlines:
+
+- The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff"><code>CFF</code></a> table
+- The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>CFF2</code></a> table
+- The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf"><code>glyf</code></a> table
+
+A [=range-request optimized font=] should have only one outline table.
+
+No two tables in a [=range-request optimized font=] should share a tag name.
+
+
+The [=outline table=] data in a [=range-request optimized font=] should lie at the end of the file.
+
+If a <code>CFF</code> table exists, the <a href="https://adobe-type-tools.github.io/font-tech-notes/pdfs/5176.CFF.pdf">CharString</a> data should lie at the end of the <code>CFF</code> table.
+
+If a <code>CFF2</code> table exists, the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#charStrings">CharString</a> data should lie at the end of the <code>CFF2</code> table.
+
+Issue: <a href="https://github.com/w3c/IFT/issues/28">Font Collections support</a>
+
+### Glyph Independence ### {#font-organization-glyph-independence}
+
+Note: The goal of this section is to make every glyph independent from each other.
+
+A [=range-request optimized font=] should not use <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6glyf.html">Compound glyphs</a>.
+
+Issue: <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with composite glyphs via range-request</a>
+
+Note: Compound glyphs can be flattened by inlining their component glyphs to become additional contours.
+
+A [=range-request optimized font=] should not use <a href="https://adobe-type-tools.github.io/font-tech-notes/pdfs/5176.CFF.pdf">Subroutines</a>.
+
+Note: CFF glyph CharStrings can be flattened by inlining subroutines to become additional CharString bytes.
+
+### Glyph Order ### {#font-organization-glyph-order}
+
+Glyphs inside a [=range-request optimized font=] should be sorted in the file to keep glyphs often used in the same documents close together in the file.
+
+Note: Putting the most frequently used glyphs together in the font increases the likelihood that the browser can download a contiguous sequence of necessary glyphs in a single range-request, thereby minimizing overhead.
+
+Note: Reordering glyphs in a font is the same conceptual operation as renaming glyphs to have different glyph IDs. Therefore, this operation cannot be completed if glyph IDs must be preserved. Because glyph IDs are internal to text processing procedures and are not persisted, this requirement is not expected to be particularly burdensome.
+
+One suggested method of sorting the glyphs in the file is by [=usage document frequency=] inside a relevant [=corpus=].
+
+A <dfn>corpus</dfn> is defined to be a collection of documents, where a documents includes a collection of glyphs necessary to render some textual content.
+
+Note: For a particular website, a corpus might be defined to be individual page loads of pages on that website.
+
+The <dfn>usage document frequency</dfn> of a particular glyph inside a [=corpus=] is defined by the number of documents in the [=corpus=] which use that glyph, divided by the number of documents in the [=corpus=].
+
+Note: This is distinct, but similar, to the number of times the glyph is used throughout the entire corpus.
+
+The [=usage document frequency=] of the glyphs in a [=range-request optimized font=] should be decreasing throughout the font; that is, the most frequently used glyphs should have the lowest glyph IDs.
+
+Note: Glyph ID 0 cannot be renamed in OpenType, TrueType, WOFF, and WOFF 2 fonts. All other glyphs can be renamed.
+
+Note: Because the goal is simply to minimize overhead by placing similarly-used glyphs together, it may actually be possible to do better than ordering by simple frequency for a particular corpus. For example, some corpuses may have cliques of glyphs which have different frequencies but which nevertheless always seem to be used together.
+
+A suggested ordering is included in <a href="#suggested-glyph-character-ordering">Appendix A</a> below.
+
+Browser Behaviors {#browser-behaviors}
+--------------------------------------
+
+### First Request ### {#browser-behaviors-first-request}
+
+When a browser encounters the CSS opt-in mechanism, it is instructed to use IFT to load the fonts. First, it follows the steps from [[IFT#method-selection|IFT method selection]]. If those steps result in using the range-request method, the rest of this section applies.
+
+The IFT method selection involves a single round-trip to the server, and if the range-request method is being used, the server's response starts sending the font file to the browser. The browser should start parsing the partial font data as it is being loaded from the server. The browser should not wait until the entire file has been received before parsing its contents.
+
+There is a certain amount of data from the beginning of the font file which the browser should unconditionally download. The boundary at the end of this data is called the <dfn>range-request threshold</dfn>.
+
+Note: The first request does not have to be a range request. If the browser expects the [=range-request threshold=] to lie within the first <code>n</code> bytes of the font, the first request may be a range request for the first <code>n</code> bytes of the font. However, a browser may instead make a non-range request, parse the data as it is being streamed from the server, and discover that it has reached the [=range-request threshold=] while data is still being streamed.
+
+Once all the data before the [=range-request threshold=] has been loaded by the browser, the browser may either close this connection to the server, or it may choose to leave the connection open and let the font data continue loading in the background.
+
+A browser may choose to add a <code>Range</code> header ([[RFC9110#name-range]]) to the initial request during the IFT method selection if it has reason to believe the range it requests will be large enough and it prefers to not close this connection to the server.
+
+Note: Different browsers may choose different [=range-request thresholds=]. Some browsers may treat this threshold as occuring at the end of the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">sfnt tableDirectory</a>. Other browsers may treat this threshold as occurring just before any outline data, provided the outline data appears at the end of the font. Other browsers may place this threshold at the very beginning of the file, thereby treating the whole file as able to be downloaded with range-requests.
+
+### Subsequent Requests ### {#browser-behaviors-subsequent-requests}
+
+After all the data before the [=range-request threshold=] has been loaded by the browser, the browser will determine which additional byte ranges in the file are necessary to load. It will then issue HTTP Range Requests ([[RFC9110#range.requests]]) for at least those ranges.
+
+Note: Browsers are encouraged to coalesce range requests for nearby areas of the file, to minimize the amount of range-request overhead required. Browsers are encouraged to inform these coalescing decisions from network configuration parameters and bandwidth / latency observations.
+
+Note: If the font file has followed all of the organization guidelines above, all information required for laying out content and performing shaping will lie before any of the outline data in the file, and every glyph's outline will be independent from every other glyph. Therefore, the browser can treat the [=range-request threshold=] as being just before outline data begins, and once it has loaded up to that threshold, it can lay out page content. After laying out the page, downloading all the necessary outlines can be done with a collection of independent and parallel range requests. This works particularly well for Chinese, Japanese, and Korean fonts, where 90% or more of the font data is outline data.
+
+Note: Another valid alternative is to treat the entire font as residing on an asynchronous virtual filesystem, and have the browser track which ranges of the font it ended up reading during its normal operation. The browser could then request those regions in range requests.
+
+Server Behaviors {#server-behaviors}
+------------------------------------
+
+Servers supporting the range-request IFT method must support range requests ([[RFC9110#range.requests]]).
+
+Servers supporting the range-request IFT method should support compression via the
+<code>Content-Encoding</code> ([[RFC9110#name-content-encoding]]) header or the
+<code>Transfer-Encoding</code> header ([[RFC9112#section-6.1]]), rather than having the font file
+itself be statically compressed.
+
+<h2 class=no-num id=priv>Privacy Considerations</h2>
+
+Please see [[IFT#priv|Privacy Condisderations]] in the main IFT document.
+
+<h2 class=no-num id=sec>Security Considerations</h2>
+
+No Security issues have been raised against this document
+
+<h2 id="suggested-glyph-character-ordering">
+Appendix A: Suggested glyph/character ordering</h2>
+
+Note: This section describes ordering of characters, not glyph IDs, because the meaning of glyph IDs are not consistent across different fonts. To optimize a particular font according to the ordering listed here, the characters will have to be mapped to glyph IDs inside the font. This approach of mapping characters to glyphs for ordering purposes works particularly well for ideographic languages with large character sets.
+
+Issue: <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a>
