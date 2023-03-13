@@ -303,14 +303,15 @@ servers may support different IFT methods, so a negotation occurs as such:
      [=patch request header=]. If the client prefers the range-request method, it does not send the
      header.
 
-2.  If the server receives the patch request header and wishes to honor it, the server must reply with
-     a valid <a href="#PatchResponse">patch subset response</a> which includes the
-     <a href="#handling-patch-response">patch-subset magic number</a>. Otherwise, the server must
-     reply with the [[RFC9110#range.requests]]
+2.  If the server receives the patch request header and wishes to honor it, the server must reply
+     according to [[#handling-patch-request]]. Otherwise, the server must reply with the
+     [[RFC9110#range.requests]]
      <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a>
      header, if it supports HTTP Range Requests.
      
-3.  If the client receives the patch-subset magic number, it commences using the patch-subset method.
+3.  If the client receives a font with a
+     <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>
+     identified by the 4-byte tag "IFTP", it commences using the patch-subset method.
      Otherwise, if the client receives the <code>Accept-Ranges: bytes</code> header, it commences
      using the range-request method. Otherwise, the whole font file is downloaded, and the current
      non-incremental loading behavior is used.
@@ -456,14 +457,6 @@ should be encoded by CBOR are given in the definition of those data types.
     <td><dfn>ArrayOf</dfn>&lt;Type&gt;</td><td>Array of a variable number of items of Type.</td><td>4</td>
   </tr>
 </table>
-
-### <dfn>ProtocolVersion</dfn> ### {#protocol-version}
-
-An [=Integer=] describing the version of this communication protocol being used by a
-[=PatchRequest=] or [=PatchResponse=]. This value guides the semantics and interpretation
-of the fields sent.
-
-This field is for future expansion. There currently is only one valid value, 0.
 
 ### <dfn>SparseBitSet</dfn> ### {#sparsebitset-object}
 
@@ -978,107 +971,65 @@ For an [=AxisInterval=] object to be well formed:
   <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
   <tr>
     <td>0</td>
-    <td><dfn for="PatchRequest">protocol_version</dfn></td>
-    <td>[=ProtocolVersion=] ([=Integer=])</td></tr>
-  <tr>
-    <td>1</td>
-    <td><dfn for="PatchRequest">accept_patch_format</dfn></td>
-    <td>[=ArrayOf=]&lt[=Integer=]&gt;</td></tr>
-  <tr>
-    <td>2</td>
     <td><dfn for="PatchRequest">codepoints_have</dfn></td>
     <td>[=CompressedSet=]</td></tr>
   <tr>
-    <td>3</td>
+    <td>1</td>
     <td><dfn for="PatchRequest">codepoints_needed</dfn></td>
     <td>[=CompressedSet=]</td></tr>
   <tr>
-    <td>4</td>
+    <td>2</td>
     <td><dfn for="PatchRequest">indices_have</dfn></td>
     <td>[=CompressedSet=]</td></tr>
   <tr>
-    <td>5</td>
+    <td>3</td>
     <td><dfn for="PatchRequest">indices_needed</dfn></td>
     <td>[=CompressedSet=]</td></tr>
   <tr>
-    <td>6</td>
+    <td>4</td>
     <td><dfn for="PatchRequest">features_have</dfn></td>
     <td>[=FeatureTagSet=]</td></tr>
   <tr>
-    <td>7</td>
+    <td>5</td>
     <td><dfn for="PatchRequest">features_needed</dfn></td>
     <td>[=FeatureTagSet=]</td></tr>
   <tr>
-    <td>8</td>
+    <td>6</td>
     <td><dfn for="PatchRequest">axis_space_have</dfn></td>
     <td>[=AxisSpace=]</td></tr>
   <tr>
-    <td>9</td>
+    <td>7</td>
     <td><dfn for="PatchRequest">axis_space_needed</dfn></td>
     <td>[=AxisSpace=]</td></tr>
   <tr>
-    <td>10</td>
+    <td>8</td>
     <td><dfn for="PatchRequest">ordering_checksum</dfn></td>
     <td>[=Integer=]</td></tr>
   <tr>
-    <td>11</td>
+    <td>9</td>
     <td><dfn for="PatchRequest">original_font_checksum</dfn></td>
     <td>[=Integer=]</td></tr>
   <tr>
-    <td>12</td>
+    <td>10</td>
     <td><dfn for="PatchRequest">base_checksum</dfn></td>
     <td>[=Integer=]</td></tr>
   <tr>
-    <td>13</td>
+    <td>11</td>
     <td><dfn for="PatchRequest">fragment_id</dfn>
     </td><td>[=String=]</td></tr>
   <tr>
-    <td>14</td>
+    <td>12</td>
     <td><dfn for="PatchRequest">codepoint_ordering</dfn></td><td>[=IntegerList=]</td></tr>
 </table>
 
 For a [=PatchRequest=] object to be well formed:
 
-*  <span class="conform client server" id="conform-request-protocol-version">
-    [=PatchRequest/protocol_version=] must be set to 0.</span>
-*  [=PatchRequest/accept_patch_format=] can include any of the values listed in [[#patch-formats]].
 *  <span class="conform client server" id="conform-request-ordering-checksum">
     If either of [=PatchRequest/indices_have=] or [=PatchRequest/indices_needed=] is set to a non-empty
     set then [=PatchRequest/ordering_checksum=] must be set.</span>
 *  <span class="conform client server" id="conform-request-base-checksum">
     If [=PatchRequest/codepoints_have=] or [=PatchRequest/indices_have=] is set to a non-empty set then
     [=PatchRequest/original_font_checksum=] and [=PatchRequest/base_checksum=] must be set.</span>
-
-### <dfn>PatchResponse</dfn> ### {#PatchResponse}
-
-<table>
-  <tr><th>ID</th><th>Field Name</th><th>Value Type</th></tr>
-  <tr>
-    <td>0</td>
-    <td><dfn for="PatchResponse">protocol_version</dfn></td><td>[=ProtocolVersion=] ([=Integer=])</td>
-  <tr>
-    <td>1</td>
-    <td><dfn for="PatchResponse">patch_format</dfn></td><td>[=Integer=]</td></tr>
-  <tr>
-    <td>2</td>
-    <td><dfn for="PatchResponse">patch</dfn></td><td>[=ByteString=]</td></tr>
-  <tr>
-    <td>3</td>
-    <td><dfn for="PatchResponse">replacement</dfn></td><td>[=ByteString=]</td></tr>
-  <tr>
-    <td>4</td>
-    <td><dfn for="PatchResponse">unrecognized_ordering</dfn></td><td>[=Integer=]</td></tr>
-</table>
-
-For a PatchResponse object to be well formed:
-*  <span class="conform server" id="conform-response-protocol-version">
-     [=PatchResponse/protocol_version=] must be set to 0.</span>
-*  <span class="conform server" id="conform-response-patch-or-replacement">
-     Only one of [=PatchResponse/patch=], [=PatchResponse/replacement=], or
-     [=PatchResponse/unrecognized_ordering=] must be set.</span>
-*  <span class="conform server" id="conform-response-valid-format">
-     If [=PatchResponse/patch_format=] is set then it must be one of the values listed in
-     [[#patch-formats]].</span>
 
 ### <dfn>ClientState</dfn> ### {#ClientState}
 
@@ -1154,6 +1105,9 @@ The algorithm:
     identified by the 4-byte tag 'IFTP'. The contents of the table are a single [=ClientState=] object
     encoded via CBOR.
 
+     * If <var>font subset</var> does not have an "IFTP" table, then this is not an incrementally
+         loaded font and cannot be extended any further. Return <var>font subset</var>.
+
 3. Otherwise make an HTTP request using the <var>fetch algorithm</var>:
 
      * The request [=request/method=] must be either "GET" or "POST".
@@ -1167,6 +1121,9 @@ The algorithm:
      * The request URL [=url/scheme=] must be "https".
 
      * The request URL [=url/path=] is set to the input <var>font URL</var>.
+
+     * The request must include an [[rfc9110#name-accept-encoding|Accept-Encoding]] header which lists
+         at minimum one of the encodings from [[#patch-encodings]].
 
      * If [=request/method=] is "POST" then, request [=request/body=] must be a single
          [=PatchRequest=] object encoded via CBOR.
@@ -1183,11 +1140,6 @@ The algorithm:
 
      The fields of the [=PatchRequest=] object should be set
      as follows:
-
-     *  [=PatchRequest/protocol_version=]: set to 0.
-
-     *  [=PatchRequest/accept_patch_format=]: set to the list of [[#patch-formats]] that this client is
-         capable of decoding. Must contain at least one format.
 
      *  [=PatchRequest/codepoints_have=]: set to exactly the set of codepoints that the current
          <var>font subset</var> contains data for. If the current
@@ -1270,9 +1222,8 @@ and the request object is more compactly encoded. GET should only be used during
 
 If a server is able to succsessfully process a [=PatchRequest=]
 it will respond with HTTP [=response/status=] code 200 and the [=response/body=] of the response will
-be a 4 byte magic number (0x49, 0x46, 0x54, 0x20) followed by a single [=PatchResponse=] object encoded
-via CBOR. The client uses the following algorithm to interpret and process the fields of the
-object.
+be an encoded representation of the extended font subset. The encoded representation may be a binary
+patch against the current font subset.
 
 <dfn abstract-op>Handle server response</dfn>
 
@@ -1297,36 +1248,20 @@ The algorithm:
      *  If it is a redirect [=status=]: follow normal redirect handling, such as
          [[fetch#http-redirect-fetch]] and then go back to step 1.
 
+     *  If [=response/status=] is 412, then the server does not recognize the codepoint ordering
+         used by the client. The client should resend the request that triggered this response but also
+         set the [=PatchRequest/codepoint_ordering=] field on the request to the
+         [=ClientState/codepoint_ordering=] in the client state table within <var>font subset</var>.
+
      *  All other statuses, the [=font subset=] extension has failed. Invoke
          [$Handle failed font load$] and return the result.
 
-2.  Check the first four bytes of the <var>server response</var> [=response/body=]. If they are
-     not equal to [0x49, 0x46, 0x54, 0x20] then this response is malformed.
-     Invoke [$Handle failed font load$] and return the result.
-
-3.  Interpret the remaining bytes of the <var>server response</var> [=response/body=] as a CBOR
-     encoded [=PatchResponse=]. If the bytes are not decodable with CBOR, or the
-     [=PatchResponse=] is not well formed, then this is an error. Invoke [$Handle failed font load$]
-     and return the result.
-
-4.  If field [=PatchResponse/replacement=] is set then: the byte array in this field is a binary patch
-     in the format specified by [=PatchResponse/patch_format=]. Apply the binary patch to a base which
-     is an empty byte array. This produces the extended font subset. Return the extended font subset
-     and any cache headers that were set on the <var>server response</var>.
-
-5.  If field [=PatchResponse/patch=] is set then:  the byte array in this field is a binary patch
-     in the format specifiedy [=PatchResponse/patch_format=]. Apply the binary patch to the input
-     <var>font subset</var>. This produces the extended font subset. Return the extended font subset
-     and any cache headers that were set on the <var>server response</var>.
-
-6.  If field [=PatchResponse/unrecognized_ordering=] is set to a non-zero value then the client should
-     resend the request that triggered this response but also set the
-     [=PatchRequest/codepoint_ordering=] field on the request to the [=ClientState/codepoint_ordering=]
-     in the client state table within <var>font subset</var>.
-
-7.  Otherwise if none of [=PatchResponse/replacement=], [=PatchResponse/patch=], or
-     [=PatchResponse/unrecognized_ordering=] this is an error, invoke [$Handle failed font load$] and
-     return the result.
+2.  Decode the <var>server response</var> [=response/body=] by applying the appropriate decoding as
+     specified by the [[rfc9110#name-content-encoding|Content-Encoding]] header. If the
+     [[rfc9110#name-content-encoding|Content-Encoding]] is one of those from [[#patch-encodings]] then
+     the input <var>font subset</var> will be used as the source file for the decoding operation. The
+     decoded response is the new extended font subset. Return the extended font subset and any cache
+     headers that were set on the <var>server response</var>.
 
 <dfn abstract-op>Handle failed font load</dfn>
 
@@ -1426,9 +1361,6 @@ Server: Responding to a PatchRequest {#handling-patch-request}
 [=PatchRequest=] over HTTPS for a font the server has and that was
 populated according to the requirements in [[#extend-subset]] then it must respond with HTTP
 [=response/status=] code 200.</span>
-<span class="conform server" id="conform-magic-number">The first 4 bytes of the response
-[=response/body=] must be set to 0x49, 0x46, 0x54, 0x20 ("IFT " encoded as ASCII) followed by a
-single [=PatchResponse=] object encoded via CBOR.</span>
 
 The [=url/path=] in the request [=request/url=] identifies the specific font that a patch is desired
 for. If the request has the [=PatchRequest/fragment_id=] field set and the file identified by
@@ -1450,6 +1382,10 @@ From the request object the server can produce two codepoint sets:
      [=PatchRequest/indices_needed=] must be mapped to codepoints by the application of the
      codepoint reordering with a checksum matching [=PatchRequest/ordering_checksum=].</span>
 
+Note: the request may optionally set [=PatchRequest/codepoint_ordering=] which is used by the client to
+provide the exact codepoint ordering that was used to encode [=PatchRequest/indices_have=] and
+[=PatchRequest/indices_needed=].
+
 Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>:
 
 1.  Feature tags the client's subset has: specified by [=PatchRequest/features_have=]. If the field is
@@ -1470,13 +1406,12 @@ Lastly, the server can produce two variable axis spaces:
 
 <span class="conform server" id="conform-bad-reordering">
 If the server does not recognize the codepoint ordering used by the client, it must respond
-with a response that will cause the client to update it's codepoint ordering to one the server
-will recognize via the process described in [[#handling-patch-response]] and not include any patch.
-That is the [=PatchResponse/patch=] and [=PatchResponse/replacement=] fields must not be set.
-The [=PatchResponse/unrecognized_ordering=] field must be set to a non-zero value.</span>
+with [=response/status=] code 412. This will instruct the client to resend the request including
+the codepoint ordering it has.
+</span>
 
 <span class="conform server" id="conform-response-valid-patch">
-Otherwise when the response is applied by the client following the process in
+Otherwise when the response is decoded by the client following the process in
 [[#handling-patch-response]] to a [=font subset=] with checksum [=PatchRequest/base_checksum=] it must
 result in an extended [=font subset=]:
 </span>
@@ -1522,17 +1457,11 @@ result in an extended [=font subset=]:
 
 Additionally:
 
-*  <span class="conform server" id="conform-response-patch-format">The format of the patch in the
-    either the [=PatchResponse/patch=] or [=PatchResponse/replacement=] fields must be one of those
-    listed in [=PatchRequest/accept_patch_format=]</span>.
-
-*  <span class="conform server" id="conform-response-ignore-unrecognized-formats">
-    If [=PatchRequest/accept_patch_format=] contains any unrecognized patch formats the server must
-    ignore the unrecognized ones.</span>
-
-Note: the server can respond with either a patch or a replacement but should try to produce a patch
-where possible. Replacement's should only be used in situations where the server is unable to recreate
-the client's state in order to generate a patch against it.
+   *  The response [=response/body=] should be encoded by one of the content encodings listed
+        in the [[rfc9110#name-accept-encoding|Accept-Encoding]] header of the request. When possible
+        the server should utilize one of the patch based encodings from [[#patch-encodings]]. Non-patch
+        based encodings should only be used where the server is unable to recreate the client's state
+        in order to generate a patch against it.
 
 Note: if a patch subset service is composed of more than one server task and some subset of those
 tasks are using a subsetter version which produces different binary results than the rest, there is
@@ -1667,33 +1596,36 @@ in little endian order.
 
 </div>
 
-Patch Formats {#patch-formats}
-------------------------------
+Patch Encodings {#patch-encodings}
+----------------------------------
 
-The following patch formats may be used by the server to create binary diffs between a source file
-and a target file:
+The following [[rfc9110#name-content-encoding|content encodings]] can be used to encode a target
+file as a patch against a source file:
 
 <table>
   <tr>
-    <th>Format</th><th>Value</th><th>Notes</th>
+    <th>Name</th><th>Description</th><th>Notes</th>
   </tr>
   <tr>
-    <td>VCDIFF</td><td>0</td>
-    <td>
-      Uses VCDIFF format [[!RFC3284]] to produce the patch.
-      <span class="conform server client" id="conform-vcdiff">
-      All client and server implementations must support this format.
-    </span>
-    </td>
-  </tr>
-  <tr>
-    <td>Brotli Shared Dictionary</td><td>1</td>
+    <td>brdiff</td>
+    <td>Brotli Shared Dictionary</td>
     <td>
       The target file is encoded with [[!RFC7932|brotli compression]] using the
       source file as a [[!Shared-Brotli|shared LZ77 dictionary]]. If the source file is empty then
       the target file is just compressed using [[!RFC7932|brotli compression]] with no shared
       dictionary.
+      
+      <span class="conform server client" id="conform-brdiff">
+      All client and server implementations must support this format.
+      </span>
    </td>
+  </tr>
+  <tr>
+    <td>vcdiff</td>
+    <td>VCDIFF Patch</td>
+    <td>
+      Uses VCDIFF format [[!RFC3284]] to produce the patch.
+    </td>
   </tr>
 </table>
 
