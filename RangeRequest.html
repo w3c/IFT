@@ -4,15 +4,14 @@
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <title>Range Request Incremental Font Transfer</title>
   <meta content="WD" name="w3c-status">
-  <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
+  <meta content="Bikeshed version f043d3484, updated Fri Feb 17 10:53:48 2023 -0800" name="generator">
   <link href="https://www.w3.org/TR/RangeRequest/" rel="canonical">
-  <meta content="b9697c93664b95a0ab8f77bc41b7e05a98dfd9d4" name="document-revision">
+  <meta content="9a0f9f925c802bc1ea1dfafc7e532393c01be318" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
 </style>
 <style>/* style-autolinks */
-
 .css.css, .property.property, .descriptor.descriptor {
     color: var(--a-normal-text);
     font-size: inherit;
@@ -72,9 +71,9 @@ pre .property::before, pre .property::after {
 
 [data-link-type=biblio] {
     white-space: pre;
-}</style>
+}
+</style>
 <style>/* style-counters */
-
 body {
     counter-reset: example figure issue;
 }
@@ -101,9 +100,9 @@ figcaption {
 }
 figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
-}</style>
+}
+</style>
 <style>/* style-dfn-panel */
-
 :root {
     --dfnpanel-bg: #ddd;
     --dfnpanel-text: var(--text);
@@ -111,10 +110,10 @@ figcaption:not(.no-marker)::before {
 .dfn-panel {
     position: absolute;
     z-index: 35;
-    height: auto;
-    width: -webkit-fit-content;
-    width: fit-content;
+    width: 20em;
+    min-width: min-content;
     max-width: 300px;
+    height: auto;
     max-height: 500px;
     overflow: auto;
     padding: 0.5em 0.75em;
@@ -122,6 +121,7 @@ figcaption:not(.no-marker)::before {
     background: var(--dfnpanel-bg);
     color: var(--dfnpanel-text);
     border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
 }
 .dfn-panel:not(.on) { display: none; }
 .dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
@@ -144,7 +144,6 @@ figcaption:not(.no-marker)::before {
 .dfn-paneled { cursor: pointer; }
 </style>
 <style>/* style-issues */
-
 a[href].issue-return {
     float: right;
     float: inline-end;
@@ -154,7 +153,6 @@ a[href].issue-return {
 }
 </style>
 <style>/* style-md-lists */
-
 /* This is a weird hack for me not yet following the commonmark spec
    regarding paragraph and lists. */
 [data-md] > :first-child {
@@ -162,7 +160,8 @@ a[href].issue-return {
 }
 [data-md] > :last-child {
     margin-bottom: 0;
-}</style>
+}
+</style>
 <style>/* style-selflinks */
 
 :root {
@@ -253,7 +252,7 @@ dfn > a.self-link::before      { content: "#"; }
     </div>
    </details>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2023 <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="https://www.keio.ac.jp/">Keio</a>, <a href="https://ev.buaa.edu.cn/">Beihang</a>). W3C <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document" rel="license">permissive document license</a> rules apply. </p>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2023 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document" rel="license">permissive document license</a> rules apply. </p>
    <hr title="Separator for header">
   </div>
   <div class="p-summary" data-fill-with="abstract">
@@ -346,16 +345,16 @@ bytes are necessary, the browser makes one initial special request for the begin
    <h3 class="heading settled" data-level="1.2" id="font-organization"><span class="secno">1.2. </span><span class="content">Font organization</span><a class="self-link" href="#font-organization"></a></h3>
    <h4 class="heading settled" data-level="1.2.1" id="font-organization-background"><span class="secno">1.2.1. </span><span class="content">Background</span><a class="self-link" href="#font-organization-background"></a></h4>
    <p><em>This section is not normative.</em></p>
-   <p>A particular organization of font files is beneficial for improving the performance of the range-request IFT method. The range-request IFT method only works with <a data-link-type="biblio" href="#biblio-truetype">[TRUETYPE]</a>, <a data-link-type="biblio" href="#biblio-opentype">[OPENTYPE]</a>, <a data-link-type="biblio" href="#biblio-woff">[WOFF]</a>, or <a data-link-type="biblio" href="#biblio-woff2">[WOFF2]</a> files. All of these file formats use an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#organization-of-an-opentype-font"><code>sfnt</code> wrapper</a> which provides a directory of tables inside the font file. A <code>sfnt</code>-based font file is mainly composed of a collection of independent tables.</p>
+   <p>A particular organization of font files is beneficial for improving the performance of the range-request IFT method. The range-request IFT method only works with <a data-link-type="biblio" href="#biblio-truetype" title="TrueType™ Reference Manual">[TRUETYPE]</a>, <a data-link-type="biblio" href="#biblio-opentype" title="OpenType specification">[OPENTYPE]</a>, <a data-link-type="biblio" href="#biblio-woff" title="WOFF File Format 1.0">[WOFF]</a>, or <a data-link-type="biblio" href="#biblio-woff2" title="WOFF File Format 2.0">[WOFF2]</a> files. All of these file formats use an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#organization-of-an-opentype-font"><code>sfnt</code> wrapper</a> which provides a directory of tables inside the font file. A <code>sfnt</code>-based font file is mainly composed of a collection of independent tables.</p>
    <p class="issue" id="issue-73fb8795"><a class="self-link" href="#issue-73fb8795"></a> <a href="https://github.com/w3c/IFT/issues/59">Using WOFF2 files with range-request mechanism doesn’t seem to be a viable option</a></p>
    <h4 class="heading settled" data-level="1.2.2" id="font-organization-introduction"><span class="secno">1.2.2. </span><span class="content">Introduction</span><a class="self-link" href="#font-organization-introduction"></a></h4>
    <p>The term <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="range-request-optimized-font">range-request optimized font</dfn> is used to describe a font file organized for use with the range-request IFT method. Optimizing a font for the range-request IFT method does not change the file format of the font.</p>
-   <p class="note" role="note"><span>Note:</span> Because optimizing a font does not change its file format, no new additional tooling is necessary to interact with these optimized fonts. They are still valid fonts, but with a particular internal organization.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Because optimizing a font does not change its file format, no new additional tooling is necessary to interact with these optimized fonts. They are still valid fonts, but with a particular internal organization.</p>
    <div class="example" id="example-85584618"><a class="self-link" href="#example-85584618"></a> The result of optimizing an OpenType font for the range-request IFT method is still a valid OpenType font. The resulting file may be larger (by byte count) than it was before optimizing it, but fewer of those bytes should be necessary for a client to download in order to render a target text. </div>
-   <p class="note" role="note"><span>Note:</span> There are no <code>MUST</code>-level requirements on the organization of a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font">range-request optimized font</a>. Any arbitrary font file may be considered to be a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font①">range-request optimized font</a>. However, additional optimizations should increase the performance of loading in a browser via the range-request IFT method. Font creators are encouraged to enact as many of the optimizations listed in this section as are reasonable for the fonts they create.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> There are no <code>MUST</code>-level requirements on the organization of a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font">range-request optimized font</a>. Any arbitrary font file may be considered to be a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font①">range-request optimized font</a>. However, additional optimizations should increase the performance of loading in a browser via the range-request IFT method. Font creators are encouraged to enact as many of the optimizations listed in this section as are reasonable for the fonts they create.</p>
    <h4 class="heading settled" data-level="1.2.3" id="font-organization-compression"><span class="secno">1.2.3. </span><span class="content">Compression</span><a class="self-link" href="#font-organization-compression"></a></h4>
-   <p>Servers supporting the range-request IFT method should support compression via the <code>Content-Encoding</code> header (<a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-encoding">HTTP Semantics § name-content-encoding</a>), rather than having the font file itself be statically compressed.</p>
-   <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font②">range-request optimized font</a> file (the file itself) should not use any kind of compression other than <a data-link-type="biblio" href="#biblio-rfc7932">[RFC7932]</a> (commonly referred to as "Brotli") compression.</p>
+   <p>Servers supporting the range-request IFT method should support compression via the <code>Content-Encoding</code> header (<span spec-section="#name-content-encoding"></span>), rather than having the font file itself be statically compressed.</p>
+   <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font②">range-request optimized font</a> file (the file itself) should not use any kind of compression other than <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">[RFC7932]</a> (commonly referred to as "Brotli") compression.</p>
    <p>If Brotli compression is used in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font③">range-request optimized font</a>, it should use only one <a href="https://datatracker.ietf.org/doc/html/rfc7932#section-9.2">meta-block</a>.</p>
    <p>If Brotli compression is used in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font④">range-request optimized font</a>, its one meta-block should have the <a href="https://datatracker.ietf.org/doc/html/rfc7932#section-9.2"><code>ISUNCOMPRESSED</code></a> bit set to 1.</p>
    <p class="issue" id="issue-6786fd81"><a class="self-link" href="#issue-6786fd81"></a> <a href="https://github.com/w3c/IFT/issues/60">Static file compression compatibility with range-request method</a></p>
@@ -377,49 +376,49 @@ which carry different types of glyph outlines:</p>
    <p>If a <code>CFF2</code> table exists, the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#charStrings">CharString</a> data should lie at the end of the <code>CFF2</code> table.</p>
    <p class="issue" id="issue-010f4980"><a class="self-link" href="#issue-010f4980"></a> <a href="https://github.com/w3c/IFT/issues/28">Font Collections support</a></p>
    <h4 class="heading settled" data-level="1.2.5" id="font-organization-glyph-independence"><span class="secno">1.2.5. </span><span class="content">Glyph Independence</span><a class="self-link" href="#font-organization-glyph-independence"></a></h4>
-   <p class="note" role="note"><span>Note:</span> The goal of this section is to make every glyph independent from each other.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> The goal of this section is to make every glyph independent from each other.</p>
    <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑧">range-request optimized font</a> should not use <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6glyf.html">Compound glyphs</a>.</p>
    <p class="issue" id="issue-5533a524"><a class="self-link" href="#issue-5533a524"></a> <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with composite glyphs via range-request</a></p>
-   <p class="note" role="note"><span>Note:</span> Compound glyphs can be flattened by inlining their component glyphs to become additional contours.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Compound glyphs can be flattened by inlining their component glyphs to become additional contours.</p>
    <p>A <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font⑨">range-request optimized font</a> should not use <a href="https://adobe-type-tools.github.io/font-tech-notes/pdfs/5176.CFF.pdf">Subroutines</a>.</p>
-   <p class="note" role="note"><span>Note:</span> CFF glyph CharStrings can be flattened by inlining subroutines to become additional CharString bytes.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> CFF glyph CharStrings can be flattened by inlining subroutines to become additional CharString bytes.</p>
    <h4 class="heading settled" data-level="1.2.6" id="font-organization-glyph-order"><span class="secno">1.2.6. </span><span class="content">Glyph Order</span><a class="self-link" href="#font-organization-glyph-order"></a></h4>
    <p>Glyphs inside a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font①⓪">range-request optimized font</a> should be sorted in the file to keep glyphs often used in the same documents close together in the file.</p>
-   <p class="note" role="note"><span>Note:</span> Putting the most frequently used glyphs together in the font increases the likelihood that the browser can download a contiguous sequence of necessary glyphs in a single range-request, thereby minimizing overhead.</p>
-   <p class="note" role="note"><span>Note:</span> Reordering glyphs in a font is the same conceptual operation as renaming glyphs to have different glyph IDs. Therefore, this operation cannot be completed if glyph IDs must be preserved. Because glyph IDs are internal to text processing procedures and are not persisted, this requirement is not expected to be particularly burdensome.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Putting the most frequently used glyphs together in the font increases the likelihood that the browser can download a contiguous sequence of necessary glyphs in a single range-request, thereby minimizing overhead.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Reordering glyphs in a font is the same conceptual operation as renaming glyphs to have different glyph IDs. Therefore, this operation cannot be completed if glyph IDs must be preserved. Because glyph IDs are internal to text processing procedures and are not persisted, this requirement is not expected to be particularly burdensome.</p>
    <p>One suggested method of sorting the glyphs in the file is by <a data-link-type="dfn" href="#usage-document-frequency" id="ref-for-usage-document-frequency">usage document frequency</a> inside a relevant <a data-link-type="dfn" href="#corpus" id="ref-for-corpus">corpus</a>.</p>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="corpus">corpus</dfn> is defined to be a collection of documents, where a documents includes a collection of glyphs necessary to render some textual content.</p>
-   <p class="note" role="note"><span>Note:</span> For a particular website, a corpus might be defined to be individual page loads of pages on that website.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> For a particular website, a corpus might be defined to be individual page loads of pages on that website.</p>
    <p>The <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="usage-document-frequency">usage document frequency</dfn> of a particular glyph inside a <a data-link-type="dfn" href="#corpus" id="ref-for-corpus①">corpus</a> is defined by the number of documents in the <a data-link-type="dfn" href="#corpus" id="ref-for-corpus②">corpus</a> which use that glyph, divided by the number of documents in the <a data-link-type="dfn" href="#corpus" id="ref-for-corpus③">corpus</a>.</p>
-   <p class="note" role="note"><span>Note:</span> This is distinct, but similar, to the number of times the glyph is used throughout the entire corpus.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> This is distinct, but similar, to the number of times the glyph is used throughout the entire corpus.</p>
    <p>The <a data-link-type="dfn" href="#usage-document-frequency" id="ref-for-usage-document-frequency①">usage document frequency</a> of the glyphs in a <a data-link-type="dfn" href="#range-request-optimized-font" id="ref-for-range-request-optimized-font①①">range-request optimized font</a> should be decreasing throughout the font; that is, the most frequently used glyphs should have the lowest glyph IDs.</p>
-   <p class="note" role="note"><span>Note:</span> Glyph ID 0 cannot be renamed in OpenType, TrueType, WOFF, and WOFF 2 fonts. All other glyphs can be renamed.</p>
-   <p class="note" role="note"><span>Note:</span> Because the goal is simply to minimize overhead by placing similarly-used glyphs together, it may actually be possible to do better than ordering by simple frequency for a particular corpus. For example, some corpuses may have cliques of glyphs which have different frequencies but which nevertheless always seem to be used together.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Glyph ID 0 cannot be renamed in OpenType, TrueType, WOFF, and WOFF 2 fonts. All other glyphs can be renamed.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Because the goal is simply to minimize overhead by placing similarly-used glyphs together, it may actually be possible to do better than ordering by simple frequency for a particular corpus. For example, some corpuses may have cliques of glyphs which have different frequencies but which nevertheless always seem to be used together.</p>
    <p>A suggested ordering is included in <a href="#suggested-glyph-character-ordering">Appendix A</a> below.</p>
    <h3 class="heading settled" data-level="1.3" id="browser-behaviors"><span class="secno">1.3. </span><span class="content">Browser Behaviors</span><a class="self-link" href="#browser-behaviors"></a></h3>
    <h4 class="heading settled" data-level="1.3.1" id="browser-behaviors-first-request"><span class="secno">1.3.1. </span><span class="content">First Request</span><a class="self-link" href="#browser-behaviors-first-request"></a></h4>
    <p>When a browser encounters the CSS opt-in mechanism, it is instructed to use IFT to load the fonts. First, it follows the steps from <a href="https://www.w3.org/TR/IFT/#method-selection">IFT method selection</a>. If those steps result in using the range-request method, the rest of this section applies.</p>
    <p>The IFT method selection involves a single round-trip to the server, and if the range-request method is being used, the server’s response starts sending the font file to the browser. The browser should start parsing the partial font data as it is being loaded from the server. The browser should not wait until the entire file has been received before parsing its contents.</p>
    <p>There is a certain amount of data from the beginning of the font file which the browser should unconditionally download. The boundary at the end of this data is called the <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="range-request-threshold">range-request threshold</dfn>.</p>
-   <p class="note" role="note"><span>Note:</span> The first request does not have to be a range request. If the browser expects the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold">range-request threshold</a> to lie within the first <code>n</code> bytes of the font, the first request may be a range request for the first <code>n</code> bytes of the font. However, a browser may instead make a non-range request, parse the data as it is being streamed from the server, and discover that it has reached the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold①">range-request threshold</a> while data is still being streamed.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> The first request does not have to be a range request. If the browser expects the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold">range-request threshold</a> to lie within the first <code>n</code> bytes of the font, the first request may be a range request for the first <code>n</code> bytes of the font. However, a browser may instead make a non-range request, parse the data as it is being streamed from the server, and discover that it has reached the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold①">range-request threshold</a> while data is still being streamed.</p>
    <p>Once all the data before the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold②">range-request threshold</a> has been loaded by the browser, the browser may either close this connection to the server, or it may choose to leave the connection open and let the font data continue loading in the background.</p>
-   <p>A browser may choose to add a <code>Range</code> header (<a href="https://www.rfc-editor.org/rfc/rfc9110#name-range">HTTP Semantics § name-range</a>) to the initial request during the IFT method selection if it has reason to believe the range it requests will be large enough and it prefers to not close this connection to the server.</p>
-   <p class="note" role="note"><span>Note:</span> Different browsers may choose different <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold③">range-request thresholds</a>. Some browsers may treat this threshold as occuring at the end of the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">sfnt tableDirectory</a>. Other browsers may treat this threshold as occurring just before any outline data, provided the outline data appears at the end of the font. Other browsers may place this threshold at the very beginning of the file, thereby treating the whole file as able to be downloaded with range-requests.</p>
+   <p>A browser may choose to add a <code>Range</code> header (<span spec-section="#name-range"></span>) to the initial request during the IFT method selection if it has reason to believe the range it requests will be large enough and it prefers to not close this connection to the server.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Different browsers may choose different <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold③">range-request thresholds</a>. Some browsers may treat this threshold as occuring at the end of the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">sfnt tableDirectory</a>. Other browsers may treat this threshold as occurring just before any outline data, provided the outline data appears at the end of the font. Other browsers may place this threshold at the very beginning of the file, thereby treating the whole file as able to be downloaded with range-requests.</p>
    <h4 class="heading settled" data-level="1.3.2" id="browser-behaviors-subsequent-requests"><span class="secno">1.3.2. </span><span class="content">Subsequent Requests</span><a class="self-link" href="#browser-behaviors-subsequent-requests"></a></h4>
-   <p>After all the data before the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold④">range-request threshold</a> has been loaded by the browser, the browser will determine which additional byte ranges in the file are necessary to load. It will then issue HTTP Range Requests (<a href="https://www.rfc-editor.org/rfc/rfc9110#range.requests">HTTP Semantics § range.requests</a>) for at least those ranges.</p>
-   <p class="note" role="note"><span>Note:</span> Browsers are encouraged to coalesce range requests for nearby areas of the file, to minimize the amount of range-request overhead required. Browsers are encouraged to inform these coalescing decisions from network configuration parameters and bandwidth / latency observations.</p>
-   <p class="note" role="note"><span>Note:</span> If the font file has followed all of the organization guidelines above, all information required for laying out content and performing shaping will lie before any of the outline data in the file, and every glyph’s outline will be independent from every other glyph. Therefore, the browser can treat the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold⑤">range-request threshold</a> as being just before outline data begins, and once it has loaded up to that threshold, it can lay out page content. After laying out the page, downloading all the necessary outlines can be done with a collection of independent and parallel range requests. This works particularly well for Chinese, Japanese, and Korean fonts, where 90% or more of the font data is outline data.</p>
-   <p class="note" role="note"><span>Note:</span> Another valid alternative is to treat the entire font as residing on an asynchronous virtual filesystem, and have the browser track which ranges of the font it ended up reading during its normal operation. The browser could then request those regions in range requests.</p>
+   <p>After all the data before the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold④">range-request threshold</a> has been loaded by the browser, the browser will determine which additional byte ranges in the file are necessary to load. It will then issue HTTP Range Requests (<a href="https://httpwg.org/specs/rfc9110.html#range.requests"><cite>HTTP Semantics</cite> §  14. Range Requests</a>) for at least those ranges.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Browsers are encouraged to coalesce range requests for nearby areas of the file, to minimize the amount of range-request overhead required. Browsers are encouraged to inform these coalescing decisions from network configuration parameters and bandwidth / latency observations.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> If the font file has followed all of the organization guidelines above, all information required for laying out content and performing shaping will lie before any of the outline data in the file, and every glyph’s outline will be independent from every other glyph. Therefore, the browser can treat the <a data-link-type="dfn" href="#range-request-threshold" id="ref-for-range-request-threshold⑤">range-request threshold</a> as being just before outline data begins, and once it has loaded up to that threshold, it can lay out page content. After laying out the page, downloading all the necessary outlines can be done with a collection of independent and parallel range requests. This works particularly well for Chinese, Japanese, and Korean fonts, where 90% or more of the font data is outline data.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Another valid alternative is to treat the entire font as residing on an asynchronous virtual filesystem, and have the browser track which ranges of the font it ended up reading during its normal operation. The browser could then request those regions in range requests.</p>
    <h3 class="heading settled" data-level="1.4" id="server-behaviors"><span class="secno">1.4. </span><span class="content">Server Behaviors</span><a class="self-link" href="#server-behaviors"></a></h3>
-   <p>Servers supporting the range-request IFT method must support range requests (<a href="https://www.rfc-editor.org/rfc/rfc9110#range.requests">HTTP Semantics § range.requests</a>).</p>
-   <p>Servers supporting the range-request IFT method should support compression via the <code>Content-Encoding</code> (<a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-encoding">HTTP Semantics § name-content-encoding</a>) header or the <code>Transfer-Encoding</code> header (<a href="https://www.rfc-editor.org/rfc/rfc9112#section-6.1">HTTP/1.1 § section-6.1</a>), rather than having the font file
+   <p>Servers supporting the range-request IFT method must support range requests (<a href="https://httpwg.org/specs/rfc9110.html#range.requests"><cite>HTTP Semantics</cite> §  14. Range Requests</a>).</p>
+   <p>Servers supporting the range-request IFT method should support compression via the <code>Content-Encoding</code> (<span spec-section="#name-content-encoding"></span>) header or the <code>Transfer-Encoding</code> header (<span spec-section="#section-6.1"></span>), rather than having the font file
 itself be statically compressed.</p>
    <h2 class="no-num heading settled" id="priv"><span class="content">Privacy Considerations</span><a class="self-link" href="#priv"></a></h2>
-   <p>Please see <a href="https://www.w3.org/TR/IFT/#priv">Privacy Condisderations</a> in the main IFT document.</p>
+   <p>Please see <a href="https://www.w3.org/TR/IFT/#priv">Privacy Considerations</a> in the main IFT document.</p>
    <h2 class="no-num heading settled" id="sec"><span class="content">Security Considerations</span><a class="self-link" href="#sec"></a></h2>
    <p>No Security issues have been raised against this document</p>
    <h2 class="heading settled" id="suggested-glyph-character-ordering"><span class="content"> Appendix A: Suggested glyph/character ordering</span><a class="self-link" href="#suggested-glyph-character-ordering"></a></h2>
-   <p class="note" role="note"><span>Note:</span> This section describes ordering of characters, not glyph IDs, because the meaning of glyph IDs are not consistent across different fonts. To optimize a particular font according to the ordering listed here, the characters will have to be mapped to glyph IDs inside the font. This approach of mapping characters to glyphs for ordering purposes works particularly well for ideographic languages with large character sets.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> This section describes ordering of characters, not glyph IDs, because the meaning of glyph IDs are not consistent across different fonts. To optimize a particular font according to the ordering listed here, the characters will have to be mapped to glyph IDs inside the font. This approach of mapping characters to glyphs for ordering purposes works particularly well for ideographic languages with large character sets.</p>
    <p class="issue" id="issue-763d5c98"><a class="self-link" href="#issue-763d5c98"></a> <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a></p>
   </main>
   <div data-fill-with="conformance">
@@ -434,7 +433,7 @@ itself be statically compressed.</p>
     However, for readability,
     these words do not appear in all uppercase letters in this specification. </p>
    <p>All of the text of this specification is normative
-    except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119">[RFC2119]</a> </p>
+    except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a> </p>
    <p>Examples in this specification are introduced with the words “for example”
     or are set apart from the normative text
     with <code>class="example"</code>,
@@ -486,8 +485,6 @@ itself be statically compressed.</p>
    <dd>J. Alakuijala; Z. Szabadka. <a href="https://www.rfc-editor.org/rfc/rfc7932"><cite>Brotli Compressed Data Format</cite></a>. July 2016. Informational. URL: <a href="https://www.rfc-editor.org/rfc/rfc7932">https://www.rfc-editor.org/rfc/rfc7932</a>
    <dt id="biblio-rfc9110">[RFC9110]
    <dd>R. Fielding, Ed.; M. Nottingham, Ed.; J. Reschke, Ed.. <a href="https://www.rfc-editor.org/rfc/rfc9110"><cite>HTTP Semantics</cite></a>. June 2022. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>
-   <dt id="biblio-rfc9112">[RFC9112]
-   <dd>R. Fielding, Ed.; M. Nottingham, Ed.; J. Reschke, Ed.. <a href="https://www.rfc-editor.org/rfc/rfc9112"><cite>HTTP/1.1</cite></a>. June 2022. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc9112">https://www.rfc-editor.org/rfc/rfc9112</a>
    <dt id="biblio-truetype">[TRUETYPE]
    <dd><a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/"><cite>TrueType™ Reference Manual</cite></a>. URL: <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/">https://developer.apple.com/fonts/TrueType-Reference-Manual/</a>
    <dt id="biblio-woff">[WOFF]
@@ -503,8 +500,8 @@ itself be statically compressed.</p>
    <div class="issue"> <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with composite glyphs via range-request</a> <a class="issue-return" href="#issue-5533a524" title="Jump to section">↵</a></div>
    <div class="issue"> <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a> <a class="issue-return" href="#issue-763d5c98" title="Jump to section">↵</a></div>
   </div>
-  <aside class="dfn-panel" data-for="range-request-optimized-font">
-   <b><a href="#range-request-optimized-font">#range-request-optimized-font</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-range-request-optimized-font" class="dfn-panel" data-for="range-request-optimized-font" id="infopanel-for-range-request-optimized-font">
+   <span id="infopaneltitle-for-range-request-optimized-font" style="display:none">Info about the 'range-request optimized font' definition.</span><b><a href="#range-request-optimized-font">#range-request-optimized-font</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-range-request-optimized-font">1.2.2. Introduction</a> <a href="#ref-for-range-request-optimized-font①">(2)</a>
     <li><a href="#ref-for-range-request-optimized-font②">1.2.3. Compression</a> <a href="#ref-for-range-request-optimized-font③">(2)</a> <a href="#ref-for-range-request-optimized-font④">(3)</a>
@@ -513,84 +510,138 @@ itself be statically compressed.</p>
     <li><a href="#ref-for-range-request-optimized-font①⓪">1.2.6. Glyph Order</a> <a href="#ref-for-range-request-optimized-font①①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="outline-table">
-   <b><a href="#outline-table">#outline-table</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-outline-table" class="dfn-panel" data-for="outline-table" id="infopanel-for-outline-table">
+   <span id="infopaneltitle-for-outline-table" style="display:none">Info about the 'outline table' definition.</span><b><a href="#outline-table">#outline-table</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-outline-table">1.2.4. Table Ordering</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="corpus">
-   <b><a href="#corpus">#corpus</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-corpus" class="dfn-panel" data-for="corpus" id="infopanel-for-corpus">
+   <span id="infopaneltitle-for-corpus" style="display:none">Info about the 'corpus' definition.</span><b><a href="#corpus">#corpus</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-corpus">1.2.6. Glyph Order</a> <a href="#ref-for-corpus①">(2)</a> <a href="#ref-for-corpus②">(3)</a> <a href="#ref-for-corpus③">(4)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="usage-document-frequency">
-   <b><a href="#usage-document-frequency">#usage-document-frequency</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-usage-document-frequency" class="dfn-panel" data-for="usage-document-frequency" id="infopanel-for-usage-document-frequency">
+   <span id="infopaneltitle-for-usage-document-frequency" style="display:none">Info about the 'usage document frequency' definition.</span><b><a href="#usage-document-frequency">#usage-document-frequency</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-usage-document-frequency">1.2.6. Glyph Order</a> <a href="#ref-for-usage-document-frequency①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="range-request-threshold">
-   <b><a href="#range-request-threshold">#range-request-threshold</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-range-request-threshold" class="dfn-panel" data-for="range-request-threshold" id="infopanel-for-range-request-threshold">
+   <span id="infopaneltitle-for-range-request-threshold" style="display:none">Info about the 'range-request threshold' definition.</span><b><a href="#range-request-threshold">#range-request-threshold</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-range-request-threshold">1.3.1. First Request</a> <a href="#ref-for-range-request-threshold①">(2)</a> <a href="#ref-for-range-request-threshold②">(3)</a> <a href="#ref-for-range-request-threshold③">(4)</a>
     <li><a href="#ref-for-range-request-threshold④">1.3.2. Subsequent Requests</a> <a href="#ref-for-range-request-threshold⑤">(2)</a>
    </ul>
   </aside>
 <script>/* script-dfn-panel */
-
-document.body.addEventListener("click", function(e) {
-    var queryAll = function(sel) { return [].slice.call(document.querySelectorAll(sel)); }
-    // Find the dfn element or panel, if any, that was clicked on.
-    var el = e.target;
-    var target;
-    var hitALink = false;
-    while(el.parentElement) {
-        if(el.tagName == "A") {
-            // Clicking on a link in a <dfn> shouldn't summon the panel
-            hitALink = true;
-        }
-        if(el.classList.contains("dfn-paneled")) {
-            target = "dfn";
-            break;
-        }
-        if(el.classList.contains("dfn-panel")) {
-            target = "dfn-panel";
-            break;
-        }
-        el = el.parentElement;
+"use strict";
+{
+    function queryAll(sel) {
+        return [].slice.call(document.querySelectorAll(sel));
     }
-    if(target != "dfn-panel") {
+
+    // Add popup behavior to all dfns to show the corresponding dfn-panel.
+    var dfns = document.querySelectorAll('.dfn-paneled');
+    for (let dfn of dfns) { insertDfnPopupAction(dfn); }
+
+    document.body.addEventListener("click", (e) => {
+        // If not handled already, just hide all dfn panels.
+        hideAllDfnPanels();
+    });
+
+    function hideAllDfnPanels() {
         // Turn off any currently "on" or "activated" panels.
-        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(function(el){
-            el.classList.remove("on");
-            el.classList.remove("activated");
-        });
-    }
-    if(target == "dfn" && !hitALink) {
-        // open the panel
-        var dfnPanel = document.querySelector(".dfn-panel[data-for='" + el.id + "']");
-        if(dfnPanel) {
-            dfnPanel.classList.add("on");
-            var rect = el.getBoundingClientRect();
-            dfnPanel.style.left = window.scrollX + rect.right + 5 + "px";
-            dfnPanel.style.top = window.scrollY + rect.top + "px";
-            var panelRect = dfnPanel.getBoundingClientRect();
-            var panelWidth = panelRect.right - panelRect.left;
-            if(panelRect.right > document.body.scrollWidth && (rect.left - (panelWidth + 5)) > 0) {
-                // Reposition, because the panel is overflowing
-                dfnPanel.style.left = window.scrollX + rect.left - (panelWidth + 5) + "px";
-            }
-        } else {
-            console.log("Couldn't find .dfn-panel[data-for='" + el.id + "']");
-        }
-    } else if(target == "dfn-panel") {
-        // Switch it to "activated" state, which pins it.
-        el.classList.add("activated");
-        el.style.left = null;
-        el.style.top = null;
+        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>hideDfnPanel(el));
     }
 
-});
+    function showDfnPanel(dfnPanel, dfn) {
+        hideAllDfnPanels(); // Only display one at this time.
+        dfn.setAttribute("aria-expanded", "true");
+        dfnPanel.classList.add("on");
+        dfnPanel.style.left = "5px";
+        dfnPanel.style.top = "0px";
+        const panelRect = dfnPanel.getBoundingClientRect();
+        const panelWidth = panelRect.right - panelRect.left;
+        if (panelRect.right > document.body.scrollWidth) {
+            // Panel's overflowing the screen.
+            // Just drop it below the dfn and flip it rightward instead.
+            // This still wont' fix things if the screen is *really* wide,
+            // but fixing that's a lot harder without 'anchor()'.
+            dfnPanel.style.top = "1.5em";
+            dfnPanel.style.left = "auto";
+            dfnPanel.style.right = "0px";
+        }
+    }
+
+    function pinDfnPanel(dfnPanel) {
+        // Switch it to "activated" state, which pins it.
+        dfnPanel.classList.add("activated");
+        dfnPanel.style.left = null;
+        dfnPanel.style.top = null;
+    }
+
+    function hideDfnPanel(dfnPanel, dfn) {
+        if(!dfn) {
+            dfn = document.getElementById(dfnPanel.getAttribute("data-for"));
+        }
+        dfn.setAttribute("aria-expanded", "false")
+        dfnPanel.classList.remove("on");
+        dfnPanel.classList.remove("activated");
+    }
+
+    function toggleDfnPanel(dfnPanel, dfn) {
+        if(dfnPanel.classList.contains("on")) {
+            hideDfnPanel(dfnPanel, dfn);
+        } else {
+            showDfnPanel(dfnPanel, dfn);
+        }
+    }
+
+    function insertDfnPopupAction(dfn) {
+        // Find dfn panel
+        const dfnPanel = document.querySelector(`.dfn-panel[data-for='${dfn.id}']`);
+        if (dfnPanel) {
+            const panelWrapper = document.createElement('span');
+            panelWrapper.appendChild(dfnPanel);
+            panelWrapper.style.position = "relative";
+            panelWrapper.style.height = "0px";
+            dfn.insertAdjacentElement("afterend", panelWrapper);
+            dfn.setAttribute('role', 'button');
+            dfn.setAttribute('aria-expanded', 'false')
+            dfn.tabIndex = 0;
+            dfn.classList.add('has-dfn-panel');
+            dfn.addEventListener('click', (event) => {
+                showDfnPanel(dfnPanel, dfn);
+                event.stopPropagation();
+            });
+            dfn.addEventListener('keypress', (event) => {
+                const kc = event.keyCode;
+                // 32->Space, 13->Enter
+                if(kc == 32 || kc == 13) {
+                    toggleDfnPanel(dfnPanel, dfn);
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            });
+
+            dfnPanel.addEventListener('click', (event) => {
+                pinDfnPanel(dfnPanel);
+                event.stopPropagation();
+            });
+
+            dfnPanel.addEventListener('keydown', (event) => {
+                if(event.keyCode == 27) { // Escape key
+                    hideDfnPanel(dfnPanel, dfn);
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            })
+
+        } else {
+            console.log("Couldn't find .dfn-panel[data-for='" + dfn.id + "']");
+        }
+    }
+}
 </script>
