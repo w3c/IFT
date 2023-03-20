@@ -1655,9 +1655,12 @@ One mitigation, which was originally introduced for reasons of networking effici
 
 <h3 id="checksum-and-possible-fingerprinting">Checksums and possible fingerprinting</h3>
 
-In the patch subset method 64 bit checksums are generated and transferred between client and server. These are used for error detection, are not persistent across browsing sessions, change frequently in the course of a single browsing session, and thus should not pose a tracking risk.
-
-Also, browsers typically cache resources keyed by the origin domain; thus the checksums and the set of characters the client requires would only be available to that domain and the patch subset server.
+In the patch subset method 64 bit checksums are generated and transferred between client and server. These are used to
+ensure the client and server are in sync. They detect cases such as where the original font being patched has changed or
+the server is not able to reproduce the clients font subset. The checksums will be stored in a browsers HTTP cache as
+part of the font subset and thus are subject to the cache paritioning applied by the browser. Since modern browsers
+cache resources keyed by the site domain, this will limit checksum availability to within the site domain and prevent
+them from being used for tracking.
 
 <h3 id="per-origin">Per-origin restriction avoids fingerprinting</h3>
 

@@ -4,9 +4,9 @@
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <title>Incremental Font Transfer</title>
   <meta content="WD" name="w3c-status">
-  <meta content="Bikeshed version 63e66730b, updated Tue Oct 25 12:35:05 2022 -0700" name="generator">
+  <meta content="Bikeshed version 26e85e599, updated Thu Dec 8 15:29:31 2022 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="b9697c93664b95a0ab8f77bc41b7e05a98dfd9d4" name="document-revision">
+  <meta content="7c3fa49d3bcc6cba84ecfddd177fb7b09ee2c8a7" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
@@ -407,7 +407,7 @@ dfn > a.self-link::before      { content: "#"; }
    <p>Incremental Font Transfer (IFT) is a collection of technologies to improve the latency of remote fonts (or "web fonts") on the web. Without this technology, a browser needs to download every last byte of a font before it can render any characters using that font. IFT allows the browser to download only some of the bytes in the file, thereby decreasing the perceived latency between the time when a browser realizes it needs a font and when the necessary text can be rendered with that font.</p>
    <p>The success of WebFonts is unevenly distributed. This specification allows WebFonts to be used where
 slow networks, very large fonts, or complex subsetting requirements currently preclude their use. For
-example, even using WOFF 2 <a data-link-type="biblio" href="#biblio-woff2">[WOFF2]</a>, fonts for CJK languages are too large to be practical.</p>
+example, even using WOFF 2 <a data-link-type="biblio" href="#biblio-woff2" title="WOFF File Format 2.0">[WOFF2]</a>, fonts for CJK languages are too large to be practical.</p>
    <p>There are two different methods which can be used to incrementally transfer fonts.</p>
    <h3 class="heading settled" data-level="1.1" id="patch-subset"><span class="secno">1.1. </span><span class="content">Patch Subset</span><a class="self-link" href="#patch-subset"></a></h3>
    <p>In the the first method, <a href="#patch-subset">Patch Subset</a> a server generates binary patches which a
@@ -425,7 +425,7 @@ method, <a href="#range-request-incxfer">Range Request</a>, has no server-side r
    <p>In order for the range request method to be as effective as possible, the font file itself should be internally arranged in a particular way, in order to decrease the number of requests the browser needs to make. Therefore, it is expected that web developers wishing to use the range request method will use font files that have had their contents already arranged optimally.</p>
    <p>This method was modelled after video playback on the web, where seeking in a video causes the browser to send a range request to the server.</p>
    <h3 class="heading settled" data-level="1.3" id="evaluation-report"><span class="secno">1.3. </span><span class="content">Technical Motivation: Evaluation Report</span><a class="self-link" href="#evaluation-report"></a></h3>
-   <p>See the Progressive Font Enrichment: Evaluation Report <a data-link-type="biblio" href="#biblio-pfe-report">[PFE-report]</a> for the investigation which led
+   <p>See the Progressive Font Enrichment: Evaluation Report <a data-link-type="biblio" href="#biblio-pfe-report" title="Progressive Font Enrichment: Evaluation Report">[PFE-report]</a> for the investigation which led
 to this specification.</p>
    <p>The evaluation report found that patch subset was generally more efficient in terms of overall
 performance and transferred bytes than range request. However, Range Request is simpler to deploy
@@ -675,7 +675,7 @@ variation axis space) that a <a data-link-type="dfn" href="#font-subset" id="ref
 sent between the client and server.</p>
    <h4 class="heading settled" data-level="4.2.1" id="encoding"><span class="secno">4.2.1. </span><span class="content">Encoding</span><a class="self-link" href="#encoding"></a></h4>
    <p>All data types defined here are encoded into a byte representation for transport using CBOR
-(Concise Binary Object Representation) <a data-link-type="biblio" href="#biblio-rfc8949">[RFC8949]</a>. More information on how each data types
+(Concise Binary Object Representation) <a data-link-type="biblio" href="#biblio-rfc8949" title="Concise Binary Object Representation (CBOR)">[RFC8949]</a>. More information on how each data types
 should be encoded by CBOR are given in the definition of those data types.</p>
    <h4 class="heading settled" data-level="4.2.2" id="primitives"><span class="secno">4.2.2. </span><span class="content">Primitives</span><a class="self-link" href="#primitives"></a></h4>
    <table>
@@ -698,7 +698,7 @@ should be encoded by CBOR are given in the definition of those data types.</p>
       <td>2
      <tr>
       <td><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="string">String</dfn>
-      <td>UTF-8 <a data-link-type="biblio" href="#biblio-rfc3629">[rfc3629]</a> text string.
+      <td>UTF-8 <a data-link-type="biblio" href="#biblio-rfc3629" title="UTF-8, a transformation format of ISO 10646">[rfc3629]</a> text string.
       <td>3
      <tr>
       <td><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="arrayof">ArrayOf</dfn>&lt;Type>
@@ -1103,7 +1103,7 @@ into ascending order and then encoding the sorted list as a <a data-link-type="d
 the above mapping rules. <span class="conform server client" id="conform-feature-tag-set-defaults">Additionally all
 default features in <a href="#feature-tag-list">Appendix A: Default Feature Tags and Encoding IDs</a> must be added to the decoded set.</span></p>
    <h4 class="heading settled" data-level="4.2.8" id="AxisSpace"><span class="secno">4.2.8. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="axisspace">AxisSpace</dfn></span><a class="self-link" href="#AxisSpace"></a></h4>
-   <p>Stores a set of intervals on one or more open type variation axes <a data-link-type="biblio" href="#biblio-opentype-variations">[opentype-variations]</a>.
+   <p>Stores a set of intervals on one or more open type variation axes <a data-link-type="biblio" href="#biblio-opentype-variations" title="OpenType Font Variations Overview">[opentype-variations]</a>.
 Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑤">ByteString</a> containing exactly 4 ASCII characters. The value in each
 pair is an <a data-link-type="dfn" href="#arrayof" id="ref-for-arrayof">ArrayOf</a>&lt;<a data-link-type="dfn" href="#axisinterval" id="ref-for-axisinterval">AxisInterval</a>>. <span class="conform client server" id="conform-axis-space-disjoint">The list of intervals for a
 each axis tag must be disjoint.</span></p>
@@ -1283,7 +1283,7 @@ font url, or null.</p>
      <p><var>desired subset definition</var>: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">description</a> of the desired
 minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a>.</p>
     <li data-md>
-     <p><var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a>. The remainder
+     <p><var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a>. The remainder
 of this section is desribed in terms of <a href="https://fetch.spec.whatwg.org/#fetching"><cite>Fetch Standard</cite> § 4 Fetching</a>, but it is allowed to substitute
 whatever HTTP fetching algorithm the user agent supports.</p>
    </ul>
@@ -1331,7 +1331,7 @@ encoded via CBOR.</p>
       <li data-md>
        <p>Otherwise if <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method②">method</a> is "GET" then, a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-header" id="ref-for-concept-header">header</a> with name <code>Font-Patch-Request</code> (the <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="patch-request-header">patch request header</dfn>)
  and whose value is a single <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest②">PatchRequest</a> object encoded via CBOR and then
-  base64url encoding <a data-link-type="biblio" href="#biblio-rfc4648">[rfc4648]</a> must be added to the request’s header list.</p>
+  base64url encoding <a data-link-type="biblio" href="#biblio-rfc4648" title="The Base16, Base32, and Base64 Data Encodings">[rfc4648]</a> must be added to the request’s header list.</p>
      </ul>
      <p>Any request and/or url parameters which are not specified here should be set based on
  the user agent’s normal handling for font requests. For example if this font load is
@@ -1452,8 +1452,8 @@ can be cached, or null.</p>
    <h4 class="heading settled algorithm" data-algorithm="Load a Font in a User Agent with a HTTP Cache" data-level="4.4.3" id="load-a-font"><span class="secno">4.4.3. </span><span class="content">Load a Font in a User Agent with a HTTP Cache</span><a class="self-link" href="#load-a-font"></a></h4>
    <p>The previous section <a href="#extend-subset">§ 4.4.1 Extending the Font Subset</a> provides no guidance on how a user agent should handle
 saving the font subset and client state between invocations of the subset extension algorithm. This
-section provides an algorithm that user agents which implement <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a> should use to save the font
-subset to the user agent’s HTTP cache (<a data-link-type="biblio" href="#biblio-rfc9111">[RFC9111]</a>).</p>
+section provides an algorithm that user agents which implement <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> should use to save the font
+subset to the user agent’s HTTP cache (<a data-link-type="biblio" href="#biblio-rfc9111" title="HTTP Caching">[RFC9111]</a>).</p>
    <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-load-a-font-with-a-http-cache">Load a font with a HTTP Cache<a class="self-link" href="#abstract-opdef-load-a-font-with-a-http-cache"></a></dfn></p>
    <p>The inputs to this algorithm:</p>
    <ul>
@@ -1466,7 +1466,7 @@ the fragment identifier (<a href="https://www.rfc-editor.org/rfc/rfc8081#section
      <p><var>desired subset definition</var>: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">description</a> of the desired
 minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a>.</p>
     <li data-md>
-     <p><var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as <a data-link-type="biblio" href="#biblio-fetch">[fetch]</a>. The remainder
+     <p><var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a>. The remainder
 of this section is desribed in terms of <a href="https://fetch.spec.whatwg.org/#fetching"><cite>Fetch Standard</cite> § 4 Fetching</a>, but it is allowed to substitute
 whatever HTTP fetching algorithm the user agent supports.</p>
    </ul>
@@ -1631,7 +1631,7 @@ same client to the same server task.</p>
 To support range request incremental tranfser the patch subset server must support HTTP range requests
 (<a href="https://www.rfc-editor.org/rfc/rfc9110#range.requests">HTTP Semantics § range.requests</a>) against the font files it provides via patch subset.</p>
    <h3 class="heading settled" data-level="4.6" id="computing-checksums"><span class="secno">4.6. </span><span class="content">Computing Checksums</span><a class="self-link" href="#computing-checksums"></a></h3>
-   <p>64 bit checksums of byte strings are computed using the <a data-link-type="biblio" href="#biblio-fast-hash">[fast-hash]</a> algorithm. A python like pseudo
+   <p>64 bit checksums of byte strings are computed using the <a data-link-type="biblio" href="#biblio-fast-hash" title="fast-hash">[fast-hash]</a> algorithm. A python like pseudo
 code version of the algorithm is presented below:</p>
 <pre># Constant values come fast hash: https://github.com/ztanml/fast-hash
 SEED = 0x11743e80f437ffe6
@@ -1660,7 +1660,7 @@ fast_hash(byte[] data):
 </pre>
    <p>To ensure checksums are consistent across all platforms, all integers during the computation are
 in little endian order.</p>
-   <p class="note" role="note"><span>Note:</span> a C implementation of fast hash can be found here: <a data-link-type="biblio" href="#biblio-fast-hash">[fast-hash]</a></p>
+   <p class="note" role="note"><span>Note:</span> a C implementation of fast hash can be found here: <a data-link-type="biblio" href="#biblio-fast-hash" title="fast-hash">[fast-hash]</a></p>
    <div class="example" id="example-e69b2b2f">
     <a class="self-link" href="#example-e69b2b2f"></a> 
     <table>
@@ -1730,18 +1730,18 @@ file as a patch against a source file:</p>
       <td>brdiff
       <td>Brotli Shared Dictionary
       <td>
-        The target file is encoded with <a data-link-type="biblio" href="#biblio-rfc7932">brotli compression</a> using the
-      source file as a <a data-link-type="biblio" href="#biblio-shared-brotli">shared LZ77 dictionary</a>. If the source file is empty then
-      the target file is just compressed using <a data-link-type="biblio" href="#biblio-rfc7932">brotli compression</a> with no shared
+        The target file is encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the
+      source file as a <a data-link-type="biblio" href="#biblio-shared-brotli" title="Shared Brotli Compressed Data Format">shared LZ77 dictionary</a>. If the source file is empty then
+      the target file is just compressed using <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> with no shared
       dictionary. 
        <p><span class="conform server client" id="conform-brdiff"> All client and server implementations must support this format. </span></p>
      <tr>
       <td>vcdiff
       <td>VCDIFF Patch
-      <td> Uses VCDIFF format <a data-link-type="biblio" href="#biblio-rfc3284">[RFC3284]</a> to produce the patch. 
+      <td> Uses VCDIFF format <a data-link-type="biblio" href="#biblio-rfc3284" title="The VCDIFF Generic Differencing and Compression Data Format">[RFC3284]</a> to produce the patch. 
    </table>
    <h2 class="heading settled" data-level="5" id="range-request-incxfer"><span class="secno">5. </span><span class="content">Range Request Incremental Transfer</span><a class="self-link" href="#range-request-incxfer"></a></h2>
-   <p>Range request incremental font transfer is specified in a separate document: <a data-biblio-obsolete data-link-type="biblio" href="#biblio-rangerequest">[RangeRequest]</a></p>
+   <p>Range request incremental font transfer is specified in a separate document: <a data-biblio-obsolete data-link-type="biblio" href="#biblio-rangerequest" title="Incremental Font Transfer via Range Request">[RangeRequest]</a></p>
    <h2 class="no-num heading settled" id="priv"><span class="content">Privacy Considerations</span><a class="self-link" href="#priv"></a></h2>
    <h3 class="heading settled" id="content-inference-from-character-set"><span class="content">Content inference from character set</span><a class="self-link" href="#content-inference-from-character-set"></a></h3>
    <p>IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see <a href="#extend-subset">§ 4.4.1 Extending the Font Subset</a>.</p>
@@ -1751,10 +1751,14 @@ file as a patch against a source file:</p>
    <p>One mitigation, which was originally introduced for reasons of networking efficiency so is likely to be implemented in practice, is to request additional, un-needed characters to dilute the ability to infer what content the user is viewing. Requesting characters which are <a href="https://www.w3.org/TR/PFE-evaluation/#codepredict">statistically likely to occur</a> may <a href="https://docs.google.com/document/d/1u-05ztF9MqftHbMKB_KiqeUhZKiXNFE4TRSUWFAPXsk/edit">avoid a subsequent request</a>.</p>
    <p>(IFT mandates HTTPS, so no in-the-middle attack is possible; the trust is between the client, and the server hosting the fonts).</p>
    <h3 class="heading settled" id="checksum-and-possible-fingerprinting"><span class="content">Checksums and possible fingerprinting</span><a class="self-link" href="#checksum-and-possible-fingerprinting"></a></h3>
-   <p>In the patch subset method 64 bit checksums are generated and transferred between client and server. These are used for error detection, are not persistent across browsing sessions, change frequently in the course of a single browsing session, and thus should not pose a tracking risk.</p>
-   <p>Also, browsers typically cache resources keyed by the origin domain; thus the checksums and the set of characters the client requires would only be available to that domain and the patch subset server.</p>
+   <p>In the patch subset method 64 bit checksums are generated and transferred between client and server. These are used to
+ensure the client and server are in sync. They detect cases such as where the original font being patched has changed or
+the server is not able to reproduce the clients font subset. The checksums will be stored in a browsers HTTP cache as
+part of the font subset and thus are subject to the cache paritioning applied by the browser. Since modern browsers
+cache resources keyed by the site domain, this will limit checksum availability to within the site domain and prevent
+them from being used for tracking.</p>
    <h3 class="heading settled" id="per-origin"><span class="content">Per-origin restriction avoids fingerprinting</span><a class="self-link" href="#per-origin"></a></h3>
-   <p>As required by <a data-link-type="biblio" href="#biblio-css-fonts-4">[css-fonts-4]</a>,
+   <p>As required by <a data-link-type="biblio" href="#biblio-css-fonts-4" title="CSS Fonts Module Level 4">[css-fonts-4]</a>,
   Web Fonts <a href="https://drafts.csswg.org/css-fonts-4/#web-fonts">must not be accessible
   in any other Document from the one which either is associated with the @font-face rule
   or owns the FontFaceSet.
@@ -2158,7 +2162,7 @@ file as a patch against a source file:</p>
     However, for readability,
     these words do not appear in all uppercase letters in this specification. </p>
    <p>All of the text of this specification is normative
-    except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119">[RFC2119]</a> </p>
+    except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a> </p>
    <p>Examples in this specification are introduced with the words “for example”
     or are set apart from the normative text
     with <code>class="example"</code>,
@@ -2772,12 +2776,13 @@ document.body.addEventListener("click", function(e) {
 </script>
 <script>/* script-var-click-highlighting */
 
-    document.addEventListener("click", e=>{
-        if(e.target.nodeName == "VAR") {
-            highlightSameAlgoVars(e.target);
-        }
-    });
+    "use strict";
     {
+        document.addEventListener("click", e=>{
+            if(e.target.nodeName == "VAR") {
+                highlightSameAlgoVars(e.target);
+            }
+        });
         const indexCounts = new Map();
         const indexNames = new Map();
         function highlightSameAlgoVars(v) {
