@@ -298,14 +298,14 @@ When the particular IFT method(s) that are supported by a server are not known, 
 determine which method to use. Different clients may support different IFT methods, and different
 servers may support different IFT methods, so a negotation occurs as such:
 
-1.  The browser makes the first request to the server using the GET HTTP method ([[rfc9110#name-get]]).
+1.  The browser makes the first request to the server using the GET HTTP method ([[rfc9110#section-9.3.1]]).
      If the client prefers the <a href="#patch-incxfer">patch-subset method</a>, it sends the relevant
      [=patch request header=]. If the client prefers the range-request method, it does not send the
      header.
 
 2.  If the server receives the patch request header and wishes to honor it, the server must reply
      according to [[#handling-patch-request]]. Otherwise, the server must reply with the
-     [[RFC9110#range.requests]]
+     [[RFC9110#section-14]]
      <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a>
      header, if it supports HTTP Range Requests.
      
@@ -1090,7 +1090,7 @@ The algorithm outputs:
 * Extended Font Subset: [=font subset=] that has been updated to cover at least the requested subset
     definition.
 
-* Cache fields: HTTP cache fields [[rfc9111#name-field-definitions]] describing how client state
+* Cache fields: HTTP cache fields [[rfc9111#section-5]] describing how client state
     can be cached, or null.
 
 The algorithm:
@@ -1122,7 +1122,7 @@ The algorithm:
 
      * The request URL [=url/path=] is set to the input <var>font URL</var>.
 
-     * The request must include an [[rfc9110#name-accept-encoding|Accept-Encoding]] header which lists
+     * The request must include an [[rfc9110#section-12.5.3|Accept-Encoding]] header which lists
          at minimum one of the encodings from [[#patch-encodings]].
 
      * If [=request/method=] is "POST" then, request [=request/body=] must be a single
@@ -1238,7 +1238,7 @@ The algorithm outputs:
 * Extended Font Subset: [=font subset=] that has been updated to cover at least the requested subset
     definition.
 
-* Cache fields: HTTP cache fields [[rfc9111#name-field-definitions]] describing how client state
+* Cache fields: HTTP cache fields [[rfc9111#section-5]] describing how client state
     can be cached, or null.
 
 The algorithm:
@@ -1257,8 +1257,8 @@ The algorithm:
          [$Handle failed font load$] and return the result.
 
 2.  Decode the <var>server response</var> [=response/body=] by applying the appropriate decoding as
-     specified by the [[rfc9110#name-content-encoding|Content-Encoding]] header. If the
-     [[rfc9110#name-content-encoding|Content-Encoding]] is one of those from [[#patch-encodings]] then
+     specified by the [[rfc9110#section-8.4|Content-Encoding]] header. If the
+     [[rfc9110#section-8.4|Content-Encoding]] is one of those from [[#patch-encodings]] then
      the input <var>font subset</var> will be used as the source file for the decoding operation. The
      decoded response is the new extended font subset. Return the extended font subset and any cache
      headers that were set on the <var>server response</var>.
@@ -1319,7 +1319,7 @@ The algorithm:
 
      * The request [=request/cache mode=] is "only-if-cached".
 
-2.  If the request is successful and the response is "fresh" ([[RFC9111#name-freshness]])
+2.  If the request is successful and the response is "fresh" ([[RFC9111#section-4.2]])
      then invoke [$Extend the font subset$] with:
 
      *  Font url set to the input <var>font URL</var>.
@@ -1458,7 +1458,7 @@ result in an extended [=font subset=]:
 Additionally:
 
    *  The response [=response/body=] should be encoded by one of the content encodings listed
-        in the [[rfc9110#name-accept-encoding|Accept-Encoding]] header of the request. When possible
+        in the [[rfc9110#section-12.5.3|Accept-Encoding]] header of the request. When possible
         the server should utilize one of the patch based encodings from [[#patch-encodings]]. Non-patch
         based encodings should only be used where the server is unable to recreate the client's state
         in order to generate a patch against it.
@@ -1486,7 +1486,7 @@ Possible error responses:
 
 A patch subset support server must also support incremental transfer via [[#range-request-incxfer]].
 To support range request incremental tranfser the patch subset server must support HTTP range requests
-([[RFC9110#range.requests]]) against the font files it provides via patch subset.
+([[RFC9110#section-14]]) against the font files it provides via patch subset.
 
 
 Computing Checksums {#computing-checksums}
@@ -1599,7 +1599,7 @@ in little endian order.
 Patch Encodings {#patch-encodings}
 ----------------------------------
 
-The following [[rfc9110#name-content-encoding|content encodings]] can be used to encode a target
+The following [[rfc9110#section-8.4|content encodings]] can be used to encode a target
 file as a patch against a source file:
 
 <table>
