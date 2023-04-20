@@ -4,15 +4,14 @@
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <title>Incremental Font Transfer</title>
   <meta content="WD" name="w3c-status">
-  <meta content="Bikeshed version 26e85e599, updated Thu Dec 8 15:29:31 2022 -0800" name="generator">
+  <meta content="Bikeshed version d9bd89757, updated Thu Mar 23 10:06:53 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="7c3fa49d3bcc6cba84ecfddd177fb7b09ee2c8a7" name="document-revision">
+  <meta content="35598300ae9cedf668b2a14c546aaa414de6057f" name="document-revision">
 <style>
 .conform:hover {background: #31668f}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f }
 </style>
 <style>/* style-autolinks */
-
 .css.css, .property.property, .descriptor.descriptor {
     color: var(--a-normal-text);
     font-size: inherit;
@@ -72,9 +71,9 @@ pre .property::before, pre .property::after {
 
 [data-link-type=biblio] {
     white-space: pre;
-}</style>
+}
+</style>
 <style>/* style-counters */
-
 body {
     counter-reset: example figure issue;
 }
@@ -101,9 +100,9 @@ figcaption {
 }
 figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
-}</style>
+}
+</style>
 <style>/* style-dfn-panel */
-
 :root {
     --dfnpanel-bg: #ddd;
     --dfnpanel-text: var(--text);
@@ -111,10 +110,10 @@ figcaption:not(.no-marker)::before {
 .dfn-panel {
     position: absolute;
     z-index: 35;
-    height: auto;
-    width: -webkit-fit-content;
-    width: fit-content;
+    width: 20em;
+    min-width: min-content;
     max-width: 300px;
+    height: auto;
     max-height: 500px;
     overflow: auto;
     padding: 0.5em 0.75em;
@@ -122,6 +121,7 @@ figcaption:not(.no-marker)::before {
     background: var(--dfnpanel-bg);
     color: var(--dfnpanel-text);
     border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
 }
 .dfn-panel:not(.on) { display: none; }
 .dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
@@ -144,7 +144,6 @@ figcaption:not(.no-marker)::before {
 .dfn-paneled { cursor: pointer; }
 </style>
 <style>/* style-issues */
-
 a[href].issue-return {
     float: right;
     float: inline-end;
@@ -154,7 +153,6 @@ a[href].issue-return {
 }
 </style>
 <style>/* style-md-lists */
-
 /* This is a weird hack for me not yet following the commonmark spec
    regarding paragraph and lists. */
 [data-md] > :first-child {
@@ -162,7 +160,8 @@ a[href].issue-return {
 }
 [data-md] > :last-child {
     margin-bottom: 0;
-}</style>
+}
+</style>
 <style>/* style-selflinks */
 
 :root {
@@ -263,7 +262,7 @@ dfn > a.self-link::before      { content: "#"; }
     </div>
    </details>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2022 <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="https://www.keio.ac.jp/">Keio</a>, <a href="https://ev.buaa.edu.cn/">Beihang</a>). W3C <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document" rel="license">permissive document license</a> rules apply. </p>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2022 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document" rel="license">permissive document license</a> rules apply. </p>
    <hr title="Separator for header">
   </div>
   <div class="p-summary" data-fill-with="abstract">
@@ -537,12 +536,12 @@ should use the patch subset IFT method to load the font.
 }
 </pre>
    </div>
-   <p class="note" role="note"><span>Note:</span> Each individual <code>@font-face</code> block may or may not opt-in to IFT. This is due to the
+   <p class="note" role="note"><span class="marker">Note:</span> Each individual <code>@font-face</code> block may or may not opt-in to IFT. This is due to the
 variety of ways fonts are used on web pages. Authors have control over which fonts they want to use
 this technology with, and which they do not.</p>
-   <p class="note" role="note"><span>Note:</span> the use of <code>incremental-auto</code> may incur a CORS preflight request for the initial
+   <p class="note" role="note"><span class="marker">Note:</span> the use of <code>incremental-auto</code> may incur a CORS preflight request for the initial
 request of method negotiation, as the initial request sets a custom header.</p>
-   <p class="note" role="note"><span>Note:</span> the IFT tech keywords can be used in conjuction with other font tech specifiers to perform
+   <p class="note" role="note"><span class="marker">Note:</span> the IFT tech keywords can be used in conjuction with other font tech specifiers to perform
 font feature selection. For example a <code>@font-face</code> could include two urls one with <code>tech(incremental-patch, color-COLRv1)</code> and the other with <code>tech(incremental-patch, color-COLRv0)</code>. The client would initiate an incremental patch
 subset transfer to one of the URLs depending on which version of COLR is supported.</p>
    <h2 class="heading settled" data-level="3" id="method-selection"><span class="secno">3. </span><span class="content">IFT Method Selection</span><a class="self-link" href="#method-selection"></a></h2>
@@ -571,12 +570,12 @@ determine which method to use. Different clients may support different IFT metho
 servers may support different IFT methods, so a negotation occurs as such:</p>
    <ol>
     <li data-md>
-     <p>The browser makes the first request to the server using the GET HTTP method (<a href="https://www.rfc-editor.org/rfc/rfc9110#name-get">HTTP Semantics § name-get</a>).
+     <p>The browser makes the first request to the server using the GET HTTP method (<a href="https://www.rfc-editor.org/rfc/rfc9110#section-9.3.1"><cite>HTTP Semantics</cite> § 9.3.1 GET</a>).
  If the client prefers the <a href="#patch-incxfer">patch-subset method</a>, it sends the relevant <a data-link-type="dfn" href="#patch-request-header" id="ref-for-patch-request-header">patch request header</a>. If the client prefers the range-request method, it does not send the
  header.</p>
     <li data-md>
      <p>If the server receives the patch request header and wishes to honor it, the server must reply
- according to <a href="#handling-patch-request">§ 4.5 Server: Responding to a PatchRequest</a>. Otherwise, the server must reply with the <a href="https://www.rfc-editor.org/rfc/rfc9110#range.requests">HTTP Semantics § range.requests</a> <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a> header, if it supports HTTP Range Requests.</p>
+ according to <a href="#handling-patch-request">§ 4.5 Server: Responding to a PatchRequest</a>. Otherwise, the server must reply with the <a href="https://www.rfc-editor.org/rfc/rfc9110#section-14"><cite>HTTP Semantics</cite> §  14. Range Requests</a> <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a> header, if it supports HTTP Range Requests.</p>
     <li data-md>
      <p>If the client receives a font with a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by the 4-byte tag "IFTP", it commences using the patch-subset method.
  Otherwise, if the client receives the <code>Accept-Ranges: bytes</code> header, it commences
@@ -712,7 +711,7 @@ equal partitions. A tree of height <i>H</i> with branching factor <i>B</i> can s
 for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree is encoded into
 a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring">ByteString</a> for transport.</p>
    <p>To construct the tree <i>T</i> which encodes set <i>S</i> first select the branching factor <i>B</i> (how many children each node has). <i>B</i> can be 4, 8, 16, or 32.</p>
-   <p class="note" role="note"><span>Note:</span> the encoder can use any of the possible branching factors, but it is recommended to
+   <p class="note" role="note"><span class="marker">Note:</span> the encoder can use any of the possible branching factors, but it is recommended to
 use 4 as that has <a href="https://github.com/w3c/PFE-analysis/blob/main/results/set_encoding_branch_factor.md">been shown</a> to give the smallest encodings for most sets typically encountered.</p>
    <p>Next, determine the height, <i>H</i>, of the tree:</p>
    <p><i>H</i> = ceil(log<sub><i>B</i></sub>(max(<i>S</i>) + 1))</p>
@@ -1284,7 +1283,7 @@ font url, or null.</p>
 minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a>.</p>
     <li data-md>
      <p><var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a>. The remainder
-of this section is desribed in terms of <a href="https://fetch.spec.whatwg.org/#fetching"><cite>Fetch Standard</cite> § 4 Fetching</a>, but it is allowed to substitute
+of this section is desribed in terms of <a href="https://fetch.spec.whatwg.org/#fetching"><cite>Fetch</cite> § 4 Fetching</a>, but it is allowed to substitute
 whatever HTTP fetching algorithm the user agent supports.</p>
    </ul>
    <p>The algorithm outputs:</p>
@@ -1293,7 +1292,7 @@ whatever HTTP fetching algorithm the user agent supports.</p>
      <p>Extended Font Subset: <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> that has been updated to cover at least the requested subset
 definition.</p>
     <li data-md>
-     <p>Cache fields: HTTP cache fields <a href="https://www.rfc-editor.org/rfc/rfc9111#name-field-definitions">HTTP Caching § name-field-definitions</a> describing how client state
+     <p>Cache fields: HTTP cache fields <a href="https://www.rfc-editor.org/rfc/rfc9111#section-5"><cite>HTTP Caching</cite> § 5 Field Definitions</a> describing how client state
 can be cached, or null.</p>
    </ul>
    <p>The algorithm:</p>
@@ -1324,7 +1323,7 @@ encoded via CBOR.</p>
       <li data-md>
        <p>The request URL <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-path" id="ref-for-concept-url-path">path</a> is set to the input <var>font URL</var>.</p>
       <li data-md>
-       <p>The request must include an <a href="https://www.rfc-editor.org/rfc/rfc9110#name-accept-encoding">Accept-Encoding</a> header which lists
+       <p>The request must include an <a href="https://www.rfc-editor.org/rfc/rfc9110#section-12.5.3">Accept-Encoding</a> header which lists
  at minimum one of the encodings from <a href="#patch-encodings">§ 4.8 Patch Encodings</a>.</p>
       <li data-md>
        <p>If <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method①">method</a> is "POST" then, request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-body" id="ref-for-concept-request-body">body</a> must be a single <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest①">PatchRequest</a> object encoded via CBOR.</p>
@@ -1387,13 +1386,13 @@ encoded via CBOR.</p>
  If a <var>fragment identifier</var> was provided as an input then this field must be set to
  the provided <var>fragment identifier</var>, otherwise it must be left unset.</p>
      </ul>
-     <p class="note" role="note"><span>Note:</span> It is allowed for the client to request more codepoints then it strictly needs. For
+     <p class="note" role="note"><span class="marker">Note:</span> It is allowed for the client to request more codepoints then it strictly needs. For
  example, on slower connections it may be more performant to request extra codepoints if
  that is likely to prevent a future request from needing to be sent.</p>
     <li data-md>
      <p>Invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-server-response" id="ref-for-abstract-opdef-handle-server-response">Handle server response</a> with the response from the server and the <var>font subset</var> then return the result.</p>
    </ol>
-   <p class="note" role="note"><span>Note:</span> POST is preferred for the HTTP method since it will not cause a CORS preflight request
+   <p class="note" role="note"><span class="marker">Note:</span> POST is preferred for the HTTP method since it will not cause a CORS preflight request
 and the request object is more compactly encoded. GET should only be used during <a href="#method-negotiation">method negotiation</a>.</p>
    <h4 class="heading settled algorithm" data-algorithm="Handling Server Response" data-level="4.4.2" id="handling-patch-response"><span class="secno">4.4.2. </span><span class="content">Handling Server Response</span><a class="self-link" href="#handling-patch-response"></a></h4>
    <p>If a server is able to succsessfully process a <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest④">PatchRequest</a> it will respond with HTTP <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status">status</a> code 200 and the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body">body</a> of the response will
@@ -1413,7 +1412,7 @@ patch against the current font subset.</p>
      <p>Extended Font Subset: <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑨">font subset</a> that has been updated to cover at least the requested subset
 definition.</p>
     <li data-md>
-     <p>Cache fields: HTTP cache fields <a href="https://www.rfc-editor.org/rfc/rfc9111#name-field-definitions">HTTP Caching § name-field-definitions</a> describing how client state
+     <p>Cache fields: HTTP cache fields <a href="https://www.rfc-editor.org/rfc/rfc9111#section-5"><cite>HTTP Caching</cite> § 5 Field Definitions</a> describing how client state
 can be cached, or null.</p>
    </ul>
    <p>The algorithm:</p>
@@ -1422,7 +1421,7 @@ can be cached, or null.</p>
      <p>If the <var>server response</var> has <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status①">status</a> other than 200:</p>
      <ul>
       <li data-md>
-       <p>If it is a redirect <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-status" id="ref-for-concept-status">status</a>: follow normal redirect handling, such as <a href="https://fetch.spec.whatwg.org/#http-redirect-fetch"><cite>Fetch Standard</cite> § 4.4 HTTP-redirect fetch</a> and then go back to step 1.</p>
+       <p>If it is a redirect <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-status" id="ref-for-concept-status">status</a>: follow normal redirect handling, such as <a href="https://fetch.spec.whatwg.org/#http-redirect-fetch"><cite>Fetch</cite> § 4.4 HTTP-redirect fetch</a> and then go back to step 1.</p>
       <li data-md>
        <p>If <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status②">status</a> is 412, then the server does not recognize the codepoint ordering
  used by the client. The client should resend the request that triggered this response but also
@@ -1432,7 +1431,7 @@ can be cached, or null.</p>
      </ul>
     <li data-md>
      <p>Decode the <var>server response</var> <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body①">body</a> by applying the appropriate decoding as
- specified by the <a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-encoding">Content-Encoding</a> header. If the <a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-encoding">Content-Encoding</a> is one of those from <a href="#patch-encodings">§ 4.8 Patch Encodings</a> then
+ specified by the <a href="https://www.rfc-editor.org/rfc/rfc9110#section-8.4">Content-Encoding</a> header. If the <a href="https://www.rfc-editor.org/rfc/rfc9110#section-8.4">Content-Encoding</a> is one of those from <a href="#patch-encodings">§ 4.8 Patch Encodings</a> then
  the input <var>font subset</var> will be used as the source file for the decoding operation. The
  decoded response is the new extended font subset. Return the extended font subset and any cache
  headers that were set on the <var>server response</var>.</p>
@@ -1467,7 +1466,7 @@ the fragment identifier (<a href="https://www.rfc-editor.org/rfc/rfc8081#section
 minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a>.</p>
     <li data-md>
      <p><var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a>. The remainder
-of this section is desribed in terms of <a href="https://fetch.spec.whatwg.org/#fetching"><cite>Fetch Standard</cite> § 4 Fetching</a>, but it is allowed to substitute
+of this section is desribed in terms of <a href="https://fetch.spec.whatwg.org/#fetching"><cite>Fetch</cite> § 4 Fetching</a>, but it is allowed to substitute
 whatever HTTP fetching algorithm the user agent supports.</p>
    </ul>
    <p>The algorithm outputs:</p>
@@ -1494,7 +1493,7 @@ whatever HTTP fetching algorithm the user agent supports.</p>
        <p>The request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-cache-mode" id="ref-for-concept-request-cache-mode①">cache mode</a> is "only-if-cached".</p>
      </ul>
     <li data-md>
-     <p>If the request is successful and the response is "fresh" (<a href="https://www.rfc-editor.org/rfc/rfc9111#name-freshness">HTTP Caching § name-freshness</a>)
+     <p>If the request is successful and the response is "fresh" (<a href="https://www.rfc-editor.org/rfc/rfc9111#section-4.2"><cite>HTTP Caching</cite> § 4.2 Freshness</a>)
  then invoke <a data-link-type="abstract-op" href="#abstract-opdef-extend-the-font-subset" id="ref-for-abstract-opdef-extend-the-font-subset">Extend the font subset</a> with:</p>
      <ul>
       <li data-md>
@@ -1545,7 +1544,7 @@ that collection that a patch is desired for. The identified font is referred to 
      <p>Codepoints the client needs: formed by the union of the codepoint sets specified by <a data-link-type="dfn" href="#patchrequest-codepoints_needed" id="ref-for-patchrequest-codepoints_needed①">codepoints_needed</a> and <a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed③">indices_needed</a>. <span class="conform server" id="conform-remap-codepoints-needed">The indices in <a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed④">indices_needed</a> must be mapped to codepoints by the application of the
  codepoint reordering with a checksum matching <a data-link-type="dfn" href="#patchrequest-ordering_checksum" id="ref-for-patchrequest-ordering_checksum③">ordering_checksum</a>.</span></p>
    </ol>
-   <p class="note" role="note"><span>Note:</span> the request may optionally set <a data-link-type="dfn" href="#patchrequest-codepoint_ordering" id="ref-for-patchrequest-codepoint_ordering①">codepoint_ordering</a> which is used by the client to
+   <p class="note" role="note"><span class="marker">Note:</span> the request may optionally set <a data-link-type="dfn" href="#patchrequest-codepoint_ordering" id="ref-for-patchrequest-codepoint_ordering①">codepoint_ordering</a> which is used by the client to
 provide the exact codepoint ordering that was used to encode <a data-link-type="dfn" href="#patchrequest-indices_have" id="ref-for-patchrequest-indices_have⑥">indices_have</a> and <a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed⑤">indices_needed</a>.</p>
    <p>Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>:</p>
    <ol>
@@ -1605,12 +1604,12 @@ feature tags</a> that the <a data-link-type="dfn" href="#original-font" id="ref-
    <ul>
     <li data-md>
      <p>The response <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body②">body</a> should be encoded by one of the content encodings listed
-    in the <a href="https://www.rfc-editor.org/rfc/rfc9110#name-accept-encoding">Accept-Encoding</a> header of the request. When possible
+    in the <a href="https://www.rfc-editor.org/rfc/rfc9110#section-12.5.3">Accept-Encoding</a> header of the request. When possible
     the server should utilize one of the patch based encodings from <a href="#patch-encodings">§ 4.8 Patch Encodings</a>. Non-patch
     based encodings should only be used where the server is unable to recreate the client’s state
     in order to generate a patch against it.</p>
    </ul>
-   <p class="note" role="note"><span>Note:</span> if a patch subset service is composed of more than one server task and some subset of those
+   <p class="note" role="note"><span class="marker">Note:</span> if a patch subset service is composed of more than one server task and some subset of those
 tasks are using a subsetter version which produces different binary results than the rest, there is
 a risk that consecutive extend requests may result in unnecessary replacement responses. For example if
 consecutive requests alternate between server backends with different subsetters, then each response
@@ -1629,7 +1628,7 @@ same client to the same server task.</p>
    <h4 class="heading settled" data-level="4.5.1" id="range-request-support"><span class="secno">4.5.1. </span><span class="content">Range Request Support</span><a class="self-link" href="#range-request-support"></a></h4>
    <p>A patch subset support server must also support incremental transfer via <a href="#range-request-incxfer">§ 5 Range Request Incremental Transfer</a>.
 To support range request incremental tranfser the patch subset server must support HTTP range requests
-(<a href="https://www.rfc-editor.org/rfc/rfc9110#range.requests">HTTP Semantics § range.requests</a>) against the font files it provides via patch subset.</p>
+(<a href="https://www.rfc-editor.org/rfc/rfc9110#section-14"><cite>HTTP Semantics</cite> §  14. Range Requests</a>) against the font files it provides via patch subset.</p>
    <h3 class="heading settled" data-level="4.6" id="computing-checksums"><span class="secno">4.6. </span><span class="content">Computing Checksums</span><a class="self-link" href="#computing-checksums"></a></h3>
    <p>64 bit checksums of byte strings are computed using the <a data-link-type="biblio" href="#biblio-fast-hash" title="fast-hash">[fast-hash]</a> algorithm. A python like pseudo
 code version of the algorithm is presented below:</p>
@@ -1660,7 +1659,7 @@ fast_hash(byte[] data):
 </pre>
    <p>To ensure checksums are consistent across all platforms, all integers during the computation are
 in little endian order.</p>
-   <p class="note" role="note"><span>Note:</span> a C implementation of fast hash can be found here: <a data-link-type="biblio" href="#biblio-fast-hash" title="fast-hash">[fast-hash]</a></p>
+   <p class="note" role="note"><span class="marker">Note:</span> a C implementation of fast hash can be found here: <a data-link-type="biblio" href="#biblio-fast-hash" title="fast-hash">[fast-hash]</a></p>
    <div class="example" id="example-e69b2b2f">
     <a class="self-link" href="#example-e69b2b2f"></a> 
     <table>
@@ -1718,7 +1717,7 @@ in little endian order.</p>
     </table>
    </div>
    <h3 class="heading settled" data-level="4.8" id="patch-encodings"><span class="secno">4.8. </span><span class="content">Patch Encodings</span><a class="self-link" href="#patch-encodings"></a></h3>
-   <p>The following <a href="https://www.rfc-editor.org/rfc/rfc9110#name-content-encoding">content encodings</a> can be used to encode a target
+   <p>The following <a href="https://www.rfc-editor.org/rfc/rfc9110#section-8.4">content encodings</a> can be used to encode a target
 file as a patch against a source file:</p>
    <table>
     <tbody>
@@ -2176,20 +2175,22 @@ them from being used for tracking.</p>
     with <code>class="note"</code>,
     like this: </p>
    <p class="note" role="note">Note, this is an informative note.</p>
-   <h3 class="no-ref no-num heading settled" id="w3c-conformant-algorithms"><span class="content">Conformant Algorithms</span><a class="self-link" href="#w3c-conformant-algorithms"></a></h3>
-   <p>Requirements phrased in the imperative as part of algorithms
+   <section>
+    <h3 class="no-ref no-num heading settled" id="w3c-conformant-algorithms"><span class="content">Conformant Algorithms</span><a class="self-link" href="#w3c-conformant-algorithms"></a></h3>
+    <p>Requirements phrased in the imperative as part of algorithms
     (such as "strip any leading space characters"
     or "return false and abort these steps")
     are to be interpreted with the meaning of the key word
     ("must", "should", "may", etc)
     used in introducing the algorithm. </p>
-   <p>Conformance requirements phrased as algorithms or specific steps
+    <p>Conformance requirements phrased as algorithms or specific steps
     can be implemented in any manner,
     so long as the end result is equivalent.
     In particular, the algorithms defined in this specification
     are intended to be easy to understand
     and are not intended to be performant.
     Implementers are encouraged to optimize. </p>
+   </section>
   </div>
 <script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
@@ -2249,80 +2250,80 @@ them from being used for tracking.</p>
    <li><a href="#string">String</a><span>, in § 4.2.2</span>
    <li><a href="#clientstate-subset_axis_space">subset_axis_space</a><span>, in § 4.3.4</span>
   </ul>
-  <aside class="dfn-panel" data-for="term-for-concept-request-body">
-   <a href="https://fetch.spec.whatwg.org/#concept-request-body">https://fetch.spec.whatwg.org/#concept-request-body</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-0d3658c59eca7c4804cd6b0a59d27df3" class="dfn-panel" data-for="0d3658c59eca7c4804cd6b0a59d27df3" id="infopanel-for-0d3658c59eca7c4804cd6b0a59d27df3">
+   <span id="infopaneltitle-for-0d3658c59eca7c4804cd6b0a59d27df3" style="display:none">Info about the 'body (for request)' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-request-body">https://fetch.spec.whatwg.org/#concept-request-body</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-request-body">4.4.1. Extending the Font Subset</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-response-body">
-   <a href="https://fetch.spec.whatwg.org/#concept-response-body">https://fetch.spec.whatwg.org/#concept-response-body</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-dbb55ca090e46cfd7979689d43fda288" class="dfn-panel" data-for="dbb55ca090e46cfd7979689d43fda288" id="infopanel-for-dbb55ca090e46cfd7979689d43fda288">
+   <span id="infopaneltitle-for-dbb55ca090e46cfd7979689d43fda288" style="display:none">Info about the 'body (for response)' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-response-body">https://fetch.spec.whatwg.org/#concept-response-body</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-response-body">4.4.2. Handling Server Response</a> <a href="#ref-for-concept-response-body①">(2)</a>
     <li><a href="#ref-for-concept-response-body②">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-request-cache-mode">
-   <a href="https://fetch.spec.whatwg.org/#concept-request-cache-mode">https://fetch.spec.whatwg.org/#concept-request-cache-mode</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-b0566d6d660c85a1c0a11fe593f9993d" class="dfn-panel" data-for="b0566d6d660c85a1c0a11fe593f9993d" id="infopanel-for-b0566d6d660c85a1c0a11fe593f9993d">
+   <span id="infopaneltitle-for-b0566d6d660c85a1c0a11fe593f9993d" style="display:none">Info about the 'cache mode' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-request-cache-mode">https://fetch.spec.whatwg.org/#concept-request-cache-mode</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-request-cache-mode">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-concept-request-cache-mode①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-request-destination">
-   <a href="https://fetch.spec.whatwg.org/#concept-request-destination">https://fetch.spec.whatwg.org/#concept-request-destination</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-89ba93986b2df9b70ab56597f4c96beb" class="dfn-panel" data-for="89ba93986b2df9b70ab56597f4c96beb" id="infopanel-for-89ba93986b2df9b70ab56597f4c96beb">
+   <span id="infopaneltitle-for-89ba93986b2df9b70ab56597f4c96beb" style="display:none">Info about the 'destination' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-request-destination">https://fetch.spec.whatwg.org/#concept-request-destination</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-request-destination">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-concept-request-destination①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-header">
-   <a href="https://fetch.spec.whatwg.org/#concept-header">https://fetch.spec.whatwg.org/#concept-header</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-ee7584061c2f45d6a827359cc7178423" class="dfn-panel" data-for="ee7584061c2f45d6a827359cc7178423" id="infopanel-for-ee7584061c2f45d6a827359cc7178423">
+   <span id="infopaneltitle-for-ee7584061c2f45d6a827359cc7178423" style="display:none">Info about the 'header' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-header">https://fetch.spec.whatwg.org/#concept-header</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-header">4.4.1. Extending the Font Subset</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-request-method">
-   <a href="https://fetch.spec.whatwg.org/#concept-request-method">https://fetch.spec.whatwg.org/#concept-request-method</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-763381417a53db57db9cfbb40d3c552a" class="dfn-panel" data-for="763381417a53db57db9cfbb40d3c552a" id="infopanel-for-763381417a53db57db9cfbb40d3c552a">
+   <span id="infopaneltitle-for-763381417a53db57db9cfbb40d3c552a" style="display:none">Info about the 'method' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-request-method">https://fetch.spec.whatwg.org/#concept-request-method</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-request-method">4.4.1. Extending the Font Subset</a> <a href="#ref-for-concept-request-method①">(2)</a> <a href="#ref-for-concept-request-method②">(3)</a>
     <li><a href="#ref-for-concept-request-method③">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-request-mode">
-   <a href="https://fetch.spec.whatwg.org/#concept-request-mode">https://fetch.spec.whatwg.org/#concept-request-mode</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-731849104592df0f69027b4122c950f6" class="dfn-panel" data-for="731849104592df0f69027b4122c950f6" id="infopanel-for-731849104592df0f69027b4122c950f6">
+   <span id="infopaneltitle-for-731849104592df0f69027b4122c950f6" style="display:none">Info about the 'mode' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-request-mode">https://fetch.spec.whatwg.org/#concept-request-mode</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-request-mode">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-concept-request-mode①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-response">
-   <a href="https://fetch.spec.whatwg.org/#concept-response">https://fetch.spec.whatwg.org/#concept-response</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-d203414c2b48c23fddab90ef753bb7cf" class="dfn-panel" data-for="d203414c2b48c23fddab90ef753bb7cf" id="infopanel-for-d203414c2b48c23fddab90ef753bb7cf">
+   <span id="infopaneltitle-for-d203414c2b48c23fddab90ef753bb7cf" style="display:none">Info about the 'response' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-response">https://fetch.spec.whatwg.org/#concept-response</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-response">4.4.2. Handling Server Response</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-status">
-   <a href="https://fetch.spec.whatwg.org/#concept-status">https://fetch.spec.whatwg.org/#concept-status</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-515c14a3a354bbedfc4825ea79cd0900" class="dfn-panel" data-for="515c14a3a354bbedfc4825ea79cd0900" id="infopanel-for-515c14a3a354bbedfc4825ea79cd0900">
+   <span id="infopaneltitle-for-515c14a3a354bbedfc4825ea79cd0900" style="display:none">Info about the 'status' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-status">https://fetch.spec.whatwg.org/#concept-status</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-status">4.4.2. Handling Server Response</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-response-status">
-   <a href="https://fetch.spec.whatwg.org/#concept-response-status">https://fetch.spec.whatwg.org/#concept-response-status</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-1b6fecbab51caa95d9e527debe16b0b0" class="dfn-panel" data-for="1b6fecbab51caa95d9e527debe16b0b0" id="infopanel-for-1b6fecbab51caa95d9e527debe16b0b0">
+   <span id="infopaneltitle-for-1b6fecbab51caa95d9e527debe16b0b0" style="display:none">Info about the 'status (for response)' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-response-status">https://fetch.spec.whatwg.org/#concept-response-status</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-response-status">4.4.2. Handling Server Response</a> <a href="#ref-for-concept-response-status①">(2)</a> <a href="#ref-for-concept-response-status②">(3)</a>
     <li><a href="#ref-for-concept-response-status③">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-concept-response-status④">(2)</a> <a href="#ref-for-concept-response-status⑤">(3)</a> <a href="#ref-for-concept-response-status⑥">(4)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-request-url">
-   <a href="https://fetch.spec.whatwg.org/#concept-request-url">https://fetch.spec.whatwg.org/#concept-request-url</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-6f4775873c70787775f9c70f0f110709" class="dfn-panel" data-for="6f4775873c70787775f9c70f0f110709" id="infopanel-for-6f4775873c70787775f9c70f0f110709">
+   <span id="infopaneltitle-for-6f4775873c70787775f9c70f0f110709" style="display:none">Info about the 'url' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-request-url">https://fetch.spec.whatwg.org/#concept-request-url</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-request-url">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-url-path">
-   <a href="https://url.spec.whatwg.org/#concept-url-path">https://url.spec.whatwg.org/#concept-url-path</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-75ccf7f4179f63dff9f682d9c35046bb" class="dfn-panel" data-for="75ccf7f4179f63dff9f682d9c35046bb" id="infopanel-for-75ccf7f4179f63dff9f682d9c35046bb">
+   <span id="infopaneltitle-for-75ccf7f4179f63dff9f682d9c35046bb" style="display:none">Info about the 'path' external reference.</span><a href="https://url.spec.whatwg.org/#concept-url-path">https://url.spec.whatwg.org/#concept-url-path</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-url-path">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-concept-url-path①">4.4.2. Handling Server Response</a>
@@ -2330,8 +2331,8 @@ them from being used for tracking.</p>
     <li><a href="#ref-for-concept-url-path③">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-concept-url-path④">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-url-scheme">
-   <a href="https://url.spec.whatwg.org/#concept-url-scheme">https://url.spec.whatwg.org/#concept-url-scheme</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-67f83ca6d3c695660bfc2f054f534ffb" class="dfn-panel" data-for="67f83ca6d3c695660bfc2f054f534ffb" id="infopanel-for-67f83ca6d3c695660bfc2f054f534ffb">
+   <span id="infopaneltitle-for-67f83ca6d3c695660bfc2f054f534ffb" style="display:none">Info about the 'scheme' external reference.</span><a href="https://url.spec.whatwg.org/#concept-url-scheme">https://url.spec.whatwg.org/#concept-url-scheme</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-url-scheme">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-concept-url-scheme①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
@@ -2342,23 +2343,23 @@ them from being used for tracking.</p>
    <li>
     <a data-link-type="biblio">[FETCH]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-concept-request-body">body <small>(for request)</small></span>
-     <li><span class="dfn-paneled" id="term-for-concept-response-body">body <small>(for response)</small></span>
-     <li><span class="dfn-paneled" id="term-for-concept-request-cache-mode">cache mode</span>
-     <li><span class="dfn-paneled" id="term-for-concept-request-destination">destination</span>
-     <li><span class="dfn-paneled" id="term-for-concept-header">header</span>
-     <li><span class="dfn-paneled" id="term-for-concept-request-method">method</span>
-     <li><span class="dfn-paneled" id="term-for-concept-request-mode">mode</span>
-     <li><span class="dfn-paneled" id="term-for-concept-response">response</span>
-     <li><span class="dfn-paneled" id="term-for-concept-status">status</span>
-     <li><span class="dfn-paneled" id="term-for-concept-response-status">status <small>(for response)</small></span>
-     <li><span class="dfn-paneled" id="term-for-concept-request-url">url</span>
+     <li><span class="dfn-paneled" id="0d3658c59eca7c4804cd6b0a59d27df3">body <small>(for request)</small></span>
+     <li><span class="dfn-paneled" id="dbb55ca090e46cfd7979689d43fda288">body <small>(for response)</small></span>
+     <li><span class="dfn-paneled" id="b0566d6d660c85a1c0a11fe593f9993d">cache mode</span>
+     <li><span class="dfn-paneled" id="89ba93986b2df9b70ab56597f4c96beb">destination</span>
+     <li><span class="dfn-paneled" id="ee7584061c2f45d6a827359cc7178423">header</span>
+     <li><span class="dfn-paneled" id="763381417a53db57db9cfbb40d3c552a">method</span>
+     <li><span class="dfn-paneled" id="731849104592df0f69027b4122c950f6">mode</span>
+     <li><span class="dfn-paneled" id="d203414c2b48c23fddab90ef753bb7cf">response</span>
+     <li><span class="dfn-paneled" id="515c14a3a354bbedfc4825ea79cd0900">status</span>
+     <li><span class="dfn-paneled" id="1b6fecbab51caa95d9e527debe16b0b0">status <small>(for response)</small></span>
+     <li><span class="dfn-paneled" id="6f4775873c70787775f9c70f0f110709">url</span>
     </ul>
    <li>
     <a data-link-type="biblio">[URL]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-concept-url-path">path</span>
-     <li><span class="dfn-paneled" id="term-for-concept-url-scheme">scheme</span>
+     <li><span class="dfn-paneled" id="75ccf7f4179f63dff9f682d9c35046bb">path</span>
+     <li><span class="dfn-paneled" id="67f83ca6d3c695660bfc2f054f534ffb">scheme</span>
     </ul>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
@@ -2404,8 +2405,8 @@ them from being used for tracking.</p>
    <dt id="biblio-woff2">[WOFF2]
    <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/"><cite>WOFF File Format 2.0</cite></a>. 10 March 2022. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
   </dl>
-  <aside class="dfn-panel" data-for="font-subset">
-   <b><a href="#font-subset">#font-subset</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-font-subset" class="dfn-panel" data-for="font-subset" id="infopanel-for-font-subset">
+   <span id="infopaneltitle-for-font-subset" style="display:none">Info about the 'font subset' definition.</span><b><a href="#font-subset">#font-subset</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-font-subset">1.1. Patch Subset</a>
     <li><a href="#ref-for-font-subset①">4.1. Font Subset</a>
@@ -2415,28 +2416,28 @@ them from being used for tracking.</p>
     <li><a href="#ref-for-font-subset①⑥">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-font-subset①⑦">(2)</a> <a href="#ref-for-font-subset①⑧">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="font-subset-definition">
-   <b><a href="#font-subset-definition">#font-subset-definition</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-font-subset-definition" class="dfn-panel" data-for="font-subset-definition" id="infopanel-for-font-subset-definition">
+   <span id="infopaneltitle-for-font-subset-definition" style="display:none">Info about the 'font subset definition' definition.</span><b><a href="#font-subset-definition">#font-subset-definition</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-font-subset-definition">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-font-subset-definition①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="integer">
-   <b><a href="#integer">#integer</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-integer" class="dfn-panel" data-for="integer" id="infopanel-for-integer">
+   <span id="infopaneltitle-for-integer" style="display:none">Info about the 'Integer' definition.</span><b><a href="#integer">#integer</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-integer">4.3.3. PatchRequest</a> <a href="#ref-for-integer①">(2)</a> <a href="#ref-for-integer②">(3)</a>
     <li><a href="#ref-for-integer③">4.3.4. ClientState</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="float">
-   <b><a href="#float">#float</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-float" class="dfn-panel" data-for="float" id="infopanel-for-float">
+   <span id="infopaneltitle-for-float" style="display:none">Info about the 'Float' definition.</span><b><a href="#float">#float</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-float">4.3.2. AxisInterval</a> <a href="#ref-for-float①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="bytestring">
-   <b><a href="#bytestring">#bytestring</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-bytestring" class="dfn-panel" data-for="bytestring" id="infopanel-for-bytestring">
+   <span id="infopaneltitle-for-bytestring" style="display:none">Info about the 'ByteString' definition.</span><b><a href="#bytestring">#bytestring</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-bytestring">4.2.3. SparseBitSet</a>
     <li><a href="#ref-for-bytestring①">4.2.4. IntegerList</a> <a href="#ref-for-bytestring②">(2)</a>
@@ -2446,26 +2447,26 @@ them from being used for tracking.</p>
     <li><a href="#ref-for-bytestring⑥">4.3.1. CompressedSet</a> <a href="#ref-for-bytestring⑦">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="string">
-   <b><a href="#string">#string</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-string" class="dfn-panel" data-for="string" id="infopanel-for-string">
+   <span id="infopaneltitle-for-string" style="display:none">Info about the 'String' definition.</span><b><a href="#string">#string</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-string">4.3.3. PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="arrayof">
-   <b><a href="#arrayof">#arrayof</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-arrayof" class="dfn-panel" data-for="arrayof" id="infopanel-for-arrayof">
+   <span id="infopaneltitle-for-arrayof" style="display:none">Info about the 'ArrayOf' definition.</span><b><a href="#arrayof">#arrayof</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-arrayof">4.2.8. AxisSpace</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="sparsebitset">
-   <b><a href="#sparsebitset">#sparsebitset</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-sparsebitset" class="dfn-panel" data-for="sparsebitset" id="infopanel-for-sparsebitset">
+   <span id="infopaneltitle-for-sparsebitset" style="display:none">Info about the 'SparseBitSet' definition.</span><b><a href="#sparsebitset">#sparsebitset</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-sparsebitset">4.3.1. CompressedSet</a> <a href="#ref-for-sparsebitset①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="integerlist">
-   <b><a href="#integerlist">#integerlist</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-integerlist" class="dfn-panel" data-for="integerlist" id="infopanel-for-integerlist">
+   <span id="infopaneltitle-for-integerlist" style="display:none">Info about the 'IntegerList' definition.</span><b><a href="#integerlist">#integerlist</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-integerlist">4.2.4. IntegerList</a>
     <li><a href="#ref-for-integerlist①">4.2.5. SortedIntegerList</a> <a href="#ref-for-integerlist②">(2)</a>
@@ -2474,73 +2475,73 @@ them from being used for tracking.</p>
     <li><a href="#ref-for-integerlist⑤">4.7. Codepoint Reordering</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="sortedintegerlist">
-   <b><a href="#sortedintegerlist">#sortedintegerlist</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-sortedintegerlist" class="dfn-panel" data-for="sortedintegerlist" id="infopanel-for-sortedintegerlist">
+   <span id="infopaneltitle-for-sortedintegerlist" style="display:none">Info about the 'SortedIntegerList' definition.</span><b><a href="#sortedintegerlist">#sortedintegerlist</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-sortedintegerlist">4.2.5. SortedIntegerList</a>
     <li><a href="#ref-for-sortedintegerlist①">4.2.6. RangeList</a>
     <li><a href="#ref-for-sortedintegerlist②">4.2.7. FeatureTagSet</a> <a href="#ref-for-sortedintegerlist③">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="rangelist">
-   <b><a href="#rangelist">#rangelist</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-rangelist" class="dfn-panel" data-for="rangelist" id="infopanel-for-rangelist">
+   <span id="infopaneltitle-for-rangelist" style="display:none">Info about the 'RangeList' definition.</span><b><a href="#rangelist">#rangelist</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-rangelist">4.3.1. CompressedSet</a> <a href="#ref-for-rangelist①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="featuretagset">
-   <b><a href="#featuretagset">#featuretagset</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-featuretagset" class="dfn-panel" data-for="featuretagset" id="infopanel-for-featuretagset">
+   <span id="infopaneltitle-for-featuretagset" style="display:none">Info about the 'FeatureTagSet' definition.</span><b><a href="#featuretagset">#featuretagset</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-featuretagset">4.3.3. PatchRequest</a> <a href="#ref-for-featuretagset①">(2)</a>
     <li><a href="#ref-for-featuretagset②">4.3.4. ClientState</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="axisspace">
-   <b><a href="#axisspace">#axisspace</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-axisspace" class="dfn-panel" data-for="axisspace" id="infopanel-for-axisspace">
+   <span id="infopaneltitle-for-axisspace" style="display:none">Info about the 'AxisSpace' definition.</span><b><a href="#axisspace">#axisspace</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-axisspace">4.3.3. PatchRequest</a> <a href="#ref-for-axisspace①">(2)</a>
     <li><a href="#ref-for-axisspace②">4.3.4. ClientState</a> <a href="#ref-for-axisspace③">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="compressedset">
-   <b><a href="#compressedset">#compressedset</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-compressedset" class="dfn-panel" data-for="compressedset" id="infopanel-for-compressedset">
+   <span id="infopaneltitle-for-compressedset" style="display:none">Info about the 'CompressedSet' definition.</span><b><a href="#compressedset">#compressedset</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-compressedset">4.3.3. PatchRequest</a> <a href="#ref-for-compressedset①">(2)</a> <a href="#ref-for-compressedset②">(3)</a> <a href="#ref-for-compressedset③">(4)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="compressedset-sparse_bit_set">
-   <b><a href="#compressedset-sparse_bit_set">#compressedset-sparse_bit_set</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-compressedset-sparse_bit_set" class="dfn-panel" data-for="compressedset-sparse_bit_set" id="infopanel-for-compressedset-sparse_bit_set">
+   <span id="infopaneltitle-for-compressedset-sparse_bit_set" style="display:none">Info about the 'sparse_bit_set' definition.</span><b><a href="#compressedset-sparse_bit_set">#compressedset-sparse_bit_set</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-compressedset-sparse_bit_set">4.3.1. CompressedSet</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="compressedset-range_deltas">
-   <b><a href="#compressedset-range_deltas">#compressedset-range_deltas</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-compressedset-range_deltas" class="dfn-panel" data-for="compressedset-range_deltas" id="infopanel-for-compressedset-range_deltas">
+   <span id="infopaneltitle-for-compressedset-range_deltas" style="display:none">Info about the 'range_deltas' definition.</span><b><a href="#compressedset-range_deltas">#compressedset-range_deltas</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-compressedset-range_deltas">4.3.1. CompressedSet</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="axisinterval">
-   <b><a href="#axisinterval">#axisinterval</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-axisinterval" class="dfn-panel" data-for="axisinterval" id="infopanel-for-axisinterval">
+   <span id="infopaneltitle-for-axisinterval" style="display:none">Info about the 'AxisInterval' definition.</span><b><a href="#axisinterval">#axisinterval</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-axisinterval">4.2.8. AxisSpace</a>
     <li><a href="#ref-for-axisinterval①">4.3.2. AxisInterval</a> <a href="#ref-for-axisinterval②">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="axisinterval-start">
-   <b><a href="#axisinterval-start">#axisinterval-start</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-axisinterval-start" class="dfn-panel" data-for="axisinterval-start" id="infopanel-for-axisinterval-start">
+   <span id="infopaneltitle-for-axisinterval-start" style="display:none">Info about the 'start' definition.</span><b><a href="#axisinterval-start">#axisinterval-start</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-axisinterval-start">4.3.2. AxisInterval</a> <a href="#ref-for-axisinterval-start①">(2)</a> <a href="#ref-for-axisinterval-start②">(3)</a> <a href="#ref-for-axisinterval-start③">(4)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="axisinterval-end">
-   <b><a href="#axisinterval-end">#axisinterval-end</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-axisinterval-end" class="dfn-panel" data-for="axisinterval-end" id="infopanel-for-axisinterval-end">
+   <span id="infopaneltitle-for-axisinterval-end" style="display:none">Info about the 'end' definition.</span><b><a href="#axisinterval-end">#axisinterval-end</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-axisinterval-end">4.3.2. AxisInterval</a> <a href="#ref-for-axisinterval-end①">(2)</a> <a href="#ref-for-axisinterval-end②">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest">
-   <b><a href="#patchrequest">#patchrequest</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest" class="dfn-panel" data-for="patchrequest" id="infopanel-for-patchrequest">
+   <span id="infopaneltitle-for-patchrequest" style="display:none">Info about the 'PatchRequest' definition.</span><b><a href="#patchrequest">#patchrequest</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest">4.3.3. PatchRequest</a>
     <li><a href="#ref-for-patchrequest①">4.4.1. Extending the Font Subset</a> <a href="#ref-for-patchrequest②">(2)</a> <a href="#ref-for-patchrequest③">(3)</a>
@@ -2548,170 +2549,170 @@ them from being used for tracking.</p>
     <li><a href="#ref-for-patchrequest⑤">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-codepoints_have">
-   <b><a href="#patchrequest-codepoints_have">#patchrequest-codepoints_have</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-codepoints_have" class="dfn-panel" data-for="patchrequest-codepoints_have" id="infopanel-for-patchrequest-codepoints_have">
+   <span id="infopaneltitle-for-patchrequest-codepoints_have" style="display:none">Info about the 'codepoints_have' definition.</span><b><a href="#patchrequest-codepoints_have">#patchrequest-codepoints_have</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-codepoints_have">4.3.3. PatchRequest</a>
     <li><a href="#ref-for-patchrequest-codepoints_have①">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-patchrequest-codepoints_have②">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-codepoints_needed">
-   <b><a href="#patchrequest-codepoints_needed">#patchrequest-codepoints_needed</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-codepoints_needed" class="dfn-panel" data-for="patchrequest-codepoints_needed" id="infopanel-for-patchrequest-codepoints_needed">
+   <span id="infopaneltitle-for-patchrequest-codepoints_needed" style="display:none">Info about the 'codepoints_needed' definition.</span><b><a href="#patchrequest-codepoints_needed">#patchrequest-codepoints_needed</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-codepoints_needed">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-patchrequest-codepoints_needed①">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-indices_have">
-   <b><a href="#patchrequest-indices_have">#patchrequest-indices_have</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-indices_have" class="dfn-panel" data-for="patchrequest-indices_have" id="infopanel-for-patchrequest-indices_have">
+   <span id="infopaneltitle-for-patchrequest-indices_have" style="display:none">Info about the 'indices_have' definition.</span><b><a href="#patchrequest-indices_have">#patchrequest-indices_have</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-indices_have">4.3.3. PatchRequest</a> <a href="#ref-for-patchrequest-indices_have①">(2)</a>
     <li><a href="#ref-for-patchrequest-indices_have②">4.4.1. Extending the Font Subset</a> <a href="#ref-for-patchrequest-indices_have③">(2)</a>
     <li><a href="#ref-for-patchrequest-indices_have④">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-indices_have⑤">(2)</a> <a href="#ref-for-patchrequest-indices_have⑥">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-indices_needed">
-   <b><a href="#patchrequest-indices_needed">#patchrequest-indices_needed</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-indices_needed" class="dfn-panel" data-for="patchrequest-indices_needed" id="infopanel-for-patchrequest-indices_needed">
+   <span id="infopaneltitle-for-patchrequest-indices_needed" style="display:none">Info about the 'indices_needed' definition.</span><b><a href="#patchrequest-indices_needed">#patchrequest-indices_needed</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-indices_needed">4.3.3. PatchRequest</a>
     <li><a href="#ref-for-patchrequest-indices_needed①">4.4.1. Extending the Font Subset</a> <a href="#ref-for-patchrequest-indices_needed②">(2)</a>
     <li><a href="#ref-for-patchrequest-indices_needed③">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-indices_needed④">(2)</a> <a href="#ref-for-patchrequest-indices_needed⑤">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-features_have">
-   <b><a href="#patchrequest-features_have">#patchrequest-features_have</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-features_have" class="dfn-panel" data-for="patchrequest-features_have" id="infopanel-for-patchrequest-features_have">
+   <span id="infopaneltitle-for-patchrequest-features_have" style="display:none">Info about the 'features_have' definition.</span><b><a href="#patchrequest-features_have">#patchrequest-features_have</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-features_have">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-patchrequest-features_have①">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-features_needed">
-   <b><a href="#patchrequest-features_needed">#patchrequest-features_needed</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-features_needed" class="dfn-panel" data-for="patchrequest-features_needed" id="infopanel-for-patchrequest-features_needed">
+   <span id="infopaneltitle-for-patchrequest-features_needed" style="display:none">Info about the 'features_needed' definition.</span><b><a href="#patchrequest-features_needed">#patchrequest-features_needed</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-features_needed">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-patchrequest-features_needed①">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-axis_space_have">
-   <b><a href="#patchrequest-axis_space_have">#patchrequest-axis_space_have</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-axis_space_have" class="dfn-panel" data-for="patchrequest-axis_space_have" id="infopanel-for-patchrequest-axis_space_have">
+   <span id="infopaneltitle-for-patchrequest-axis_space_have" style="display:none">Info about the 'axis_space_have' definition.</span><b><a href="#patchrequest-axis_space_have">#patchrequest-axis_space_have</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-axis_space_have">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-patchrequest-axis_space_have①">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-axis_space_have②">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-axis_space_needed">
-   <b><a href="#patchrequest-axis_space_needed">#patchrequest-axis_space_needed</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-axis_space_needed" class="dfn-panel" data-for="patchrequest-axis_space_needed" id="infopanel-for-patchrequest-axis_space_needed">
+   <span id="infopaneltitle-for-patchrequest-axis_space_needed" style="display:none">Info about the 'axis_space_needed' definition.</span><b><a href="#patchrequest-axis_space_needed">#patchrequest-axis_space_needed</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-axis_space_needed">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-patchrequest-axis_space_needed①">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-axis_space_needed②">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-ordering_checksum">
-   <b><a href="#patchrequest-ordering_checksum">#patchrequest-ordering_checksum</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-ordering_checksum" class="dfn-panel" data-for="patchrequest-ordering_checksum" id="infopanel-for-patchrequest-ordering_checksum">
+   <span id="infopaneltitle-for-patchrequest-ordering_checksum" style="display:none">Info about the 'ordering_checksum' definition.</span><b><a href="#patchrequest-ordering_checksum">#patchrequest-ordering_checksum</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-ordering_checksum">4.3.3. PatchRequest</a>
     <li><a href="#ref-for-patchrequest-ordering_checksum①">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-patchrequest-ordering_checksum②">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-ordering_checksum③">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-original_font_checksum">
-   <b><a href="#patchrequest-original_font_checksum">#patchrequest-original_font_checksum</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-original_font_checksum" class="dfn-panel" data-for="patchrequest-original_font_checksum" id="infopanel-for-patchrequest-original_font_checksum">
+   <span id="infopaneltitle-for-patchrequest-original_font_checksum" style="display:none">Info about the 'original_font_checksum' definition.</span><b><a href="#patchrequest-original_font_checksum">#patchrequest-original_font_checksum</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-original_font_checksum">4.3.3. PatchRequest</a>
     <li><a href="#ref-for-patchrequest-original_font_checksum①">4.4.1. Extending the Font Subset</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-base_checksum">
-   <b><a href="#patchrequest-base_checksum">#patchrequest-base_checksum</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-base_checksum" class="dfn-panel" data-for="patchrequest-base_checksum" id="infopanel-for-patchrequest-base_checksum">
+   <span id="infopaneltitle-for-patchrequest-base_checksum" style="display:none">Info about the 'base_checksum' definition.</span><b><a href="#patchrequest-base_checksum">#patchrequest-base_checksum</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-base_checksum">4.3.3. PatchRequest</a>
     <li><a href="#ref-for-patchrequest-base_checksum①">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-patchrequest-base_checksum②">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-fragment_id">
-   <b><a href="#patchrequest-fragment_id">#patchrequest-fragment_id</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-fragment_id" class="dfn-panel" data-for="patchrequest-fragment_id" id="infopanel-for-patchrequest-fragment_id">
+   <span id="infopaneltitle-for-patchrequest-fragment_id" style="display:none">Info about the 'fragment_id' definition.</span><b><a href="#patchrequest-fragment_id">#patchrequest-fragment_id</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-fragment_id">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-patchrequest-fragment_id①">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-fragment_id②">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patchrequest-codepoint_ordering">
-   <b><a href="#patchrequest-codepoint_ordering">#patchrequest-codepoint_ordering</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patchrequest-codepoint_ordering" class="dfn-panel" data-for="patchrequest-codepoint_ordering" id="infopanel-for-patchrequest-codepoint_ordering">
+   <span id="infopaneltitle-for-patchrequest-codepoint_ordering" style="display:none">Info about the 'codepoint_ordering' definition.</span><b><a href="#patchrequest-codepoint_ordering">#patchrequest-codepoint_ordering</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patchrequest-codepoint_ordering">4.4.2. Handling Server Response</a>
     <li><a href="#ref-for-patchrequest-codepoint_ordering①">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="clientstate">
-   <b><a href="#clientstate">#clientstate</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-clientstate" class="dfn-panel" data-for="clientstate" id="infopanel-for-clientstate">
+   <span id="infopaneltitle-for-clientstate" style="display:none">Info about the 'ClientState' definition.</span><b><a href="#clientstate">#clientstate</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-clientstate">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-clientstate①">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="clientstate-original_font_checksum">
-   <b><a href="#clientstate-original_font_checksum">#clientstate-original_font_checksum</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-clientstate-original_font_checksum" class="dfn-panel" data-for="clientstate-original_font_checksum" id="infopanel-for-clientstate-original_font_checksum">
+   <span id="infopaneltitle-for-clientstate-original_font_checksum" style="display:none">Info about the 'original_font_checksum' definition.</span><b><a href="#clientstate-original_font_checksum">#clientstate-original_font_checksum</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-clientstate-original_font_checksum">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-clientstate-original_font_checksum①">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="clientstate-codepoint_ordering">
-   <b><a href="#clientstate-codepoint_ordering">#clientstate-codepoint_ordering</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-clientstate-codepoint_ordering" class="dfn-panel" data-for="clientstate-codepoint_ordering" id="infopanel-for-clientstate-codepoint_ordering">
+   <span id="infopaneltitle-for-clientstate-codepoint_ordering" style="display:none">Info about the 'codepoint_ordering' definition.</span><b><a href="#clientstate-codepoint_ordering">#clientstate-codepoint_ordering</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-clientstate-codepoint_ordering">4.4.1. Extending the Font Subset</a> <a href="#ref-for-clientstate-codepoint_ordering①">(2)</a> <a href="#ref-for-clientstate-codepoint_ordering②">(3)</a> <a href="#ref-for-clientstate-codepoint_ordering③">(4)</a> <a href="#ref-for-clientstate-codepoint_ordering④">(5)</a> <a href="#ref-for-clientstate-codepoint_ordering⑤">(6)</a> <a href="#ref-for-clientstate-codepoint_ordering⑥">(7)</a>
     <li><a href="#ref-for-clientstate-codepoint_ordering⑦">4.4.2. Handling Server Response</a>
     <li><a href="#ref-for-clientstate-codepoint_ordering⑧">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="clientstate-subset_axis_space">
-   <b><a href="#clientstate-subset_axis_space">#clientstate-subset_axis_space</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-clientstate-subset_axis_space" class="dfn-panel" data-for="clientstate-subset_axis_space" id="infopanel-for-clientstate-subset_axis_space">
+   <span id="infopaneltitle-for-clientstate-subset_axis_space" style="display:none">Info about the 'subset_axis_space' definition.</span><b><a href="#clientstate-subset_axis_space">#clientstate-subset_axis_space</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-clientstate-subset_axis_space">4.4.1. Extending the Font Subset</a>
     <li><a href="#ref-for-clientstate-subset_axis_space①">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="clientstate-original_axis_space">
-   <b><a href="#clientstate-original_axis_space">#clientstate-original_axis_space</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-clientstate-original_axis_space" class="dfn-panel" data-for="clientstate-original_axis_space" id="infopanel-for-clientstate-original_axis_space">
+   <span id="infopaneltitle-for-clientstate-original_axis_space" style="display:none">Info about the 'original_axis_space' definition.</span><b><a href="#clientstate-original_axis_space">#clientstate-original_axis_space</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-clientstate-original_axis_space">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="clientstate-original_features">
-   <b><a href="#clientstate-original_features">#clientstate-original_features</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-clientstate-original_features" class="dfn-panel" data-for="clientstate-original_features" id="infopanel-for-clientstate-original_features">
+   <span id="infopaneltitle-for-clientstate-original_features" style="display:none">Info about the 'original_features' definition.</span><b><a href="#clientstate-original_features">#clientstate-original_features</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-clientstate-original_features">4.5. Server: Responding to a PatchRequest</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="abstract-opdef-extend-the-font-subset">
-   <b><a href="#abstract-opdef-extend-the-font-subset">#abstract-opdef-extend-the-font-subset</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-abstract-opdef-extend-the-font-subset" class="dfn-panel" data-for="abstract-opdef-extend-the-font-subset" id="infopanel-for-abstract-opdef-extend-the-font-subset">
+   <span id="infopaneltitle-for-abstract-opdef-extend-the-font-subset" style="display:none">Info about the 'Extend the font subset' definition.</span><b><a href="#abstract-opdef-extend-the-font-subset">#abstract-opdef-extend-the-font-subset</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-abstract-opdef-extend-the-font-subset">4.4.3. Load a Font in a User Agent with a HTTP Cache</a> <a href="#ref-for-abstract-opdef-extend-the-font-subset①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="patch-request-header">
-   <b><a href="#patch-request-header">#patch-request-header</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-patch-request-header" class="dfn-panel" data-for="patch-request-header" id="infopanel-for-patch-request-header">
+   <span id="infopaneltitle-for-patch-request-header" style="display:none">Info about the 'patch request header' definition.</span><b><a href="#patch-request-header">#patch-request-header</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-patch-request-header">3.1. IFT Method Negotiation</a>
     <li><a href="#ref-for-patch-request-header①">3.3. Offline Usage</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="abstract-opdef-handle-server-response">
-   <b><a href="#abstract-opdef-handle-server-response">#abstract-opdef-handle-server-response</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-abstract-opdef-handle-server-response" class="dfn-panel" data-for="abstract-opdef-handle-server-response" id="infopanel-for-abstract-opdef-handle-server-response">
+   <span id="infopaneltitle-for-abstract-opdef-handle-server-response" style="display:none">Info about the 'Handle server response' definition.</span><b><a href="#abstract-opdef-handle-server-response">#abstract-opdef-handle-server-response</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-abstract-opdef-handle-server-response">4.4.1. Extending the Font Subset</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="abstract-opdef-handle-failed-font-load">
-   <b><a href="#abstract-opdef-handle-failed-font-load">#abstract-opdef-handle-failed-font-load</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-abstract-opdef-handle-failed-font-load" class="dfn-panel" data-for="abstract-opdef-handle-failed-font-load" id="infopanel-for-abstract-opdef-handle-failed-font-load">
+   <span id="infopaneltitle-for-abstract-opdef-handle-failed-font-load" style="display:none">Info about the 'Handle failed font load' definition.</span><b><a href="#abstract-opdef-handle-failed-font-load">#abstract-opdef-handle-failed-font-load</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-abstract-opdef-handle-failed-font-load">4.4.2. Handling Server Response</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="original-font">
-   <b><a href="#original-font">#original-font</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-original-font" class="dfn-panel" data-for="original-font" id="infopanel-for-original-font">
+   <span id="infopaneltitle-for-original-font" style="display:none">Info about the 'original font' definition.</span><b><a href="#original-font">#original-font</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-original-font">4.4.1. Extending the Font Subset</a> <a href="#ref-for-original-font①">(2)</a> <a href="#ref-for-original-font②">(3)</a> <a href="#ref-for-original-font③">(4)</a>
     <li><a href="#ref-for-original-font④">4.4.2. Handling Server Response</a>
@@ -2719,60 +2720,114 @@ them from being used for tracking.</p>
    </ul>
   </aside>
 <script>/* script-dfn-panel */
-
-document.body.addEventListener("click", function(e) {
-    var queryAll = function(sel) { return [].slice.call(document.querySelectorAll(sel)); }
-    // Find the dfn element or panel, if any, that was clicked on.
-    var el = e.target;
-    var target;
-    var hitALink = false;
-    while(el.parentElement) {
-        if(el.tagName == "A") {
-            // Clicking on a link in a <dfn> shouldn't summon the panel
-            hitALink = true;
-        }
-        if(el.classList.contains("dfn-paneled")) {
-            target = "dfn";
-            break;
-        }
-        if(el.classList.contains("dfn-panel")) {
-            target = "dfn-panel";
-            break;
-        }
-        el = el.parentElement;
+"use strict";
+{
+    function queryAll(sel) {
+        return [].slice.call(document.querySelectorAll(sel));
     }
-    if(target != "dfn-panel") {
+
+    // Add popup behavior to all dfns to show the corresponding dfn-panel.
+    var dfns = document.querySelectorAll('.dfn-paneled');
+    for (let dfn of dfns) { insertDfnPopupAction(dfn); }
+
+    document.body.addEventListener("click", (e) => {
+        // If not handled already, just hide all dfn panels.
+        hideAllDfnPanels();
+    });
+
+    function hideAllDfnPanels() {
         // Turn off any currently "on" or "activated" panels.
-        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(function(el){
-            el.classList.remove("on");
-            el.classList.remove("activated");
-        });
-    }
-    if(target == "dfn" && !hitALink) {
-        // open the panel
-        var dfnPanel = document.querySelector(".dfn-panel[data-for='" + el.id + "']");
-        if(dfnPanel) {
-            dfnPanel.classList.add("on");
-            var rect = el.getBoundingClientRect();
-            dfnPanel.style.left = window.scrollX + rect.right + 5 + "px";
-            dfnPanel.style.top = window.scrollY + rect.top + "px";
-            var panelRect = dfnPanel.getBoundingClientRect();
-            var panelWidth = panelRect.right - panelRect.left;
-            if(panelRect.right > document.body.scrollWidth && (rect.left - (panelWidth + 5)) > 0) {
-                // Reposition, because the panel is overflowing
-                dfnPanel.style.left = window.scrollX + rect.left - (panelWidth + 5) + "px";
-            }
-        } else {
-            console.log("Couldn't find .dfn-panel[data-for='" + el.id + "']");
-        }
-    } else if(target == "dfn-panel") {
-        // Switch it to "activated" state, which pins it.
-        el.classList.add("activated");
-        el.style.left = null;
-        el.style.top = null;
+        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>hideDfnPanel(el));
     }
 
-});
+    function showDfnPanel(dfnPanel, dfn) {
+        hideAllDfnPanels(); // Only display one at this time.
+        dfn.setAttribute("aria-expanded", "true");
+        dfnPanel.classList.add("on");
+        dfnPanel.style.left = "5px";
+        dfnPanel.style.top = "0px";
+        const panelRect = dfnPanel.getBoundingClientRect();
+        const panelWidth = panelRect.right - panelRect.left;
+        if (panelRect.right > document.body.scrollWidth) {
+            // Panel's overflowing the screen.
+            // Just drop it below the dfn and flip it rightward instead.
+            // This still wont' fix things if the screen is *really* wide,
+            // but fixing that's a lot harder without 'anchor()'.
+            dfnPanel.style.top = "1.5em";
+            dfnPanel.style.left = "auto";
+            dfnPanel.style.right = "0px";
+        }
+    }
+
+    function pinDfnPanel(dfnPanel) {
+        // Switch it to "activated" state, which pins it.
+        dfnPanel.classList.add("activated");
+        dfnPanel.style.left = null;
+        dfnPanel.style.top = null;
+    }
+
+    function hideDfnPanel(dfnPanel, dfn) {
+        if(!dfn) {
+            dfn = document.getElementById(dfnPanel.getAttribute("data-for"));
+        }
+        dfn.setAttribute("aria-expanded", "false")
+        dfnPanel.classList.remove("on");
+        dfnPanel.classList.remove("activated");
+    }
+
+    function toggleDfnPanel(dfnPanel, dfn) {
+        if(dfnPanel.classList.contains("on")) {
+            hideDfnPanel(dfnPanel, dfn);
+        } else {
+            showDfnPanel(dfnPanel, dfn);
+        }
+    }
+
+    function insertDfnPopupAction(dfn) {
+        // Find dfn panel
+        const dfnPanel = document.querySelector(`.dfn-panel[data-for='${dfn.id}']`);
+        if (dfnPanel) {
+            const panelWrapper = document.createElement('span');
+            panelWrapper.appendChild(dfnPanel);
+            panelWrapper.style.position = "relative";
+            panelWrapper.style.height = "0px";
+            dfn.insertAdjacentElement("afterend", panelWrapper);
+            dfn.setAttribute('role', 'button');
+            dfn.setAttribute('aria-expanded', 'false')
+            dfn.tabIndex = 0;
+            dfn.classList.add('has-dfn-panel');
+            dfn.addEventListener('click', (event) => {
+                showDfnPanel(dfnPanel, dfn);
+                event.stopPropagation();
+            });
+            dfn.addEventListener('keypress', (event) => {
+                const kc = event.keyCode;
+                // 32->Space, 13->Enter
+                if(kc == 32 || kc == 13) {
+                    toggleDfnPanel(dfnPanel, dfn);
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            });
+
+            dfnPanel.addEventListener('click', (event) => {
+                pinDfnPanel(dfnPanel);
+                event.stopPropagation();
+            });
+
+            dfnPanel.addEventListener('keydown', (event) => {
+                if(event.keyCode == 27) { // Escape key
+                    hideDfnPanel(dfnPanel, dfn);
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            })
+
+        } else {
+            console.log("Couldn't find .dfn-panel[data-for='" + dfn.id + "']");
+        }
+    }
+}
 </script>
 <script>/* script-var-click-highlighting */
 
