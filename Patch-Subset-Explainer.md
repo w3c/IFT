@@ -24,6 +24,7 @@
 - [Detailed design discussion](#detailed-design-discussion)
   - [Why use two methods](#why-use-two-methods)
   - [Why use a url query parameter](#why-use-a-url-query-parameter)
+  - [Privacy concern: snooping on the user](#privacy-concern-snooping-on-the-user)
 - [Testing](#testing)
 - [Stakeholder Feedback / Opposition](#stakeholder-feedback--opposition)
 
