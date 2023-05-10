@@ -182,6 +182,8 @@ and also perhaps a lack of appreciation that HTTPS (which is required for IFT)
 prevents the person-in-the-middle attack,
 or that information is required to [not leak across origins](https://w3c.github.io/IFT/Overview.html#per-origin).
 
+- [Require that incrementally-loaded fonts not be preserved nor exposed to other origins](https://github.com/w3c/IFT/issues/43)
+
 Discussion then centere around what an (assumed malicious)
 IFT font server could **learn about the user**.
 For example, in languages with very large character sets,
