@@ -158,7 +158,7 @@ It was seen as problematic by the HTTP WG, because it impinges on a
 
 The HTTP WG introduced us the HTTP [QUERY](https://httpwg.org/http-extensions/draft-ietf-httpbis-safe-method-w-body.html),
 which seemed like a better way to achieve the same result.
-There is an open issue, as QUERY is still a draft wil limited real-world deployment:
+There is an open issue, as QUERY is still a draft with limited real-world deployment:
 
  - [Add QUERY as a HTTP method type used for patch subset.](https://github.com/w3c/IFT/issues/127)
 
