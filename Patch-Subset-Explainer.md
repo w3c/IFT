@@ -194,7 +194,8 @@ it might be possible to infer the type of content on the web page,
 by looking for unusual characters whose use tends to be domain specific.
 
 Discussion is ongoing, and the current state of our understanding
-is in the specification as [Content inference from character set](https://w3c.github.io/IFT/Overview.html#content-inference-from-character-set).
+is in the specification as [Content inference from character set](https://w3c.github.io/IFT/Overview.html#content-inference-from-character-set)
+and also in [Simulating Impact of Noise on Privacy](https://github.com/w3c/PFE-analysis/blob/main/results/noise_simulations.md).
 
 ## Testing
 
