@@ -123,7 +123,7 @@ method, <a href="#range-request-incxfer">Range Request</a>, has no server-side r
 
 In order for the range request method to be as effective as possible, the font file itself should be internally arranged in a particular way, in order to decrease the number of requests the browser needs to make. Therefore, it is expected that web developers wishing to use the range request method will use font files that have had their contents already arranged optimally.
 
-This method was modelled after video playback on the web, where seeking in a video causes the browser to send a range request to the server.
+This method was modeled after video playback on the web, where seeking in a video causes the browser to send a range request to the server.
 
 Technical Motivation: Evaluation Report {#evaluation-report}
 ------------------------------------------------------------
@@ -133,7 +133,7 @@ to this specification.
 
 The evaluation report found that patch subset was generally more efficient in terms of overall
 performance and transferred bytes than range request. However, Range Request is simpler to deploy
-for many uses cases while still providing material improvments to loading performance for large fonts.
+for many use cases while still providing material improvements to loading performance for large fonts.
 
 Performance Considerations and the use of Incremental Font Transfer {#performance-considerations}
 --------------------------------------------------------
@@ -144,7 +144,7 @@ and the content being rendered. This section provides non-normative guidance to 
 1. When incremental transfer should be utilized.
 2. When used, which of the two methods should be utilized.
 
-Incrementally loading a font has a fundemental performance tradeoff versus loading the whole font.
+Incrementally loading a font has a fundamental performance trade off versus loading the whole font.
 Simplistically, under incremental transfer less bytes may be transferred at the potential cost of
 increasing the total number of network requests being made, and/or increased request processing
 latency. In general incremental font transfer will be beneficial where the reduction in latency from
@@ -188,7 +188,7 @@ performance.
 Performant implementations should incorporate a similar mechanism which can select codepoints which are
 likely to be needed in the future and preemptively load them. This will improve performance by reducing
 the need to make additional requests for missing codepoints. The set of codepoints the client has and
-the set they are requesting can be used in conjuction with codepoint occurence frequency and codepoint
+the set they are requesting can be used in conjunction with codepoint occurrence frequency and codepoint
 usage in languages/scripts  to make predictions on which additional codepoints are likely to be needed.
 
 Under range request the prediction mechanism will need to be part of the client implementation. In
@@ -212,7 +212,7 @@ three main factors for this:
 3. Patch subset is able to compress incremental font data against previously loaded data from that
     font. This leads to better compression overall compared to range request.
 
-See the evaluation report for a quantative assessment of the difference in performance of patch
+See the evaluation report for a quantitative assessment of the difference in performance of patch
 subset versus range request [[PFE-report#analysis]].
 
 The downside of using patch subset is that it requires server side processing to produce the patches,
@@ -229,7 +229,7 @@ Opt-In Mechanism {#opt-in}
 
 <em>This section is general to both IFT methods.</em>
 
-Webpage's can choose to opt-in to either patch subset or range request incremental transfer for a font
+Web page's can choose to opt-in to either patch subset or range request incremental transfer for a font
 via the use of a CSS font tech keyword ([[css-fonts-4#font-tech-definitions]]) inside the
 ''@font-face'' block.
 
@@ -260,11 +260,11 @@ Note: Each individual <code>@font-face</code> block may or may not opt-in to IFT
 variety of ways fonts are used on web pages. Authors have control over which fonts they want to use
 this technology with, and which they do not.
 
-Note: the use of <code>incremental-auto</code> may incur a CORS preflight request for the initial
+Note: the use of <code>incremental-auto</code> may incur a CORS pre-flight request for the initial
 request of method negotiation, as the initial request sets a custom header.
 
-Note: the IFT tech keywords can be used in conjuction with other font tech specifiers to perform
-font feature selection. For example a <code>@font-face</code> could include two urls one with
+Note: the IFT tech keywords can be used in conjunction with other font tech specifiers to perform
+font feature selection. For example a <code>@font-face</code> could include two URLs one with
 <code>tech(incremental-patch, color-COLRv1)</code> and the other with
 <code>tech(incremental-patch, color-COLRv0)</code>. The client would initiate an incremental patch
 subset transfer to one of the URLs depending on which version of COLR is supported.
@@ -301,7 +301,7 @@ IFT Method Negotiation {#method-negotiation}
 
 When the particular IFT method(s) that are supported by a server are not known, the client must
 determine which method to use. Different clients may support different IFT methods, and different
-servers may support different IFT methods, so a negotation occurs as such:
+servers may support different IFT methods, so a negotiation occurs as such:
 
 1.  The browser makes the first request to the server using the GET HTTP method ([[rfc9110#section-9.3.1]]).
      If the client prefers the <a href="#patch-incxfer">patch-subset method</a>, it sends the relevant
@@ -396,9 +396,9 @@ Offline Usage {#offline-usage}
 
 Special consideration must be taken when saving a page for offline usage that uses an incrementally
 transferred font since the saved page won't be able to increment the font if content changes (eg.
-due to javascript execution). In these cases the page saving mechanism should download the full font
+due to JavaScript execution). In these cases the page saving mechanism should download the full font
 by making a normal GET request without the [=patch request header=] to the font url. Additionally
-when URL's are rewritten to point to the saved full font any of the incremental tech specifiers should
+when URLs are rewritten to point to the saved full font any of the incremental tech specifiers should
 be removed.
 
 Patch Based Incremental Transfer {#patch-incxfer}
@@ -411,7 +411,7 @@ A <dfn dfn>font subset</dfn> is a modified version of a font file that contains 
 render a subset of:
 
 *  the codepoints,
-*  <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout
+*  <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout
     features</a>,
 *  and <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a>.
 
@@ -708,7 +708,7 @@ Zig-Zag encoding reversibly converts signed integers to unsigned integers,
 using the same number of bits. The entire range of values is supported.
 This step is required, as the [[#integerlist-uintbase128]] step works on
 unsigned integers only. The encoding maps positive integer values to even positive integers and
-negative integer values to odd positive integers. Psuedo code:
+negative integer values to odd positive integers. Pseudo code:
 
 ```
 encode(n):
@@ -864,7 +864,7 @@ bytes = [03 07 03 81 7F]
 ### <dfn>FeatureTagSet</dfn> ### {#featuretagset-object}
 
 A FeatureTagSet encodes a set of zero or more
-<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>.
+<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout feature tags</a>.
 Each feature tag is mapped to an integer value and then the set of mapped integers are encoded in a
 [=SortedIntegerList=]. Feature tags are mapped to integers as follows:
 
@@ -878,7 +878,7 @@ Each feature tag is mapped to an integer value and then the set of mapped intege
 *  Otherwise: the tag is converted to an integer by treating the tag's 4 byte string as a 4 byte
     little endian integer.
 
-The final encoding is produced by sorting the mapped integers (exlcuding tags which are skipped)
+The final encoding is produced by sorting the mapped integers (excluding tags which are skipped)
 into ascending order and then encoding the sorted list as a [=SortedIntegerList=].
 
 When decoding a FeatureTagSet the integer values are mapped back to the original tags by reversing
@@ -1091,7 +1091,7 @@ The inputs to this algorithm are:
     minimum [=font subset=].
 
 * <var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder
-    of this section is desribed in terms of [[fetch#fetching]], but it is allowed to substitute
+    of this section is described in terms of [[fetch#fetching]], but it is allowed to substitute
     whatever HTTP fetching algorithm the user agent supports.
 
 The algorithm outputs:
@@ -1180,7 +1180,7 @@ The algorithm:
 
      *  [=PatchRequest/features_have=]: set to the list of
          <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">
-         opentype layout feature tags</a> that the current <var>font subset</var> has data
+         OpenType layout feature tags</a> that the current <var>font subset</var> has data
          for. If the current <var>font subset</var> is not set then this
          field is left unset. Additionally, if the current <var>font subset</var> has all
          data for features present in the [=original font=] then this field can be unset.
@@ -1224,13 +1224,13 @@ The algorithm:
 4. Invoke [$Handle server response$] with the response from the server and the <var>font subset</var>
     then return the result.
 
-Note: POST is preferred for the HTTP method since it will not cause a CORS preflight request
+Note: POST is preferred for the HTTP method since it will not cause a CORS pre-flight request
 and the request object is more compactly encoded. GET should only be used during
 <a href="#method-negotiation">method negotiation</a>.
 
 <h4 algorithm id="handling-patch-response">Handling Server Response</h4>
 
-If a server is able to succsessfully process a [=PatchRequest=]
+If a server is able to successfully process a [=PatchRequest=]
 it will respond with HTTP [=response/status=] code 200 and the [=response/body=] of the response will
 be an encoded representation of the extended font subset. The encoded representation may be a binary
 patch against the current font subset.
@@ -1281,7 +1281,7 @@ The algorithm:
 4. Verify that the union of the codepoints present in the <var>extended font subset</var> and all codepoints
     listed in the <var>client state</var> field [=ClientState/missing_codepoints=] is equal to the set of
     codepoints asked for (union of codepoints/indices needed and codepoints/indices have) in the request
-    which generated this response. If they are not euqal, this is an invalid response. Invoke
+    which generated this response. If they are not equal, this is an invalid response. Invoke
     [$Handle failed font load$] and return the result.
 
 5. Return the <var>extended font subset</var> and any cache headers that were set on the <var>server response</var>.
@@ -1319,7 +1319,7 @@ The inputs to this algorithm:
     minimum [=font subset=].
 
 * <var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder
-    of this section is desribed in terms of [[fetch#fetching]], but it is allowed to substitute
+    of this section is described in terms of [[fetch#fetching]], but it is allowed to substitute
     whatever HTTP fetching algorithm the user agent supports.
 
 The algorithm outputs:
@@ -1409,7 +1409,7 @@ Note: the request may optionally set [=PatchRequest/codepoint_ordering=] which i
 provide the exact codepoint ordering that was used to encode [=PatchRequest/indices_have=] and
 [=PatchRequest/indices_needed=].
 
-Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout feature tags</a>:
+Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout feature tags</a>:
 
 1.  Feature tags the client's subset has: specified by [=PatchRequest/features_have=]. If the field is
      unset this indicates the client's subset contains all features in the [=original font=].
@@ -1475,7 +1475,7 @@ result in an extended [=font subset=]:
 
     *  <span class="conform server" id="conform-response-client-state-original-features">
         The [=ClientState/original_features=] field must be set to the list of
-        <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout
+        <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout
         feature tags</a> that the [=original font=] has data for.</span>
 
     *  <span class="conform server" id="conform-response-client-state-missing-codepoints">
@@ -1513,7 +1513,7 @@ Possible error responses:
 ### Range Request Support ### {#range-request-support}
 
 A patch subset support server must also support incremental transfer via [[#range-request-incxfer]].
-To support range request incremental tranfser the patch subset server must support HTTP range requests
+To support range request incremental transfer the patch subset server must support HTTP range requests
 ([[RFC9110#section-14]]) against the font files it provides via patch subset.
 
 
@@ -1686,7 +1686,7 @@ One mitigation, which was originally introduced for reasons of networking effici
 In the patch subset method 64 bit checksums are generated and transferred between client and server. These are used to
 ensure the client and server are in sync. They detect cases such as where the original font being patched has changed or
 the server is not able to reproduce the clients font subset. The checksums will be stored in a browsers HTTP cache as
-part of the font subset and thus are subject to the cache paritioning applied by the browser. Since modern browsers
+part of the font subset and thus are subject to the cache partitioning applied by the browser. Since modern browsers
 cache resources keyed by the site domain, this will limit checksum availability to within the site domain and prevent
 them from being used for tracking.
 
@@ -1727,7 +1727,7 @@ Since the <a href="https://www.w3.org/TR/2022/WD-IFT-20220628/">Working
   <li>Added an id for offline usage header</li>
   <li>Updated the responding to patch request section for client state changes</li>
   <li>Updated loading with a cache section for client state changes</li>
-  <li>Added client side handling of new urecognized_ordering field</li>
+  <li>Added client side handling of new unrecognized_ordering field</li>
   <li>Updated handling failed font load section for client state</li>
   <li>Updated the 'Extending font subset' section for client state changes</li>
   <li>Added ClientState object schema</li>
