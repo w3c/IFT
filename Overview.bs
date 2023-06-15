@@ -1061,6 +1061,10 @@ For a [=PatchRequest=] object to be well formed:
     <td>4</td>
     <td><dfn for="ClientState">original_features</dfn></td><td>[=FeatureTagSet=]</td></tr>
 
+  <tr>
+    <td>5</td>
+    <td><dfn for="ClientState">missing_codepoints</dfn></td><td>[=CompressedSet=]</td></tr>
+
 </table>
 
 Client {#client}
@@ -1147,10 +1151,11 @@ The algorithm:
      as follows:
 
      *  [=PatchRequest/codepoints_have=]: set to exactly the set of codepoints that the current
-         <var>font subset</var> contains data for. If the current
+         <var>font subset</var> contains data for plus the set of missing codepoints
+         specified in [=ClientState/missing_codepoints=]. If the current
          <var>font subset</var> is not set then this field is left unset. If
-         <var>client state</var> is available and has a [=ClientState/codepoint_ordering=] then
-         this field should not be set.
+         <var>client state</var> is available and has a [=ClientState/codepoint_ordering=]
+         and [=ClientState/missing_codepoints=] is empty then this field should not be set.
 
      *  [=PatchRequest/codepoints_needed=]: set to the set of codepoints that the client wants to
          add to its [=font subset=]. That is the codepoint set from <var>desired subset
@@ -1265,8 +1270,21 @@ The algorithm:
      specified by the [[rfc9110#section-8.4|Content-Encoding]] header. If the
      [[rfc9110#section-8.4|Content-Encoding]] is one of those from [[#patch-encodings]] then
      the input <var>font subset</var> will be used as the source file for the decoding operation. The
-     decoded response is the new extended font subset. Return the extended font subset and any cache
-     headers that were set on the <var>server response</var>.
+     decoded response is the new <var>extended font subset</var>.
+
+3.  Load the <var>client state</var> from the <var>extended font subset</var>. Client state is stored in the
+    <var>extended font subset</var> as a
+    <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>
+    identified by the 4-byte tag 'IFTP'. The contents of the table are a single [=ClientState=] object
+    encoded via CBOR.
+
+4. Verify that the union of the codepoints present in the <var>extended font subset</var> and all codepoints
+    listed in the <var>client state</var> field [=ClientState/missing_codepoints=] is equal to the set of
+    codepoints asked for (union of codepoints/indices needed and codepoints/indices have) in the request
+    which generated this response. If they are not euqal, this is an invalid response. Invoke
+    [$Handle failed font load$] and return the result.
+
+5. Return the <var>extended font subset</var> and any cache headers that were set on the <var>server response</var>.
 
 <dfn abstract-op>Handle failed font load</dfn>
 
@@ -1459,6 +1477,11 @@ result in an extended [=font subset=]:
         The [=ClientState/original_features=] field must be set to the list of
         <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout
         feature tags</a> that the [=original font=] has data for.</span>
+
+    *  <span class="conform server" id="conform-response-client-state-missing-codepoints">
+        The [=ClientState/missing_codepoints=] field must be set to the list of codepoints
+        in that are in the set of codepoints needed or the set of codepoints the client has,
+        and are not present in the [=original font=].
 
 Additionally:
 
