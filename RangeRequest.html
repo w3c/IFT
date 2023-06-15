@@ -4,14 +4,14 @@
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <title>Range Request Incremental Font Transfer</title>
   <meta content="WD" name="w3c-status">
-  <meta content="Bikeshed version d9bd89757, updated Thu Mar 23 10:06:53 2023 -0700" name="generator">
+  <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/RangeRequest/" rel="canonical">
-  <meta content="0fa655056ac70763900d5de2e6431fb34d44341c" name="document-revision">
+  <meta content="bac9661bf7980ed085b84b6af157e3f6c9acf27b" name="document-revision">
 <style>
     .conform:hover {background: #31668f; color: white}
     .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
     </style>
-<style>/* style-autolinks */
+<style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
     color: var(--a-normal-text);
     font-size: inherit;
@@ -72,8 +72,238 @@ pre .property::before, pre .property::after {
 [data-link-type=biblio] {
     white-space: pre;
 }
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --selflink-text: black;
+        --selflink-bg: silver;
+        --selflink-hover-text: white;
+    }
+}
 </style>
-<style>/* style-counters */
+<style>/* Boilerplate: style-colors */
+
+/* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
+:root {
+    color-scheme: light dark;
+
+    --text: black;
+    --bg: white;
+
+    --unofficial-watermark: url(https://www.w3.org/StyleSheets/TR/2016/logos/UD-watermark);
+
+    --logo-bg: #1a5e9a;
+    --logo-active-bg: #c00;
+    --logo-text: white;
+
+    --tocnav-normal-text: #707070;
+    --tocnav-normal-bg: var(--bg);
+    --tocnav-hover-text: var(--tocnav-normal-text);
+    --tocnav-hover-bg: #f8f8f8;
+    --tocnav-active-text: #c00;
+    --tocnav-active-bg: var(--tocnav-normal-bg);
+
+    --tocsidebar-text: var(--text);
+    --tocsidebar-bg: #f7f8f9;
+    --tocsidebar-shadow: rgba(0,0,0,.1);
+    --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+    --toclink-text: var(--text);
+    --toclink-underline: #3980b5;
+    --toclink-visited-text: var(--toclink-text);
+    --toclink-visited-underline: #054572;
+
+    --heading-text: #005a9c;
+
+    --hr-text: var(--text);
+
+    --algo-border: #def;
+
+    --del-text: red;
+    --del-bg: transparent;
+    --ins-text: #080;
+    --ins-bg: transparent;
+
+    --a-normal-text: #034575;
+    --a-normal-underline: #bbb;
+    --a-visited-text: var(--a-normal-text);
+    --a-visited-underline: #707070;
+    --a-hover-bg: rgba(75%, 75%, 75%, .25);
+    --a-active-text: #c00;
+    --a-active-underline: #c00;
+
+    --blockquote-border: silver;
+    --blockquote-bg: transparent;
+    --blockquote-text: currentcolor;
+
+    --issue-border: #e05252;
+    --issue-bg: #fbe9e9;
+    --issue-text: var(--text);
+    --issueheading-text: #831616;
+
+    --example-border: #e0cb52;
+    --example-bg: #fcfaee;
+    --example-text: var(--text);
+    --exampleheading-text: #574b0f;
+
+    --note-border: #52e052;
+    --note-bg: #e9fbe9;
+    --note-text: var(--text);
+    --noteheading-text: hsl(120, 70%, 30%);
+    --notesummary-underline: silver;
+
+    --assertion-border: #aaa;
+    --assertion-bg: #eee;
+    --assertion-text: black;
+
+    --advisement-border: orange;
+    --advisement-bg: #fec;
+    --advisement-text: var(--text);
+    --advisementheading-text: #b35f00;
+
+    --warning-border: red;
+    --warning-bg: hsla(40,100%,50%,0.95);
+    --warning-text: var(--text);
+
+    --amendment-border: #330099;
+    --amendment-bg: #F5F0FF;
+    --amendment-text: var(--text);
+    --amendmentheading-text: #220066;
+
+    --def-border: #8ccbf2;
+    --def-bg: #def;
+    --def-text: var(--text);
+    --defrow-border: #bbd7e9;
+
+    --datacell-border: silver;
+
+    --indexinfo-text: #707070;
+
+    --indextable-hover-text: black;
+    --indextable-hover-bg: #f7f8f9;
+
+    --outdatedspec-bg: rgba(0, 0, 0, .5);
+    --outdatedspec-text: black;
+    --outdated-bg: maroon;
+    --outdated-text: white;
+    --outdated-shadow: red;
+
+    --editedrec-bg: darkorange;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #ddd;
+        --bg: black;
+
+        --unofficial-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='%23100808' transform='translate(200 200) rotate(-45) translate(-200 -200)' stroke='%23100808' stroke-width='3'%3E%3Ctext x='50%25' y='220' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EUNOFFICIAL%3C/text%3E%3Ctext x='50%25' y='305' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EDRAFT%3C/text%3E%3C/g%3E%3C/svg%3E");
+
+        --logo-bg: #1a5e9a;
+        --logo-active-bg: #c00;
+        --logo-text: white;
+
+        --tocnav-normal-text: #999;
+        --tocnav-normal-bg: var(--bg);
+        --tocnav-hover-text: var(--tocnav-normal-text);
+        --tocnav-hover-bg: #080808;
+        --tocnav-active-text: #f44;
+        --tocnav-active-bg: var(--tocnav-normal-bg);
+
+        --tocsidebar-text: var(--text);
+        --tocsidebar-bg: #080808;
+        --tocsidebar-shadow: rgba(255,255,255,.1);
+        --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+        --toclink-text: var(--text);
+        --toclink-underline: #6af;
+        --toclink-visited-text: var(--toclink-text);
+        --toclink-visited-underline: #054572;
+
+        --heading-text: #8af;
+
+        --hr-text: var(--text);
+
+        --algo-border: #456;
+
+        --del-text: #f44;
+        --del-bg: transparent;
+        --ins-text: #4a4;
+        --ins-bg: transparent;
+
+        --a-normal-text: #6af;
+        --a-normal-underline: #555;
+        --a-visited-text: var(--a-normal-text);
+        --a-visited-underline: var(--a-normal-underline);
+        --a-hover-bg: rgba(25%, 25%, 25%, .2);
+        --a-active-text: #f44;
+        --a-active-underline: var(--a-active-text);
+
+        --borderedblock-bg: rgba(255, 255, 255, .05);
+
+        --blockquote-border: silver;
+        --blockquote-bg: var(--borderedblock-bg);
+        --blockquote-text: currentcolor;
+
+        --issue-border: #e05252;
+        --issue-bg: var(--borderedblock-bg);
+        --issue-text: var(--text);
+        --issueheading-text: hsl(0deg, 70%, 70%);
+
+        --example-border: hsl(50deg, 90%, 60%);
+        --example-bg: var(--borderedblock-bg);
+        --example-text: var(--text);
+        --exampleheading-text: hsl(50deg, 70%, 70%);
+
+        --note-border: hsl(120deg, 100%, 35%);
+        --note-bg: var(--borderedblock-bg);
+        --note-text: var(--text);
+        --noteheading-text: hsl(120, 70%, 70%);
+        --notesummary-underline: silver;
+
+        --assertion-border: #444;
+        --assertion-bg: var(--borderedblock-bg);
+        --assertion-text: var(--text);
+
+        --advisement-border: orange;
+        --advisement-bg: #222218;
+        --advisement-text: var(--text);
+        --advisementheading-text: #f84;
+
+        --warning-border: red;
+        --warning-bg: hsla(40,100%,20%,0.95);
+        --warning-text: var(--text);
+
+        --amendment-border: #330099;
+        --amendment-bg: #080010;
+        --amendment-text: var(--text);
+        --amendmentheading-text: #cc00ff;
+
+        --def-border: #8ccbf2;
+        --def-bg: #080818;
+        --def-text: var(--text);
+        --defrow-border: #136;
+
+        --datacell-border: silver;
+
+        --indexinfo-text: #aaa;
+
+        --indextable-hover-text: var(--text);
+        --indextable-hover-bg: #181818;
+
+        --outdatedspec-bg: rgba(255, 255, 255, .5);
+        --outdatedspec-text: black;
+        --outdated-bg: maroon;
+        --outdated-text: white;
+        --outdated-shadow: red;
+
+        --editedrec-bg: darkorange;
+    }
+    /* In case a transparent-bg image doesn't expect to be on a dark bg,
+       which is quite common in practice... */
+    img { background: white; }
+}
+</style>
+<style>/* Boilerplate: style-counters */
 body {
     counter-reset: example figure issue;
 }
@@ -102,17 +332,22 @@ figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
 }
 </style>
-<style>/* style-dfn-panel */
+<style>/* Boilerplate: style-dfn-panel */
 :root {
     --dfnpanel-bg: #ddd;
     --dfnpanel-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+    }
 }
 .dfn-panel {
     position: absolute;
     z-index: 35;
     width: 20em;
-    min-width: min-content;
-    max-width: 300px;
+    width: 300px;
     height: auto;
     max-height: 500px;
     overflow: auto;
@@ -129,8 +364,15 @@ figcaption:not(.no-marker)::before {
 .dfn-panel a { color: var(--dfnpanel-text); }
 .dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
 .dfn-panel > b + b { margin-top: 0.25em; }
-.dfn-panel ul { padding: 0; }
-.dfn-panel li { list-style: inside; }
+.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
+.dfn-panel li a {
+    white-space: pre;
+    display: inline-block;
+    max-width: calc(300px - 1.5em - 1em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .dfn-panel.activated {
     display: inline-block;
     position: fixed;
@@ -141,9 +383,9 @@ figcaption:not(.no-marker)::before {
     max-height: 30vh;
 }
 
-.dfn-paneled { cursor: pointer; }
+.dfn-paneled[role="button"] { cursor: pointer; }
 </style>
-<style>/* style-issues */
+<style>/* Boilerplate: style-issues */
 a[href].issue-return {
     float: right;
     float: inline-end;
@@ -152,7 +394,7 @@ a[href].issue-return {
     text-decoration: none;
 }
 </style>
-<style>/* style-md-lists */
+<style>/* Boilerplate: style-md-lists */
 /* This is a weird hack for me not yet following the commonmark spec
    regarding paragraph and lists. */
 [data-md] > :first-child {
@@ -162,7 +404,7 @@ a[href].issue-return {
     margin-bottom: 0;
 }
 </style>
-<style>/* style-selflinks */
+<style>/* Boilerplate: style-selflinks */
 
 :root {
     --selflink-text: white;
@@ -252,7 +494,7 @@ dfn > a.self-link::before      { content: "#"; }
     </div>
    </details>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2023 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document" rel="license">permissive document license</a> rules apply. </p>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2023 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/copyright-software" rel="license" title="W3C Software and Document License">permissive document license</a> rules apply. </p>
    <hr title="Separator for header">
   </div>
   <div class="p-summary" data-fill-with="abstract">
@@ -276,7 +518,11 @@ dfn > a.self-link::before      { content: "#"; }
    <p> Publication as a Working Draft does not imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. This is a draft document and may be updated, replaced or
   obsoleted by other documents at any time. It is inappropriate to cite this
   document as other than work in progress. </p>
-  <p>This document was produced by a group operating under the <a href="https://www.w3.org/Consortium/Patent-Policy/">W3C Patent Policy</a>. W3C maintains a <a rel="disclosure" href="https://www.w3.org/groups/wg/webfonts/ipr">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="https://www.w3.org/Consortium/Patent-Policy/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/Consortium/Patent-Policy/#sec-Disclosure">section 6 of the W3C Patent Policy</a>.</p>
+   <p> This document was produced by groups operating under
+  the <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/">W3C Patent Policy</a>.
+  W3C maintains a <a href="https://www.w3.org/groups/wg/webfonts/ipr" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group;
+  that page also includes instructions for disclosing a patent.
+  An individual who has actual knowledge of a patent which the individual believes contains <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>. </p>
    <p> This document is governed by the <a href="https://www.w3.org/2021/Process-20211102/" id="w3c_process_revision">2 November 2021 W3C Process Document</a>. </p>
    <p></p>
   </div>
@@ -482,7 +728,7 @@ itself be statically compressed.</p>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
    <dt id="biblio-ift">[IFT]
-   <dd>Chris Lilley; Myles Maxfield; Garret Rieger. <a href="https://www.w3.org/TR/IFT/"><cite>Incremental Font Transfer</cite></a>. 28 June 2022. WD. URL: <a href="https://www.w3.org/TR/IFT/">https://www.w3.org/TR/IFT/</a>
+   <dd>Chris Lilley; Garret Rieger; Myles Maxfield. <a href="https://www.w3.org/TR/IFT/"><cite>Incremental Font Transfer</cite></a>. 30 May 2023. WD. URL: <a href="https://www.w3.org/TR/IFT/">https://www.w3.org/TR/IFT/</a>
    <dt id="biblio-opentype">[OPENTYPE]
    <dd><a href="http://www.microsoft.com/typography/otspec/default.htm"><cite>OpenType specification</cite></a>. URL: <a href="http://www.microsoft.com/typography/otspec/default.htm">http://www.microsoft.com/typography/otspec/default.htm</a>
    <dt id="biblio-rfc2119">[RFC2119]
@@ -508,56 +754,68 @@ itself be statically compressed.</p>
    <div class="issue"> <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with composite glyphs via range-request</a> <a class="issue-return" href="#issue-5533a524" title="Jump to section">↵</a></div>
    <div class="issue"> <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a> <a class="issue-return" href="#issue-763d5c98" title="Jump to section">↵</a></div>
   </div>
-  <aside aria-labelledby="infopaneltitle-for-range-request-optimized-font" class="dfn-panel" data-for="range-request-optimized-font" id="infopanel-for-range-request-optimized-font">
-   <span id="infopaneltitle-for-range-request-optimized-font" style="display:none">Info about the 'range-request optimized font' definition.</span><b><a href="#range-request-optimized-font">#range-request-optimized-font</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-range-request-optimized-font">1.2.2. Introduction</a> <a href="#ref-for-range-request-optimized-font①">(2)</a>
-    <li><a href="#ref-for-range-request-optimized-font②">1.2.3. Compression</a> <a href="#ref-for-range-request-optimized-font③">(2)</a> <a href="#ref-for-range-request-optimized-font④">(3)</a>
-    <li><a href="#ref-for-range-request-optimized-font⑤">1.2.4. Table Ordering</a> <a href="#ref-for-range-request-optimized-font⑥">(2)</a> <a href="#ref-for-range-request-optimized-font⑦">(3)</a>
-    <li><a href="#ref-for-range-request-optimized-font⑧">1.2.5. Glyph Independence</a> <a href="#ref-for-range-request-optimized-font⑨">(2)</a>
-    <li><a href="#ref-for-range-request-optimized-font①⓪">1.2.6. Glyph Order</a> <a href="#ref-for-range-request-optimized-font①①">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-outline-table" class="dfn-panel" data-for="outline-table" id="infopanel-for-outline-table">
-   <span id="infopaneltitle-for-outline-table" style="display:none">Info about the 'outline table' definition.</span><b><a href="#outline-table">#outline-table</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-outline-table">1.2.4. Table Ordering</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-corpus" class="dfn-panel" data-for="corpus" id="infopanel-for-corpus">
-   <span id="infopaneltitle-for-corpus" style="display:none">Info about the 'corpus' definition.</span><b><a href="#corpus">#corpus</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-corpus">1.2.6. Glyph Order</a> <a href="#ref-for-corpus①">(2)</a> <a href="#ref-for-corpus②">(3)</a> <a href="#ref-for-corpus③">(4)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-usage-document-frequency" class="dfn-panel" data-for="usage-document-frequency" id="infopanel-for-usage-document-frequency">
-   <span id="infopaneltitle-for-usage-document-frequency" style="display:none">Info about the 'usage document frequency' definition.</span><b><a href="#usage-document-frequency">#usage-document-frequency</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-usage-document-frequency">1.2.6. Glyph Order</a> <a href="#ref-for-usage-document-frequency①">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-range-request-threshold" class="dfn-panel" data-for="range-request-threshold" id="infopanel-for-range-request-threshold">
-   <span id="infopaneltitle-for-range-request-threshold" style="display:none">Info about the 'range-request threshold' definition.</span><b><a href="#range-request-threshold">#range-request-threshold</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-range-request-threshold">1.3.1. First Request</a> <a href="#ref-for-range-request-threshold①">(2)</a> <a href="#ref-for-range-request-threshold②">(3)</a> <a href="#ref-for-range-request-threshold③">(4)</a>
-    <li><a href="#ref-for-range-request-threshold④">1.3.2. Subsequent Requests</a> <a href="#ref-for-range-request-threshold⑤">(2)</a>
-   </ul>
-  </aside>
-<script>/* script-dfn-panel */
+<script>/* Boilerplate: script-dfn-panel */
 "use strict";
 {
-    function queryAll(sel) {
-        return [].slice.call(document.querySelectorAll(sel));
+    const dfnsJson = window.dfnsJson || {};
+
+    function genDfnPanel({dfnID, url, dfnText, refSections, external}) {
+        return mk.aside({
+            class: "dfn-panel",
+            id: `infopanel-for-${dfnID}`,
+            "data-for": dfnID,
+            "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+            },
+            mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+                `Info about the '${dfnText}' ${external?"external":""} reference.`),
+            mk.a({href:url}, url),
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({
+                                    href: `#${ref.id}`
+                                    },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        );
     }
 
-    // Add popup behavior to all dfns to show the corresponding dfn-panel.
-    var dfns = document.querySelectorAll('.dfn-paneled');
-    for (let dfn of dfns) { insertDfnPopupAction(dfn); }
+    function genAllDfnPanels() {
+        for(const panelData of Object.values(window.dfnpanelData)) {
+            const dfnID = panelData.dfnID;
+            const dfn = document.getElementById(dfnID);
+            if(!dfn) {
+                console.log(`Can't find dfn#${dfnID}.`, panelData);
+            } else {
+                const panel = genDfnPanel(panelData);
+                append(document.body, panel);
+                insertDfnPopupAction(dfn, panel)
+            }
+        }
+    }
 
-    document.body.addEventListener("click", (e) => {
-        // If not handled already, just hide all dfn panels.
-        hideAllDfnPanels();
-    });
+    document.addEventListener("DOMContentLoaded", ()=>{
+        genAllDfnPanels();
+
+        // Add popup behavior to all dfns to show the corresponding dfn-panel.
+        var dfns = queryAll('.dfn-paneled');
+        for(let dfn of dfns) { ; }
+
+        document.body.addEventListener("click", (e) => {
+            // If not handled already, just hide all dfn panels.
+            hideAllDfnPanels();
+        });
+    })
+
 
     function hideAllDfnPanels() {
         // Turn off any currently "on" or "activated" panels.
@@ -607,49 +865,249 @@ itself be statically compressed.</p>
         }
     }
 
-    function insertDfnPopupAction(dfn) {
+    function insertDfnPopupAction(dfn, dfnPanel) {
         // Find dfn panel
-        const dfnPanel = document.querySelector(`.dfn-panel[data-for='${dfn.id}']`);
-        if (dfnPanel) {
-            const panelWrapper = document.createElement('span');
-            panelWrapper.appendChild(dfnPanel);
-            panelWrapper.style.position = "relative";
-            panelWrapper.style.height = "0px";
-            dfn.insertAdjacentElement("afterend", panelWrapper);
-            dfn.setAttribute('role', 'button');
-            dfn.setAttribute('aria-expanded', 'false')
-            dfn.tabIndex = 0;
-            dfn.classList.add('has-dfn-panel');
-            dfn.addEventListener('click', (event) => {
-                showDfnPanel(dfnPanel, dfn);
+        const panelWrapper = document.createElement('span');
+        panelWrapper.appendChild(dfnPanel);
+        panelWrapper.style.position = "relative";
+        panelWrapper.style.height = "0px";
+        dfn.insertAdjacentElement("afterend", panelWrapper);
+        dfn.setAttribute('role', 'button');
+        dfn.setAttribute('aria-expanded', 'false')
+        dfn.tabIndex = 0;
+        dfn.classList.add('has-dfn-panel');
+        dfn.addEventListener('click', (event) => {
+            showDfnPanel(dfnPanel, dfn);
+            event.stopPropagation();
+        });
+        dfn.addEventListener('keypress', (event) => {
+            const kc = event.keyCode;
+            // 32->Space, 13->Enter
+            if(kc == 32 || kc == 13) {
+                toggleDfnPanel(dfnPanel, dfn);
                 event.stopPropagation();
-            });
-            dfn.addEventListener('keypress', (event) => {
-                const kc = event.keyCode;
-                // 32->Space, 13->Enter
-                if(kc == 32 || kc == 13) {
-                    toggleDfnPanel(dfnPanel, dfn);
-                    event.stopPropagation();
-                    event.preventDefault();
-                }
-            });
+                event.preventDefault();
+            }
+        });
 
-            dfnPanel.addEventListener('click', (event) => {
+        dfnPanel.addEventListener('click', (event) => {
+            if (event.target.nodeName == 'A') {
                 pinDfnPanel(dfnPanel);
+            }
+            event.stopPropagation();
+        });
+
+        dfnPanel.addEventListener('keydown', (event) => {
+            if(event.keyCode == 27) { // Escape key
+                hideDfnPanel(dfnPanel, dfn);
                 event.stopPropagation();
-            });
-
-            dfnPanel.addEventListener('keydown', (event) => {
-                if(event.keyCode == 27) { // Escape key
-                    hideDfnPanel(dfnPanel, dfn);
-                    event.stopPropagation();
-                    event.preventDefault();
-                }
-            })
-
-        } else {
-            console.log("Couldn't find .dfn-panel[data-for='" + dfn.id + "']");
-        }
+                event.preventDefault();
+            }
+        })
     }
+}
+</script>
+<script>/* Boilerplate: script-dfn-panel-json */
+window.dfnpanelData = {};
+window.dfnpanelData['range-request-optimized-font'] = {"dfnID": "range-request-optimized-font", "url": "#range-request-optimized-font", "dfnText": "range-request optimized font", "refSections": [{"refs": [{"id": "ref-for-range-request-optimized-font"}, {"id": "ref-for-range-request-optimized-font\u2460"}], "title": "1.2.2. Introduction"}, {"refs": [{"id": "ref-for-range-request-optimized-font\u2461"}, {"id": "ref-for-range-request-optimized-font\u2462"}, {"id": "ref-for-range-request-optimized-font\u2463"}], "title": "1.2.3. Compression"}, {"refs": [{"id": "ref-for-range-request-optimized-font\u2464"}, {"id": "ref-for-range-request-optimized-font\u2465"}, {"id": "ref-for-range-request-optimized-font\u2466"}], "title": "1.2.4. Table Ordering"}, {"refs": [{"id": "ref-for-range-request-optimized-font\u2467"}, {"id": "ref-for-range-request-optimized-font\u2468"}], "title": "1.2.5. Glyph Independence"}, {"refs": [{"id": "ref-for-range-request-optimized-font\u2460\u24ea"}, {"id": "ref-for-range-request-optimized-font\u2460\u2460"}], "title": "1.2.6. Glyph Order"}], "external": false};
+window.dfnpanelData['outline-table'] = {"dfnID": "outline-table", "url": "#outline-table", "dfnText": "outline table", "refSections": [{"refs": [{"id": "ref-for-outline-table"}], "title": "1.2.4. Table Ordering"}], "external": false};
+window.dfnpanelData['corpus'] = {"dfnID": "corpus", "url": "#corpus", "dfnText": "corpus", "refSections": [{"refs": [{"id": "ref-for-corpus"}, {"id": "ref-for-corpus\u2460"}, {"id": "ref-for-corpus\u2461"}, {"id": "ref-for-corpus\u2462"}], "title": "1.2.6. Glyph Order"}], "external": false};
+window.dfnpanelData['usage-document-frequency'] = {"dfnID": "usage-document-frequency", "url": "#usage-document-frequency", "dfnText": "usage document frequency", "refSections": [{"refs": [{"id": "ref-for-usage-document-frequency"}, {"id": "ref-for-usage-document-frequency\u2460"}], "title": "1.2.6. Glyph Order"}], "external": false};
+window.dfnpanelData['range-request-threshold'] = {"dfnID": "range-request-threshold", "url": "#range-request-threshold", "dfnText": "range-request threshold", "refSections": [{"refs": [{"id": "ref-for-range-request-threshold"}, {"id": "ref-for-range-request-threshold\u2460"}, {"id": "ref-for-range-request-threshold\u2461"}, {"id": "ref-for-range-request-threshold\u2462"}], "title": "1.3.1. First Request"}, {"refs": [{"id": "ref-for-range-request-threshold\u2463"}, {"id": "ref-for-range-request-threshold\u2464"}], "title": "1.3.2. Subsequent Requests"}], "external": false};
+</script>
+<script>/* Boilerplate: script-dom-helper */
+function query(sel) { return document.querySelector(sel); }
+
+function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
+
+function iter(obj) {
+	if(!obj) return [];
+	var it = obj[Symbol.iterator];
+	if(it) return it;
+	return Object.entries(obj);
+}
+
+function mk(tagname, attrs, ...children) {
+	const el = document.createElement(tagname);
+	for(const [k,v] of iter(attrs)) {
+		if(k.slice(0,3) == "_on") {
+			const eventName = k.slice(3);
+			el.addEventListener(eventName, v);
+		} else if(k[0] == "_") {
+			// property, not attribute
+			el[k.slice(1)] = v;
+		} else {
+			if(v === false || v == null) {
+        continue;
+      } else if(v === true) {
+        el.setAttribute(k, "");
+        continue;
+      } else {
+  			el.setAttribute(k, v);
+      }
+		}
+	}
+	append(el, children);
+	return el;
+}
+
+/* Create shortcuts for every known HTML element */
+[
+  "a",
+  "abbr",
+  "acronym",
+  "address",
+  "applet",
+  "area",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "base",
+  "basefont",
+  "bdo",
+  "big",
+  "blockquote",
+  "body",
+  "br",
+  "button",
+  "canvas",
+  "caption",
+  "center",
+  "cite",
+  "code",
+  "col",
+  "colgroup",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "dialog",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "embed",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "font",
+  "footer",
+  "form",
+  "frame",
+  "frameset",
+  "head",
+  "header",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "html",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "map",
+  "mark",
+  "meta",
+  "meter",
+  "nav",
+  "nobr",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "param",
+  "pre",
+  "progress",
+  "q",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strike",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "template",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "u",
+  "ul",
+  "var",
+  "video",
+  "wbr",
+  "xmp",
+].forEach(tagname=>{
+	mk[tagname] = (...args) => mk(tagname, ...args);
+});
+
+function* nodesFromChildList(children) {
+	for(const child of children.flat(Infinity)) {
+		if(child instanceof Node) {
+			yield child;
+		} else {
+			yield new Text(child);
+		}
+	}
+}
+function append(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		if(el instanceof Node) el.appendChild(child);
+		else el.push(child);
+	}
+	return el;
+}
+
+function insertAfter(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		el.parentNode.insertBefore(child, el.nextSibling);
+	}
+	return el;
+}
+
+function clearContents(el) {
+	el.innerHTML = "";
+	return el;
+}
+
+function parseHTML(markup) {
+	if(markup.toLowerCase().trim().indexOf('<!doctype') === 0) {
+		const doc = document.implementation.createHTMLDocument("");
+		doc.documentElement.innerHTML = markup;
+		return doc;
+	} else {
+		const el = mk.template({});
+		el.innerHTML = markup;
+		return el.content;
+	}
 }
 </script>

@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="f9e9e4cf1cf8f31bc54cb45d3a96f52a8ea5bbea" name="document-revision">
+  <meta content="d0d75bfd53b867d2c8475ece13b2d15e88c2a251" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1571,6 +1571,10 @@ set then <a data-link-type="dfn" href="#patchrequest-ordering_checksum" id="ref-
       <td>4
       <td><dfn class="dfn-paneled" data-dfn-for="ClientState" data-dfn-type="dfn" data-noexport id="clientstate-original_features">original_features</dfn>
       <td><a data-link-type="dfn" href="#featuretagset" id="ref-for-featuretagset②">FeatureTagSet</a>
+     <tr>
+      <td>5
+      <td><dfn class="dfn-paneled" data-dfn-for="ClientState" data-dfn-type="dfn" data-noexport id="clientstate-missing_codepoints">missing_codepoints</dfn>
+      <td><a data-link-type="dfn" href="#compressedset" id="ref-for-compressedset④">CompressedSet</a>
    </table>
    <h3 class="heading settled" data-level="4.4" id="client"><span class="secno">4.4. </span><span class="content">Client</span><a class="self-link" href="#client"></a></h3>
    <h4 class="heading settled algorithm" data-algorithm="Extending the Font Subset" data-level="4.4.1" id="extend-subset"><span class="secno">4.4.1. </span><span class="content">Extending the Font Subset</span><a class="self-link" href="#extend-subset"></a></h4>
@@ -1648,8 +1652,8 @@ encoded via CBOR.</p>
  as follows:</p>
      <ul>
       <li data-md>
-       <p><a data-link-type="dfn" href="#patchrequest-codepoints_have" id="ref-for-patchrequest-codepoints_have①">codepoints_have</a>: set to exactly the set of codepoints that the current <var>font subset</var> contains data for. If the current <var>font subset</var> is not set then this field is left unset. If <var>client state</var> is available and has a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering">codepoint_ordering</a> then
- this field should not be set.</p>
+       <p><a data-link-type="dfn" href="#patchrequest-codepoints_have" id="ref-for-patchrequest-codepoints_have①">codepoints_have</a>: set to exactly the set of codepoints that the current <var>font subset</var> contains data for plus the set of missing codepoints
+ specified in <a data-link-type="dfn" href="#clientstate-missing_codepoints" id="ref-for-clientstate-missing_codepoints">missing_codepoints</a>. If the current <var>font subset</var> is not set then this field is left unset. If <var>client state</var> is available and has a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering">codepoint_ordering</a> and <a data-link-type="dfn" href="#clientstate-missing_codepoints" id="ref-for-clientstate-missing_codepoints①">missing_codepoints</a> is empty then this field should not be set.</p>
       <li data-md>
        <p><a data-link-type="dfn" href="#patchrequest-codepoints_needed" id="ref-for-patchrequest-codepoints_needed">codepoints_needed</a>: set to the set of codepoints that the client wants to
  add to its <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a>. That is the codepoint set from <var>desired subset
@@ -1742,8 +1746,17 @@ can be cached, or null.</p>
      <p>Decode the <var>server response</var> <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-body" id="ref-for-concept-response-body①">body</a> by applying the appropriate decoding as
  specified by the <a href="https://www.rfc-editor.org/rfc/rfc9110#section-8.4">Content-Encoding</a> header. If the <a href="https://www.rfc-editor.org/rfc/rfc9110#section-8.4">Content-Encoding</a> is one of those from <a href="#patch-encodings">§ 4.8 Patch Encodings</a> then
  the input <var>font subset</var> will be used as the source file for the decoding operation. The
- decoded response is the new extended font subset. Return the extended font subset and any cache
- headers that were set on the <var>server response</var>.</p>
+ decoded response is the new <var>extended font subset</var>.</p>
+    <li data-md>
+     <p>Load the <var>client state</var> from the <var>extended font subset</var>. Client state is stored in the <var>extended font subset</var> as a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by the 4-byte tag 'IFTP'. The contents of the table are a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate①">ClientState</a> object
+encoded via CBOR.</p>
+    <li data-md>
+     <p>Verify that the union of the codepoints present in the <var>extended font subset</var> and all codepoints
+listed in the <var>client state</var> field <a data-link-type="dfn" href="#clientstate-missing_codepoints" id="ref-for-clientstate-missing_codepoints②">missing_codepoints</a> is equal to the set of
+codepoints asked for (union of codepoints/indices needed and codepoints/indices have) in the request
+which generated this response. If they are not euqal, this is an invalid response. Invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-failed-font-load" id="ref-for-abstract-opdef-handle-failed-font-load①">Handle failed font load</a> and return the result.</p>
+    <li data-md>
+     <p>Return the <var>extended font subset</var> and any cache headers that were set on the <var>server response</var>.</p>
    </ol>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-handle-failed-font-load">Handle failed font load</dfn></p>
    <p>If the font load or extension has failed the client should choose one of the following options:</p>
@@ -1892,7 +1905,7 @@ the union of the set of features needed and the sets of features the client alre
 space that covers at least the union of the axis space the client has and the axis space the
 client needs.</span></p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-client-state">That has a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> which is identified by the tag 'IFTP' whose content is a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate①">ClientState</a> object encoded via
+     <p><span class="conform server" id="conform-response-client-state">That has a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> which is identified by the tag 'IFTP' whose content is a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate②">ClientState</a> object encoded via
 CBOR:</span></p>
      <ul>
       <li data-md>
@@ -1907,6 +1920,10 @@ CBOR:</span></p>
       <li data-md>
        <p><span class="conform server" id="conform-response-client-state-original-features"> The <a data-link-type="dfn" href="#clientstate-original_features" id="ref-for-clientstate-original_features">original_features</a> field must be set to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype layout
 feature tags</a> that the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①③">original font</a> has data for.</span></p>
+      <li data-md>
+       <p><span class="conform server" id="conform-response-client-state-missing-codepoints"> The <a data-link-type="dfn" href="#clientstate-missing_codepoints" id="ref-for-clientstate-missing_codepoints③">missing_codepoints</a> field must be set to the list of codepoints
+in that are in the set of codepoints needed or the set of codepoints the client has,
+and are not present in the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①④">original font</a>.</span></p>
      </ul>
    </ul>
    <p>Additionally:</p>
@@ -2575,6 +2592,7 @@ them from being used for tracking.</p>
    <li><a href="#integer">Integer</a><span>, in § 4.2.2</span>
    <li><a href="#integerlist">IntegerList</a><span>, in § 4.2.4</span>
    <li><a href="#abstract-opdef-load-a-font-with-a-http-cache">Load a font with a HTTP Cache</a><span>, in § 4.4.3</span>
+   <li><a href="#clientstate-missing_codepoints">missing_codepoints</a><span>, in § 4.3.4</span>
    <li><a href="#patchrequest-ordering_checksum">ordering_checksum</a><span>, in § 4.3.3</span>
    <li><a href="#clientstate-original_axis_space">original_axis_space</a><span>, in § 4.3.4</span>
    <li><a href="#clientstate-original_features">original_features</a><span>, in § 4.3.4</span>
@@ -2997,7 +3015,7 @@ window.dfnpanelData['sortedintegerlist'] = {"dfnID": "sortedintegerlist", "url":
 window.dfnpanelData['rangelist'] = {"dfnID": "rangelist", "url": "#rangelist", "dfnText": "RangeList", "refSections": [{"refs": [{"id": "ref-for-rangelist"}, {"id": "ref-for-rangelist\u2460"}], "title": "4.3.1. CompressedSet"}], "external": false};
 window.dfnpanelData['featuretagset'] = {"dfnID": "featuretagset", "url": "#featuretagset", "dfnText": "FeatureTagSet", "refSections": [{"refs": [{"id": "ref-for-featuretagset"}, {"id": "ref-for-featuretagset\u2460"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-featuretagset\u2461"}], "title": "4.3.4. ClientState"}], "external": false};
 window.dfnpanelData['axisspace'] = {"dfnID": "axisspace", "url": "#axisspace", "dfnText": "AxisSpace", "refSections": [{"refs": [{"id": "ref-for-axisspace"}, {"id": "ref-for-axisspace\u2460"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-axisspace\u2461"}, {"id": "ref-for-axisspace\u2462"}], "title": "4.3.4. ClientState"}], "external": false};
-window.dfnpanelData['compressedset'] = {"dfnID": "compressedset", "url": "#compressedset", "dfnText": "CompressedSet", "refSections": [{"refs": [{"id": "ref-for-compressedset"}, {"id": "ref-for-compressedset\u2460"}, {"id": "ref-for-compressedset\u2461"}, {"id": "ref-for-compressedset\u2462"}], "title": "4.3.3. PatchRequest"}], "external": false};
+window.dfnpanelData['compressedset'] = {"dfnID": "compressedset", "url": "#compressedset", "dfnText": "CompressedSet", "refSections": [{"refs": [{"id": "ref-for-compressedset"}, {"id": "ref-for-compressedset\u2460"}, {"id": "ref-for-compressedset\u2461"}, {"id": "ref-for-compressedset\u2462"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-compressedset\u2463"}], "title": "4.3.4. ClientState"}], "external": false};
 window.dfnpanelData['compressedset-sparse_bit_set'] = {"dfnID": "compressedset-sparse_bit_set", "url": "#compressedset-sparse_bit_set", "dfnText": "sparse_bit_set", "refSections": [{"refs": [{"id": "ref-for-compressedset-sparse_bit_set"}], "title": "4.3.1. CompressedSet"}], "external": false};
 window.dfnpanelData['compressedset-range_deltas'] = {"dfnID": "compressedset-range_deltas", "url": "#compressedset-range_deltas", "dfnText": "range_deltas", "refSections": [{"refs": [{"id": "ref-for-compressedset-range_deltas"}], "title": "4.3.1. CompressedSet"}], "external": false};
 window.dfnpanelData['axisinterval'] = {"dfnID": "axisinterval", "url": "#axisinterval", "dfnText": "AxisInterval", "refSections": [{"refs": [{"id": "ref-for-axisinterval"}], "title": "4.2.8. AxisSpace"}, {"refs": [{"id": "ref-for-axisinterval\u2460"}, {"id": "ref-for-axisinterval\u2461"}], "title": "4.3.2. AxisInterval"}], "external": false};
@@ -3017,17 +3035,18 @@ window.dfnpanelData['patchrequest-original_font_checksum'] = {"dfnID": "patchreq
 window.dfnpanelData['patchrequest-base_checksum'] = {"dfnID": "patchrequest-base_checksum", "url": "#patchrequest-base_checksum", "dfnText": "base_checksum", "refSections": [{"refs": [{"id": "ref-for-patchrequest-base_checksum"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-patchrequest-base_checksum\u2460"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-base_checksum\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['patchrequest-fragment_id'] = {"dfnID": "patchrequest-fragment_id", "url": "#patchrequest-fragment_id", "dfnText": "fragment_id", "refSections": [{"refs": [{"id": "ref-for-patchrequest-fragment_id"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-fragment_id\u2460"}, {"id": "ref-for-patchrequest-fragment_id\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['patchrequest-codepoint_ordering'] = {"dfnID": "patchrequest-codepoint_ordering", "url": "#patchrequest-codepoint_ordering", "dfnText": "codepoint_ordering", "refSections": [{"refs": [{"id": "ref-for-patchrequest-codepoint_ordering"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-patchrequest-codepoint_ordering\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
-window.dfnpanelData['clientstate'] = {"dfnID": "clientstate", "url": "#clientstate", "dfnText": "ClientState", "refSections": [{"refs": [{"id": "ref-for-clientstate"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['clientstate'] = {"dfnID": "clientstate", "url": "#clientstate", "dfnText": "ClientState", "refSections": [{"refs": [{"id": "ref-for-clientstate"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate\u2460"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-clientstate\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['clientstate-original_font_checksum'] = {"dfnID": "clientstate-original_font_checksum", "url": "#clientstate-original_font_checksum", "dfnText": "original_font_checksum", "refSections": [{"refs": [{"id": "ref-for-clientstate-original_font_checksum"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate-original_font_checksum\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['clientstate-codepoint_ordering'] = {"dfnID": "clientstate-codepoint_ordering", "url": "#clientstate-codepoint_ordering", "dfnText": "codepoint_ordering", "refSections": [{"refs": [{"id": "ref-for-clientstate-codepoint_ordering"}, {"id": "ref-for-clientstate-codepoint_ordering\u2460"}, {"id": "ref-for-clientstate-codepoint_ordering\u2461"}, {"id": "ref-for-clientstate-codepoint_ordering\u2462"}, {"id": "ref-for-clientstate-codepoint_ordering\u2463"}, {"id": "ref-for-clientstate-codepoint_ordering\u2464"}, {"id": "ref-for-clientstate-codepoint_ordering\u2465"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate-codepoint_ordering\u2466"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-clientstate-codepoint_ordering\u2467"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['clientstate-subset_axis_space'] = {"dfnID": "clientstate-subset_axis_space", "url": "#clientstate-subset_axis_space", "dfnText": "subset_axis_space", "refSections": [{"refs": [{"id": "ref-for-clientstate-subset_axis_space"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate-subset_axis_space\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['clientstate-original_axis_space'] = {"dfnID": "clientstate-original_axis_space", "url": "#clientstate-original_axis_space", "dfnText": "original_axis_space", "refSections": [{"refs": [{"id": "ref-for-clientstate-original_axis_space"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['clientstate-original_features'] = {"dfnID": "clientstate-original_features", "url": "#clientstate-original_features", "dfnText": "original_features", "refSections": [{"refs": [{"id": "ref-for-clientstate-original_features"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['clientstate-missing_codepoints'] = {"dfnID": "clientstate-missing_codepoints", "url": "#clientstate-missing_codepoints", "dfnText": "missing_codepoints", "refSections": [{"refs": [{"id": "ref-for-clientstate-missing_codepoints"}, {"id": "ref-for-clientstate-missing_codepoints\u2460"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate-missing_codepoints\u2461"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-clientstate-missing_codepoints\u2462"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['abstract-opdef-extend-the-font-subset'] = {"dfnID": "abstract-opdef-extend-the-font-subset", "url": "#abstract-opdef-extend-the-font-subset", "dfnText": "Extend the font subset", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-extend-the-font-subset"}, {"id": "ref-for-abstract-opdef-extend-the-font-subset\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": false};
 window.dfnpanelData['patch-request-header'] = {"dfnID": "patch-request-header", "url": "#patch-request-header", "dfnText": "patch request header", "refSections": [{"refs": [{"id": "ref-for-patch-request-header"}], "title": "3.1. IFT Method Negotiation"}, {"refs": [{"id": "ref-for-patch-request-header\u2460"}], "title": "3.3. Offline Usage"}], "external": false};
 window.dfnpanelData['abstract-opdef-handle-server-response'] = {"dfnID": "abstract-opdef-handle-server-response", "url": "#abstract-opdef-handle-server-response", "dfnText": "Handle server response", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-handle-server-response"}], "title": "4.4.1. Extending the Font Subset"}], "external": false};
-window.dfnpanelData['abstract-opdef-handle-failed-font-load'] = {"dfnID": "abstract-opdef-handle-failed-font-load", "url": "#abstract-opdef-handle-failed-font-load", "dfnText": "Handle failed font load", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-handle-failed-font-load"}], "title": "4.4.2. Handling Server Response"}], "external": false};
-window.dfnpanelData['original-font'] = {"dfnID": "original-font", "url": "#original-font", "dfnText": "original font", "refSections": [{"refs": [{"id": "ref-for-original-font"}, {"id": "ref-for-original-font\u2460"}, {"id": "ref-for-original-font\u2461"}, {"id": "ref-for-original-font\u2462"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-original-font\u2463"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-original-font\u2464"}, {"id": "ref-for-original-font\u2465"}, {"id": "ref-for-original-font\u2466"}, {"id": "ref-for-original-font\u2467"}, {"id": "ref-for-original-font\u2468"}, {"id": "ref-for-original-font\u2460\u24ea"}, {"id": "ref-for-original-font\u2460\u2460"}, {"id": "ref-for-original-font\u2460\u2461"}, {"id": "ref-for-original-font\u2460\u2462"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['abstract-opdef-handle-failed-font-load'] = {"dfnID": "abstract-opdef-handle-failed-font-load", "url": "#abstract-opdef-handle-failed-font-load", "dfnText": "Handle failed font load", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-handle-failed-font-load"}, {"id": "ref-for-abstract-opdef-handle-failed-font-load\u2460"}], "title": "4.4.2. Handling Server Response"}], "external": false};
+window.dfnpanelData['original-font'] = {"dfnID": "original-font", "url": "#original-font", "dfnText": "original font", "refSections": [{"refs": [{"id": "ref-for-original-font"}, {"id": "ref-for-original-font\u2460"}, {"id": "ref-for-original-font\u2461"}, {"id": "ref-for-original-font\u2462"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-original-font\u2463"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-original-font\u2464"}, {"id": "ref-for-original-font\u2465"}, {"id": "ref-for-original-font\u2466"}, {"id": "ref-for-original-font\u2467"}, {"id": "ref-for-original-font\u2468"}, {"id": "ref-for-original-font\u2460\u24ea"}, {"id": "ref-for-original-font\u2460\u2460"}, {"id": "ref-for-original-font\u2460\u2461"}, {"id": "ref-for-original-font\u2460\u2462"}, {"id": "ref-for-original-font\u2460\u2463"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 </script>
 <script>/* Boilerplate: script-dom-helper */
 function query(sel) { return document.querySelector(sel); }
