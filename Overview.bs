@@ -1357,7 +1357,7 @@ The algorithm:
      *  Otherwise, <var>available codepoints</var> is equal to the set of codepoints specified in
           [[#obfuscation-codepoints]].
 
-4. Partition <var>available codepoints</var> into one or more disjoint sets that each contain at least 5
+4. Partition <var>available codepoints</var> into one or more disjoint sets that each contain at least 7
      codepoints. The specific partitioning algorithm is left up to the implementation.
 
 5. Find the all of the partitioned sets which contain at least one codepoint from <var>obfuscation codepoints</var>
@@ -1732,18 +1732,33 @@ Range request incremental font transfer is specified in a separate document: [[R
 
 <h3  id="content-inference-from-character-set">Content inference from character set</h3>
 
-IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see [[#extend-subset]].
+IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web
+font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For
+details, see [[#extend-subset]].
 
-The purpose of doing so is to allow the server to compute a binary patch to the existing font, adding more characters. Thus, fonts are transferred incrementally, as needed, which <a href="https://www.w3.org/TR/PFE-evaluation/#analysis-cjk">greatly reduces</a>> the bytes transferred and the overall network cost..
+The purpose of doing so is to allow the server to compute a binary patch to the existing font, adding more characters.
+Thus, fonts are transferred incrementally, as needed, which
+<a href="https://www.w3.org/TR/PFE-evaluation/#analysis-cjk">greatly reduces</a> the bytes transferred and the overall
+network cost.
 
-For some languages, which use a very large character set (Chinese and Japanese are examples) the vast reduction in total bytes transferred means that Web fonts become usable, including on mobile networks, for the first time.
+For some languages, which use a very large character set (Chinese and Japanese are examples) the vast reduction in total
+bytes transferred means that Web fonts become usable, including on mobile networks, for the first time.
 
-However, for those languages, it is <em>possible</em> that individual requests might be analyzed by a rogue font server to obtain intelligence about the type of content which is being read. It is unclear how feasible this attack is, or the computational complexity required to exploit it, unless the characters being requested are very unusual.
+However, for those languages, it is <em>possible</em> that individual requests might be analyzed by a rogue font server
+to obtain intelligence about the type of content which is being read. It is unclear how feasible this attack is, or the
+computational complexity required to exploit it, unless the characters being requested are very unusual.
 
-One mitigation, which was originally introduced for reasons of networking efficiency so is likely to be implemented in practice, is to request additional, un-needed characters to dilute the ability to infer what content the user is viewing. Requesting characters which are <a href="https://www.w3.org/TR/PFE-evaluation/#codepredict">statistically likely to occur</a> may <a href="https://docs.google.com/document/d/1u-05ztF9MqftHbMKB_KiqeUhZKiXNFE4TRSUWFAPXsk/edit">avoid a subsequent request</a>.
+There are two main mitigations in place:
 
-(IFT mandates HTTPS, so no in-the-middle attack is possible; the trust is between the client, and the server hosting the fonts).
+1. IFT mandates HTTPS, so no in-the-middle attack is possible; the trust is between the client, and the server
+     hosting the fonts.
 
+2. IFT obscures the specific codepoints the client needs by adding additional codepoints to the request that
+     are not present in the content. This specification defines a set of codepoints which require obfuscation
+     ([[#obfuscation-codepoints]]) and then [[#codepoint-grouping]] is used to add additional codepoints to the request.
+     This method was found to be effective in reducing the ability to determine the content which is the source
+     of a request via <a href="https://github.com/w3c/PFE-analysis/blob/main/results/noise_simulations.md">
+     simulations</a>.
 
 <h3 id="checksum-and-possible-fingerprinting">Checksums and possible fingerprinting</h3>
 
@@ -1764,8 +1779,8 @@ them from being used for tracking.
   This avoids information leaking across origins.
 
   Similarly, font palette values
-  <a href="https://drafts.csswg.org/css-fonts-4/#font-palette-values">must only be available to the documents that reference it</a>.
-  Using an author-defined color palette outside of the documents that reference it
+  <a href="https://drafts.csswg.org/css-fonts-4/#font-palette-values">must only be available to the documents that
+  reference it</a>. Using an author-defined color palette outside of the documents that reference it
   would constitute a security leak since the contents of one page
   would be able to affect other pages,
   something an attacker could use as an attack vector.
