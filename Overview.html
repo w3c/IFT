@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="6b144cd2ec171938a9ec48d3b5773d648b7a5ce8" name="document-revision">
+  <meta content="058e0b8762bd21ee4f13406f60adf780b05c0986" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -660,7 +660,8 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
        <ol class="toc">
         <li><a href="#extend-subset"><span class="secno">4.4.1</span> <span class="content">Extending the Font Subset</span></a>
         <li><a href="#handling-patch-response"><span class="secno">4.4.2</span> <span class="content">Handling Server Response</span></a>
-        <li><a href="#load-a-font"><span class="secno">4.4.3</span> <span class="content">Load a Font in a User Agent with a HTTP Cache</span></a>
+        <li><a href="#codepoint-grouping"><span class="secno">4.4.3</span> <span class="content">Grouping Codepoints for a Request</span></a>
+        <li><a href="#load-a-font"><span class="secno">4.4.4</span> <span class="content">Load a Font in a User Agent with a HTTP Cache</span></a>
        </ol>
       <li>
        <a href="#handling-patch-request"><span class="secno">4.5</span> <span class="content">Server: Responding to a PatchRequest</span></a>
@@ -686,6 +687,7 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
     <li><a href="#sec"><span class="secno"></span> <span class="content">Security Considerations</span></a>
     <li><a href="#changes"><span class="secno"></span> <span class="content">Changes</span></a>
     <li><a href="#feature-tag-list"><span class="secno"></span> <span class="content"> Appendix A: Default Feature Tags and Encoding IDs</span></a>
+    <li><a href="#cjk-unicode-blocks"><span class="secno"></span> <span class="content"> Appendix B: CJK Unicode Blocks</span></a>
     <li>
      <a href="#w3c-conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
      <ol class="toc">
@@ -1595,6 +1597,9 @@ font url, or null.</p>
      <p><var>desired subset definition</var>: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">description</a> of the desired
 minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a>.</p>
     <li data-md>
+     <p><var>codepoint coverage hint</var> (optional): A set of code points that are expected to be present in the
+original font, or null. For fonts loading via CSS this is given by <a href="https://www.w3.org/TR/css-fonts-4/#unicode-range-desc"><cite>CSS Fonts 4</cite> § 4.5 Character range: the unicode-range descriptor</a>.</p>
+    <li data-md>
      <p><var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a>. The remainder
 of this section is described in terms of <a href="https://fetch.spec.whatwg.org/#fetching"><cite>Fetch</cite> § 4 Fetching</a>, but it is allowed to substitute
 whatever HTTP fetching algorithm the user agent supports.</p>
@@ -1611,8 +1616,6 @@ can be cached, or null.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Compare the <var>desired subset definition</var> to the <var>font subset</var>. If the <var>font subset</var> is a superset of <var>desired subset definition</var> then return <var>font subset</var>, and null for the cache fields.</p>
-    <li data-md>
      <p>If <var>font subset</var> is set then load the <var>client state</var> from the <var>font subset</var>. Client state is stored in the <var>font subset</var> as a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by the 4-byte tag 'IFTP'. The contents of the table are a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate">ClientState</a> object
 encoded via CBOR.</p>
      <ul>
@@ -1621,7 +1624,16 @@ encoded via CBOR.</p>
  loaded font and cannot be extended any further. Return <var>font subset</var>.</p>
      </ul>
     <li data-md>
-     <p>Otherwise make an HTTP request using the <var>fetch algorithm</var>:</p>
+     <p>If client state was loaded in the previous step, remove all codepoints in <var>desired subset definition</var> which are not listed in <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering">codepoint_ordering</a>. Otherwise if <var>codepoint coverage hint</var> is
+ non-null, remove all codepoint in <var>desired subset definition</var> which are not found in <var>codepoint coverage hint</var>.</p>
+    <li data-md>
+     <p>Compare the <var>desired subset definition</var> to the <var>font subset</var>. If the <var>font subset</var> is a superset of <var>desired subset definition</var> then return <var>font subset</var>, and null for the cache fields.</p>
+    <li data-md>
+     <p>Invoke <a data-link-type="abstract-op" href="#abstract-opdef-create-codepoint-groups-for-cjk-codepoints" id="ref-for-abstract-opdef-create-codepoint-groups-for-cjk-codepoints">Create codepoint groups for CJK codepoints</a>. The requested codepoints input is the codepoint set from <var>desired subset definition</var> minus the codepoints already in the <var>font subset</var>. Additionally
+ pass in <var>codepoint coverage hint</var>, <var>font subset</var>, and the client state loaded in step 1.
+ Add the returned codepoints to <var>desired subset definition</var></p>
+    <li data-md>
+     <p>Make an HTTP request using the <var>fetch algorithm</var>:</p>
      <ul>
       <li data-md>
        <p>The request <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method">method</a> must be either "GET" or "POST".</p>
@@ -1653,22 +1665,22 @@ encoded via CBOR.</p>
      <ul>
       <li data-md>
        <p><a data-link-type="dfn" href="#patchrequest-codepoints_have" id="ref-for-patchrequest-codepoints_have①">codepoints_have</a>: set to exactly the set of codepoints that the current <var>font subset</var> contains data for plus the set of missing codepoints
- specified in <a data-link-type="dfn" href="#clientstate-missing_codepoints" id="ref-for-clientstate-missing_codepoints">missing_codepoints</a>. If the current <var>font subset</var> is not set then this field is left unset. If <var>client state</var> is available and has a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering">codepoint_ordering</a> and <a data-link-type="dfn" href="#clientstate-missing_codepoints" id="ref-for-clientstate-missing_codepoints①">missing_codepoints</a> is empty then this field should not be set.</p>
+ specified in <a data-link-type="dfn" href="#clientstate-missing_codepoints" id="ref-for-clientstate-missing_codepoints">missing_codepoints</a>. If the current <var>font subset</var> is not set then this field is left unset. If <var>client state</var> is available and has a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering①">codepoint_ordering</a> and <a data-link-type="dfn" href="#clientstate-missing_codepoints" id="ref-for-clientstate-missing_codepoints①">missing_codepoints</a> is empty then this field should not be set.</p>
       <li data-md>
        <p><a data-link-type="dfn" href="#patchrequest-codepoints_needed" id="ref-for-patchrequest-codepoints_needed">codepoints_needed</a>: set to the set of codepoints that the client wants to
  add to its <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a>. That is the codepoint set from <var>desired subset
- definition</var> minus the codepoints already in the <var>font subset</var>. If <var>client state</var> is available and has a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering①">codepoint_ordering</a> then
+ definition</var> minus the codepoints already in the <var>font subset</var>. If <var>client state</var> is available and has a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering②">codepoint_ordering</a> then
  this field should not be set.</p>
       <li data-md>
        <p><a data-link-type="dfn" href="#patchrequest-indices_have" id="ref-for-patchrequest-indices_have②">indices_have</a>: encodes the set of additional codepoints that the current <var>font subset</var> contains data for. The codepoint values are transformed
- to indices by applying the <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a> specified by <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering②">codepoint_ordering</a> to each codepoint value. If
- the <var>client state</var> is not available or it does not have a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering③">codepoint_ordering</a> then this field should not be set.</p>
+ to indices by applying the <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a> specified by <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering③">codepoint_ordering</a> to each codepoint value. If
+ the <var>client state</var> is not available or it does not have a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering④">codepoint_ordering</a> then this field should not be set.</p>
       <li data-md>
        <p><a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed①">indices_needed</a>: encodes the set of codepoints that the client wants to add to
  its <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font subset</a>. That is the codepoint set from <var>desired subset
  definition</var> minus the codepoints already in <var>font subset</var>.
- The codepoint values are transformed to indices by applying the <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a> specified by <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering④">codepoint_ordering</a> to each codepoint value. If
- the <var>client state</var> is not available or it does not have a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑤">codepoint_ordering</a> then this field should not be set.</p>
+ The codepoint values are transformed to indices by applying the <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a> specified by <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑤">codepoint_ordering</a> to each codepoint value. If
+ the <var>client state</var> is not available or it does not have a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑥">codepoint_ordering</a> then this field should not be set.</p>
       <li data-md>
        <p><a data-link-type="dfn" href="#patchrequest-features_have" id="ref-for-patchrequest-features_have">features_have</a>: set to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags"> OpenType layout feature tags</a> that the current <var>font subset</var> has data
  for. If the current <var>font subset</var> is not set then this
@@ -1686,7 +1698,7 @@ encoded via CBOR.</p>
        <p><a data-link-type="dfn" href="#patchrequest-axis_space_needed" id="ref-for-patchrequest-axis_space_needed">axis_space_needed</a>: set to the intervals of each variable axis in the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font②">original font</a> that the client wants to add to its <var>font subset</var> as defined in the <var>desired subset definition</var>. If the client wants an
  entire axis from the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font③">original font</a> then that axis should not be listed.</p>
       <li data-md>
-       <p><a data-link-type="dfn" href="#patchrequest-ordering_checksum" id="ref-for-patchrequest-ordering_checksum①">ordering_checksum</a>: If either of <a data-link-type="dfn" href="#patchrequest-indices_have" id="ref-for-patchrequest-indices_have③">indices_have</a> or <a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed②">indices_needed</a> is set then this must be set to the checksum of the <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑥">codepoint_ordering</a> saved in the <var>client state</var>. The checksum
+       <p><a data-link-type="dfn" href="#patchrequest-ordering_checksum" id="ref-for-patchrequest-ordering_checksum①">ordering_checksum</a>: If either of <a data-link-type="dfn" href="#patchrequest-indices_have" id="ref-for-patchrequest-indices_have③">indices_have</a> or <a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed②">indices_needed</a> is set then this must be set to the checksum of the <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑦">codepoint_ordering</a> saved in the <var>client state</var>. The checksum
  is computed via <a href="#reordering-checksum">§ 4.7.1 Codepoint Reordering Checksum</a>.</p>
       <li data-md>
        <p><a data-link-type="dfn" href="#patchrequest-original_font_checksum" id="ref-for-patchrequest-original_font_checksum①">original_font_checksum</a>:
@@ -1738,7 +1750,7 @@ can be cached, or null.</p>
       <li data-md>
        <p>If <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status②">status</a> is 412, then the server does not recognize the codepoint ordering
  used by the client. The client should resend the request that triggered this response but also
- set the <a data-link-type="dfn" href="#patchrequest-codepoint_ordering" id="ref-for-patchrequest-codepoint_ordering">codepoint_ordering</a> field on the request to the <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑦">codepoint_ordering</a> in the client state table within <var>font subset</var>.</p>
+ set the <a data-link-type="dfn" href="#patchrequest-codepoint_ordering" id="ref-for-patchrequest-codepoint_ordering">codepoint_ordering</a> field on the request to the <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑧">codepoint_ordering</a> in the client state table within <var>font subset</var>.</p>
       <li data-md>
        <p>All other statuses, the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⓪">font subset</a> extension has failed. Invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-failed-font-load" id="ref-for-abstract-opdef-handle-failed-font-load">Handle failed font load</a> and return the result.</p>
      </ul>
@@ -1770,7 +1782,55 @@ which generated this response. If they are not equal, this is an invalid respons
     <li data-md>
      <p>Discard the saved <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①②">font subset</a>, and use the user agent’s existing font fallback mechanism.</p>
    </ol>
-   <h4 class="heading settled algorithm" data-algorithm="Load a Font in a User Agent with a HTTP Cache" data-level="4.4.3" id="load-a-font"><span class="secno">4.4.3. </span><span class="content">Load a Font in a User Agent with a HTTP Cache</span><a class="self-link" href="#load-a-font"></a></h4>
+   <h4 class="heading settled algorithm" data-algorithm="Grouping Codepoints for a Request" data-level="4.4.3" id="codepoint-grouping"><span class="secno">4.4.3. </span><span class="content">Grouping Codepoints for a Request</span><a class="self-link" href="#codepoint-grouping"></a></h4>
+   <p>This algorithm is used by the client when forming a request which includes <a href="#cjk-unicode-blocks">CJK</a> codepoints
+to obscure the specific codepoints needed by the request to improve privacy (see <a href="#content-inference-from-character-set">Content inference from character set</a> for the rationale behind this).</p>
+   <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-create-codepoint-groups-for-cjk-codepoints">Create codepoint groups for CJK codepoints</dfn></p>
+   <p>The inputs to this algorithm:</p>
+   <ul>
+    <li data-md>
+     <p><var>requested codepoints</var>: a set of codepoints that are being requested to be added to a font subset.</p>
+    <li data-md>
+     <p><var>codepoint coverage hint</var> (optional): A set of code points that are expected to be present in the
+original font, or null.</p>
+    <li data-md>
+     <p><var>font subset</var> (optional): previously loaded <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a> for the given
+font url, or null.</p>
+    <li data-md>
+     <p><var>client state</var> (optional): The <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate②">ClientState</a> object for the <var>font subset</var>, or null.</p>
+   </ul>
+   <p>The algorithm outputs:</p>
+   <ul>
+    <li data-md>
+     <p>An updated list of codepoints to include in the request.</p>
+   </ul>
+   <p>The algorithm:</p>
+   <ol>
+    <li data-md>
+     <p>Create a new set <var>CJK codepoints</var> by removing all codepoints from <var>requested codepoints</var> which are
+not listed in <a href="#cjk-unicode-blocks">Appendix B: CJK Unicode Blocks</a>.</p>
+    <li data-md>
+     <p>If <var>CJK codepoints</var> is an empty set, return <var>requested codepoints</var>.</p>
+    <li data-md>
+     <p>Form a set <var>available codepoints</var>:</p>
+     <ul>
+      <li data-md>
+       <p>If <var>client state</var> is non-null <var>available codepoints</var> is the set of codepoints included
+  in the <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑨">codepoint_ordering</a>.</p>
+      <li data-md>
+       <p>If <var>codepoint coverage hint</var> is non-null <var>available codepoints</var> is equal to
+  the <var>codepoint coverage hint</var> set.</p>
+      <li data-md>
+       <p>Otherwise, <var>available codepoints</var> is equal to the set of codepoints specified in <a href="#cjk-unicode-blocks">Appendix B: CJK Unicode Blocks</a>.</p>
+     </ul>
+    <li data-md>
+     <p>Partition <var>available codepoints</var> into one or more groups that each contain at least 5 codepoints. The
+ specific partitioning algorithm is left up to the implementation.</p>
+    <li data-md>
+     <p>Find the set of groups which contain at least one codepoint from <var>CJK codepoints</var>. Union the matching
+ groups and return the resulting set.</p>
+   </ol>
+   <h4 class="heading settled algorithm" data-algorithm="Load a Font in a User Agent with a HTTP Cache" data-level="4.4.4" id="load-a-font"><span class="secno">4.4.4. </span><span class="content">Load a Font in a User Agent with a HTTP Cache</span><a class="self-link" href="#load-a-font"></a></h4>
    <p>The previous section <a href="#extend-subset">§ 4.4.1 Extending the Font Subset</a> provides no guidance on how a user agent should handle
 saving the font subset and client state between invocations of the subset extension algorithm. This
 section provides an algorithm that user agents which implement <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> should use to save the font
@@ -1785,7 +1845,7 @@ subset to the user agent’s HTTP cache (<a data-link-type="biblio" href="#bibli
 the fragment identifier (<a href="https://www.rfc-editor.org/rfc/rfc8081#section-4.2">The "font" Top-Level Media Type § section-4.2</a>) identifies a single font within the collection.</p>
     <li data-md>
      <p><var>desired subset definition</var>: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">description</a> of the desired
-minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a>.</p>
+minimum <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a>.</p>
     <li data-md>
      <p><var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a>. The remainder
 of this section is described in terms of <a href="https://fetch.spec.whatwg.org/#fetching"><cite>Fetch</cite> § 4 Fetching</a>, but it is allowed to substitute
@@ -1794,7 +1854,7 @@ whatever HTTP fetching algorithm the user agent supports.</p>
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p>A <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a> which covers at minimum the input subset definition.</p>
+     <p>A <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a> which covers at minimum the input subset definition.</p>
    </ul>
    <p>The algorithm:</p>
    <ol>
@@ -1849,7 +1909,7 @@ whatever HTTP fetching algorithm the user agent supports.</p>
      <p>If the returned cache fields are non-null update the cache entry for the input
  font url with the returned client state and returned cache fields.</p>
     <li data-md>
-     <p>Return the returned <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a>.</p>
+     <p>Return the returned <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a>.</p>
    </ol>
    <h3 class="heading settled" data-level="4.5" id="handling-patch-request"><span class="secno">4.5. </span><span class="content">Server: Responding to a PatchRequest</span><a class="self-link" href="#handling-patch-request"></a></h3>
    <p><span class="conform server" id="conform-successful-response">If the server receives a well formed <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest⑤">PatchRequest</a> over HTTPS for a font the server has and that was
@@ -1891,8 +1951,8 @@ provide the exact codepoint ordering that was used to encode <a data-link-type="
    <p><span class="conform server" id="conform-bad-reordering"> If the server does not recognize the codepoint ordering used by the client, it must respond
 with <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status④">status</a> code 412. This will instruct the client to resend the request including
 the codepoint ordering it has. </span></p>
-   <p><span class="conform server" id="conform-response-valid-patch"> Otherwise when the response is decoded by the client following the process in <a href="#handling-patch-response">§ 4.4.2 Handling Server Response</a> to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a> with checksum <a data-link-type="dfn" href="#patchrequest-base_checksum" id="ref-for-patchrequest-base_checksum②">base_checksum</a> it must
-result in an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑦">font subset</a>: </span></p>
+   <p><span class="conform server" id="conform-response-valid-patch"> Otherwise when the response is decoded by the client following the process in <a href="#handling-patch-response">§ 4.4.2 Handling Server Response</a> to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑦">font subset</a> with checksum <a data-link-type="dfn" href="#patchrequest-base_checksum" id="ref-for-patchrequest-base_checksum②">base_checksum</a> it must
+result in an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑧">font subset</a>: </span></p>
    <ul>
     <li data-md>
      <p><span class="conform server" id="conform-response-subset">That contains data for at least the union
@@ -1905,15 +1965,15 @@ the union of the set of features needed and the sets of features the client alre
 space that covers at least the union of the axis space the client has and the axis space the
 client needs.</span></p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-client-state">That has a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> which is identified by the tag 'IFTP' whose content is a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate②">ClientState</a> object encoded via
+     <p><span class="conform server" id="conform-response-client-state">That has a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> which is identified by the tag 'IFTP' whose content is a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate③">ClientState</a> object encoded via
 CBOR:</span></p>
      <ul>
       <li data-md>
        <p><span class="conform server" id="conform-response-client-state-original-checksum">The <a data-link-type="dfn" href="#clientstate-original_font_checksum" id="ref-for-clientstate-original_font_checksum①">original_font_checksum</a> field must be set to the checksum of the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font⑨">original font</a> computed by the procedure in <a href="#computing-checksums">§ 4.6 Computing Checksums</a>.</span></p>
       <li data-md>
-       <p><span class="conform server" id="conform-response-client-state-codepoint-ordering"> The <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑧">codepoint_ordering</a> field must be set following <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a>.</span></p>
+       <p><span class="conform server" id="conform-response-client-state-codepoint-ordering"> The <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering①⓪">codepoint_ordering</a> field must be set following <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a>.</span></p>
       <li data-md>
-       <p><span class="conform server" id="conform-response-client-state-subset-axis-space-field"> If the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①⓪">original font</a> has variation axes, the <a data-link-type="dfn" href="#clientstate-subset_axis_space" id="ref-for-clientstate-subset_axis_space①">subset_axis_space</a> field must be set to the axis space covered by the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑧">font subset</a>.</span></p>
+       <p><span class="conform server" id="conform-response-client-state-subset-axis-space-field"> If the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①⓪">original font</a> has variation axes, the <a data-link-type="dfn" href="#clientstate-subset_axis_space" id="ref-for-clientstate-subset_axis_space①">subset_axis_space</a> field must be set to the axis space covered by the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑨">font subset</a>.</span></p>
       <li data-md>
        <p><span class="conform server" id="conform-response-client-state-original-axis-space"> If the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①①">original font</a> has variation axes, the <a data-link-type="dfn" href="#clientstate-original_axis_space" id="ref-for-clientstate-original_axis_space">original_axis_space</a> field must be set to the axis space covered by
  the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①②">original font</a>.</span></p>
@@ -2511,6 +2571,21 @@ them from being used for tracking.</p>
       <td>zero
       <td>176
    </table>
+   <h2 class="heading settled" id="cjk-unicode-blocks"><span class="content"> Appendix B: CJK Unicode Blocks</span><a class="self-link" href="#cjk-unicode-blocks"></a></h2>
+   <p>The following codepoints are considered to be CJK codepoints:</p>
+   <table>
+    <thead>
+     <tr>
+      <th>Unicode Block Name 
+      <th>Codepoint Range 
+    <tbody>
+     <tr>
+      <td>CJK Unified Ideographs 
+      <td>U+4E00..U+9FFF 
+     <tr>
+      <td>TODO 
+      <td>Add More 
+   </table>
   </main>
   <div data-fill-with="conformance">
    <h2 class="no-ref no-num heading settled" id="w3c-conformance"><span class="content">Conformance</span><a class="self-link" href="#w3c-conformance"></a></h2>
@@ -2576,6 +2651,7 @@ them from being used for tracking.</p>
    <li><a href="#patchrequest-codepoints_have">codepoints_have</a><span>, in § 4.3.3</span>
    <li><a href="#patchrequest-codepoints_needed">codepoints_needed</a><span>, in § 4.3.3</span>
    <li><a href="#compressedset">CompressedSet</a><span>, in § 4.3.1</span>
+   <li><a href="#abstract-opdef-create-codepoint-groups-for-cjk-codepoints">Create codepoint groups for CJK codepoints</a><span>, in § 4.4.3</span>
    <li><a href="#axisinterval-end">end</a><span>, in § 4.3.2</span>
    <li><a href="#abstract-opdef-extend-the-font-subset">Extend the font subset</a><span>, in § 4.4.1</span>
    <li><a href="#patchrequest-features_have">features_have</a><span>, in § 4.3.3</span>
@@ -2591,7 +2667,7 @@ them from being used for tracking.</p>
    <li><a href="#patchrequest-indices_needed">indices_needed</a><span>, in § 4.3.3</span>
    <li><a href="#integer">Integer</a><span>, in § 4.2.2</span>
    <li><a href="#integerlist">IntegerList</a><span>, in § 4.2.4</span>
-   <li><a href="#abstract-opdef-load-a-font-with-a-http-cache">Load a font with a HTTP Cache</a><span>, in § 4.4.3</span>
+   <li><a href="#abstract-opdef-load-a-font-with-a-http-cache">Load a font with a HTTP Cache</a><span>, in § 4.4.4</span>
    <li><a href="#clientstate-missing_codepoints">missing_codepoints</a><span>, in § 4.3.4</span>
    <li><a href="#patchrequest-ordering_checksum">ordering_checksum</a><span>, in § 4.3.3</span>
    <li><a href="#clientstate-original_axis_space">original_axis_space</a><span>, in § 4.3.4</span>
@@ -2991,19 +3067,19 @@ them from being used for tracking.</p>
 window.dfnpanelData = {};
 window.dfnpanelData['8e9945a0'] = {"dfnID": "8e9945a0", "url": "https://fetch.spec.whatwg.org/#concept-request-body", "dfnText": "body (for request)", "refSections": [{"refs": [{"id": "ref-for-concept-request-body"}], "title": "4.4.1. Extending the Font Subset"}], "external": true};
 window.dfnpanelData['81a76425'] = {"dfnID": "81a76425", "url": "https://fetch.spec.whatwg.org/#concept-response-body", "dfnText": "body (for response)", "refSections": [{"refs": [{"id": "ref-for-concept-response-body"}, {"id": "ref-for-concept-response-body\u2460"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-concept-response-body\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": true};
-window.dfnpanelData['688f9669'] = {"dfnID": "688f9669", "url": "https://fetch.spec.whatwg.org/#concept-request-cache-mode", "dfnText": "cache mode", "refSections": [{"refs": [{"id": "ref-for-concept-request-cache-mode"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-request-cache-mode\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
-window.dfnpanelData['3ae34c95'] = {"dfnID": "3ae34c95", "url": "https://fetch.spec.whatwg.org/#concept-request-destination", "dfnText": "destination", "refSections": [{"refs": [{"id": "ref-for-concept-request-destination"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-request-destination\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
+window.dfnpanelData['688f9669'] = {"dfnID": "688f9669", "url": "https://fetch.spec.whatwg.org/#concept-request-cache-mode", "dfnText": "cache mode", "refSections": [{"refs": [{"id": "ref-for-concept-request-cache-mode"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-request-cache-mode\u2460"}], "title": "4.4.4. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
+window.dfnpanelData['3ae34c95'] = {"dfnID": "3ae34c95", "url": "https://fetch.spec.whatwg.org/#concept-request-destination", "dfnText": "destination", "refSections": [{"refs": [{"id": "ref-for-concept-request-destination"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-request-destination\u2460"}], "title": "4.4.4. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
 window.dfnpanelData['c9e7c11a'] = {"dfnID": "c9e7c11a", "url": "https://fetch.spec.whatwg.org/#concept-header", "dfnText": "header", "refSections": [{"refs": [{"id": "ref-for-concept-header"}], "title": "4.4.1. Extending the Font Subset"}], "external": true};
-window.dfnpanelData['50b05fad'] = {"dfnID": "50b05fad", "url": "https://fetch.spec.whatwg.org/#concept-request-method", "dfnText": "method", "refSections": [{"refs": [{"id": "ref-for-concept-request-method"}, {"id": "ref-for-concept-request-method\u2460"}, {"id": "ref-for-concept-request-method\u2461"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-request-method\u2462"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
-window.dfnpanelData['cb98f71f'] = {"dfnID": "cb98f71f", "url": "https://fetch.spec.whatwg.org/#concept-request-mode", "dfnText": "mode", "refSections": [{"refs": [{"id": "ref-for-concept-request-mode"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-request-mode\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
+window.dfnpanelData['50b05fad'] = {"dfnID": "50b05fad", "url": "https://fetch.spec.whatwg.org/#concept-request-method", "dfnText": "method", "refSections": [{"refs": [{"id": "ref-for-concept-request-method"}, {"id": "ref-for-concept-request-method\u2460"}, {"id": "ref-for-concept-request-method\u2461"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-request-method\u2462"}], "title": "4.4.4. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
+window.dfnpanelData['cb98f71f'] = {"dfnID": "cb98f71f", "url": "https://fetch.spec.whatwg.org/#concept-request-mode", "dfnText": "mode", "refSections": [{"refs": [{"id": "ref-for-concept-request-mode"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-request-mode\u2460"}], "title": "4.4.4. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
 window.dfnpanelData['ee7bba09'] = {"dfnID": "ee7bba09", "url": "https://fetch.spec.whatwg.org/#concept-response", "dfnText": "response", "refSections": [{"refs": [{"id": "ref-for-concept-response"}], "title": "4.4.2. Handling Server Response"}], "external": true};
 window.dfnpanelData['28119f64'] = {"dfnID": "28119f64", "url": "https://fetch.spec.whatwg.org/#concept-status", "dfnText": "status", "refSections": [{"refs": [{"id": "ref-for-concept-status"}], "title": "4.4.2. Handling Server Response"}], "external": true};
 window.dfnpanelData['a1d47575'] = {"dfnID": "a1d47575", "url": "https://fetch.spec.whatwg.org/#concept-response-status", "dfnText": "status (for response)", "refSections": [{"refs": [{"id": "ref-for-concept-response-status"}, {"id": "ref-for-concept-response-status\u2460"}, {"id": "ref-for-concept-response-status\u2461"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-concept-response-status\u2462"}, {"id": "ref-for-concept-response-status\u2463"}, {"id": "ref-for-concept-response-status\u2464"}, {"id": "ref-for-concept-response-status\u2465"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": true};
 window.dfnpanelData['dc1cd39b'] = {"dfnID": "dc1cd39b", "url": "https://fetch.spec.whatwg.org/#concept-request-url", "dfnText": "url", "refSections": [{"refs": [{"id": "ref-for-concept-request-url"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": true};
-window.dfnpanelData['c0868016'] = {"dfnID": "c0868016", "url": "https://url.spec.whatwg.org/#concept-url-path", "dfnText": "path", "refSections": [{"refs": [{"id": "ref-for-concept-url-path"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-url-path\u2460"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-concept-url-path\u2461"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}, {"refs": [{"id": "ref-for-concept-url-path\u2462"}, {"id": "ref-for-concept-url-path\u2463"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": true};
-window.dfnpanelData['3a711be7'] = {"dfnID": "3a711be7", "url": "https://url.spec.whatwg.org/#concept-url-scheme", "dfnText": "scheme", "refSections": [{"refs": [{"id": "ref-for-concept-url-scheme"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-url-scheme\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
-window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "1.1. Patch Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "4.1. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2461"}, {"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}, {"id": "ref-for-font-subset\u2460\u2460"}, {"id": "ref-for-font-subset\u2460\u2461"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2462"}, {"id": "ref-for-font-subset\u2460\u2463"}, {"id": "ref-for-font-subset\u2460\u2464"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2465"}, {"id": "ref-for-font-subset\u2460\u2466"}, {"id": "ref-for-font-subset\u2460\u2467"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
-window.dfnpanelData['font-subset-definition'] = {"dfnID": "font-subset-definition", "url": "#font-subset-definition", "dfnText": "font subset definition", "refSections": [{"refs": [{"id": "ref-for-font-subset-definition"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-font-subset-definition\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": false};
+window.dfnpanelData['c0868016'] = {"dfnID": "c0868016", "url": "https://url.spec.whatwg.org/#concept-url-path", "dfnText": "path", "refSections": [{"refs": [{"id": "ref-for-concept-url-path"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-url-path\u2460"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-concept-url-path\u2461"}], "title": "4.4.4. Load a Font in a User Agent with a HTTP Cache"}, {"refs": [{"id": "ref-for-concept-url-path\u2462"}, {"id": "ref-for-concept-url-path\u2463"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": true};
+window.dfnpanelData['3a711be7'] = {"dfnID": "3a711be7", "url": "https://url.spec.whatwg.org/#concept-url-scheme", "dfnText": "scheme", "refSections": [{"refs": [{"id": "ref-for-concept-url-scheme"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-url-scheme\u2460"}], "title": "4.4.4. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
+window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "1.1. Patch Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "4.1. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2461"}, {"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}, {"id": "ref-for-font-subset\u2460\u2460"}, {"id": "ref-for-font-subset\u2460\u2461"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2462"}], "title": "4.4.3. Grouping Codepoints for a Request"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}, {"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}], "title": "4.4.4. Load a Font in a User Agent with a HTTP Cache"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2466"}, {"id": "ref-for-font-subset\u2460\u2467"}, {"id": "ref-for-font-subset\u2460\u2468"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['font-subset-definition'] = {"dfnID": "font-subset-definition", "url": "#font-subset-definition", "dfnText": "font subset definition", "refSections": [{"refs": [{"id": "ref-for-font-subset-definition"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-font-subset-definition\u2460"}], "title": "4.4.4. Load a Font in a User Agent with a HTTP Cache"}], "external": false};
 window.dfnpanelData['integer'] = {"dfnID": "integer", "url": "#integer", "dfnText": "Integer", "refSections": [{"refs": [{"id": "ref-for-integer"}, {"id": "ref-for-integer\u2460"}, {"id": "ref-for-integer\u2461"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-integer\u2462"}], "title": "4.3.4. ClientState"}], "external": false};
 window.dfnpanelData['float'] = {"dfnID": "float", "url": "#float", "dfnText": "Float", "refSections": [{"refs": [{"id": "ref-for-float"}, {"id": "ref-for-float\u2460"}], "title": "4.3.2. AxisInterval"}], "external": false};
 window.dfnpanelData['bytestring'] = {"dfnID": "bytestring", "url": "#bytestring", "dfnText": "ByteString", "refSections": [{"refs": [{"id": "ref-for-bytestring"}], "title": "4.2.3. SparseBitSet"}, {"refs": [{"id": "ref-for-bytestring\u2460"}, {"id": "ref-for-bytestring\u2461"}], "title": "4.2.4. IntegerList"}, {"refs": [{"id": "ref-for-bytestring\u2462"}], "title": "4.2.5. SortedIntegerList"}, {"refs": [{"id": "ref-for-bytestring\u2463"}], "title": "4.2.6. RangeList"}, {"refs": [{"id": "ref-for-bytestring\u2464"}], "title": "4.2.8. AxisSpace"}, {"refs": [{"id": "ref-for-bytestring\u2465"}, {"id": "ref-for-bytestring\u2466"}], "title": "4.3.1. CompressedSet"}], "external": false};
@@ -3035,17 +3111,18 @@ window.dfnpanelData['patchrequest-original_font_checksum'] = {"dfnID": "patchreq
 window.dfnpanelData['patchrequest-base_checksum'] = {"dfnID": "patchrequest-base_checksum", "url": "#patchrequest-base_checksum", "dfnText": "base_checksum", "refSections": [{"refs": [{"id": "ref-for-patchrequest-base_checksum"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-patchrequest-base_checksum\u2460"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-base_checksum\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['patchrequest-fragment_id'] = {"dfnID": "patchrequest-fragment_id", "url": "#patchrequest-fragment_id", "dfnText": "fragment_id", "refSections": [{"refs": [{"id": "ref-for-patchrequest-fragment_id"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-fragment_id\u2460"}, {"id": "ref-for-patchrequest-fragment_id\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['patchrequest-codepoint_ordering'] = {"dfnID": "patchrequest-codepoint_ordering", "url": "#patchrequest-codepoint_ordering", "dfnText": "codepoint_ordering", "refSections": [{"refs": [{"id": "ref-for-patchrequest-codepoint_ordering"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-patchrequest-codepoint_ordering\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
-window.dfnpanelData['clientstate'] = {"dfnID": "clientstate", "url": "#clientstate", "dfnText": "ClientState", "refSections": [{"refs": [{"id": "ref-for-clientstate"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate\u2460"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-clientstate\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['clientstate'] = {"dfnID": "clientstate", "url": "#clientstate", "dfnText": "ClientState", "refSections": [{"refs": [{"id": "ref-for-clientstate"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate\u2460"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-clientstate\u2461"}], "title": "4.4.3. Grouping Codepoints for a Request"}, {"refs": [{"id": "ref-for-clientstate\u2462"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['clientstate-original_font_checksum'] = {"dfnID": "clientstate-original_font_checksum", "url": "#clientstate-original_font_checksum", "dfnText": "original_font_checksum", "refSections": [{"refs": [{"id": "ref-for-clientstate-original_font_checksum"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate-original_font_checksum\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
-window.dfnpanelData['clientstate-codepoint_ordering'] = {"dfnID": "clientstate-codepoint_ordering", "url": "#clientstate-codepoint_ordering", "dfnText": "codepoint_ordering", "refSections": [{"refs": [{"id": "ref-for-clientstate-codepoint_ordering"}, {"id": "ref-for-clientstate-codepoint_ordering\u2460"}, {"id": "ref-for-clientstate-codepoint_ordering\u2461"}, {"id": "ref-for-clientstate-codepoint_ordering\u2462"}, {"id": "ref-for-clientstate-codepoint_ordering\u2463"}, {"id": "ref-for-clientstate-codepoint_ordering\u2464"}, {"id": "ref-for-clientstate-codepoint_ordering\u2465"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate-codepoint_ordering\u2466"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-clientstate-codepoint_ordering\u2467"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['clientstate-codepoint_ordering'] = {"dfnID": "clientstate-codepoint_ordering", "url": "#clientstate-codepoint_ordering", "dfnText": "codepoint_ordering", "refSections": [{"refs": [{"id": "ref-for-clientstate-codepoint_ordering"}, {"id": "ref-for-clientstate-codepoint_ordering\u2460"}, {"id": "ref-for-clientstate-codepoint_ordering\u2461"}, {"id": "ref-for-clientstate-codepoint_ordering\u2462"}, {"id": "ref-for-clientstate-codepoint_ordering\u2463"}, {"id": "ref-for-clientstate-codepoint_ordering\u2464"}, {"id": "ref-for-clientstate-codepoint_ordering\u2465"}, {"id": "ref-for-clientstate-codepoint_ordering\u2466"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate-codepoint_ordering\u2467"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-clientstate-codepoint_ordering\u2468"}], "title": "4.4.3. Grouping Codepoints for a Request"}, {"refs": [{"id": "ref-for-clientstate-codepoint_ordering\u2460\u24ea"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['clientstate-subset_axis_space'] = {"dfnID": "clientstate-subset_axis_space", "url": "#clientstate-subset_axis_space", "dfnText": "subset_axis_space", "refSections": [{"refs": [{"id": "ref-for-clientstate-subset_axis_space"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate-subset_axis_space\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['clientstate-original_axis_space'] = {"dfnID": "clientstate-original_axis_space", "url": "#clientstate-original_axis_space", "dfnText": "original_axis_space", "refSections": [{"refs": [{"id": "ref-for-clientstate-original_axis_space"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['clientstate-original_features'] = {"dfnID": "clientstate-original_features", "url": "#clientstate-original_features", "dfnText": "original_features", "refSections": [{"refs": [{"id": "ref-for-clientstate-original_features"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 window.dfnpanelData['clientstate-missing_codepoints'] = {"dfnID": "clientstate-missing_codepoints", "url": "#clientstate-missing_codepoints", "dfnText": "missing_codepoints", "refSections": [{"refs": [{"id": "ref-for-clientstate-missing_codepoints"}, {"id": "ref-for-clientstate-missing_codepoints\u2460"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate-missing_codepoints\u2461"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-clientstate-missing_codepoints\u2462"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
-window.dfnpanelData['abstract-opdef-extend-the-font-subset'] = {"dfnID": "abstract-opdef-extend-the-font-subset", "url": "#abstract-opdef-extend-the-font-subset", "dfnText": "Extend the font subset", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-extend-the-font-subset"}, {"id": "ref-for-abstract-opdef-extend-the-font-subset\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": false};
+window.dfnpanelData['abstract-opdef-extend-the-font-subset'] = {"dfnID": "abstract-opdef-extend-the-font-subset", "url": "#abstract-opdef-extend-the-font-subset", "dfnText": "Extend the font subset", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-extend-the-font-subset"}, {"id": "ref-for-abstract-opdef-extend-the-font-subset\u2460"}], "title": "4.4.4. Load a Font in a User Agent with a HTTP Cache"}], "external": false};
 window.dfnpanelData['patch-request-header'] = {"dfnID": "patch-request-header", "url": "#patch-request-header", "dfnText": "patch request header", "refSections": [{"refs": [{"id": "ref-for-patch-request-header"}], "title": "3.1. IFT Method Negotiation"}, {"refs": [{"id": "ref-for-patch-request-header\u2460"}], "title": "3.3. Offline Usage"}], "external": false};
 window.dfnpanelData['abstract-opdef-handle-server-response'] = {"dfnID": "abstract-opdef-handle-server-response", "url": "#abstract-opdef-handle-server-response", "dfnText": "Handle server response", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-handle-server-response"}], "title": "4.4.1. Extending the Font Subset"}], "external": false};
 window.dfnpanelData['abstract-opdef-handle-failed-font-load'] = {"dfnID": "abstract-opdef-handle-failed-font-load", "url": "#abstract-opdef-handle-failed-font-load", "dfnText": "Handle failed font load", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-handle-failed-font-load"}, {"id": "ref-for-abstract-opdef-handle-failed-font-load\u2460"}], "title": "4.4.2. Handling Server Response"}], "external": false};
+window.dfnpanelData['abstract-opdef-create-codepoint-groups-for-cjk-codepoints'] = {"dfnID": "abstract-opdef-create-codepoint-groups-for-cjk-codepoints", "url": "#abstract-opdef-create-codepoint-groups-for-cjk-codepoints", "dfnText": "Create codepoint groups for CJK codepoints", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-create-codepoint-groups-for-cjk-codepoints"}], "title": "4.4.1. Extending the Font Subset"}], "external": false};
 window.dfnpanelData['original-font'] = {"dfnID": "original-font", "url": "#original-font", "dfnText": "original font", "refSections": [{"refs": [{"id": "ref-for-original-font"}, {"id": "ref-for-original-font\u2460"}, {"id": "ref-for-original-font\u2461"}, {"id": "ref-for-original-font\u2462"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-original-font\u2463"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-original-font\u2464"}, {"id": "ref-for-original-font\u2465"}, {"id": "ref-for-original-font\u2466"}, {"id": "ref-for-original-font\u2467"}, {"id": "ref-for-original-font\u2468"}, {"id": "ref-for-original-font\u2460\u24ea"}, {"id": "ref-for-original-font\u2460\u2460"}, {"id": "ref-for-original-font\u2460\u2461"}, {"id": "ref-for-original-font\u2460\u2462"}, {"id": "ref-for-original-font\u2460\u2463"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
 </script>
 <script>/* Boilerplate: script-dom-helper */

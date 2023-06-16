@@ -1090,6 +1090,9 @@ The inputs to this algorithm are:
 * <var>desired subset definition</var>: a [=font subset definition|description=] of the desired
     minimum [=font subset=].
 
+* <var>codepoint coverage hint</var> (optional): A set of code points that are expected to be present in the
+    original font, or null. For fonts loading via CSS this is given by [[css-fonts-4#unicode-range-desc]].
+
 * <var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder
     of this section is described in terms of [[fetch#fetching]], but it is allowed to substitute
     whatever HTTP fetching algorithm the user agent supports.
@@ -1104,11 +1107,8 @@ The algorithm outputs:
 
 The algorithm:
 
-1. Compare the <var>desired subset definition</var> to the <var>font subset</var>. If the
-     <var>font subset</var> is a superset of <var>desired subset definition</var> then return
-     <var>font subset</var>, and null for the cache fields.
 
-2. If <var>font subset</var> is set then load the <var>client state</var> from the
+1. If <var>font subset</var> is set then load the <var>client state</var> from the
     <var>font subset</var>. Client state is stored in the <var>font subset</var> as a
     <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>
     identified by the 4-byte tag 'IFTP'. The contents of the table are a single [=ClientState=] object
@@ -1117,7 +1117,21 @@ The algorithm:
      * If <var>font subset</var> does not have an "IFTP" table, then this is not an incrementally
          loaded font and cannot be extended any further. Return <var>font subset</var>.
 
-3. Otherwise make an HTTP request using the <var>fetch algorithm</var>:
+2. If client state was loaded in the previous step, remove all codepoints in <var>desired subset definition</var>
+     which are not listed in [=ClientState/codepoint_ordering=]. Otherwise if <var>codepoint coverage hint</var> is
+     non-null, remove all codepoint in <var>desired subset definition</var> which are not found in
+     <var>codepoint coverage hint</var>.
+
+3. Compare the <var>desired subset definition</var> to the <var>font subset</var>. If the
+     <var>font subset</var> is a superset of <var>desired subset definition</var> then return
+     <var>font subset</var>, and null for the cache fields.
+
+4. Invoke [$Create codepoint groups for CJK codepoints$]. The requested codepoints input is the codepoint set from
+     <var>desired subset definition</var> minus the codepoints already in the <var>font subset</var>. Additionally
+     pass in <var>codepoint coverage hint</var>, <var>font subset</var>, and the client state loaded in step 1.
+     Add the returned codepoints to <var>desired subset definition</var>
+
+5. Make an HTTP request using the <var>fetch algorithm</var>:
 
      * The request [=request/method=] must be either "GET" or "POST".
 
@@ -1221,7 +1235,7 @@ The algorithm:
      example, on slower connections it may be more performant to request extra codepoints if
      that is likely to prevent a future request from needing to be sent.
 
-4. Invoke [$Handle server response$] with the response from the server and the <var>font subset</var>
+6. Invoke [$Handle server response$] with the response from the server and the <var>font subset</var>
     then return the result.
 
 Note: POST is preferred for the HTTP method since it will not cause a CORS pre-flight request
@@ -1298,6 +1312,55 @@ If the font load or extension has failed the client should choose one of the fol
       the entire [=original font=].
 
 3.  Discard the saved [=font subset=], and use the user agent's existing font fallback mechanism.
+
+<h4 algorithm id="codepoint-grouping">Grouping Codepoints for a Request</h4>
+
+This algorithm is used by the client when forming a request which includes [[#cjk-unicode-blocks|CJK]] codepoints
+to obscure the specific codepoints needed by the request to improve privacy (see
+[[#content-inference-from-character-set]] for the rationale behind this).
+
+<!-- TODO: rename to not be cjk specific -->
+<dfn abstract-op>Create codepoint groups for CJK codepoints</h4>
+
+The inputs to this algorithm:
+
+* <var>requested codepoints</var>: a set of codepoints that are being requested to be added to a font subset.
+
+* <var>codepoint coverage hint</var> (optional): A set of code points that are expected to be present in the
+    original font, or null.
+
+* <var>font subset</var> (optional): previously loaded [=font subset=] for the given
+    font url, or null.
+
+* <var>client state</var> (optional): The [=ClientState=] object for the <var>font subset</var>, or null.
+
+The algorithm outputs:
+
+*  An updated list of codepoints to include in the request.
+
+The algorithm:
+
+1. Create a new set <var>CJK codepoints</var> by removing all codepoints from <var>requested codepoints</var> which are
+    not listed in [[#cjk-unicode-blocks]].
+
+2. If <var>CJK codepoints</var> is an empty set, return <var>requested codepoints</var>.
+
+3. Form a set <var>available codepoints</var>:
+
+     *  If <var>client state</var> is non-null <var>available codepoints</var> is the set of codepoints included
+          in the [=ClientState/codepoint_ordering=].
+
+     *  If <var>codepoint coverage hint</var> is non-null <var>available codepoints</var> is equal to
+          the <var>codepoint coverage hint</var> set.
+
+     *  Otherwise, <var>available codepoints</var> is equal to the set of codepoints specified in
+          [[#cjk-unicode-blocks]].
+
+4. Partition <var>available codepoints</var> into one or more groups that each contain at least 5 codepoints. The
+     specific partitioning algorithm is left up to the implementation.
+
+5. Find the set of groups which contain at least one codepoint from <var>CJK codepoints</var>. Union the matching
+     groups and return the resulting set.
 
 <h4 algorithm id="load-a-font">Load a Font in a User Agent with a HTTP Cache</h4>
 
@@ -1758,3 +1821,26 @@ Appendix A: Default Feature Tags and Encoding IDs</h2>
 <!-- Edit feature-registry.csv to update this table. -->
 path: feature-registry.html
 </pre>
+
+<h2 id="cjk-unicode-blocks">
+Appendix B: CJK Unicode Blocks</h2>
+
+<!-- TODO Rename the appendix title to not be CJK specific. eg. extra privacy codepoints. -->
+
+The following codepoints are considered to be CJK codepoints:
+
+<table>
+  <thead>
+    <tr>
+      <th>Unicode Block Name
+      <th>Codepoint Range
+  <tbody>
+    <tr>
+      <td>CJK Unified Ideographs
+      <td>U+4E00..U+9FFF
+
+    <tr>
+      <td>TODO
+      <td>Add More
+</table>
+      
