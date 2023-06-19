@@ -4,14 +4,14 @@
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <title>Incremental Font Transfer</title>
   <meta content="WD" name="w3c-status">
-  <meta content="Bikeshed version d9bd89757, updated Thu Mar 23 10:06:53 2023 -0700" name="generator">
+  <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="0fa655056ac70763900d5de2e6431fb34d44341c" name="document-revision">
+  <meta content="f9e9e4cf1cf8f31bc54cb45d3a96f52a8ea5bbea" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
 </style>
-<style>/* style-autolinks */
+<style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
     color: var(--a-normal-text);
     font-size: inherit;
@@ -72,8 +72,238 @@ pre .property::before, pre .property::after {
 [data-link-type=biblio] {
     white-space: pre;
 }
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --selflink-text: black;
+        --selflink-bg: silver;
+        --selflink-hover-text: white;
+    }
+}
 </style>
-<style>/* style-counters */
+<style>/* Boilerplate: style-colors */
+
+/* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
+:root {
+    color-scheme: light dark;
+
+    --text: black;
+    --bg: white;
+
+    --unofficial-watermark: url(https://www.w3.org/StyleSheets/TR/2016/logos/UD-watermark);
+
+    --logo-bg: #1a5e9a;
+    --logo-active-bg: #c00;
+    --logo-text: white;
+
+    --tocnav-normal-text: #707070;
+    --tocnav-normal-bg: var(--bg);
+    --tocnav-hover-text: var(--tocnav-normal-text);
+    --tocnav-hover-bg: #f8f8f8;
+    --tocnav-active-text: #c00;
+    --tocnav-active-bg: var(--tocnav-normal-bg);
+
+    --tocsidebar-text: var(--text);
+    --tocsidebar-bg: #f7f8f9;
+    --tocsidebar-shadow: rgba(0,0,0,.1);
+    --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+    --toclink-text: var(--text);
+    --toclink-underline: #3980b5;
+    --toclink-visited-text: var(--toclink-text);
+    --toclink-visited-underline: #054572;
+
+    --heading-text: #005a9c;
+
+    --hr-text: var(--text);
+
+    --algo-border: #def;
+
+    --del-text: red;
+    --del-bg: transparent;
+    --ins-text: #080;
+    --ins-bg: transparent;
+
+    --a-normal-text: #034575;
+    --a-normal-underline: #bbb;
+    --a-visited-text: var(--a-normal-text);
+    --a-visited-underline: #707070;
+    --a-hover-bg: rgba(75%, 75%, 75%, .25);
+    --a-active-text: #c00;
+    --a-active-underline: #c00;
+
+    --blockquote-border: silver;
+    --blockquote-bg: transparent;
+    --blockquote-text: currentcolor;
+
+    --issue-border: #e05252;
+    --issue-bg: #fbe9e9;
+    --issue-text: var(--text);
+    --issueheading-text: #831616;
+
+    --example-border: #e0cb52;
+    --example-bg: #fcfaee;
+    --example-text: var(--text);
+    --exampleheading-text: #574b0f;
+
+    --note-border: #52e052;
+    --note-bg: #e9fbe9;
+    --note-text: var(--text);
+    --noteheading-text: hsl(120, 70%, 30%);
+    --notesummary-underline: silver;
+
+    --assertion-border: #aaa;
+    --assertion-bg: #eee;
+    --assertion-text: black;
+
+    --advisement-border: orange;
+    --advisement-bg: #fec;
+    --advisement-text: var(--text);
+    --advisementheading-text: #b35f00;
+
+    --warning-border: red;
+    --warning-bg: hsla(40,100%,50%,0.95);
+    --warning-text: var(--text);
+
+    --amendment-border: #330099;
+    --amendment-bg: #F5F0FF;
+    --amendment-text: var(--text);
+    --amendmentheading-text: #220066;
+
+    --def-border: #8ccbf2;
+    --def-bg: #def;
+    --def-text: var(--text);
+    --defrow-border: #bbd7e9;
+
+    --datacell-border: silver;
+
+    --indexinfo-text: #707070;
+
+    --indextable-hover-text: black;
+    --indextable-hover-bg: #f7f8f9;
+
+    --outdatedspec-bg: rgba(0, 0, 0, .5);
+    --outdatedspec-text: black;
+    --outdated-bg: maroon;
+    --outdated-text: white;
+    --outdated-shadow: red;
+
+    --editedrec-bg: darkorange;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #ddd;
+        --bg: black;
+
+        --unofficial-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='%23100808' transform='translate(200 200) rotate(-45) translate(-200 -200)' stroke='%23100808' stroke-width='3'%3E%3Ctext x='50%25' y='220' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EUNOFFICIAL%3C/text%3E%3Ctext x='50%25' y='305' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EDRAFT%3C/text%3E%3C/g%3E%3C/svg%3E");
+
+        --logo-bg: #1a5e9a;
+        --logo-active-bg: #c00;
+        --logo-text: white;
+
+        --tocnav-normal-text: #999;
+        --tocnav-normal-bg: var(--bg);
+        --tocnav-hover-text: var(--tocnav-normal-text);
+        --tocnav-hover-bg: #080808;
+        --tocnav-active-text: #f44;
+        --tocnav-active-bg: var(--tocnav-normal-bg);
+
+        --tocsidebar-text: var(--text);
+        --tocsidebar-bg: #080808;
+        --tocsidebar-shadow: rgba(255,255,255,.1);
+        --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+        --toclink-text: var(--text);
+        --toclink-underline: #6af;
+        --toclink-visited-text: var(--toclink-text);
+        --toclink-visited-underline: #054572;
+
+        --heading-text: #8af;
+
+        --hr-text: var(--text);
+
+        --algo-border: #456;
+
+        --del-text: #f44;
+        --del-bg: transparent;
+        --ins-text: #4a4;
+        --ins-bg: transparent;
+
+        --a-normal-text: #6af;
+        --a-normal-underline: #555;
+        --a-visited-text: var(--a-normal-text);
+        --a-visited-underline: var(--a-normal-underline);
+        --a-hover-bg: rgba(25%, 25%, 25%, .2);
+        --a-active-text: #f44;
+        --a-active-underline: var(--a-active-text);
+
+        --borderedblock-bg: rgba(255, 255, 255, .05);
+
+        --blockquote-border: silver;
+        --blockquote-bg: var(--borderedblock-bg);
+        --blockquote-text: currentcolor;
+
+        --issue-border: #e05252;
+        --issue-bg: var(--borderedblock-bg);
+        --issue-text: var(--text);
+        --issueheading-text: hsl(0deg, 70%, 70%);
+
+        --example-border: hsl(50deg, 90%, 60%);
+        --example-bg: var(--borderedblock-bg);
+        --example-text: var(--text);
+        --exampleheading-text: hsl(50deg, 70%, 70%);
+
+        --note-border: hsl(120deg, 100%, 35%);
+        --note-bg: var(--borderedblock-bg);
+        --note-text: var(--text);
+        --noteheading-text: hsl(120, 70%, 70%);
+        --notesummary-underline: silver;
+
+        --assertion-border: #444;
+        --assertion-bg: var(--borderedblock-bg);
+        --assertion-text: var(--text);
+
+        --advisement-border: orange;
+        --advisement-bg: #222218;
+        --advisement-text: var(--text);
+        --advisementheading-text: #f84;
+
+        --warning-border: red;
+        --warning-bg: hsla(40,100%,20%,0.95);
+        --warning-text: var(--text);
+
+        --amendment-border: #330099;
+        --amendment-bg: #080010;
+        --amendment-text: var(--text);
+        --amendmentheading-text: #cc00ff;
+
+        --def-border: #8ccbf2;
+        --def-bg: #080818;
+        --def-text: var(--text);
+        --defrow-border: #136;
+
+        --datacell-border: silver;
+
+        --indexinfo-text: #aaa;
+
+        --indextable-hover-text: var(--text);
+        --indextable-hover-bg: #181818;
+
+        --outdatedspec-bg: rgba(255, 255, 255, .5);
+        --outdatedspec-text: black;
+        --outdated-bg: maroon;
+        --outdated-text: white;
+        --outdated-shadow: red;
+
+        --editedrec-bg: darkorange;
+    }
+    /* In case a transparent-bg image doesn't expect to be on a dark bg,
+       which is quite common in practice... */
+    img { background: white; }
+}
+</style>
+<style>/* Boilerplate: style-counters */
 body {
     counter-reset: example figure issue;
 }
@@ -102,17 +332,22 @@ figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
 }
 </style>
-<style>/* style-dfn-panel */
+<style>/* Boilerplate: style-dfn-panel */
 :root {
     --dfnpanel-bg: #ddd;
     --dfnpanel-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+    }
 }
 .dfn-panel {
     position: absolute;
     z-index: 35;
     width: 20em;
-    min-width: min-content;
-    max-width: 300px;
+    width: 300px;
     height: auto;
     max-height: 500px;
     overflow: auto;
@@ -129,8 +364,15 @@ figcaption:not(.no-marker)::before {
 .dfn-panel a { color: var(--dfnpanel-text); }
 .dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
 .dfn-panel > b + b { margin-top: 0.25em; }
-.dfn-panel ul { padding: 0; }
-.dfn-panel li { list-style: inside; }
+.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
+.dfn-panel li a {
+    white-space: pre;
+    display: inline-block;
+    max-width: calc(300px - 1.5em - 1em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .dfn-panel.activated {
     display: inline-block;
     position: fixed;
@@ -141,9 +383,62 @@ figcaption:not(.no-marker)::before {
     max-height: 30vh;
 }
 
-.dfn-paneled { cursor: pointer; }
+.dfn-paneled[role="button"] { cursor: pointer; }
 </style>
-<style>/* style-issues */
+<style>/* Boilerplate: style-dfn-panel */
+:root {
+    --dfnpanel-bg: #ddd;
+    --dfnpanel-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+    }
+}
+.dfn-panel {
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.75em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--dfnpanel-bg);
+    color: var(--dfnpanel-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+.dfn-panel:not(.on) { display: none; }
+.dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
+.dfn-panel > b { display: block; }
+.dfn-panel a { color: var(--dfnpanel-text); }
+.dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel > b + b { margin-top: 0.25em; }
+.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
+.dfn-panel li a {
+    white-space: pre;
+    display: inline-block;
+    max-width: calc(300px - 1.5em - 1em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dfn-panel.activated {
+    display: inline-block;
+    position: fixed;
+    left: .5em;
+    bottom: 2em;
+    margin: 0 auto;
+    max-width: calc(100vw - 1.5em - .4em - .5em);
+    max-height: 30vh;
+}
+
+.dfn-paneled[role="button"] { cursor: pointer; }
+</style>
+<style>/* Boilerplate: style-issues */
 a[href].issue-return {
     float: right;
     float: inline-end;
@@ -152,7 +447,7 @@ a[href].issue-return {
     text-decoration: none;
 }
 </style>
-<style>/* style-md-lists */
+<style>/* Boilerplate: style-md-lists */
 /* This is a weird hack for me not yet following the commonmark spec
    regarding paragraph and lists. */
 [data-md] > :first-child {
@@ -162,7 +457,7 @@ a[href].issue-return {
     margin-bottom: 0;
 }
 </style>
-<style>/* style-selflinks */
+<style>/* Boilerplate: style-selflinks */
 
 :root {
     --selflink-text: white;
@@ -222,17 +517,27 @@ a.self-link::before            { content: "¶"; }
 .heading > a.self-link::before { content: "§"; }
 dfn > a.self-link::before      { content: "#"; }
 </style>
-<style>/* style-var-click-highlighting */
-
-    var { cursor: pointer; }
-    var.selected0 { background-color: #F4D200; box-shadow: 0 0 0 2px #F4D200; }
-    var.selected1 { background-color: #FF87A2; box-shadow: 0 0 0 2px #FF87A2; }
-    var.selected2 { background-color: #96E885; box-shadow: 0 0 0 2px #96E885; }
-    var.selected3 { background-color: #3EEED2; box-shadow: 0 0 0 2px #3EEED2; }
-    var.selected4 { background-color: #EACFB6; box-shadow: 0 0 0 2px #EACFB6; }
-    var.selected5 { background-color: #82DDFF; box-shadow: 0 0 0 2px #82DDFF; }
-    var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
-    </style>
+<style>/* Boilerplate: style-style-var-click-highlighting */
+/*
+Colors were chosen in Lab using https://nixsensor.com/free-color-converter/
+D50 2deg illuminant, L in [0,100], a and b in [-128, 128]
+0 = lab(85,0,85)
+1 = lab(85,80,30)
+2 = lab(85,-40,40)
+3 = lab(85,-50,0)
+4 = lab(85,5,15)
+5 = lab(85,-10,-50)
+6 = lab(85,35,-15)
+*/
+var { cursor: pointer; }
+var.selected0 { background-color: #F4D200; box-shadow: 0 0 0 2px #F4D200; }
+var.selected1 { background-color: #FF87A2; box-shadow: 0 0 0 2px #FF87A2; }
+var.selected2 { background-color: #96E885; box-shadow: 0 0 0 2px #96E885; }
+var.selected3 { background-color: #3EEED2; box-shadow: 0 0 0 2px #3EEED2; }
+var.selected4 { background-color: #EACFB6; box-shadow: 0 0 0 2px #EACFB6; }
+var.selected5 { background-color: #82DDFF; box-shadow: 0 0 0 2px #82DDFF; }
+var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
+</style>
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-WD" rel="stylesheet">
  <body class="h-entry">
   <div class="head">
@@ -262,7 +567,7 @@ dfn > a.self-link::before      { content: "#"; }
     </div>
    </details>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2023 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document" rel="license">permissive document license</a> rules apply. </p>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2023 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/copyright-software" rel="license" title="W3C Software and Document License">permissive document license</a> rules apply. </p>
    <hr title="Separator for header">
   </div>
   <div class="p-summary" data-fill-with="abstract">
@@ -286,8 +591,12 @@ dfn > a.self-link::before      { content: "#"; }
    <p> Publication as a Working Draft does not imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. This is a draft document and may be updated, replaced or
   obsoleted by other documents at any time. It is inappropriate to cite this
   document as other than work in progress. </p>
-  <p>This document was produced by a group operating under the <a href="https://www.w3.org/Consortium/Patent-Policy/">W3C Patent Policy</a>. W3C maintains a <a rel="disclosure" href="https://www.w3.org/groups/wg/webfonts/ipr">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="https://www.w3.org/Consortium/Patent-Policy/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/Consortium/Patent-Policy/#sec-Disclosure">section 6 of the W3C Patent Policy</a>.</p>
-  <p>This document is governed by the <a id="w3c_process_revision" href="https://www.w3.org/2021/Process-20211102/">2 November 2021 W3C Process Document</a>. </p>
+   <p> This document was produced by groups operating under
+  the <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/">W3C Patent Policy</a>.
+  W3C maintains a <a href="https://www.w3.org/groups/wg/webfonts/ipr" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group;
+  that page also includes instructions for disclosing a patent.
+  An individual who has actual knowledge of a patent which the individual believes contains <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>. </p>
+   <p> This document is governed by the <a href="https://www.w3.org/2021/Process-20211102/" id="w3c_process_revision">2 November 2021 W3C Process Document</a>. </p>
    <p></p>
   </div>
   <div data-fill-with="at-risk"></div>
@@ -533,6 +842,9 @@ should use the patch subset IFT method to load the font.
 }
 </pre>
    </div>
+   <p>@font-face’s that include one of the incremental tech keywords should also include a <a href="https://www.w3.org/TR/css-fonts-4/#unicode-range-desc">unicode-range descriptor</a>. This informs the client which codepoints
+are available in the font prior to making the first request, which can be used to avoid requesting
+unavailable codepoints.</p>
    <p class="note" role="note"><span class="marker">Note:</span> Each individual <code>@font-face</code> block may or may not opt-in to IFT. This is due to the
 variety of ways fonts are used on web pages. Authors have control over which fonts they want to use
 this technology with, and which they do not.</p>
@@ -1737,7 +2049,7 @@ file as a patch against a source file:</p>
       <td> Uses VCDIFF format <a data-link-type="biblio" href="#biblio-rfc3284" title="The VCDIFF Generic Differencing and Compression Data Format">[RFC3284]</a> to produce the patch. 
    </table>
    <h2 class="heading settled" data-level="5" id="range-request-incxfer"><span class="secno">5. </span><span class="content">Range Request Incremental Transfer</span><a class="self-link" href="#range-request-incxfer"></a></h2>
-   <p>Range request incremental font transfer is specified in a separate document: <a data-biblio-obsolete data-link-type="biblio" href="#biblio-rangerequest" title="Incremental Font Transfer via Range Request">[RangeRequest]</a></p>
+   <p>Range request incremental font transfer is specified in a separate document: <a data-biblio-obsolete data-link-type="biblio" href="#biblio-rangerequest" title="Range Request Incremental Font Transfer">[RangeRequest]</a></p>
    <h2 class="no-num heading settled" id="priv"><span class="content">Privacy Considerations</span><a class="self-link" href="#priv"></a></h2>
    <h3 class="heading settled" id="content-inference-from-character-set"><span class="content">Content inference from character set</span><a class="self-link" href="#content-inference-from-character-set"></a></h3>
    <p>IFT exposes, to the server hosting a Web font, the set of characters that the browser can already render in a given Web font, and also the set of characters that it cannot render, but wants to (for example, to render a new Web page). For details, see <a href="#extend-subset">§ 4.4.1 Extending the Font Subset</a>.</p>
@@ -1780,7 +2092,7 @@ them from being used for tracking.</p>
     <li>Added an id for offline usage header
     <li>Updated the responding to patch request section for client state changes
     <li>Updated loading with a cache section for client state changes
-    <li>Added client side hanlding of new urecognized_ordering field
+    <li>Added client side handling of new urecognized_ordering field
     <li>Updated handling failed font load section for client state
     <li>Updated the 'Extending font subset' section for client state changes
     <li>Added ClientState object schema
@@ -2284,116 +2596,28 @@ them from being used for tracking.</p>
    <li><a href="#string">String</a><span>, in § 4.2.2</span>
    <li><a href="#clientstate-subset_axis_space">subset_axis_space</a><span>, in § 4.3.4</span>
   </ul>
-  <aside aria-labelledby="infopaneltitle-for-0d3658c59eca7c4804cd6b0a59d27df3" class="dfn-panel" data-for="0d3658c59eca7c4804cd6b0a59d27df3" id="infopanel-for-0d3658c59eca7c4804cd6b0a59d27df3">
-   <span id="infopaneltitle-for-0d3658c59eca7c4804cd6b0a59d27df3" style="display:none">Info about the 'body (for request)' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-request-body">https://fetch.spec.whatwg.org/#concept-request-body</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-request-body">4.4.1. Extending the Font Subset</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-dbb55ca090e46cfd7979689d43fda288" class="dfn-panel" data-for="dbb55ca090e46cfd7979689d43fda288" id="infopanel-for-dbb55ca090e46cfd7979689d43fda288">
-   <span id="infopaneltitle-for-dbb55ca090e46cfd7979689d43fda288" style="display:none">Info about the 'body (for response)' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-response-body">https://fetch.spec.whatwg.org/#concept-response-body</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-response-body">4.4.2. Handling Server Response</a> <a href="#ref-for-concept-response-body①">(2)</a>
-    <li><a href="#ref-for-concept-response-body②">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-b0566d6d660c85a1c0a11fe593f9993d" class="dfn-panel" data-for="b0566d6d660c85a1c0a11fe593f9993d" id="infopanel-for-b0566d6d660c85a1c0a11fe593f9993d">
-   <span id="infopaneltitle-for-b0566d6d660c85a1c0a11fe593f9993d" style="display:none">Info about the 'cache mode' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-request-cache-mode">https://fetch.spec.whatwg.org/#concept-request-cache-mode</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-request-cache-mode">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-concept-request-cache-mode①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-89ba93986b2df9b70ab56597f4c96beb" class="dfn-panel" data-for="89ba93986b2df9b70ab56597f4c96beb" id="infopanel-for-89ba93986b2df9b70ab56597f4c96beb">
-   <span id="infopaneltitle-for-89ba93986b2df9b70ab56597f4c96beb" style="display:none">Info about the 'destination' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-request-destination">https://fetch.spec.whatwg.org/#concept-request-destination</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-request-destination">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-concept-request-destination①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-ee7584061c2f45d6a827359cc7178423" class="dfn-panel" data-for="ee7584061c2f45d6a827359cc7178423" id="infopanel-for-ee7584061c2f45d6a827359cc7178423">
-   <span id="infopaneltitle-for-ee7584061c2f45d6a827359cc7178423" style="display:none">Info about the 'header' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-header">https://fetch.spec.whatwg.org/#concept-header</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-header">4.4.1. Extending the Font Subset</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-763381417a53db57db9cfbb40d3c552a" class="dfn-panel" data-for="763381417a53db57db9cfbb40d3c552a" id="infopanel-for-763381417a53db57db9cfbb40d3c552a">
-   <span id="infopaneltitle-for-763381417a53db57db9cfbb40d3c552a" style="display:none">Info about the 'method' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-request-method">https://fetch.spec.whatwg.org/#concept-request-method</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-request-method">4.4.1. Extending the Font Subset</a> <a href="#ref-for-concept-request-method①">(2)</a> <a href="#ref-for-concept-request-method②">(3)</a>
-    <li><a href="#ref-for-concept-request-method③">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-731849104592df0f69027b4122c950f6" class="dfn-panel" data-for="731849104592df0f69027b4122c950f6" id="infopanel-for-731849104592df0f69027b4122c950f6">
-   <span id="infopaneltitle-for-731849104592df0f69027b4122c950f6" style="display:none">Info about the 'mode' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-request-mode">https://fetch.spec.whatwg.org/#concept-request-mode</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-request-mode">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-concept-request-mode①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-d203414c2b48c23fddab90ef753bb7cf" class="dfn-panel" data-for="d203414c2b48c23fddab90ef753bb7cf" id="infopanel-for-d203414c2b48c23fddab90ef753bb7cf">
-   <span id="infopaneltitle-for-d203414c2b48c23fddab90ef753bb7cf" style="display:none">Info about the 'response' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-response">https://fetch.spec.whatwg.org/#concept-response</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-response">4.4.2. Handling Server Response</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-515c14a3a354bbedfc4825ea79cd0900" class="dfn-panel" data-for="515c14a3a354bbedfc4825ea79cd0900" id="infopanel-for-515c14a3a354bbedfc4825ea79cd0900">
-   <span id="infopaneltitle-for-515c14a3a354bbedfc4825ea79cd0900" style="display:none">Info about the 'status' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-status">https://fetch.spec.whatwg.org/#concept-status</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-status">4.4.2. Handling Server Response</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-1b6fecbab51caa95d9e527debe16b0b0" class="dfn-panel" data-for="1b6fecbab51caa95d9e527debe16b0b0" id="infopanel-for-1b6fecbab51caa95d9e527debe16b0b0">
-   <span id="infopaneltitle-for-1b6fecbab51caa95d9e527debe16b0b0" style="display:none">Info about the 'status (for response)' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-response-status">https://fetch.spec.whatwg.org/#concept-response-status</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-response-status">4.4.2. Handling Server Response</a> <a href="#ref-for-concept-response-status①">(2)</a> <a href="#ref-for-concept-response-status②">(3)</a>
-    <li><a href="#ref-for-concept-response-status③">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-concept-response-status④">(2)</a> <a href="#ref-for-concept-response-status⑤">(3)</a> <a href="#ref-for-concept-response-status⑥">(4)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-6f4775873c70787775f9c70f0f110709" class="dfn-panel" data-for="6f4775873c70787775f9c70f0f110709" id="infopanel-for-6f4775873c70787775f9c70f0f110709">
-   <span id="infopaneltitle-for-6f4775873c70787775f9c70f0f110709" style="display:none">Info about the 'url' external reference.</span><a href="https://fetch.spec.whatwg.org/#concept-request-url">https://fetch.spec.whatwg.org/#concept-request-url</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-request-url">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-75ccf7f4179f63dff9f682d9c35046bb" class="dfn-panel" data-for="75ccf7f4179f63dff9f682d9c35046bb" id="infopanel-for-75ccf7f4179f63dff9f682d9c35046bb">
-   <span id="infopaneltitle-for-75ccf7f4179f63dff9f682d9c35046bb" style="display:none">Info about the 'path' external reference.</span><a href="https://url.spec.whatwg.org/#concept-url-path">https://url.spec.whatwg.org/#concept-url-path</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-url-path">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-concept-url-path①">4.4.2. Handling Server Response</a>
-    <li><a href="#ref-for-concept-url-path②">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
-    <li><a href="#ref-for-concept-url-path③">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-concept-url-path④">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-67f83ca6d3c695660bfc2f054f534ffb" class="dfn-panel" data-for="67f83ca6d3c695660bfc2f054f534ffb" id="infopanel-for-67f83ca6d3c695660bfc2f054f534ffb">
-   <span id="infopaneltitle-for-67f83ca6d3c695660bfc2f054f534ffb" style="display:none">Info about the 'scheme' external reference.</span><a href="https://url.spec.whatwg.org/#concept-url-scheme">https://url.spec.whatwg.org/#concept-url-scheme</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-concept-url-scheme">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-concept-url-scheme①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
-   </ul>
-  </aside>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="index">
    <li>
     <a data-link-type="biblio">[FETCH]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="0d3658c59eca7c4804cd6b0a59d27df3">body <small>(for request)</small></span>
-     <li><span class="dfn-paneled" id="dbb55ca090e46cfd7979689d43fda288">body <small>(for response)</small></span>
-     <li><span class="dfn-paneled" id="b0566d6d660c85a1c0a11fe593f9993d">cache mode</span>
-     <li><span class="dfn-paneled" id="89ba93986b2df9b70ab56597f4c96beb">destination</span>
-     <li><span class="dfn-paneled" id="ee7584061c2f45d6a827359cc7178423">header</span>
-     <li><span class="dfn-paneled" id="763381417a53db57db9cfbb40d3c552a">method</span>
-     <li><span class="dfn-paneled" id="731849104592df0f69027b4122c950f6">mode</span>
-     <li><span class="dfn-paneled" id="d203414c2b48c23fddab90ef753bb7cf">response</span>
-     <li><span class="dfn-paneled" id="515c14a3a354bbedfc4825ea79cd0900">status</span>
-     <li><span class="dfn-paneled" id="1b6fecbab51caa95d9e527debe16b0b0">status <small>(for response)</small></span>
-     <li><span class="dfn-paneled" id="6f4775873c70787775f9c70f0f110709">url</span>
+     <li><span class="dfn-paneled" id="8e9945a0">body <small>(for request)</small></span>
+     <li><span class="dfn-paneled" id="81a76425">body <small>(for response)</small></span>
+     <li><span class="dfn-paneled" id="688f9669">cache mode</span>
+     <li><span class="dfn-paneled" id="3ae34c95">destination</span>
+     <li><span class="dfn-paneled" id="c9e7c11a">header</span>
+     <li><span class="dfn-paneled" id="50b05fad">method</span>
+     <li><span class="dfn-paneled" id="cb98f71f">mode</span>
+     <li><span class="dfn-paneled" id="ee7bba09">response</span>
+     <li><span class="dfn-paneled" id="28119f64">status</span>
+     <li><span class="dfn-paneled" id="a1d47575">status <small>(for response)</small></span>
+     <li><span class="dfn-paneled" id="dc1cd39b">url</span>
     </ul>
    <li>
     <a data-link-type="biblio">[URL]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="75ccf7f4179f63dff9f682d9c35046bb">path</span>
-     <li><span class="dfn-paneled" id="67f83ca6d3c695660bfc2f054f534ffb">scheme</span>
+     <li><span class="dfn-paneled" id="c0868016">path</span>
+     <li><span class="dfn-paneled" id="3a711be7">scheme</span>
     </ul>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
@@ -2431,7 +2655,7 @@ them from being used for tracking.</p>
    <dt id="biblio-opentype-variations">[OPENTYPE-VARIATIONS]
    <dd><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview"><cite>OpenType Font Variations Overview</cite></a>. 23 October 2020. Note. URL: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview">https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview</a>
    <dt id="biblio-rangerequest">[RangeRequest]
-   <dd>Chris Lilley; Myles Maxfield; Garret Rieger. <a href="https://www.w3.org/TR/RangeRequest/"><cite>Incremental Font Transfer via Range Request</cite></a>. 25 January 2022. WD. URL: <a href="https://www.w3.org/TR/RangeRequest/">https://www.w3.org/TR/RangeRequest/</a>
+   <dd>Chris Lilley; Garret Rieger; Myles Maxfield. <a href="https://www.w3.org/TR/RangeRequest/"><cite>Range Request Incremental Font Transfer</cite></a>. 30 May 2023. WD. URL: <a href="https://www.w3.org/TR/RangeRequest/">https://www.w3.org/TR/RangeRequest/</a>
    <dt id="biblio-rfc3629">[RFC3629]
    <dd>F. Yergeau. <a href="https://www.rfc-editor.org/rfc/rfc3629"><cite>UTF-8, a transformation format of ISO 10646</cite></a>. November 2003. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3629">https://www.rfc-editor.org/rfc/rfc3629</a>
    <dt id="biblio-rfc4648">[RFC4648]
@@ -2439,335 +2663,68 @@ them from being used for tracking.</p>
    <dt id="biblio-woff2">[WOFF2]
    <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/"><cite>WOFF File Format 2.0</cite></a>. 10 March 2022. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
   </dl>
-  <aside aria-labelledby="infopaneltitle-for-font-subset" class="dfn-panel" data-for="font-subset" id="infopanel-for-font-subset">
-   <span id="infopaneltitle-for-font-subset" style="display:none">Info about the 'font subset' definition.</span><b><a href="#font-subset">#font-subset</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-font-subset">1.1. Patch Subset</a>
-    <li><a href="#ref-for-font-subset①">4.1. Font Subset</a>
-    <li><a href="#ref-for-font-subset②">4.4.1. Extending the Font Subset</a> <a href="#ref-for-font-subset③">(2)</a> <a href="#ref-for-font-subset④">(3)</a> <a href="#ref-for-font-subset⑤">(4)</a> <a href="#ref-for-font-subset⑥">(5)</a> <a href="#ref-for-font-subset⑦">(6)</a>
-    <li><a href="#ref-for-font-subset⑧">4.4.2. Handling Server Response</a> <a href="#ref-for-font-subset⑨">(2)</a> <a href="#ref-for-font-subset①⓪">(3)</a> <a href="#ref-for-font-subset①①">(4)</a> <a href="#ref-for-font-subset①②">(5)</a>
-    <li><a href="#ref-for-font-subset①③">4.4.3. Load a Font in a User Agent with a HTTP Cache</a> <a href="#ref-for-font-subset①④">(2)</a> <a href="#ref-for-font-subset①⑤">(3)</a>
-    <li><a href="#ref-for-font-subset①⑥">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-font-subset①⑦">(2)</a> <a href="#ref-for-font-subset①⑧">(3)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-font-subset-definition" class="dfn-panel" data-for="font-subset-definition" id="infopanel-for-font-subset-definition">
-   <span id="infopaneltitle-for-font-subset-definition" style="display:none">Info about the 'font subset definition' definition.</span><b><a href="#font-subset-definition">#font-subset-definition</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-font-subset-definition">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-font-subset-definition①">4.4.3. Load a Font in a User Agent with a HTTP Cache</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-integer" class="dfn-panel" data-for="integer" id="infopanel-for-integer">
-   <span id="infopaneltitle-for-integer" style="display:none">Info about the 'Integer' definition.</span><b><a href="#integer">#integer</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-integer">4.3.3. PatchRequest</a> <a href="#ref-for-integer①">(2)</a> <a href="#ref-for-integer②">(3)</a>
-    <li><a href="#ref-for-integer③">4.3.4. ClientState</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-float" class="dfn-panel" data-for="float" id="infopanel-for-float">
-   <span id="infopaneltitle-for-float" style="display:none">Info about the 'Float' definition.</span><b><a href="#float">#float</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-float">4.3.2. AxisInterval</a> <a href="#ref-for-float①">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-bytestring" class="dfn-panel" data-for="bytestring" id="infopanel-for-bytestring">
-   <span id="infopaneltitle-for-bytestring" style="display:none">Info about the 'ByteString' definition.</span><b><a href="#bytestring">#bytestring</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-bytestring">4.2.3. SparseBitSet</a>
-    <li><a href="#ref-for-bytestring①">4.2.4. IntegerList</a> <a href="#ref-for-bytestring②">(2)</a>
-    <li><a href="#ref-for-bytestring③">4.2.5. SortedIntegerList</a>
-    <li><a href="#ref-for-bytestring④">4.2.6. RangeList</a>
-    <li><a href="#ref-for-bytestring⑤">4.2.8. AxisSpace</a>
-    <li><a href="#ref-for-bytestring⑥">4.3.1. CompressedSet</a> <a href="#ref-for-bytestring⑦">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-string" class="dfn-panel" data-for="string" id="infopanel-for-string">
-   <span id="infopaneltitle-for-string" style="display:none">Info about the 'String' definition.</span><b><a href="#string">#string</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-string">4.3.3. PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-arrayof" class="dfn-panel" data-for="arrayof" id="infopanel-for-arrayof">
-   <span id="infopaneltitle-for-arrayof" style="display:none">Info about the 'ArrayOf' definition.</span><b><a href="#arrayof">#arrayof</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-arrayof">4.2.8. AxisSpace</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-sparsebitset" class="dfn-panel" data-for="sparsebitset" id="infopanel-for-sparsebitset">
-   <span id="infopaneltitle-for-sparsebitset" style="display:none">Info about the 'SparseBitSet' definition.</span><b><a href="#sparsebitset">#sparsebitset</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-sparsebitset">4.3.1. CompressedSet</a> <a href="#ref-for-sparsebitset①">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-integerlist" class="dfn-panel" data-for="integerlist" id="infopanel-for-integerlist">
-   <span id="infopaneltitle-for-integerlist" style="display:none">Info about the 'IntegerList' definition.</span><b><a href="#integerlist">#integerlist</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-integerlist">4.2.4. IntegerList</a>
-    <li><a href="#ref-for-integerlist①">4.2.5. SortedIntegerList</a> <a href="#ref-for-integerlist②">(2)</a>
-    <li><a href="#ref-for-integerlist③">4.3.3. PatchRequest</a>
-    <li><a href="#ref-for-integerlist④">4.3.4. ClientState</a>
-    <li><a href="#ref-for-integerlist⑤">4.7. Codepoint Reordering</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-sortedintegerlist" class="dfn-panel" data-for="sortedintegerlist" id="infopanel-for-sortedintegerlist">
-   <span id="infopaneltitle-for-sortedintegerlist" style="display:none">Info about the 'SortedIntegerList' definition.</span><b><a href="#sortedintegerlist">#sortedintegerlist</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-sortedintegerlist">4.2.5. SortedIntegerList</a>
-    <li><a href="#ref-for-sortedintegerlist①">4.2.6. RangeList</a>
-    <li><a href="#ref-for-sortedintegerlist②">4.2.7. FeatureTagSet</a> <a href="#ref-for-sortedintegerlist③">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-rangelist" class="dfn-panel" data-for="rangelist" id="infopanel-for-rangelist">
-   <span id="infopaneltitle-for-rangelist" style="display:none">Info about the 'RangeList' definition.</span><b><a href="#rangelist">#rangelist</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-rangelist">4.3.1. CompressedSet</a> <a href="#ref-for-rangelist①">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-featuretagset" class="dfn-panel" data-for="featuretagset" id="infopanel-for-featuretagset">
-   <span id="infopaneltitle-for-featuretagset" style="display:none">Info about the 'FeatureTagSet' definition.</span><b><a href="#featuretagset">#featuretagset</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-featuretagset">4.3.3. PatchRequest</a> <a href="#ref-for-featuretagset①">(2)</a>
-    <li><a href="#ref-for-featuretagset②">4.3.4. ClientState</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-axisspace" class="dfn-panel" data-for="axisspace" id="infopanel-for-axisspace">
-   <span id="infopaneltitle-for-axisspace" style="display:none">Info about the 'AxisSpace' definition.</span><b><a href="#axisspace">#axisspace</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-axisspace">4.3.3. PatchRequest</a> <a href="#ref-for-axisspace①">(2)</a>
-    <li><a href="#ref-for-axisspace②">4.3.4. ClientState</a> <a href="#ref-for-axisspace③">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-compressedset" class="dfn-panel" data-for="compressedset" id="infopanel-for-compressedset">
-   <span id="infopaneltitle-for-compressedset" style="display:none">Info about the 'CompressedSet' definition.</span><b><a href="#compressedset">#compressedset</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-compressedset">4.3.3. PatchRequest</a> <a href="#ref-for-compressedset①">(2)</a> <a href="#ref-for-compressedset②">(3)</a> <a href="#ref-for-compressedset③">(4)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-compressedset-sparse_bit_set" class="dfn-panel" data-for="compressedset-sparse_bit_set" id="infopanel-for-compressedset-sparse_bit_set">
-   <span id="infopaneltitle-for-compressedset-sparse_bit_set" style="display:none">Info about the 'sparse_bit_set' definition.</span><b><a href="#compressedset-sparse_bit_set">#compressedset-sparse_bit_set</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-compressedset-sparse_bit_set">4.3.1. CompressedSet</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-compressedset-range_deltas" class="dfn-panel" data-for="compressedset-range_deltas" id="infopanel-for-compressedset-range_deltas">
-   <span id="infopaneltitle-for-compressedset-range_deltas" style="display:none">Info about the 'range_deltas' definition.</span><b><a href="#compressedset-range_deltas">#compressedset-range_deltas</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-compressedset-range_deltas">4.3.1. CompressedSet</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-axisinterval" class="dfn-panel" data-for="axisinterval" id="infopanel-for-axisinterval">
-   <span id="infopaneltitle-for-axisinterval" style="display:none">Info about the 'AxisInterval' definition.</span><b><a href="#axisinterval">#axisinterval</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-axisinterval">4.2.8. AxisSpace</a>
-    <li><a href="#ref-for-axisinterval①">4.3.2. AxisInterval</a> <a href="#ref-for-axisinterval②">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-axisinterval-start" class="dfn-panel" data-for="axisinterval-start" id="infopanel-for-axisinterval-start">
-   <span id="infopaneltitle-for-axisinterval-start" style="display:none">Info about the 'start' definition.</span><b><a href="#axisinterval-start">#axisinterval-start</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-axisinterval-start">4.3.2. AxisInterval</a> <a href="#ref-for-axisinterval-start①">(2)</a> <a href="#ref-for-axisinterval-start②">(3)</a> <a href="#ref-for-axisinterval-start③">(4)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-axisinterval-end" class="dfn-panel" data-for="axisinterval-end" id="infopanel-for-axisinterval-end">
-   <span id="infopaneltitle-for-axisinterval-end" style="display:none">Info about the 'end' definition.</span><b><a href="#axisinterval-end">#axisinterval-end</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-axisinterval-end">4.3.2. AxisInterval</a> <a href="#ref-for-axisinterval-end①">(2)</a> <a href="#ref-for-axisinterval-end②">(3)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest" class="dfn-panel" data-for="patchrequest" id="infopanel-for-patchrequest">
-   <span id="infopaneltitle-for-patchrequest" style="display:none">Info about the 'PatchRequest' definition.</span><b><a href="#patchrequest">#patchrequest</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest">4.3.3. PatchRequest</a>
-    <li><a href="#ref-for-patchrequest①">4.4.1. Extending the Font Subset</a> <a href="#ref-for-patchrequest②">(2)</a> <a href="#ref-for-patchrequest③">(3)</a>
-    <li><a href="#ref-for-patchrequest④">4.4.2. Handling Server Response</a>
-    <li><a href="#ref-for-patchrequest⑤">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-codepoints_have" class="dfn-panel" data-for="patchrequest-codepoints_have" id="infopanel-for-patchrequest-codepoints_have">
-   <span id="infopaneltitle-for-patchrequest-codepoints_have" style="display:none">Info about the 'codepoints_have' definition.</span><b><a href="#patchrequest-codepoints_have">#patchrequest-codepoints_have</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-codepoints_have">4.3.3. PatchRequest</a>
-    <li><a href="#ref-for-patchrequest-codepoints_have①">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-patchrequest-codepoints_have②">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-codepoints_needed" class="dfn-panel" data-for="patchrequest-codepoints_needed" id="infopanel-for-patchrequest-codepoints_needed">
-   <span id="infopaneltitle-for-patchrequest-codepoints_needed" style="display:none">Info about the 'codepoints_needed' definition.</span><b><a href="#patchrequest-codepoints_needed">#patchrequest-codepoints_needed</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-codepoints_needed">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-patchrequest-codepoints_needed①">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-indices_have" class="dfn-panel" data-for="patchrequest-indices_have" id="infopanel-for-patchrequest-indices_have">
-   <span id="infopaneltitle-for-patchrequest-indices_have" style="display:none">Info about the 'indices_have' definition.</span><b><a href="#patchrequest-indices_have">#patchrequest-indices_have</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-indices_have">4.3.3. PatchRequest</a> <a href="#ref-for-patchrequest-indices_have①">(2)</a>
-    <li><a href="#ref-for-patchrequest-indices_have②">4.4.1. Extending the Font Subset</a> <a href="#ref-for-patchrequest-indices_have③">(2)</a>
-    <li><a href="#ref-for-patchrequest-indices_have④">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-indices_have⑤">(2)</a> <a href="#ref-for-patchrequest-indices_have⑥">(3)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-indices_needed" class="dfn-panel" data-for="patchrequest-indices_needed" id="infopanel-for-patchrequest-indices_needed">
-   <span id="infopaneltitle-for-patchrequest-indices_needed" style="display:none">Info about the 'indices_needed' definition.</span><b><a href="#patchrequest-indices_needed">#patchrequest-indices_needed</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-indices_needed">4.3.3. PatchRequest</a>
-    <li><a href="#ref-for-patchrequest-indices_needed①">4.4.1. Extending the Font Subset</a> <a href="#ref-for-patchrequest-indices_needed②">(2)</a>
-    <li><a href="#ref-for-patchrequest-indices_needed③">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-indices_needed④">(2)</a> <a href="#ref-for-patchrequest-indices_needed⑤">(3)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-features_have" class="dfn-panel" data-for="patchrequest-features_have" id="infopanel-for-patchrequest-features_have">
-   <span id="infopaneltitle-for-patchrequest-features_have" style="display:none">Info about the 'features_have' definition.</span><b><a href="#patchrequest-features_have">#patchrequest-features_have</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-features_have">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-patchrequest-features_have①">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-features_needed" class="dfn-panel" data-for="patchrequest-features_needed" id="infopanel-for-patchrequest-features_needed">
-   <span id="infopaneltitle-for-patchrequest-features_needed" style="display:none">Info about the 'features_needed' definition.</span><b><a href="#patchrequest-features_needed">#patchrequest-features_needed</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-features_needed">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-patchrequest-features_needed①">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-axis_space_have" class="dfn-panel" data-for="patchrequest-axis_space_have" id="infopanel-for-patchrequest-axis_space_have">
-   <span id="infopaneltitle-for-patchrequest-axis_space_have" style="display:none">Info about the 'axis_space_have' definition.</span><b><a href="#patchrequest-axis_space_have">#patchrequest-axis_space_have</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-axis_space_have">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-patchrequest-axis_space_have①">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-axis_space_have②">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-axis_space_needed" class="dfn-panel" data-for="patchrequest-axis_space_needed" id="infopanel-for-patchrequest-axis_space_needed">
-   <span id="infopaneltitle-for-patchrequest-axis_space_needed" style="display:none">Info about the 'axis_space_needed' definition.</span><b><a href="#patchrequest-axis_space_needed">#patchrequest-axis_space_needed</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-axis_space_needed">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-patchrequest-axis_space_needed①">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-axis_space_needed②">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-ordering_checksum" class="dfn-panel" data-for="patchrequest-ordering_checksum" id="infopanel-for-patchrequest-ordering_checksum">
-   <span id="infopaneltitle-for-patchrequest-ordering_checksum" style="display:none">Info about the 'ordering_checksum' definition.</span><b><a href="#patchrequest-ordering_checksum">#patchrequest-ordering_checksum</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-ordering_checksum">4.3.3. PatchRequest</a>
-    <li><a href="#ref-for-patchrequest-ordering_checksum①">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-patchrequest-ordering_checksum②">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-ordering_checksum③">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-original_font_checksum" class="dfn-panel" data-for="patchrequest-original_font_checksum" id="infopanel-for-patchrequest-original_font_checksum">
-   <span id="infopaneltitle-for-patchrequest-original_font_checksum" style="display:none">Info about the 'original_font_checksum' definition.</span><b><a href="#patchrequest-original_font_checksum">#patchrequest-original_font_checksum</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-original_font_checksum">4.3.3. PatchRequest</a>
-    <li><a href="#ref-for-patchrequest-original_font_checksum①">4.4.1. Extending the Font Subset</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-base_checksum" class="dfn-panel" data-for="patchrequest-base_checksum" id="infopanel-for-patchrequest-base_checksum">
-   <span id="infopaneltitle-for-patchrequest-base_checksum" style="display:none">Info about the 'base_checksum' definition.</span><b><a href="#patchrequest-base_checksum">#patchrequest-base_checksum</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-base_checksum">4.3.3. PatchRequest</a>
-    <li><a href="#ref-for-patchrequest-base_checksum①">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-patchrequest-base_checksum②">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-fragment_id" class="dfn-panel" data-for="patchrequest-fragment_id" id="infopanel-for-patchrequest-fragment_id">
-   <span id="infopaneltitle-for-patchrequest-fragment_id" style="display:none">Info about the 'fragment_id' definition.</span><b><a href="#patchrequest-fragment_id">#patchrequest-fragment_id</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-fragment_id">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-patchrequest-fragment_id①">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-patchrequest-fragment_id②">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patchrequest-codepoint_ordering" class="dfn-panel" data-for="patchrequest-codepoint_ordering" id="infopanel-for-patchrequest-codepoint_ordering">
-   <span id="infopaneltitle-for-patchrequest-codepoint_ordering" style="display:none">Info about the 'codepoint_ordering' definition.</span><b><a href="#patchrequest-codepoint_ordering">#patchrequest-codepoint_ordering</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patchrequest-codepoint_ordering">4.4.2. Handling Server Response</a>
-    <li><a href="#ref-for-patchrequest-codepoint_ordering①">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-clientstate" class="dfn-panel" data-for="clientstate" id="infopanel-for-clientstate">
-   <span id="infopaneltitle-for-clientstate" style="display:none">Info about the 'ClientState' definition.</span><b><a href="#clientstate">#clientstate</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-clientstate">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-clientstate①">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-clientstate-original_font_checksum" class="dfn-panel" data-for="clientstate-original_font_checksum" id="infopanel-for-clientstate-original_font_checksum">
-   <span id="infopaneltitle-for-clientstate-original_font_checksum" style="display:none">Info about the 'original_font_checksum' definition.</span><b><a href="#clientstate-original_font_checksum">#clientstate-original_font_checksum</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-clientstate-original_font_checksum">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-clientstate-original_font_checksum①">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-clientstate-codepoint_ordering" class="dfn-panel" data-for="clientstate-codepoint_ordering" id="infopanel-for-clientstate-codepoint_ordering">
-   <span id="infopaneltitle-for-clientstate-codepoint_ordering" style="display:none">Info about the 'codepoint_ordering' definition.</span><b><a href="#clientstate-codepoint_ordering">#clientstate-codepoint_ordering</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-clientstate-codepoint_ordering">4.4.1. Extending the Font Subset</a> <a href="#ref-for-clientstate-codepoint_ordering①">(2)</a> <a href="#ref-for-clientstate-codepoint_ordering②">(3)</a> <a href="#ref-for-clientstate-codepoint_ordering③">(4)</a> <a href="#ref-for-clientstate-codepoint_ordering④">(5)</a> <a href="#ref-for-clientstate-codepoint_ordering⑤">(6)</a> <a href="#ref-for-clientstate-codepoint_ordering⑥">(7)</a>
-    <li><a href="#ref-for-clientstate-codepoint_ordering⑦">4.4.2. Handling Server Response</a>
-    <li><a href="#ref-for-clientstate-codepoint_ordering⑧">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-clientstate-subset_axis_space" class="dfn-panel" data-for="clientstate-subset_axis_space" id="infopanel-for-clientstate-subset_axis_space">
-   <span id="infopaneltitle-for-clientstate-subset_axis_space" style="display:none">Info about the 'subset_axis_space' definition.</span><b><a href="#clientstate-subset_axis_space">#clientstate-subset_axis_space</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-clientstate-subset_axis_space">4.4.1. Extending the Font Subset</a>
-    <li><a href="#ref-for-clientstate-subset_axis_space①">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-clientstate-original_axis_space" class="dfn-panel" data-for="clientstate-original_axis_space" id="infopanel-for-clientstate-original_axis_space">
-   <span id="infopaneltitle-for-clientstate-original_axis_space" style="display:none">Info about the 'original_axis_space' definition.</span><b><a href="#clientstate-original_axis_space">#clientstate-original_axis_space</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-clientstate-original_axis_space">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-clientstate-original_features" class="dfn-panel" data-for="clientstate-original_features" id="infopanel-for-clientstate-original_features">
-   <span id="infopaneltitle-for-clientstate-original_features" style="display:none">Info about the 'original_features' definition.</span><b><a href="#clientstate-original_features">#clientstate-original_features</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-clientstate-original_features">4.5. Server: Responding to a PatchRequest</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-abstract-opdef-extend-the-font-subset" class="dfn-panel" data-for="abstract-opdef-extend-the-font-subset" id="infopanel-for-abstract-opdef-extend-the-font-subset">
-   <span id="infopaneltitle-for-abstract-opdef-extend-the-font-subset" style="display:none">Info about the 'Extend the font subset' definition.</span><b><a href="#abstract-opdef-extend-the-font-subset">#abstract-opdef-extend-the-font-subset</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-abstract-opdef-extend-the-font-subset">4.4.3. Load a Font in a User Agent with a HTTP Cache</a> <a href="#ref-for-abstract-opdef-extend-the-font-subset①">(2)</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-patch-request-header" class="dfn-panel" data-for="patch-request-header" id="infopanel-for-patch-request-header">
-   <span id="infopaneltitle-for-patch-request-header" style="display:none">Info about the 'patch request header' definition.</span><b><a href="#patch-request-header">#patch-request-header</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-patch-request-header">3.1. IFT Method Negotiation</a>
-    <li><a href="#ref-for-patch-request-header①">3.3. Offline Usage</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-abstract-opdef-handle-server-response" class="dfn-panel" data-for="abstract-opdef-handle-server-response" id="infopanel-for-abstract-opdef-handle-server-response">
-   <span id="infopaneltitle-for-abstract-opdef-handle-server-response" style="display:none">Info about the 'Handle server response' definition.</span><b><a href="#abstract-opdef-handle-server-response">#abstract-opdef-handle-server-response</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-abstract-opdef-handle-server-response">4.4.1. Extending the Font Subset</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-abstract-opdef-handle-failed-font-load" class="dfn-panel" data-for="abstract-opdef-handle-failed-font-load" id="infopanel-for-abstract-opdef-handle-failed-font-load">
-   <span id="infopaneltitle-for-abstract-opdef-handle-failed-font-load" style="display:none">Info about the 'Handle failed font load' definition.</span><b><a href="#abstract-opdef-handle-failed-font-load">#abstract-opdef-handle-failed-font-load</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-abstract-opdef-handle-failed-font-load">4.4.2. Handling Server Response</a>
-   </ul>
-  </aside>
-  <aside aria-labelledby="infopaneltitle-for-original-font" class="dfn-panel" data-for="original-font" id="infopanel-for-original-font">
-   <span id="infopaneltitle-for-original-font" style="display:none">Info about the 'original font' definition.</span><b><a href="#original-font">#original-font</a></b><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-original-font">4.4.1. Extending the Font Subset</a> <a href="#ref-for-original-font①">(2)</a> <a href="#ref-for-original-font②">(3)</a> <a href="#ref-for-original-font③">(4)</a>
-    <li><a href="#ref-for-original-font④">4.4.2. Handling Server Response</a>
-    <li><a href="#ref-for-original-font⑤">4.5. Server: Responding to a PatchRequest</a> <a href="#ref-for-original-font⑥">(2)</a> <a href="#ref-for-original-font⑦">(3)</a> <a href="#ref-for-original-font⑧">(4)</a> <a href="#ref-for-original-font⑨">(5)</a> <a href="#ref-for-original-font①⓪">(6)</a> <a href="#ref-for-original-font①①">(7)</a> <a href="#ref-for-original-font①②">(8)</a> <a href="#ref-for-original-font①③">(9)</a>
-   </ul>
-  </aside>
-<script>/* script-dfn-panel */
+<script>/* Boilerplate: script-dfn-panel */
 "use strict";
 {
-    function queryAll(sel) {
-        return [].slice.call(document.querySelectorAll(sel));
+    const dfnsJson = window.dfnsJson || {};
+
+    function genDfnPanel({dfnID, url, dfnText, refSections, external}) {
+        return mk.aside({
+            class: "dfn-panel",
+            id: `infopanel-for-${dfnID}`,
+            "data-for": dfnID,
+            "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+            },
+            mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+                `Info about the '${dfnText}' ${external?"external":""} reference.`),
+            mk.a({href:url}, url),
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({
+                                    href: `#${ref.id}`
+                                    },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        );
     }
 
-    // Add popup behavior to all dfns to show the corresponding dfn-panel.
-    var dfns = document.querySelectorAll('.dfn-paneled');
-    for (let dfn of dfns) { insertDfnPopupAction(dfn); }
+    function genAllDfnPanels() {
+        for(const panelData of Object.values(window.dfnpanelData)) {
+            const dfnID = panelData.dfnID;
+            const dfn = document.getElementById(dfnID);
+            if(!dfn) {
+                console.log(`Can't find dfn#${dfnID}.`, panelData);
+            } else {
+                const panel = genDfnPanel(panelData);
+                append(document.body, panel);
+                insertDfnPopupAction(dfn, panel)
+            }
+        }
+    }
 
-    document.body.addEventListener("click", (e) => {
-        // If not handled already, just hide all dfn panels.
-        hideAllDfnPanels();
-    });
+    document.addEventListener("DOMContentLoaded", ()=>{
+        genAllDfnPanels();
+
+        // Add popup behavior to all dfns to show the corresponding dfn-panel.
+        var dfns = queryAll('.dfn-paneled');
+        for(let dfn of dfns) { ; }
+
+        document.body.addEventListener("click", (e) => {
+            // If not handled already, just hide all dfn panels.
+            hideAllDfnPanels();
+        });
+    })
+
 
     function hideAllDfnPanels() {
         // Turn off any currently "on" or "activated" panels.
@@ -2817,134 +2774,552 @@ them from being used for tracking.</p>
         }
     }
 
-    function insertDfnPopupAction(dfn) {
+    function insertDfnPopupAction(dfn, dfnPanel) {
         // Find dfn panel
-        const dfnPanel = document.querySelector(`.dfn-panel[data-for='${dfn.id}']`);
-        if (dfnPanel) {
-            const panelWrapper = document.createElement('span');
-            panelWrapper.appendChild(dfnPanel);
-            panelWrapper.style.position = "relative";
-            panelWrapper.style.height = "0px";
-            dfn.insertAdjacentElement("afterend", panelWrapper);
-            dfn.setAttribute('role', 'button');
-            dfn.setAttribute('aria-expanded', 'false')
-            dfn.tabIndex = 0;
-            dfn.classList.add('has-dfn-panel');
-            dfn.addEventListener('click', (event) => {
-                showDfnPanel(dfnPanel, dfn);
+        const panelWrapper = document.createElement('span');
+        panelWrapper.appendChild(dfnPanel);
+        panelWrapper.style.position = "relative";
+        panelWrapper.style.height = "0px";
+        dfn.insertAdjacentElement("afterend", panelWrapper);
+        dfn.setAttribute('role', 'button');
+        dfn.setAttribute('aria-expanded', 'false')
+        dfn.tabIndex = 0;
+        dfn.classList.add('has-dfn-panel');
+        dfn.addEventListener('click', (event) => {
+            showDfnPanel(dfnPanel, dfn);
+            event.stopPropagation();
+        });
+        dfn.addEventListener('keypress', (event) => {
+            const kc = event.keyCode;
+            // 32->Space, 13->Enter
+            if(kc == 32 || kc == 13) {
+                toggleDfnPanel(dfnPanel, dfn);
                 event.stopPropagation();
-            });
-            dfn.addEventListener('keypress', (event) => {
-                const kc = event.keyCode;
-                // 32->Space, 13->Enter
-                if(kc == 32 || kc == 13) {
-                    toggleDfnPanel(dfnPanel, dfn);
-                    event.stopPropagation();
-                    event.preventDefault();
-                }
-            });
+                event.preventDefault();
+            }
+        });
 
-            dfnPanel.addEventListener('click', (event) => {
+        dfnPanel.addEventListener('click', (event) => {
+            if (event.target.nodeName == 'A') {
                 pinDfnPanel(dfnPanel);
+            }
+            event.stopPropagation();
+        });
+
+        dfnPanel.addEventListener('keydown', (event) => {
+            if(event.keyCode == 27) { // Escape key
+                hideDfnPanel(dfnPanel, dfn);
                 event.stopPropagation();
-            });
-
-            dfnPanel.addEventListener('keydown', (event) => {
-                if(event.keyCode == 27) { // Escape key
-                    hideDfnPanel(dfnPanel, dfn);
-                    event.stopPropagation();
-                    event.preventDefault();
-                }
-            })
-
-        } else {
-            console.log("Couldn't find .dfn-panel[data-for='" + dfn.id + "']");
-        }
+                event.preventDefault();
+            }
+        })
     }
 }
 </script>
-<script>/* script-var-click-highlighting */
+<script>/* Boilerplate: script-dfn-panel */
+"use strict";
+{
+    const dfnsJson = window.dfnsJson || {};
 
-    "use strict";
-    {
-        document.addEventListener("click", e=>{
-            if(e.target.nodeName == "VAR") {
-                highlightSameAlgoVars(e.target);
-            }
-        });
-        const indexCounts = new Map();
-        const indexNames = new Map();
-        function highlightSameAlgoVars(v) {
-            // Find the algorithm container.
-            let algoContainer = null;
-            let searchEl = v;
-            while(algoContainer == null && searchEl != document.body) {
-                searchEl = searchEl.parentNode;
-                if(searchEl.hasAttribute("data-algorithm")) {
-                    algoContainer = searchEl;
-                }
-            }
+    function genDfnPanel({dfnID, url, dfnText, refSections, external}) {
+        return mk.aside({
+            class: "dfn-panel",
+            id: `infopanel-for-${dfnID}`,
+            "data-for": dfnID,
+            "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+            },
+            mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+                `Info about the '${dfnText}' ${external?"external":""} reference.`),
+            mk.a({href:url}, url),
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({
+                                    href: `#${ref.id}`
+                                    },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
 
-            // Not highlighting document-global vars,
-            // too likely to be unrelated.
-            if(algoContainer == null) return;
-
-            const algoName = algoContainer.getAttribute("data-algorithm");
-            const varName = getVarName(v);
-            const addClass = !v.classList.contains("selected");
-            let highlightClass = null;
-            if(addClass) {
-                const index = chooseHighlightIndex(algoName, varName);
-                indexCounts.get(algoName)[index] += 1;
-                indexNames.set(algoName+"///"+varName, index);
-                highlightClass = nameFromIndex(index);
+    function genAllDfnPanels() {
+        for(const panelData of Object.values(window.dfnpanelData)) {
+            const dfnID = panelData.dfnID;
+            const dfn = document.getElementById(dfnID);
+            if(!dfn) {
+                console.log(`Can't find dfn#${dfnID}.`, panelData);
             } else {
-                const index = previousHighlightIndex(algoName, varName);
-                indexCounts.get(algoName)[index] -= 1;
-                highlightClass = nameFromIndex(index);
+                const panel = genDfnPanel(panelData);
+                append(document.body, panel);
+                insertDfnPopupAction(dfn, panel)
             }
-
-            // Find all same-name vars, and toggle their class appropriately.
-            for(const el of algoContainer.querySelectorAll("var")) {
-                if(getVarName(el) == varName) {
-                    el.classList.toggle("selected", addClass);
-                    el.classList.toggle(highlightClass, addClass);
-                }
-            }
-        }
-        function getVarName(el) {
-            return el.textContent.replace(/(\s|\xa0)+/, " ").trim();
-        }
-        function chooseHighlightIndex(algoName, varName) {
-            let indexes = null;
-            if(indexCounts.has(algoName)) {
-                indexes = indexCounts.get(algoName);
-            } else {
-                // 7 classes right now
-                indexes = [0,0,0,0,0,0,0];
-                indexCounts.set(algoName, indexes);
-            }
-
-            // If the element was recently unclicked,
-            // *and* that color is still unclaimed,
-            // give it back the same color.
-            const lastIndex = previousHighlightIndex(algoName, varName);
-            if(indexes[lastIndex] === 0) return lastIndex;
-
-            // Find the earliest index with the lowest count.
-            const minCount = Math.min.apply(null, indexes);
-            let index = null;
-            for(var i = 0; i < indexes.length; i++) {
-                if(indexes[i] == minCount) {
-                    return i;
-                }
-            }
-        }
-        function previousHighlightIndex(algoName, varName) {
-            return indexNames.get(algoName+"///"+varName);
-        }
-        function nameFromIndex(index) {
-            return "selected" + index;
         }
     }
-    </script>
+
+    document.addEventListener("DOMContentLoaded", ()=>{
+        genAllDfnPanels();
+
+        // Add popup behavior to all dfns to show the corresponding dfn-panel.
+        var dfns = queryAll('.dfn-paneled');
+        for(let dfn of dfns) { ; }
+
+        document.body.addEventListener("click", (e) => {
+            // If not handled already, just hide all dfn panels.
+            hideAllDfnPanels();
+        });
+    })
+
+
+    function hideAllDfnPanels() {
+        // Turn off any currently "on" or "activated" panels.
+        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>hideDfnPanel(el));
+    }
+
+    function showDfnPanel(dfnPanel, dfn) {
+        hideAllDfnPanels(); // Only display one at this time.
+        dfn.setAttribute("aria-expanded", "true");
+        dfnPanel.classList.add("on");
+        dfnPanel.style.left = "5px";
+        dfnPanel.style.top = "0px";
+        const panelRect = dfnPanel.getBoundingClientRect();
+        const panelWidth = panelRect.right - panelRect.left;
+        if (panelRect.right > document.body.scrollWidth) {
+            // Panel's overflowing the screen.
+            // Just drop it below the dfn and flip it rightward instead.
+            // This still wont' fix things if the screen is *really* wide,
+            // but fixing that's a lot harder without 'anchor()'.
+            dfnPanel.style.top = "1.5em";
+            dfnPanel.style.left = "auto";
+            dfnPanel.style.right = "0px";
+        }
+    }
+
+    function pinDfnPanel(dfnPanel) {
+        // Switch it to "activated" state, which pins it.
+        dfnPanel.classList.add("activated");
+        dfnPanel.style.left = null;
+        dfnPanel.style.top = null;
+    }
+
+    function hideDfnPanel(dfnPanel, dfn) {
+        if(!dfn) {
+            dfn = document.getElementById(dfnPanel.getAttribute("data-for"));
+        }
+        dfn.setAttribute("aria-expanded", "false")
+        dfnPanel.classList.remove("on");
+        dfnPanel.classList.remove("activated");
+    }
+
+    function toggleDfnPanel(dfnPanel, dfn) {
+        if(dfnPanel.classList.contains("on")) {
+            hideDfnPanel(dfnPanel, dfn);
+        } else {
+            showDfnPanel(dfnPanel, dfn);
+        }
+    }
+
+    function insertDfnPopupAction(dfn, dfnPanel) {
+        // Find dfn panel
+        const panelWrapper = document.createElement('span');
+        panelWrapper.appendChild(dfnPanel);
+        panelWrapper.style.position = "relative";
+        panelWrapper.style.height = "0px";
+        dfn.insertAdjacentElement("afterend", panelWrapper);
+        dfn.setAttribute('role', 'button');
+        dfn.setAttribute('aria-expanded', 'false')
+        dfn.tabIndex = 0;
+        dfn.classList.add('has-dfn-panel');
+        dfn.addEventListener('click', (event) => {
+            showDfnPanel(dfnPanel, dfn);
+            event.stopPropagation();
+        });
+        dfn.addEventListener('keypress', (event) => {
+            const kc = event.keyCode;
+            // 32->Space, 13->Enter
+            if(kc == 32 || kc == 13) {
+                toggleDfnPanel(dfnPanel, dfn);
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        });
+
+        dfnPanel.addEventListener('click', (event) => {
+            if (event.target.nodeName == 'A') {
+                pinDfnPanel(dfnPanel);
+            }
+            event.stopPropagation();
+        });
+
+        dfnPanel.addEventListener('keydown', (event) => {
+            if(event.keyCode == 27) { // Escape key
+                hideDfnPanel(dfnPanel, dfn);
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        })
+    }
+}
+</script>
+<script>/* Boilerplate: script-dfn-panel-json */
+window.dfnpanelData = {};
+window.dfnpanelData['8e9945a0'] = {"dfnID": "8e9945a0", "url": "https://fetch.spec.whatwg.org/#concept-request-body", "dfnText": "body (for request)", "refSections": [{"refs": [{"id": "ref-for-concept-request-body"}], "title": "4.4.1. Extending the Font Subset"}], "external": true};
+window.dfnpanelData['81a76425'] = {"dfnID": "81a76425", "url": "https://fetch.spec.whatwg.org/#concept-response-body", "dfnText": "body (for response)", "refSections": [{"refs": [{"id": "ref-for-concept-response-body"}, {"id": "ref-for-concept-response-body\u2460"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-concept-response-body\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": true};
+window.dfnpanelData['688f9669'] = {"dfnID": "688f9669", "url": "https://fetch.spec.whatwg.org/#concept-request-cache-mode", "dfnText": "cache mode", "refSections": [{"refs": [{"id": "ref-for-concept-request-cache-mode"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-request-cache-mode\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
+window.dfnpanelData['3ae34c95'] = {"dfnID": "3ae34c95", "url": "https://fetch.spec.whatwg.org/#concept-request-destination", "dfnText": "destination", "refSections": [{"refs": [{"id": "ref-for-concept-request-destination"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-request-destination\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
+window.dfnpanelData['c9e7c11a'] = {"dfnID": "c9e7c11a", "url": "https://fetch.spec.whatwg.org/#concept-header", "dfnText": "header", "refSections": [{"refs": [{"id": "ref-for-concept-header"}], "title": "4.4.1. Extending the Font Subset"}], "external": true};
+window.dfnpanelData['50b05fad'] = {"dfnID": "50b05fad", "url": "https://fetch.spec.whatwg.org/#concept-request-method", "dfnText": "method", "refSections": [{"refs": [{"id": "ref-for-concept-request-method"}, {"id": "ref-for-concept-request-method\u2460"}, {"id": "ref-for-concept-request-method\u2461"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-request-method\u2462"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
+window.dfnpanelData['cb98f71f'] = {"dfnID": "cb98f71f", "url": "https://fetch.spec.whatwg.org/#concept-request-mode", "dfnText": "mode", "refSections": [{"refs": [{"id": "ref-for-concept-request-mode"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-request-mode\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
+window.dfnpanelData['ee7bba09'] = {"dfnID": "ee7bba09", "url": "https://fetch.spec.whatwg.org/#concept-response", "dfnText": "response", "refSections": [{"refs": [{"id": "ref-for-concept-response"}], "title": "4.4.2. Handling Server Response"}], "external": true};
+window.dfnpanelData['28119f64'] = {"dfnID": "28119f64", "url": "https://fetch.spec.whatwg.org/#concept-status", "dfnText": "status", "refSections": [{"refs": [{"id": "ref-for-concept-status"}], "title": "4.4.2. Handling Server Response"}], "external": true};
+window.dfnpanelData['a1d47575'] = {"dfnID": "a1d47575", "url": "https://fetch.spec.whatwg.org/#concept-response-status", "dfnText": "status (for response)", "refSections": [{"refs": [{"id": "ref-for-concept-response-status"}, {"id": "ref-for-concept-response-status\u2460"}, {"id": "ref-for-concept-response-status\u2461"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-concept-response-status\u2462"}, {"id": "ref-for-concept-response-status\u2463"}, {"id": "ref-for-concept-response-status\u2464"}, {"id": "ref-for-concept-response-status\u2465"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": true};
+window.dfnpanelData['dc1cd39b'] = {"dfnID": "dc1cd39b", "url": "https://fetch.spec.whatwg.org/#concept-request-url", "dfnText": "url", "refSections": [{"refs": [{"id": "ref-for-concept-request-url"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": true};
+window.dfnpanelData['c0868016'] = {"dfnID": "c0868016", "url": "https://url.spec.whatwg.org/#concept-url-path", "dfnText": "path", "refSections": [{"refs": [{"id": "ref-for-concept-url-path"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-url-path\u2460"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-concept-url-path\u2461"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}, {"refs": [{"id": "ref-for-concept-url-path\u2462"}, {"id": "ref-for-concept-url-path\u2463"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": true};
+window.dfnpanelData['3a711be7'] = {"dfnID": "3a711be7", "url": "https://url.spec.whatwg.org/#concept-url-scheme", "dfnText": "scheme", "refSections": [{"refs": [{"id": "ref-for-concept-url-scheme"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-concept-url-scheme\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": true};
+window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "1.1. Patch Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "4.1. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2461"}, {"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}, {"id": "ref-for-font-subset\u2460\u2460"}, {"id": "ref-for-font-subset\u2460\u2461"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2462"}, {"id": "ref-for-font-subset\u2460\u2463"}, {"id": "ref-for-font-subset\u2460\u2464"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2465"}, {"id": "ref-for-font-subset\u2460\u2466"}, {"id": "ref-for-font-subset\u2460\u2467"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['font-subset-definition'] = {"dfnID": "font-subset-definition", "url": "#font-subset-definition", "dfnText": "font subset definition", "refSections": [{"refs": [{"id": "ref-for-font-subset-definition"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-font-subset-definition\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": false};
+window.dfnpanelData['integer'] = {"dfnID": "integer", "url": "#integer", "dfnText": "Integer", "refSections": [{"refs": [{"id": "ref-for-integer"}, {"id": "ref-for-integer\u2460"}, {"id": "ref-for-integer\u2461"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-integer\u2462"}], "title": "4.3.4. ClientState"}], "external": false};
+window.dfnpanelData['float'] = {"dfnID": "float", "url": "#float", "dfnText": "Float", "refSections": [{"refs": [{"id": "ref-for-float"}, {"id": "ref-for-float\u2460"}], "title": "4.3.2. AxisInterval"}], "external": false};
+window.dfnpanelData['bytestring'] = {"dfnID": "bytestring", "url": "#bytestring", "dfnText": "ByteString", "refSections": [{"refs": [{"id": "ref-for-bytestring"}], "title": "4.2.3. SparseBitSet"}, {"refs": [{"id": "ref-for-bytestring\u2460"}, {"id": "ref-for-bytestring\u2461"}], "title": "4.2.4. IntegerList"}, {"refs": [{"id": "ref-for-bytestring\u2462"}], "title": "4.2.5. SortedIntegerList"}, {"refs": [{"id": "ref-for-bytestring\u2463"}], "title": "4.2.6. RangeList"}, {"refs": [{"id": "ref-for-bytestring\u2464"}], "title": "4.2.8. AxisSpace"}, {"refs": [{"id": "ref-for-bytestring\u2465"}, {"id": "ref-for-bytestring\u2466"}], "title": "4.3.1. CompressedSet"}], "external": false};
+window.dfnpanelData['string'] = {"dfnID": "string", "url": "#string", "dfnText": "String", "refSections": [{"refs": [{"id": "ref-for-string"}], "title": "4.3.3. PatchRequest"}], "external": false};
+window.dfnpanelData['arrayof'] = {"dfnID": "arrayof", "url": "#arrayof", "dfnText": "ArrayOf", "refSections": [{"refs": [{"id": "ref-for-arrayof"}], "title": "4.2.8. AxisSpace"}], "external": false};
+window.dfnpanelData['sparsebitset'] = {"dfnID": "sparsebitset", "url": "#sparsebitset", "dfnText": "SparseBitSet", "refSections": [{"refs": [{"id": "ref-for-sparsebitset"}, {"id": "ref-for-sparsebitset\u2460"}], "title": "4.3.1. CompressedSet"}], "external": false};
+window.dfnpanelData['integerlist'] = {"dfnID": "integerlist", "url": "#integerlist", "dfnText": "IntegerList", "refSections": [{"refs": [{"id": "ref-for-integerlist"}], "title": "4.2.4. IntegerList"}, {"refs": [{"id": "ref-for-integerlist\u2460"}, {"id": "ref-for-integerlist\u2461"}], "title": "4.2.5. SortedIntegerList"}, {"refs": [{"id": "ref-for-integerlist\u2462"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-integerlist\u2463"}], "title": "4.3.4. ClientState"}, {"refs": [{"id": "ref-for-integerlist\u2464"}], "title": "4.7. Codepoint Reordering"}], "external": false};
+window.dfnpanelData['sortedintegerlist'] = {"dfnID": "sortedintegerlist", "url": "#sortedintegerlist", "dfnText": "SortedIntegerList", "refSections": [{"refs": [{"id": "ref-for-sortedintegerlist"}], "title": "4.2.5. SortedIntegerList"}, {"refs": [{"id": "ref-for-sortedintegerlist\u2460"}], "title": "4.2.6. RangeList"}, {"refs": [{"id": "ref-for-sortedintegerlist\u2461"}, {"id": "ref-for-sortedintegerlist\u2462"}], "title": "4.2.7. FeatureTagSet"}], "external": false};
+window.dfnpanelData['rangelist'] = {"dfnID": "rangelist", "url": "#rangelist", "dfnText": "RangeList", "refSections": [{"refs": [{"id": "ref-for-rangelist"}, {"id": "ref-for-rangelist\u2460"}], "title": "4.3.1. CompressedSet"}], "external": false};
+window.dfnpanelData['featuretagset'] = {"dfnID": "featuretagset", "url": "#featuretagset", "dfnText": "FeatureTagSet", "refSections": [{"refs": [{"id": "ref-for-featuretagset"}, {"id": "ref-for-featuretagset\u2460"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-featuretagset\u2461"}], "title": "4.3.4. ClientState"}], "external": false};
+window.dfnpanelData['axisspace'] = {"dfnID": "axisspace", "url": "#axisspace", "dfnText": "AxisSpace", "refSections": [{"refs": [{"id": "ref-for-axisspace"}, {"id": "ref-for-axisspace\u2460"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-axisspace\u2461"}, {"id": "ref-for-axisspace\u2462"}], "title": "4.3.4. ClientState"}], "external": false};
+window.dfnpanelData['compressedset'] = {"dfnID": "compressedset", "url": "#compressedset", "dfnText": "CompressedSet", "refSections": [{"refs": [{"id": "ref-for-compressedset"}, {"id": "ref-for-compressedset\u2460"}, {"id": "ref-for-compressedset\u2461"}, {"id": "ref-for-compressedset\u2462"}], "title": "4.3.3. PatchRequest"}], "external": false};
+window.dfnpanelData['compressedset-sparse_bit_set'] = {"dfnID": "compressedset-sparse_bit_set", "url": "#compressedset-sparse_bit_set", "dfnText": "sparse_bit_set", "refSections": [{"refs": [{"id": "ref-for-compressedset-sparse_bit_set"}], "title": "4.3.1. CompressedSet"}], "external": false};
+window.dfnpanelData['compressedset-range_deltas'] = {"dfnID": "compressedset-range_deltas", "url": "#compressedset-range_deltas", "dfnText": "range_deltas", "refSections": [{"refs": [{"id": "ref-for-compressedset-range_deltas"}], "title": "4.3.1. CompressedSet"}], "external": false};
+window.dfnpanelData['axisinterval'] = {"dfnID": "axisinterval", "url": "#axisinterval", "dfnText": "AxisInterval", "refSections": [{"refs": [{"id": "ref-for-axisinterval"}], "title": "4.2.8. AxisSpace"}, {"refs": [{"id": "ref-for-axisinterval\u2460"}, {"id": "ref-for-axisinterval\u2461"}], "title": "4.3.2. AxisInterval"}], "external": false};
+window.dfnpanelData['axisinterval-start'] = {"dfnID": "axisinterval-start", "url": "#axisinterval-start", "dfnText": "start", "refSections": [{"refs": [{"id": "ref-for-axisinterval-start"}, {"id": "ref-for-axisinterval-start\u2460"}, {"id": "ref-for-axisinterval-start\u2461"}, {"id": "ref-for-axisinterval-start\u2462"}], "title": "4.3.2. AxisInterval"}], "external": false};
+window.dfnpanelData['axisinterval-end'] = {"dfnID": "axisinterval-end", "url": "#axisinterval-end", "dfnText": "end", "refSections": [{"refs": [{"id": "ref-for-axisinterval-end"}, {"id": "ref-for-axisinterval-end\u2460"}, {"id": "ref-for-axisinterval-end\u2461"}], "title": "4.3.2. AxisInterval"}], "external": false};
+window.dfnpanelData['patchrequest'] = {"dfnID": "patchrequest", "url": "#patchrequest", "dfnText": "PatchRequest", "refSections": [{"refs": [{"id": "ref-for-patchrequest"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-patchrequest\u2460"}, {"id": "ref-for-patchrequest\u2461"}, {"id": "ref-for-patchrequest\u2462"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest\u2463"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-patchrequest\u2464"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['patchrequest-codepoints_have'] = {"dfnID": "patchrequest-codepoints_have", "url": "#patchrequest-codepoints_have", "dfnText": "codepoints_have", "refSections": [{"refs": [{"id": "ref-for-patchrequest-codepoints_have"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-patchrequest-codepoints_have\u2460"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-codepoints_have\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['patchrequest-codepoints_needed'] = {"dfnID": "patchrequest-codepoints_needed", "url": "#patchrequest-codepoints_needed", "dfnText": "codepoints_needed", "refSections": [{"refs": [{"id": "ref-for-patchrequest-codepoints_needed"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-codepoints_needed\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['patchrequest-indices_have'] = {"dfnID": "patchrequest-indices_have", "url": "#patchrequest-indices_have", "dfnText": "indices_have", "refSections": [{"refs": [{"id": "ref-for-patchrequest-indices_have"}, {"id": "ref-for-patchrequest-indices_have\u2460"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-patchrequest-indices_have\u2461"}, {"id": "ref-for-patchrequest-indices_have\u2462"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-indices_have\u2463"}, {"id": "ref-for-patchrequest-indices_have\u2464"}, {"id": "ref-for-patchrequest-indices_have\u2465"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['patchrequest-indices_needed'] = {"dfnID": "patchrequest-indices_needed", "url": "#patchrequest-indices_needed", "dfnText": "indices_needed", "refSections": [{"refs": [{"id": "ref-for-patchrequest-indices_needed"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-patchrequest-indices_needed\u2460"}, {"id": "ref-for-patchrequest-indices_needed\u2461"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-indices_needed\u2462"}, {"id": "ref-for-patchrequest-indices_needed\u2463"}, {"id": "ref-for-patchrequest-indices_needed\u2464"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['patchrequest-features_have'] = {"dfnID": "patchrequest-features_have", "url": "#patchrequest-features_have", "dfnText": "features_have", "refSections": [{"refs": [{"id": "ref-for-patchrequest-features_have"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-features_have\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['patchrequest-features_needed'] = {"dfnID": "patchrequest-features_needed", "url": "#patchrequest-features_needed", "dfnText": "features_needed", "refSections": [{"refs": [{"id": "ref-for-patchrequest-features_needed"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-features_needed\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['patchrequest-axis_space_have'] = {"dfnID": "patchrequest-axis_space_have", "url": "#patchrequest-axis_space_have", "dfnText": "axis_space_have", "refSections": [{"refs": [{"id": "ref-for-patchrequest-axis_space_have"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-axis_space_have\u2460"}, {"id": "ref-for-patchrequest-axis_space_have\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['patchrequest-axis_space_needed'] = {"dfnID": "patchrequest-axis_space_needed", "url": "#patchrequest-axis_space_needed", "dfnText": "axis_space_needed", "refSections": [{"refs": [{"id": "ref-for-patchrequest-axis_space_needed"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-axis_space_needed\u2460"}, {"id": "ref-for-patchrequest-axis_space_needed\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['patchrequest-ordering_checksum'] = {"dfnID": "patchrequest-ordering_checksum", "url": "#patchrequest-ordering_checksum", "dfnText": "ordering_checksum", "refSections": [{"refs": [{"id": "ref-for-patchrequest-ordering_checksum"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-patchrequest-ordering_checksum\u2460"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-ordering_checksum\u2461"}, {"id": "ref-for-patchrequest-ordering_checksum\u2462"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['patchrequest-original_font_checksum'] = {"dfnID": "patchrequest-original_font_checksum", "url": "#patchrequest-original_font_checksum", "dfnText": "original_font_checksum", "refSections": [{"refs": [{"id": "ref-for-patchrequest-original_font_checksum"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-patchrequest-original_font_checksum\u2460"}], "title": "4.4.1. Extending the Font Subset"}], "external": false};
+window.dfnpanelData['patchrequest-base_checksum'] = {"dfnID": "patchrequest-base_checksum", "url": "#patchrequest-base_checksum", "dfnText": "base_checksum", "refSections": [{"refs": [{"id": "ref-for-patchrequest-base_checksum"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-patchrequest-base_checksum\u2460"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-base_checksum\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['patchrequest-fragment_id'] = {"dfnID": "patchrequest-fragment_id", "url": "#patchrequest-fragment_id", "dfnText": "fragment_id", "refSections": [{"refs": [{"id": "ref-for-patchrequest-fragment_id"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-patchrequest-fragment_id\u2460"}, {"id": "ref-for-patchrequest-fragment_id\u2461"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['patchrequest-codepoint_ordering'] = {"dfnID": "patchrequest-codepoint_ordering", "url": "#patchrequest-codepoint_ordering", "dfnText": "codepoint_ordering", "refSections": [{"refs": [{"id": "ref-for-patchrequest-codepoint_ordering"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-patchrequest-codepoint_ordering\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['clientstate'] = {"dfnID": "clientstate", "url": "#clientstate", "dfnText": "ClientState", "refSections": [{"refs": [{"id": "ref-for-clientstate"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['clientstate-original_font_checksum'] = {"dfnID": "clientstate-original_font_checksum", "url": "#clientstate-original_font_checksum", "dfnText": "original_font_checksum", "refSections": [{"refs": [{"id": "ref-for-clientstate-original_font_checksum"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate-original_font_checksum\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['clientstate-codepoint_ordering'] = {"dfnID": "clientstate-codepoint_ordering", "url": "#clientstate-codepoint_ordering", "dfnText": "codepoint_ordering", "refSections": [{"refs": [{"id": "ref-for-clientstate-codepoint_ordering"}, {"id": "ref-for-clientstate-codepoint_ordering\u2460"}, {"id": "ref-for-clientstate-codepoint_ordering\u2461"}, {"id": "ref-for-clientstate-codepoint_ordering\u2462"}, {"id": "ref-for-clientstate-codepoint_ordering\u2463"}, {"id": "ref-for-clientstate-codepoint_ordering\u2464"}, {"id": "ref-for-clientstate-codepoint_ordering\u2465"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate-codepoint_ordering\u2466"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-clientstate-codepoint_ordering\u2467"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['clientstate-subset_axis_space'] = {"dfnID": "clientstate-subset_axis_space", "url": "#clientstate-subset_axis_space", "dfnText": "subset_axis_space", "refSections": [{"refs": [{"id": "ref-for-clientstate-subset_axis_space"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-clientstate-subset_axis_space\u2460"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['clientstate-original_axis_space'] = {"dfnID": "clientstate-original_axis_space", "url": "#clientstate-original_axis_space", "dfnText": "original_axis_space", "refSections": [{"refs": [{"id": "ref-for-clientstate-original_axis_space"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['clientstate-original_features'] = {"dfnID": "clientstate-original_features", "url": "#clientstate-original_features", "dfnText": "original_features", "refSections": [{"refs": [{"id": "ref-for-clientstate-original_features"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+window.dfnpanelData['abstract-opdef-extend-the-font-subset'] = {"dfnID": "abstract-opdef-extend-the-font-subset", "url": "#abstract-opdef-extend-the-font-subset", "dfnText": "Extend the font subset", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-extend-the-font-subset"}, {"id": "ref-for-abstract-opdef-extend-the-font-subset\u2460"}], "title": "4.4.3. Load a Font in a User Agent with a HTTP Cache"}], "external": false};
+window.dfnpanelData['patch-request-header'] = {"dfnID": "patch-request-header", "url": "#patch-request-header", "dfnText": "patch request header", "refSections": [{"refs": [{"id": "ref-for-patch-request-header"}], "title": "3.1. IFT Method Negotiation"}, {"refs": [{"id": "ref-for-patch-request-header\u2460"}], "title": "3.3. Offline Usage"}], "external": false};
+window.dfnpanelData['abstract-opdef-handle-server-response'] = {"dfnID": "abstract-opdef-handle-server-response", "url": "#abstract-opdef-handle-server-response", "dfnText": "Handle server response", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-handle-server-response"}], "title": "4.4.1. Extending the Font Subset"}], "external": false};
+window.dfnpanelData['abstract-opdef-handle-failed-font-load'] = {"dfnID": "abstract-opdef-handle-failed-font-load", "url": "#abstract-opdef-handle-failed-font-load", "dfnText": "Handle failed font load", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-handle-failed-font-load"}], "title": "4.4.2. Handling Server Response"}], "external": false};
+window.dfnpanelData['original-font'] = {"dfnID": "original-font", "url": "#original-font", "dfnText": "original font", "refSections": [{"refs": [{"id": "ref-for-original-font"}, {"id": "ref-for-original-font\u2460"}, {"id": "ref-for-original-font\u2461"}, {"id": "ref-for-original-font\u2462"}], "title": "4.4.1. Extending the Font Subset"}, {"refs": [{"id": "ref-for-original-font\u2463"}], "title": "4.4.2. Handling Server Response"}, {"refs": [{"id": "ref-for-original-font\u2464"}, {"id": "ref-for-original-font\u2465"}, {"id": "ref-for-original-font\u2466"}, {"id": "ref-for-original-font\u2467"}, {"id": "ref-for-original-font\u2468"}, {"id": "ref-for-original-font\u2460\u24ea"}, {"id": "ref-for-original-font\u2460\u2460"}, {"id": "ref-for-original-font\u2460\u2461"}, {"id": "ref-for-original-font\u2460\u2462"}], "title": "4.5. Server: Responding to a PatchRequest"}], "external": false};
+</script>
+<script>/* Boilerplate: script-dom-helper */
+function query(sel) { return document.querySelector(sel); }
+
+function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
+
+function iter(obj) {
+	if(!obj) return [];
+	var it = obj[Symbol.iterator];
+	if(it) return it;
+	return Object.entries(obj);
+}
+
+function mk(tagname, attrs, ...children) {
+	const el = document.createElement(tagname);
+	for(const [k,v] of iter(attrs)) {
+		if(k.slice(0,3) == "_on") {
+			const eventName = k.slice(3);
+			el.addEventListener(eventName, v);
+		} else if(k[0] == "_") {
+			// property, not attribute
+			el[k.slice(1)] = v;
+		} else {
+			if(v === false || v == null) {
+        continue;
+      } else if(v === true) {
+        el.setAttribute(k, "");
+        continue;
+      } else {
+  			el.setAttribute(k, v);
+      }
+		}
+	}
+	append(el, children);
+	return el;
+}
+
+/* Create shortcuts for every known HTML element */
+[
+  "a",
+  "abbr",
+  "acronym",
+  "address",
+  "applet",
+  "area",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "base",
+  "basefont",
+  "bdo",
+  "big",
+  "blockquote",
+  "body",
+  "br",
+  "button",
+  "canvas",
+  "caption",
+  "center",
+  "cite",
+  "code",
+  "col",
+  "colgroup",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "dialog",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "embed",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "font",
+  "footer",
+  "form",
+  "frame",
+  "frameset",
+  "head",
+  "header",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "html",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "map",
+  "mark",
+  "meta",
+  "meter",
+  "nav",
+  "nobr",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "param",
+  "pre",
+  "progress",
+  "q",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strike",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "template",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "u",
+  "ul",
+  "var",
+  "video",
+  "wbr",
+  "xmp",
+].forEach(tagname=>{
+	mk[tagname] = (...args) => mk(tagname, ...args);
+});
+
+function* nodesFromChildList(children) {
+	for(const child of children.flat(Infinity)) {
+		if(child instanceof Node) {
+			yield child;
+		} else {
+			yield new Text(child);
+		}
+	}
+}
+function append(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		if(el instanceof Node) el.appendChild(child);
+		else el.push(child);
+	}
+	return el;
+}
+
+function insertAfter(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		el.parentNode.insertBefore(child, el.nextSibling);
+	}
+	return el;
+}
+
+function clearContents(el) {
+	el.innerHTML = "";
+	return el;
+}
+
+function parseHTML(markup) {
+	if(markup.toLowerCase().trim().indexOf('<!doctype') === 0) {
+		const doc = document.implementation.createHTMLDocument("");
+		doc.documentElement.innerHTML = markup;
+		return doc;
+	} else {
+		const el = mk.template({});
+		el.innerHTML = markup;
+		return el.content;
+	}
+}
+</script>
+<script>/* Boilerplate: script-var-click-highlighting */
+/*
+Color-choosing design:
+
+Colors are ordered by goodness.
+Each color has a usage count (initially zero).
+Each variable has a last-used color.
+
+* If the var has a last-used color, and that color's usage is 0,
+    return that color.
+* Otherwise, return the lowest-indexed color with the lowest usage.
+    Increment the color's usage and set it as the last-used color
+    for that var.
+* On unclicking, decrement usage of the color.
+*/
+"use strict";
+{
+    document.addEventListener("click", e=>{
+        if(e.target.nodeName == "VAR") {
+            highlightSameAlgoVars(e.target);
+        }
+    });
+    const indexCounts = new Map();
+    const indexNames = new Map();
+    function highlightSameAlgoVars(v) {
+        // Find the algorithm container.
+        let algoContainer = null;
+        let searchEl = v;
+        while(algoContainer == null && searchEl != document.body) {
+            searchEl = searchEl.parentNode;
+            if(searchEl.hasAttribute("data-algorithm")) {
+                algoContainer = searchEl;
+            }
+        }
+
+        // Not highlighting document-global vars,
+        // too likely to be unrelated.
+        if(algoContainer == null) return;
+
+        const algoName = algoContainer.getAttribute("data-algorithm");
+        const varName = getVarName(v);
+        const addClass = !v.classList.contains("selected");
+        let highlightClass = null;
+        if(addClass) {
+            const index = chooseHighlightIndex(algoName, varName);
+            indexCounts.get(algoName)[index] += 1;
+            indexNames.set(algoName+"///"+varName, index);
+            highlightClass = nameFromIndex(index);
+        } else {
+            const index = previousHighlightIndex(algoName, varName);
+            indexCounts.get(algoName)[index] -= 1;
+            highlightClass = nameFromIndex(index);
+        }
+
+        // Find all same-name vars, and toggle their class appropriately.
+        for(const el of algoContainer.querySelectorAll("var")) {
+            if(getVarName(el) == varName) {
+                el.classList.toggle("selected", addClass);
+                el.classList.toggle(highlightClass, addClass);
+            }
+        }
+    }
+    function getVarName(el) {
+        return el.textContent.replace(/(\s|\xa0)+/, " ").trim();
+    }
+    function chooseHighlightIndex(algoName, varName) {
+        let indexes = null;
+        if(indexCounts.has(algoName)) {
+            indexes = indexCounts.get(algoName);
+        } else {
+            // 7 classes right now
+            indexes = [0,0,0,0,0,0,0];
+            indexCounts.set(algoName, indexes);
+        }
+
+        // If the element was recently unclicked,
+        // *and* that color is still unclaimed,
+        // give it back the same color.
+        const lastIndex = previousHighlightIndex(algoName, varName);
+        if(indexes[lastIndex] === 0) return lastIndex;
+
+        // Find the earliest index with the lowest count.
+        const minCount = Math.min.apply(null, indexes);
+        let index = null;
+        for(var i = 0; i < indexes.length; i++) {
+            if(indexes[i] == minCount) {
+                return i;
+            }
+        }
+    }
+    function previousHighlightIndex(algoName, varName) {
+        return indexNames.get(algoName+"///"+varName);
+    }
+    function nameFromIndex(index) {
+        return "selected" + index;
+    }
+}
+</script>
