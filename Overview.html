@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="8cf088637d0997eb8c69a74cde8a01abf2ac39f9" name="document-revision">
+  <meta content="9568adc7983b057a92b724395456b2d06fd15cfd" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1391,27 +1391,34 @@ bytes = [03 07 03 81 7F]
 </pre>
    </div>
    <h4 class="heading settled" data-level="4.2.7" id="featuretagset-object"><span class="secno">4.2.7. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="featuretagset">FeatureTagSet</dfn></span><a class="self-link" href="#featuretagset-object"></a></h4>
-   <p>A FeatureTagSet encodes a set of zero or more <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout feature tags</a>.
-Each feature tag is mapped to an integer value and then the set of mapped integers are encoded in a <a data-link-type="dfn" href="#sortedintegerlist" id="ref-for-sortedintegerlist②">SortedIntegerList</a>. Feature tags are mapped to integers as follows:</p>
-   <ul>
+   <p>A FeatureTagSet encodes a set of zero or more <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout feature tags</a>. To encode
+a set of feature tags:</p>
+   <ol>
     <li data-md>
-     <p>If the tag is found in <a href="#feature-tag-list">Appendix A: Default Feature Tags and Encoding IDs</a>:</p>
+     <p>Union the set of feature tags to be encoded and the list of feature tags in <a href="#feature-tag-list">Appendix A: Default Feature Tags and Encoding IDs</a>. For each tag in the
+union:</p>
      <ul>
       <li data-md>
-       <p>If the "Encoded As" column corresponding to the tag is "default" then the tag is skipped and
-not encoded.</p>
+       <p>If the tag is present in the list of feature tags to be encoded, is present in <a href="#feature-tag-list">Appendix A: Default Feature Tags and Encoding IDs</a>, and
+has a value of "needed" in the "Encode If" column of <a href="#feature-tag-list">Appendix A: Default Feature Tags and Encoding IDs</a>; then add the value of "Encoded As"
+to the encoded ID list.</p>
       <li data-md>
-       <p>Else, the tag is mapped to the integer value in the "Encoded As" column.</p>
+       <p>If the tag is not present in the list of feature tags to be encoded, is present in <a href="#feature-tag-list">Appendix A: Default Feature Tags and Encoding IDs</a>, and
+has a value of "not needed" in the "Encode If" column of <a href="#feature-tag-list">Appendix A: Default Feature Tags and Encoding IDs</a>; then add the value of "Encoded As"
+to the encoded ID list.</p>
+      <li data-md>
+       <p>If the tag is present in the list of feature tags to be encoded and is not present in <a href="#feature-tag-list">Appendix A: Default Feature Tags and Encoding IDs</a>, then
+convert the tag to  an integer by treating the tag’s 4 byte string as a 4 byte little endian integer and add that
+value to the encoded ID list.</p>
+      <li data-md>
+       <p>Otherwise, do nothing for this tag.</p>
      </ul>
     <li data-md>
-     <p>Otherwise: the tag is converted to an integer by treating the tag’s 4 byte string as a 4 byte
-little endian integer.</p>
-   </ul>
-   <p>The final encoding is produced by sorting the mapped integers (excluding tags which are skipped)
-into ascending order and then encoding the sorted list as a <a data-link-type="dfn" href="#sortedintegerlist" id="ref-for-sortedintegerlist③">SortedIntegerList</a>.</p>
+     <p>The final encoding is produced by sorting the encoded ID list produced in step 1 into ascending order and then encoding
+the sorted list as a <a data-link-type="dfn" href="#sortedintegerlist" id="ref-for-sortedintegerlist②">SortedIntegerList</a>.</p>
+   </ol>
    <p>When decoding a FeatureTagSet the integer values are mapped back to the original tags by reversing
-the above mapping rules. <span class="conform server client" id="conform-feature-tag-set-defaults">Additionally all
-default features in <a href="#feature-tag-list">Appendix A: Default Feature Tags and Encoding IDs</a> must be added to the decoded set.</span></p>
+the above encoding rules.</p>
    <h4 class="heading settled" data-level="4.2.8" id="AxisSpace"><span class="secno">4.2.8. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="axisspace">AxisSpace</dfn></span><a class="self-link" href="#AxisSpace"></a></h4>
    <p>Stores a set of intervals on one or more open type variation axes <a data-link-type="biblio" href="#biblio-opentype-variations" title="OpenType Font Variations Overview">[opentype-variations]</a>.
 Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑤">ByteString</a> containing exactly 4 ASCII characters. The value in each
@@ -2212,386 +2219,521 @@ them from being used for tracking.</p>
     <li>Made HTTP RFC references more specific
    </ul>
    <h2 class="heading settled" id="feature-tag-list"><span class="content"> Appendix A: Default Feature Tags and Encoding IDs</span><a class="self-link" href="#feature-tag-list"></a></h2>
+   <p>This appendix is normative. It lists the IDs used to encode feature tags into a <a data-link-type="dfn" href="#featuretagset" id="ref-for-featuretagset③">FeatureTagSet</a>. This table
+was assembled from several sources:</p>
+   <ul>
+    <li data-md>
+     <p>Includes all features listed in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featurelist">OpenType layout feature registry</a>.</p>
+    <li data-md>
+     <p>The value of "Encode If" is set to "not needed" for all features which are listed as "default on" in <a href="https://tiro.com/John/Enabling_Typography_(OTL).pdf">Enabling Typography</a> or are in the
+default set in the <a href="https://github.com/harfbuzz/harfbuzz/blob/main/src/hb-subset-input.cc">harfbuzz
+subsetter</a>.</p>
+   </ul>
    <table>
     <tbody>
      <tr>
       <th>Tag
       <th>Encoded As
+      <th>Encode If
      <tr>
       <td>aalt
       <td>1
+      <td>needed
      <tr>
       <td>abvf
-      <td>default
+      <td>2
+      <td>not needed
      <tr>
       <td>abvm
-      <td>default
+      <td>3
+      <td>not needed
      <tr>
       <td>abvs
-      <td>default
+      <td>4
+      <td>not needed
      <tr>
       <td>afrc
-      <td>2
+      <td>5
+      <td>needed
      <tr>
       <td>akhn
-      <td>default
+      <td>6
+      <td>not needed
      <tr>
       <td>blwf
-      <td>default
+      <td>7
+      <td>not needed
      <tr>
       <td>blwm
-      <td>default
+      <td>8
+      <td>not needed
      <tr>
       <td>blws
-      <td>default
+      <td>9
+      <td>not needed
      <tr>
       <td>calt
-      <td>default
+      <td>10
+      <td>not needed
      <tr>
       <td>case
-      <td>3
+      <td>11
+      <td>needed
      <tr>
       <td>ccmp
-      <td>default
+      <td>12
+      <td>not needed
      <tr>
       <td>cfar
-      <td>default
+      <td>13
+      <td>not needed
      <tr>
       <td>chws
-      <td>default
+      <td>14
+      <td>not needed
      <tr>
       <td>cjct
-      <td>default
+      <td>15
+      <td>not needed
      <tr>
       <td>clig
-      <td>default
+      <td>16
+      <td>not needed
      <tr>
       <td>cpct
-      <td>4
+      <td>17
+      <td>needed
      <tr>
       <td>cpsp
-      <td>5
+      <td>18
+      <td>needed
      <tr>
       <td>cswh
-      <td>default
+      <td>19
+      <td>not needed
      <tr>
       <td>curs
-      <td>default
+      <td>20
+      <td>not needed
      <tr>
       <td>cv01-cv99
-      <td>6-104
+      <td>21-119
+      <td>needed
      <tr>
       <td>c2pc
-      <td>105
+      <td>120
+      <td>needed
      <tr>
       <td>c2sc
-      <td>106
+      <td>121
+      <td>needed
      <tr>
       <td>dist
-      <td>default
+      <td>122
+      <td>not needed
      <tr>
       <td>dlig
-      <td>107
+      <td>123
+      <td>needed
      <tr>
       <td>dnom
-      <td>default
+      <td>124
+      <td>not needed
      <tr>
       <td>dtls
-      <td>default
+      <td>125
+      <td>not needed
      <tr>
       <td>expt
-      <td>108
+      <td>126
+      <td>needed
      <tr>
       <td>falt
-      <td>109
+      <td>127
+      <td>needed
      <tr>
       <td>fin2
-      <td>default
+      <td>128
+      <td>not needed
      <tr>
       <td>fin3
-      <td>default
+      <td>129
+      <td>not needed
      <tr>
       <td>fina
-      <td>default
+      <td>130
+      <td>not needed
      <tr>
       <td>flac
-      <td>default
+      <td>131
+      <td>not needed
      <tr>
       <td>frac
-      <td>default
+      <td>132
+      <td>not needed
      <tr>
       <td>fwid
-      <td>110
+      <td>133
+      <td>needed
      <tr>
       <td>half
-      <td>default
+      <td>134
+      <td>not needed
      <tr>
       <td>haln
-      <td>default
+      <td>135
+      <td>not needed
      <tr>
       <td>halt
-      <td>111
+      <td>136
+      <td>needed
      <tr>
       <td>hist
-      <td>112
+      <td>137
+      <td>needed
      <tr>
       <td>hkna
-      <td>113
+      <td>138
+      <td>needed
      <tr>
       <td>hlig
-      <td>114
+      <td>139
+      <td>needed
      <tr>
       <td>hngl
-      <td>115
+      <td>140
+      <td>needed
      <tr>
       <td>hojo
-      <td>116
+      <td>141
+      <td>needed
      <tr>
       <td>hwid
-      <td>117
+      <td>142
+      <td>needed
      <tr>
       <td>init
-      <td>default
+      <td>143
+      <td>not needed
      <tr>
       <td>isol
-      <td>default
+      <td>144
+      <td>not needed
      <tr>
       <td>ital
-      <td>118
+      <td>145
+      <td>needed
      <tr>
       <td>jalt
-      <td>default
+      <td>146
+      <td>not needed
      <tr>
       <td>jp78
-      <td>119
+      <td>147
+      <td>needed
      <tr>
       <td>jp83
-      <td>120
+      <td>148
+      <td>needed
      <tr>
       <td>jp90
-      <td>121
+      <td>149
+      <td>needed
      <tr>
       <td>jp04
-      <td>122
+      <td>150
+      <td>needed
      <tr>
       <td>kern
-      <td>default
+      <td>151
+      <td>not needed
      <tr>
       <td>lfbd
-      <td>123
+      <td>152
+      <td>needed
      <tr>
       <td>liga
-      <td>default
+      <td>153
+      <td>not needed
      <tr>
       <td>ljmo
-      <td>default
+      <td>154
+      <td>not needed
      <tr>
       <td>lnum
-      <td>124
+      <td>155
+      <td>needed
      <tr>
       <td>locl
-      <td>default
+      <td>156
+      <td>not needed
      <tr>
       <td>ltra
-      <td>default
+      <td>157
+      <td>not needed
      <tr>
       <td>ltrm
-      <td>default
+      <td>158
+      <td>not needed
      <tr>
       <td>mark
-      <td>default
+      <td>159
+      <td>not needed
      <tr>
       <td>med2
-      <td>default
+      <td>160
+      <td>not needed
      <tr>
       <td>medi
-      <td>default
+      <td>161
+      <td>not needed
      <tr>
       <td>mgrk
-      <td>125
+      <td>162
+      <td>needed
      <tr>
       <td>mkmk
-      <td>default
+      <td>163
+      <td>not needed
      <tr>
       <td>mset
-      <td>default
+      <td>164
+      <td>not needed
      <tr>
       <td>nalt
-      <td>126
+      <td>165
+      <td>needed
      <tr>
       <td>nlck
-      <td>127
+      <td>166
+      <td>needed
      <tr>
       <td>nukt
-      <td>default
+      <td>167
+      <td>not needed
      <tr>
       <td>numr
-      <td>default
+      <td>168
+      <td>not needed
      <tr>
       <td>onum
-      <td>128
+      <td>169
+      <td>needed
      <tr>
       <td>opbd
-      <td>129
+      <td>170
+      <td>needed
      <tr>
       <td>ordn
-      <td>130
+      <td>171
+      <td>needed
      <tr>
       <td>ornm
-      <td>131
+      <td>172
+      <td>needed
      <tr>
       <td>palt
-      <td>132
+      <td>173
+      <td>needed
      <tr>
       <td>pcap
-      <td>133
+      <td>174
+      <td>needed
      <tr>
       <td>pkna
-      <td>134
+      <td>175
+      <td>needed
      <tr>
       <td>pnum
-      <td>135
+      <td>176
+      <td>needed
      <tr>
       <td>pref
-      <td>default
+      <td>177
+      <td>not needed
      <tr>
       <td>pres
-      <td>default
+      <td>178
+      <td>not needed
      <tr>
       <td>pstf
-      <td>default
+      <td>179
+      <td>not needed
      <tr>
       <td>psts
-      <td>default
+      <td>180
+      <td>not needed
      <tr>
       <td>pwid
-      <td>136
+      <td>181
+      <td>needed
      <tr>
       <td>qwid
-      <td>137
+      <td>182
+      <td>needed
      <tr>
       <td>rand
-      <td>default
+      <td>183
+      <td>not needed
      <tr>
       <td>rclt
-      <td>default
+      <td>184
+      <td>not needed
      <tr>
       <td>rkrf
-      <td>default
+      <td>185
+      <td>not needed
      <tr>
       <td>rlig
-      <td>default
+      <td>186
+      <td>not needed
      <tr>
       <td>rphf
-      <td>default
+      <td>187
+      <td>not needed
      <tr>
       <td>rtbd
-      <td>138
+      <td>188
+      <td>needed
      <tr>
       <td>rtla
-      <td>default
+      <td>189
+      <td>not needed
      <tr>
       <td>rtlm
-      <td>default
+      <td>190
+      <td>not needed
      <tr>
       <td>ruby
-      <td>139
+      <td>191
+      <td>needed
      <tr>
       <td>rvrn
-      <td>default
+      <td>192
+      <td>not needed
      <tr>
       <td>salt
-      <td>140
+      <td>193
+      <td>needed
      <tr>
       <td>sinf
-      <td>141
+      <td>194
+      <td>needed
      <tr>
       <td>size
-      <td>142
+      <td>195
+      <td>needed
      <tr>
       <td>smcp
-      <td>143
+      <td>196
+      <td>needed
      <tr>
       <td>smpl
-      <td>144
+      <td>197
+      <td>needed
      <tr>
       <td>ss01-ss20
-      <td>145-164
+      <td>198-217
+      <td>needed
      <tr>
       <td>ssty
-      <td>default
+      <td>218
+      <td>not needed
      <tr>
       <td>stch
-      <td>default
+      <td>219
+      <td>not needed
      <tr>
       <td>subs
-      <td>165
+      <td>220
+      <td>needed
      <tr>
       <td>sups
-      <td>166
+      <td>221
+      <td>needed
      <tr>
       <td>swsh
-      <td>167
+      <td>222
+      <td>needed
      <tr>
       <td>titl
-      <td>168
+      <td>223
+      <td>needed
      <tr>
       <td>tjmo
-      <td>default
+      <td>224
+      <td>not needed
      <tr>
       <td>tnam
-      <td>169
+      <td>225
+      <td>needed
      <tr>
       <td>tnum
-      <td>170
+      <td>226
+      <td>needed
      <tr>
       <td>trad
-      <td>171
+      <td>227
+      <td>needed
      <tr>
       <td>twid
-      <td>172
+      <td>228
+      <td>needed
      <tr>
       <td>unic
-      <td>173
+      <td>229
+      <td>needed
      <tr>
       <td>valt
-      <td>default
+      <td>230
+      <td>not needed
      <tr>
       <td>vatu
-      <td>default
+      <td>231
+      <td>not needed
      <tr>
       <td>vchw
-      <td>default
+      <td>232
+      <td>not needed
      <tr>
       <td>vert
-      <td>default
+      <td>233
+      <td>not needed
      <tr>
       <td>vhal
-      <td>174
+      <td>234
+      <td>needed
      <tr>
       <td>vjmo
-      <td>default
+      <td>235
+      <td>not needed
      <tr>
       <td>vkna
-      <td>175
+      <td>236
+      <td>needed
      <tr>
       <td>vkrn
-      <td>default
+      <td>237
+      <td>not needed
      <tr>
       <td>vpal
-      <td>default
+      <td>238
+      <td>not needed
      <tr>
       <td>vrt2
-      <td>default
+      <td>239
+      <td>not needed
      <tr>
       <td>vrtr
-      <td>default
+      <td>240
+      <td>not needed
      <tr>
       <td>zero
-      <td>176
+      <td>241
+      <td>needed
    </table>
    <h2 class="heading settled" id="obfuscation-codepoints"><span class="content"> Appendix B: Codepoints Requiring Obfuscation</span><a class="self-link" href="#obfuscation-codepoints"></a></h2>
-   <p>The following codepoints are considered to need obfuscation:</p>
+   <p>This appendix is normative.The following codepoints are considered to need obfuscation:</p>
    <ul>
     <li data-md>
      <p>All unicode codepoints with the <a href="https://www.unicode.org/reports/tr44/tr44-30.html#Unified_Ideograph">Unified_Ideograph</a> property.</p>
@@ -3100,9 +3242,9 @@ window.dfnpanelData['string'] = {"dfnID": "string", "url": "#string", "dfnText":
 window.dfnpanelData['arrayof'] = {"dfnID": "arrayof", "url": "#arrayof", "dfnText": "ArrayOf", "refSections": [{"refs": [{"id": "ref-for-arrayof"}], "title": "4.2.8. AxisSpace"}], "external": false};
 window.dfnpanelData['sparsebitset'] = {"dfnID": "sparsebitset", "url": "#sparsebitset", "dfnText": "SparseBitSet", "refSections": [{"refs": [{"id": "ref-for-sparsebitset"}, {"id": "ref-for-sparsebitset\u2460"}], "title": "4.3.1. CompressedSet"}], "external": false};
 window.dfnpanelData['integerlist'] = {"dfnID": "integerlist", "url": "#integerlist", "dfnText": "IntegerList", "refSections": [{"refs": [{"id": "ref-for-integerlist"}], "title": "4.2.4. IntegerList"}, {"refs": [{"id": "ref-for-integerlist\u2460"}, {"id": "ref-for-integerlist\u2461"}], "title": "4.2.5. SortedIntegerList"}, {"refs": [{"id": "ref-for-integerlist\u2462"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-integerlist\u2463"}], "title": "4.3.4. ClientState"}, {"refs": [{"id": "ref-for-integerlist\u2464"}], "title": "4.7. Codepoint Reordering"}], "external": false};
-window.dfnpanelData['sortedintegerlist'] = {"dfnID": "sortedintegerlist", "url": "#sortedintegerlist", "dfnText": "SortedIntegerList", "refSections": [{"refs": [{"id": "ref-for-sortedintegerlist"}], "title": "4.2.5. SortedIntegerList"}, {"refs": [{"id": "ref-for-sortedintegerlist\u2460"}], "title": "4.2.6. RangeList"}, {"refs": [{"id": "ref-for-sortedintegerlist\u2461"}, {"id": "ref-for-sortedintegerlist\u2462"}], "title": "4.2.7. FeatureTagSet"}], "external": false};
+window.dfnpanelData['sortedintegerlist'] = {"dfnID": "sortedintegerlist", "url": "#sortedintegerlist", "dfnText": "SortedIntegerList", "refSections": [{"refs": [{"id": "ref-for-sortedintegerlist"}], "title": "4.2.5. SortedIntegerList"}, {"refs": [{"id": "ref-for-sortedintegerlist\u2460"}], "title": "4.2.6. RangeList"}, {"refs": [{"id": "ref-for-sortedintegerlist\u2461"}], "title": "4.2.7. FeatureTagSet"}], "external": false};
 window.dfnpanelData['rangelist'] = {"dfnID": "rangelist", "url": "#rangelist", "dfnText": "RangeList", "refSections": [{"refs": [{"id": "ref-for-rangelist"}, {"id": "ref-for-rangelist\u2460"}], "title": "4.3.1. CompressedSet"}], "external": false};
-window.dfnpanelData['featuretagset'] = {"dfnID": "featuretagset", "url": "#featuretagset", "dfnText": "FeatureTagSet", "refSections": [{"refs": [{"id": "ref-for-featuretagset"}, {"id": "ref-for-featuretagset\u2460"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-featuretagset\u2461"}], "title": "4.3.4. ClientState"}], "external": false};
+window.dfnpanelData['featuretagset'] = {"dfnID": "featuretagset", "url": "#featuretagset", "dfnText": "FeatureTagSet", "refSections": [{"refs": [{"id": "ref-for-featuretagset"}, {"id": "ref-for-featuretagset\u2460"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-featuretagset\u2461"}], "title": "4.3.4. ClientState"}, {"refs": [{"id": "ref-for-featuretagset\u2462"}], "title": "\nAppendix A: Default Feature Tags and Encoding IDs"}], "external": false};
 window.dfnpanelData['axisspace'] = {"dfnID": "axisspace", "url": "#axisspace", "dfnText": "AxisSpace", "refSections": [{"refs": [{"id": "ref-for-axisspace"}, {"id": "ref-for-axisspace\u2460"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-axisspace\u2461"}, {"id": "ref-for-axisspace\u2462"}], "title": "4.3.4. ClientState"}], "external": false};
 window.dfnpanelData['compressedset'] = {"dfnID": "compressedset", "url": "#compressedset", "dfnText": "CompressedSet", "refSections": [{"refs": [{"id": "ref-for-compressedset"}, {"id": "ref-for-compressedset\u2460"}, {"id": "ref-for-compressedset\u2461"}, {"id": "ref-for-compressedset\u2462"}], "title": "4.3.3. PatchRequest"}, {"refs": [{"id": "ref-for-compressedset\u2463"}], "title": "4.3.4. ClientState"}], "external": false};
 window.dfnpanelData['compressedset-sparse_bit_set'] = {"dfnID": "compressedset-sparse_bit_set", "url": "#compressedset-sparse_bit_set", "dfnText": "sparse_bit_set", "refSections": [{"refs": [{"id": "ref-for-compressedset-sparse_bit_set"}], "title": "4.3.1. CompressedSet"}], "external": false};

@@ -864,27 +864,31 @@ bytes = [03 07 03 81 7F]
 ### <dfn>FeatureTagSet</dfn> ### {#featuretagset-object}
 
 A FeatureTagSet encodes a set of zero or more
-<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout feature tags</a>.
-Each feature tag is mapped to an integer value and then the set of mapped integers are encoded in a
-[=SortedIntegerList=]. Feature tags are mapped to integers as follows:
+<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout feature tags</a>. To encode
+a set of feature tags:
 
-*  If the tag is found in [[#feature-tag-list]]:
+1. Union the set of feature tags to be encoded and the list of feature tags in [[#feature-tag-list]]. For each tag in the
+    union:
 
-    *  If the "Encoded As" column corresponding to the tag is "default" then the tag is skipped and
-        not encoded.
+    *  If the tag is present in the list of feature tags to be encoded, is present in [[#feature-tag-list]], and
+        has a value of "needed" in the "Encode If" column of [[#feature-tag-list]]; then add the value of "Encoded As"
+        to the encoded ID list.
 
-    *  Else, the tag is mapped to the integer value in the "Encoded As" column.
+    *  If the tag is not present in the list of feature tags to be encoded, is present in [[#feature-tag-list]], and
+        has a value of "not needed" in the "Encode If" column of [[#feature-tag-list]]; then add the value of "Encoded As"
+        to the encoded ID list.
 
-*  Otherwise: the tag is converted to an integer by treating the tag's 4 byte string as a 4 byte
-    little endian integer.
+    *  If the tag is present in the list of feature tags to be encoded and is not present in [[#feature-tag-list]], then
+        convert the tag to  an integer by treating the tag's 4 byte string as a 4 byte little endian integer and add that
+        value to the encoded ID list.
 
-The final encoding is produced by sorting the mapped integers (excluding tags which are skipped)
-into ascending order and then encoding the sorted list as a [=SortedIntegerList=].
+    *  Otherwise, do nothing for this tag.
+
+2. The final encoding is produced by sorting the encoded ID list produced in step 1 into ascending order and then encoding
+    the sorted list as a [=SortedIntegerList=].
 
 When decoding a FeatureTagSet the integer values are mapped back to the original tags by reversing
-the above mapping rules.
-<span class="conform server client" id="conform-feature-tag-set-defaults">Additionally all
-default features in [[#feature-tag-list]] must be added to the decoded set.</span>
+the above encoding rules.
 
 ### <dfn>AxisSpace</dfn> ### {#AxisSpace}
 
@@ -1848,6 +1852,17 @@ Since the <a href="https://www.w3.org/TR/2022/WD-IFT-20220628/">Working
 <h2 id="feature-tag-list">
 Appendix A: Default Feature Tags and Encoding IDs</h2>
 
+This appendix is normative. It lists the IDs used to encode feature tags into a [=FeatureTagSet=]. This table
+was assembled from several sources:
+
+* Includes all features listed in the
+    <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featurelist">OpenType layout feature registry</a>.
+
+* The value of "Encode If" is set to "not needed" for all features which are listed as "default on" in
+    <a href="https://tiro.com/John/Enabling_Typography_(OTL).pdf">Enabling Typography</a> or are in the
+    default set in the <a href="https://github.com/harfbuzz/harfbuzz/blob/main/src/hb-subset-input.cc">harfbuzz
+    subsetter</a>.
+
 <pre class=include>
 <!-- Edit feature-registry.csv to update this table. -->
 path: feature-registry.html
@@ -1856,6 +1871,6 @@ path: feature-registry.html
 <h2 id="obfuscation-codepoints">
 Appendix B: Codepoints Requiring Obfuscation</h2>
 
-The following codepoints are considered to need obfuscation:
+This appendix is normative.The following codepoints are considered to need obfuscation:
 
 * All unicode codepoints with the [[UAX44#Unified_Ideograph|Unified_Ideograph]] property.
