@@ -1865,9 +1865,24 @@ was assembled from several sources:
     default set in the <a href="https://github.com/harfbuzz/harfbuzz/blob/main/src/hb-subset-input.cc">harfbuzz
     subsetter</a>.
 
-The entries in this table are versioned (by the Encoding Version column) since the client and server need to agree on
-the encoding. Currently there is only one version, 1, which is used by default. Future specification updates may
-introduce additional versions and a mechanism for the server to inform the client up to which version it supports.
+The columns should be interpreted as follows:
+
+*  Tag: the 4 byte tag for this feature from [[open-type/featurelist]].
+
+*  Encoded As: the integer ID used to represent this feature in a [=FeatureTagSet=].
+
+*  Encode If: entries marked as "not needed" are assumed to be in a [=FeatureTagSet=] by default. Including their
+    encoding ID in a [=FeatureTagSet=] removes the feature from the set. Entries marked as "needed" are not included
+    by default.
+    
+*  Encoding Version: the entries in this table are versioned (by the Encoding Version column) since the client and
+    server need to agree on the encoding. Currently there is only one version, 1, which is used by default. Future
+    specification updates may introduce additional versions and a mechanism for the server to inform the client up to
+    which version it supports.
+
+Note: the set of features selected to be included by default is purely an optimization mechanism and should not be
+used by clients as a guide for which features they should be asking for in requests. To minimize the number of bytes
+loaded clients should only request features that are needed for the rendering of the content used by the font.
 
 <pre class=include>
 <!-- Edit feature-registry.csv to update this table. -->
