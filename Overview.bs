@@ -53,14 +53,13 @@ spec:fetch; type:dfn; for:/; text:response
     "date": "27 Jul 2021"
   },
 
-
-  "OpenType-Variations": {
-    "href": "https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview",
+  "open-type": {
+    "href": "https://docs.microsoft.com/en-us/typography/opentype/spec",
     "authors": [],
     "status": "Note",
     "publisher": "Microsoft",
-    "title": "OpenType Font Variations Overview",
-    "date": "23 October 2020"
+    "title": "OpenType Specification",
+    "date": "December 2021"
   },
 
   "fast-hash": {
@@ -79,6 +78,15 @@ spec:fetch; type:dfn; for:/; text:response
     "publisher": "What WG",
     "title": "Fetch Standard",
     "date": "22 May 2023"
+  },
+
+  "enabling-typography": {
+    "href": "https://tiro.com/John/Enabling_Typography_(OTL).pdf",
+    "authors": ["John Hudson"],
+    "status": "Note",
+    "publisher": "John Hudson",
+    "title": "Enabling Typography: towards a general model of OpenType Layout",
+    "date": "April 15th, 2014"
   }
 }
 </pre>
@@ -104,7 +112,7 @@ There are two different methods which can be used to incrementally transfer font
 Patch Subset {#patch-subset}
 ----------------------------
 
-In the the first method, <a href="#patch-subset">Patch Subset</a> a server generates binary patches which a
+In the the first method, [[#patch-incxfer|Patch Subset]], a server generates binary patches which a
 client applies to a subset of the font in order to extend the coverage of that subset. The server
 is stateless, it does not maintain any session data for clients between requests. Thus when a client
 requests the generation of a patch from the server it has to fully describe the current subset of the
@@ -119,7 +127,7 @@ Range Request {#range-request}
 ------------------------------
 
 The second
-method, <a href="#range-request-incxfer">Range Request</a>, has no server-side requirements other than the server should be able to respond to byte-based range requests. The browser makes range requests to the server for the specific bytes in the font file that it needs. In order to know which bytes are necessary, the browser makes one initial special request for the beginning of the file to obtain all required font tables, and then calculates glyph coverage and required byte ranges using font character-to-glyph mapping and glyph substitution / layout tables.
+method, [[#range-request-incxfer|Range Request]], has no server-side requirements other than the server should be able to respond to byte-based range requests. The browser makes range requests to the server for the specific bytes in the font file that it needs. In order to know which bytes are necessary, the browser makes one initial special request for the beginning of the file to obtain all required font tables, and then calculates glyph coverage and required byte ranges using font character-to-glyph mapping and glyph substitution / layout tables.
 
 In order for the range request method to be as effective as possible, the font file itself should be internally arranged in a particular way, in order to decrease the number of requests the browser needs to make. Therefore, it is expected that web developers wishing to use the range request method will use font files that have had their contents already arranged optimally.
 
@@ -238,7 +246,7 @@ There are three tech keywords available:
 *  <code>incremental-patch</code>: Load the font incrementally using the patch subset method.
 *  <code>incremental-range</code>: Load the font incrementally using the range request method.
 *  <code>incremental-auto</code>:  Load the font incrementally. The particular method to use is
-    determined by <a href="#method-negotiation">Method Negotiation</a>.
+    determined by [[#method-negotiation|Method Negotiation]].
 
 <div class=example>
 The use of the <code>incremental-patch</code> keyword in this CSS rule indicates to the browser they
@@ -279,13 +287,13 @@ The client should have support for both patch subset and range request IFT. The 
 IFT method to utilize for a font load using the following procedure:
 
 *  If the content has specified which method to use, such as via the <code>incremental-patch</code> or
-    <code>incremental-range</code> font tech keyword (see: <a href="#opt-in">opt-in mechanism</a>),
+    <code>incremental-range</code> font tech keyword (see: [[#opt-in|opt-in mechanism]]),
     then that method should be used if the client supports it. If the specified method is not supported
     then the client should fallback to to loading the font non-incrementally.
 
 *  Otherwise if the client does not know which particular IFT method(s) that the server hosting the
     font supports, such as when the <code>incremental-auto</code> font tech keyword is used, then
-    <a href="#method-negotiation">method negotiation</a> should be used to determine the method.
+    [[#method-negotiation|method negotiation]] should be used to determine the method.
 
 The most recently specified method by the content takes precedence. For example if on a site the
 first page specifies to use the patch subset method for a font URL, but the second page specifies
@@ -304,18 +312,16 @@ determine which method to use. Different clients may support different IFT metho
 servers may support different IFT methods, so a negotiation occurs as such:
 
 1.  The browser makes the first request to the server using the GET HTTP method ([[rfc9110#section-9.3.1]]).
-     If the client prefers the <a href="#patch-incxfer">patch-subset method</a>, it sends the relevant
+     If the client prefers the [[#patch-incxfer|patch-subset method]], it sends the relevant
      [=patch request header=]. If the client prefers the range-request method, it does not send the
      header.
 
 2.  If the server receives the patch request header and wishes to honor it, the server must reply
      according to [[#handling-patch-request]]. Otherwise, the server must reply with the
-     [[RFC9110#section-14]]
-     <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a>
-     header, if it supports HTTP Range Requests.
+     [[RFC9110#section-14.3|Accept-Ranges]] header, if it supports HTTP Range Requests.
      
 3.  If the client receives a font with a
-     <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>
+     [[open-type/otff#table-directory|table]]
      identified by the 4-byte tag "IFTP", it commences using the patch-subset method.
      Otherwise, if the client receives the <code>Accept-Ranges: bytes</code> header, it commences
      using the range-request method. Otherwise, the whole font file is downloaded, and the current
@@ -407,25 +413,27 @@ Patch Based Incremental Transfer {#patch-incxfer}
 Font Subset {#font-subset-info}
 --------------------------
 
-A <dfn dfn>font subset</dfn> is a modified version of a font file that contains only the data needed to
+A <dfn dfn>font subset</dfn> is a modified version of a font file [[!iso14496-22]]that contains only the data needed to
 render a subset of:
 
 *  the codepoints,
-*  <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout
-    features</a>,
-*  and <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a>.
+*  [[open-type/featuretags|layout features]],
+*  and [[open-type/otvaroverview#terminology|design-variation space]].
 
 supported by the original font.
 <span class="conform client server" id="conform-font-subset">
 When a subsetted font is used to render text using any combination of the subset codepoints,
-<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">layout features</a>,
-or <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a> it must render identically to the original font. This includes rendering with
+[[open-type/featuretags|layout features]], or  [[open-type/otvaroverview#terminology|design-variation space]]
+it must render identically to the original font. This includes rendering with
 the use of any optional typographic features that a renderer may choose to use from the original font,
 such as hinting instructions.
 </span>
 
 A <dfn dfn>font subset definition</dfn> describes the minimum data (codepoints, layout features,
 variation axis space) that a [=font subset=] must possess.
+
+Note: For convenience the remainder of this document links to the [[open-type]] specification which is a copy of
+[[!iso14496-22]].
 
 Data Types {#data-types}
 ------------------------
@@ -456,7 +464,7 @@ should be encoded by CBOR are given in the definition of those data types.
     <td><dfn>ByteString</dfn></td><td>Variable number of bytes.</td><td>2</td>
   </tr>
   <tr>
-    <td><dfn>String</dfn></td><td>UTF-8 [[rfc3629]] text string.</td><td>3</td>
+    <td><dfn>String</dfn></td><td>UTF-8 [[!rfc3629]] text string.</td><td>3</td>
   </tr>
   <tr>
     <td><dfn>ArrayOf</dfn>&lt;Type&gt;</td><td>Array of a variable number of items of Type.</td><td>4</td>
@@ -864,7 +872,7 @@ bytes = [03 07 03 81 7F]
 ### <dfn>FeatureTagSet</dfn> ### {#featuretagset-object}
 
 A FeatureTagSet encodes a set of zero or more
-<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout feature tags</a>. To encode
+[[open-type/featuretags|OpenType layout feature tags]]. To encode
 a set of feature tags:
 
 1. Union the set of feature tags to be encoded and the list of feature tags in [[#feature-tag-list]]. For each tag in the
@@ -892,10 +900,9 @@ the above encoding rules.
 
 ### <dfn>AxisSpace</dfn> ### {#AxisSpace}
 
-Stores a set of intervals on one or more open type variation axes [[opentype-variations]]</a>.
-Encoded as a CBOR map (major type 5). The key in each pair is an
-<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord">
-axis tag</a>. It is encoded as a [=ByteString=] containing exactly 4 ASCII characters. The value in each
+Stores a set of intervals on one or more open type variation axes [[open-type/otvaroverview]]</a>.
+Encoded as a CBOR map (major type 5). The key in each pair is an [[open-type/fvar#variationaxisrecord|axis tag]]. It is
+encoded as a [=ByteString=] containing exactly 4 ASCII characters. The value in each
 pair is an [=ArrayOf=]&lt;[=AxisInterval=]&gt;.
 <span class="conform client server" id="conform-axis-space-disjoint">The list of intervals for a
 each axis tag must be disjoint.</span>
@@ -1110,9 +1117,8 @@ The algorithm:
 
 1. If <var>font subset</var> is set then load the <var>client state</var> from the
     <var>font subset</var>. Client state is stored in the <var>font subset</var> as a
-    <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>
-    identified by the 4-byte tag 'IFTP'. The contents of the table are a single [=ClientState=] object
-    encoded via CBOR.
+    [[open-type/otff#table-directory|table]] identified by the 4-byte tag 'IFTP'. The contents of the table are a
+    single [=ClientState=] object encoded via CBOR.
 
      * If <var>font subset</var> does not have an "IFTP" table, then this is not an incrementally
          loaded font and cannot be extended any further. Return <var>font subset</var>.
@@ -1159,8 +1165,8 @@ The algorithm:
      * Otherwise if [=request/method=] is "GET" then, a [=header=] with name
          <code>Font-Patch-Request</code> (the <dfn export>patch request header</dfn>)
          and whose value is a single
-         [=PatchRequest=] object encoded via CBOR and then
-         base64url encoding [[rfc4648]] must be added to the request's header list.
+        [=PatchRequest=] object encoded via CBOR and then
+        base64url encoding [[!rfc4648]] must be added to the request's header list.
 
      Any request and/or url parameters which are not specified here should be set based on
      the user agent's normal handling for font requests. For example if this font load is
@@ -1198,8 +1204,7 @@ The algorithm:
          [=ClientState/codepoint_ordering=] then this field should not be set.
 
      *  [=PatchRequest/features_have=]: set to the list of
-         <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">
-         OpenType layout feature tags</a> that the current <var>font subset</var> has data
+         [[open-type/featuretags|OpenType layout feature tags]] that the current <var>font subset</var> has data
          for. If the current <var>font subset</var> is not set then this
          field is left unset. Additionally, if the current <var>font subset</var> has all
          data for features present in the [=original font=] then this field can be unset.
@@ -1242,7 +1247,7 @@ The algorithm:
 
 Note: POST is preferred for the HTTP method since it will not cause a CORS pre-flight request
 and the request object is more compactly encoded. GET should only be used during
-<a href="#method-negotiation">method negotiation</a>.
+[[#method-negotiation|method negotiation]].
 
 <h4 algorithm id="handling-patch-response">Handling Server Response</h4>
 
@@ -1289,8 +1294,7 @@ The algorithm:
      decoded response is the new <var>extended font subset</var>.
 
 3. Load the <var>client state</var> from the <var>extended font subset</var>. Client state is stored in the
-    <var>extended font subset</var> as a
-    <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>
+    <var>extended font subset</var> as a [[open-type/otff#table-directory|table]]
     identified by the 4-byte tag 'IFTP'. The contents of the table are a single [=ClientState=] object
     encoded via CBOR.
 
@@ -1478,7 +1482,7 @@ Note: the request may optionally set [=PatchRequest/codepoint_ordering=] which i
 provide the exact codepoint ordering that was used to encode [=PatchRequest/indices_have=] and
 [=PatchRequest/indices_needed=].
 
-Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout feature tags</a>:
+Likewise, the server can produce two sets of [[open-type/featuretags|OpenType layout feature tags]]:
 
 1.  Feature tags the client's subset has: specified by [=PatchRequest/features_have=]. If the field is
      unset this indicates the client's subset contains all features in the [=original font=].
@@ -1521,9 +1525,8 @@ result in an extended [=font subset=]:
 
 
 *  <span class="conform server" id="conform-response-client-state">That has a
-    <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>
-    which is identified by the tag 'IFTP' whose content is a single [=ClientState=] object encoded via
-    CBOR:</span>
+    [[open-type/otff#table-directory|table]] which is identified by the tag 'IFTP' whose content is a single
+    [=ClientState=] object encoded via CBOR:</span>
 
     *  <span class="conform server" id="conform-response-client-state-original-checksum">The
         [=ClientState/original_font_checksum=] field must be set to the checksum of the
@@ -1545,8 +1548,7 @@ result in an extended [=font subset=]:
 
     *  <span class="conform server" id="conform-response-client-state-original-features">
         The [=ClientState/original_features=] field must be set to the list of
-        <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout
-        feature tags</a> that the [=original font=] has data for.</span>
+        [[open-type/featuretags|OpenType layout feature tags]] that the [=original font=] has data for.</span>
 
     *  <span class="conform server" id="conform-response-client-state-missing-codepoints">
         The [=ClientState/missing_codepoints=] field must be set to the list of codepoints
@@ -1791,15 +1793,15 @@ them from being used for tracking.
 <h3 id="per-origin">Per-origin restriction avoids fingerprinting</h3>
 
   As required by [[!css-fonts-4]],
-  Web Fonts <a href="https://drafts.csswg.org/css-fonts-4/#web-fonts">must not be accessible
+  Web Fonts [[css-fonts-4#web-fonts|must not be accessible
   in any other Document from the one which either is associated with the @font-face rule
-  or owns the FontFaceSet.
+  or owns the FontFaceSet]].
   Other applications on the device must not be able to access Web Fonts.</a>
   This avoids information leaking across origins.
 
   Similarly, font palette values
-  <a href="https://drafts.csswg.org/css-fonts-4/#font-palette-values">must only be available to the documents that
-  reference it</a>. Using an author-defined color palette outside of the documents that reference it
+  [[css-fonts-4#font-palette-values|must only be available to the documents that
+  reference it]]. Using an author-defined color palette outside of the documents that reference it
   would constitute a security leak since the contents of one page
   would be able to affect other pages,
   something an attacker could use as an attack vector.
@@ -1856,10 +1858,10 @@ Appendix A: Default Feature Tags and Encoding IDs</h2>
 was assembled from several sources:
 
 * Includes all features listed in the
-    <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featurelist">OpenType layout feature registry</a>.
+    [[open-type/featurelist|OpenType layout feature registry]].
 
 * The value of "Encode If" is set to "not needed" for all features which are listed as "default on" in
-    <a href="https://tiro.com/John/Enabling_Typography_(OTL).pdf">Enabling Typography</a> or are in the
+    [[enabling-typography]] or are in the
     default set in the <a href="https://github.com/harfbuzz/harfbuzz/blob/main/src/hb-subset-input.cc">harfbuzz
     subsetter</a>.
 
