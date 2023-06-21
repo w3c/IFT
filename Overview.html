@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="ab7c2d0406bfeea5c8c714e0c89933123586be94" name="document-revision">
+  <meta content="81a63e1ebfb53c453292ec6db64a743992c07c48" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -717,7 +717,7 @@ slow networks, very large fonts, or complex subsetting requirements currently pr
 example, even using WOFF 2 <a data-link-type="biblio" href="#biblio-woff2" title="WOFF File Format 2.0">[WOFF2]</a>, fonts for CJK languages are too large to be practical.</p>
    <p>There are two different methods which can be used to incrementally transfer fonts.</p>
    <h3 class="heading settled" data-level="1.1" id="patch-subset"><span class="secno">1.1. </span><span class="content">Patch Subset</span><a class="self-link" href="#patch-subset"></a></h3>
-   <p>In the the first method, <a href="#patch-subset">Patch Subset</a> a server generates binary patches which a
+   <p>In the the first method, <a href="#patch-incxfer">Patch Subset</a>, a server generates binary patches which a
 client applies to a subset of the font in order to extend the coverage of that subset. The server
 is stateless, it does not maintain any session data for clients between requests. Thus when a client
 requests the generation of a patch from the server it has to fully describe the current subset of the
@@ -886,9 +886,9 @@ servers may support different IFT methods, so a negotiation occurs as such:</p>
  header.</p>
     <li data-md>
      <p>If the server receives the patch request header and wishes to honor it, the server must reply
- according to <a href="#handling-patch-request">§ 4.5 Server: Responding to a PatchRequest</a>. Otherwise, the server must reply with the <a href="https://www.rfc-editor.org/rfc/rfc9110#section-14"><cite>HTTP Semantics</cite> §  14. Range Requests</a> <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-ranges"><code>Accept-Ranges</code></a> header, if it supports HTTP Range Requests.</p>
+ according to <a href="#handling-patch-request">§ 4.5 Server: Responding to a PatchRequest</a>. Otherwise, the server must reply with the <a href="https://www.rfc-editor.org/rfc/rfc9110#section-14.3">Accept-Ranges</a> header, if it supports HTTP Range Requests.</p>
     <li data-md>
-     <p>If the client receives a font with a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by the 4-byte tag "IFTP", it commences using the patch-subset method.
+     <p>If the client receives a font with a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by the 4-byte tag "IFTP", it commences using the patch-subset method.
  Otherwise, if the client receives the <code>Accept-Ranges: bytes</code> header, it commences
  using the range-request method. Otherwise, the whole font file is downloaded, and the current
  non-incremental loading behavior is used.</p>
@@ -963,23 +963,22 @@ when URLs are rewritten to point to the saved full font any of the incremental t
 be removed.</p>
    <h2 class="heading settled" data-level="4" id="patch-incxfer"><span class="secno">4. </span><span class="content">Patch Based Incremental Transfer</span><a class="self-link" href="#patch-incxfer"></a></h2>
    <h3 class="heading settled" data-level="4.1" id="font-subset-info"><span class="secno">4.1. </span><span class="content">Font Subset</span><a class="self-link" href="#font-subset-info"></a></h3>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-subset">font subset</dfn> is a modified version of a font file that contains only the data needed to
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-subset">font subset</dfn> is a modified version of a font file <a data-link-type="biblio" href="#biblio-iso14496-22" title="Information technology — Coding of audio-visual objects — Part 22: Open Font Format">[iso14496-22]</a>that contains only the data needed to
 render a subset of:</p>
    <ul>
     <li data-md>
      <p>the codepoints,</p>
     <li data-md>
-     <p><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout
-features</a>,</p>
+     <p><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a>,</p>
     <li data-md>
      <p>and <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a>.</p>
    </ul>
-   <p>supported by the original font. <span class="conform client server" id="conform-font-subset"> When a subsetted font is used to render text using any combination of the subset codepoints, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">layout features</a>,
-or <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a> it must render identically to the original font. This includes rendering with
+   <p>supported by the original font. <span class="conform client server" id="conform-font-subset"> When a subsetted font is used to render text using any combination of the subset codepoints, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a>, or <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a> it must render identically to the original font. This includes rendering with
 the use of any optional typographic features that a renderer may choose to use from the original font,
 such as hinting instructions. </span></p>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-subset-definition">font subset definition</dfn> describes the minimum data (codepoints, layout features,
 variation axis space) that a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①">font subset</a> must possess.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> For convenience the remainder of this document links to the <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">[open-type]</a> specification which is a copy of <a data-link-type="biblio" href="#biblio-iso14496-22" title="Information technology — Coding of audio-visual objects — Part 22: Open Font Format">[iso14496-22]</a>.</p>
    <h3 class="heading settled" data-level="4.2" id="data-types"><span class="secno">4.2. </span><span class="content">Data Types</span><a class="self-link" href="#data-types"></a></h3>
    <p>This section lists all of the data types that are used to form the request and response messages
 sent between the client and server.</p>
@@ -1391,7 +1390,7 @@ bytes = [03 07 03 81 7F]
 </pre>
    </div>
    <h4 class="heading settled" data-level="4.2.7" id="featuretagset-object"><span class="secno">4.2.7. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="featuretagset">FeatureTagSet</dfn></span><a class="self-link" href="#featuretagset-object"></a></h4>
-   <p>A FeatureTagSet encodes a set of zero or more <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout feature tags</a>. To encode
+   <p>A FeatureTagSet encodes a set of zero or more <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">OpenType layout feature tags</a>. To encode
 a set of feature tags:</p>
    <ol>
     <li data-md>
@@ -1420,8 +1419,9 @@ the sorted list as a <a data-link-type="dfn" href="#sortedintegerlist" id="ref-f
    <p>When decoding a FeatureTagSet the integer values are mapped back to the original tags by reversing
 the above encoding rules.</p>
    <h4 class="heading settled" data-level="4.2.8" id="AxisSpace"><span class="secno">4.2.8. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="axisspace">AxisSpace</dfn></span><a class="self-link" href="#AxisSpace"></a></h4>
-   <p>Stores a set of intervals on one or more open type variation axes <a data-link-type="biblio" href="#biblio-opentype-variations" title="OpenType Font Variations Overview">[opentype-variations]</a>.
-Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord"> axis tag</a>. It is encoded as a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑤">ByteString</a> containing exactly 4 ASCII characters. The value in each
+   <p>Stores a set of intervals on one or more open type variation axes <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#">OpenType Specification § otvaroverview#</a>.
+Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord">axis tag</a>. It is
+encoded as a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑤">ByteString</a> containing exactly 4 ASCII characters. The value in each
 pair is an <a data-link-type="dfn" href="#arrayof" id="ref-for-arrayof">ArrayOf</a>&lt;<a data-link-type="dfn" href="#axisinterval" id="ref-for-axisinterval">AxisInterval</a>>. <span class="conform client server" id="conform-axis-space-disjoint">The list of intervals for a
 each axis tag must be disjoint.</span></p>
    <h4 class="heading settled" data-level="4.2.9" id="objects"><span class="secno">4.2.9. </span><span class="content">Objects</span><a class="self-link" href="#objects"></a></h4>
@@ -1619,8 +1619,8 @@ can be cached, or null.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>If <var>font subset</var> is set then load the <var>client state</var> from the <var>font subset</var>. Client state is stored in the <var>font subset</var> as a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by the 4-byte tag 'IFTP'. The contents of the table are a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate">ClientState</a> object
-encoded via CBOR.</p>
+     <p>If <var>font subset</var> is set then load the <var>client state</var> from the <var>font subset</var>. Client state is stored in the <var>font subset</var> as a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by the 4-byte tag 'IFTP'. The contents of the table are a
+single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate">ClientState</a> object encoded via CBOR.</p>
      <ul>
       <li data-md>
        <p>If <var>font subset</var> does not have an "IFTP" table, then this is not an incrementally
@@ -1662,7 +1662,7 @@ encoded via CBOR.</p>
       <li data-md>
        <p>Otherwise if <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method②">method</a> is "GET" then, a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-header" id="ref-for-concept-header①">header</a> with name <code>Font-Patch-Request</code> (the <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="patch-request-header">patch request header</dfn>)
  and whose value is a single <a data-link-type="dfn" href="#patchrequest" id="ref-for-patchrequest②">PatchRequest</a> object encoded via CBOR and then
- base64url encoding <a data-link-type="biblio" href="#biblio-rfc4648" title="The Base16, Base32, and Base64 Data Encodings">[rfc4648]</a> must be added to the request’s header list.</p>
+base64url encoding <a data-link-type="biblio" href="#biblio-rfc4648" title="The Base16, Base32, and Base64 Data Encodings">[rfc4648]</a> must be added to the request’s header list.</p>
      </ul>
      <p>Any request and/or url parameters which are not specified here should be set based on
  the user agent’s normal handling for font requests. For example if this font load is
@@ -1689,7 +1689,7 @@ encoded via CBOR.</p>
  The codepoint values are transformed to indices by applying the <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a> specified by <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑤">codepoint_ordering</a> to each codepoint value. If
  the <var>client state</var> is not available or it does not have a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑥">codepoint_ordering</a> then this field should not be set.</p>
       <li data-md>
-       <p><a data-link-type="dfn" href="#patchrequest-features_have" id="ref-for-patchrequest-features_have">features_have</a>: set to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags"> OpenType layout feature tags</a> that the current <var>font subset</var> has data
+       <p><a data-link-type="dfn" href="#patchrequest-features_have" id="ref-for-patchrequest-features_have">features_have</a>: set to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">OpenType layout feature tags</a> that the current <var>font subset</var> has data
  for. If the current <var>font subset</var> is not set then this
  field is left unset. Additionally, if the current <var>font subset</var> has all
  data for features present in the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font">original font</a> then this field can be unset.</p>
@@ -1764,7 +1764,7 @@ can be cached, or null.</p>
  the input <var>font subset</var> will be used as the source file for the decoding operation. The
  decoded response is the new <var>extended font subset</var>.</p>
     <li data-md>
-     <p>Load the <var>client state</var> from the <var>extended font subset</var>. Client state is stored in the <var>extended font subset</var> as a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by the 4-byte tag 'IFTP'. The contents of the table are a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate①">ClientState</a> object
+     <p>Load the <var>client state</var> from the <var>extended font subset</var>. Client state is stored in the <var>extended font subset</var> as a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by the 4-byte tag 'IFTP'. The contents of the table are a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate①">ClientState</a> object
 encoded via CBOR.</p>
     <li data-md>
      <p>If a <var>client state</var> table is not present then this is the full font and no further augmentation
@@ -1930,7 +1930,7 @@ that collection that a patch is desired for. The identified font is referred to 
    </ol>
    <p class="note" role="note"><span class="marker">Note:</span> the request may optionally set <a data-link-type="dfn" href="#patchrequest-codepoint_ordering" id="ref-for-patchrequest-codepoint_ordering①">codepoint_ordering</a> which is used by the client to
 provide the exact codepoint ordering that was used to encode <a data-link-type="dfn" href="#patchrequest-indices_have" id="ref-for-patchrequest-indices_have⑥">indices_have</a> and <a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed⑤">indices_needed</a>.</p>
-   <p>Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout feature tags</a>:</p>
+   <p>Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">OpenType layout feature tags</a>:</p>
    <ol>
     <li data-md>
      <p>Feature tags the client’s subset has: specified by <a data-link-type="dfn" href="#patchrequest-features_have" id="ref-for-patchrequest-features_have①">features_have</a>. If the field is
@@ -1967,8 +1967,7 @@ the union of the set of features needed and the sets of features the client alre
 space that covers at least the union of the axis space the client has and the axis space the
 client needs.</span></p>
     <li data-md>
-     <p><span class="conform server" id="conform-response-client-state">That has a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> which is identified by the tag 'IFTP' whose content is a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate③">ClientState</a> object encoded via
-CBOR:</span></p>
+     <p><span class="conform server" id="conform-response-client-state">That has a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> which is identified by the tag 'IFTP' whose content is a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate③">ClientState</a> object encoded via CBOR:</span></p>
      <ul>
       <li data-md>
        <p><span class="conform server" id="conform-response-client-state-original-checksum">The <a data-link-type="dfn" href="#clientstate-original_font_checksum" id="ref-for-clientstate-original_font_checksum①">original_font_checksum</a> field must be set to the checksum of the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font⑨">original font</a> computed by the procedure in <a href="#computing-checksums">§ 4.6 Computing Checksums</a>.</span></p>
@@ -1980,8 +1979,7 @@ CBOR:</span></p>
        <p><span class="conform server" id="conform-response-client-state-original-axis-space"> If the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①①">original font</a> has variation axes, the <a data-link-type="dfn" href="#clientstate-original_axis_space" id="ref-for-clientstate-original_axis_space">original_axis_space</a> field must be set to the axis space covered by
  the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①②">original font</a>.</span></p>
       <li data-md>
-       <p><span class="conform server" id="conform-response-client-state-original-features"> The <a data-link-type="dfn" href="#clientstate-original_features" id="ref-for-clientstate-original_features">original_features</a> field must be set to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout
-feature tags</a> that the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①③">original font</a> has data for.</span></p>
+       <p><span class="conform server" id="conform-response-client-state-original-features"> The <a data-link-type="dfn" href="#clientstate-original_features" id="ref-for-clientstate-original_features">original_features</a> field must be set to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">OpenType layout feature tags</a> that the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①③">original font</a> has data for.</span></p>
       <li data-md>
        <p><span class="conform server" id="conform-response-client-state-missing-codepoints"> The <a data-link-type="dfn" href="#clientstate-missing_codepoints" id="ref-for-clientstate-missing_codepoints③">missing_codepoints</a> field must be set to the list of codepoints
 in that are in the set of codepoints needed or the set of codepoints the client has,
@@ -2170,11 +2168,12 @@ cache resources keyed by the site domain, this will limit checksum availability 
 them from being used for tracking.</p>
    <h3 class="heading settled" id="per-origin"><span class="content">Per-origin restriction avoids fingerprinting</span><a class="self-link" href="#per-origin"></a></h3>
    <p>As required by <a data-link-type="biblio" href="#biblio-css-fonts-4" title="CSS Fonts Module Level 4">[css-fonts-4]</a>,
-  Web Fonts <a href="https://drafts.csswg.org/css-fonts-4/#web-fonts">must not be accessible
+  Web Fonts <a href="https://www.w3.org/TR/css-fonts-4/#web-fonts">must not be accessible
   in any other Document from the one which either is associated with the @font-face rule
-  or owns the FontFaceSet.
-  Other applications on the device must not be able to access Web Fonts.</a> This avoids information leaking across origins.</p>
-   <p>Similarly, font palette values <a href="https://drafts.csswg.org/css-fonts-4/#font-palette-values">must only be available to the documents that
+  or owns the FontFaceSet</a>.
+  Other applications on the device must not be able to access Web Fonts.
+  This avoids information leaking across origins.</p>
+   <p>Similarly, font palette values <a href="https://www.w3.org/TR/css-fonts-4/#font-palette-values">must only be available to the documents that
   reference it</a>. Using an author-defined color palette outside of the documents that reference it
   would constitute a security leak since the contents of one page
   would be able to affect other pages,
@@ -2223,9 +2222,9 @@ them from being used for tracking.</p>
 was assembled from several sources:</p>
    <ul>
     <li data-md>
-     <p>Includes all features listed in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featurelist">OpenType layout feature registry</a>.</p>
+     <p>Includes all features listed in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featurelist#">OpenType layout feature registry</a>.</p>
     <li data-md>
-     <p>The value of "Encode If" is set to "not needed" for all features which are listed as "default on" in <a href="https://tiro.com/John/Enabling_Typography_(OTL).pdf">Enabling Typography</a> or are in the
+     <p>The value of "Encode If" is set to "not needed" for all features which are listed as "default on" in <a data-link-type="biblio" href="#biblio-enabling-typography" title="Enabling Typography: towards a general model of OpenType Layout">[enabling-typography]</a> or are in the
 default set in the <a href="https://github.com/harfbuzz/harfbuzz/blob/main/src/hb-subset-input.cc">harfbuzz
 subsetter</a>.</p>
    </ul>
@@ -3002,12 +3001,20 @@ introduce additional versions and a mechanism for the server to inform the clien
    <dd>ztanml. <a href="https://github.com/ztanml/fast-hash"><cite>fast-hash</cite></a>. 22 October 2018. Note. URL: <a href="https://github.com/ztanml/fast-hash">https://github.com/ztanml/fast-hash</a>
    <dt id="biblio-fetch">[FETCH]
    <dd><a href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. 22 May 2023. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
+   <dt id="biblio-iso14496-22">[ISO14496-22]
+   <dd><a href="https://www.iso.org/standard/74461.html"><cite>Information technology — Coding of audio-visual objects — Part 22: Open Font Format</cite></a>. January 2019. Published. URL: <a href="https://www.iso.org/standard/74461.html">https://www.iso.org/standard/74461.html</a>
+   <dt id="biblio-open-type">[OPEN-TYPE]
+   <dd><a href="https://docs.microsoft.com/en-us/typography/opentype/spec"><cite>OpenType Specification</cite></a>. December 2021. Note. URL: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec">https://docs.microsoft.com/en-us/typography/opentype/spec</a>
    <dt id="biblio-pfe-report">[PFE-report]
    <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/"><cite>Progressive Font Enrichment: Evaluation Report</cite></a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
    <dt id="biblio-rfc3284">[RFC3284]
    <dd>D. Korn; et al. <a href="https://www.rfc-editor.org/rfc/rfc3284"><cite>The VCDIFF Generic Differencing and Compression Data Format</cite></a>. June 2002. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3284">https://www.rfc-editor.org/rfc/rfc3284</a>
+   <dt id="biblio-rfc3629">[RFC3629]
+   <dd>F. Yergeau. <a href="https://www.rfc-editor.org/rfc/rfc3629"><cite>UTF-8, a transformation format of ISO 10646</cite></a>. November 2003. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3629">https://www.rfc-editor.org/rfc/rfc3629</a>
+   <dt id="biblio-rfc4648">[RFC4648]
+   <dd>S. Josefsson. <a href="https://www.rfc-editor.org/rfc/rfc4648"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. October 2006. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>
    <dt id="biblio-rfc7932">[RFC7932]
    <dd>J. Alakuijala; Z. Szabadka. <a href="https://www.rfc-editor.org/rfc/rfc7932"><cite>Brotli Compressed Data Format</cite></a>. July 2016. Informational. URL: <a href="https://www.rfc-editor.org/rfc/rfc7932">https://www.rfc-editor.org/rfc/rfc7932</a>
    <dt id="biblio-rfc8081">[RFC8081]
@@ -3027,16 +3034,12 @@ introduce additional versions and a mechanism for the server to inform the clien
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
+   <dt id="biblio-enabling-typography">[ENABLING-TYPOGRAPHY]
+   <dd>John Hudson. <a href="https://tiro.com/John/Enabling_Typography_(OTL).pdf"><cite>Enabling Typography: towards a general model of OpenType Layout</cite></a>. April 15th, 2014. Note. URL: <a href="https://tiro.com/John/Enabling_Typography_(OTL).pdf">https://tiro.com/John/Enabling_Typography_(OTL).pdf</a>
    <dt id="biblio-fips-180-4">[FIPS-180-4]
    <dd><a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf"><cite>FIPS PUB 180-4: Secure Hash Standard (SHS)</cite></a>. August 2015. National Standard. URL: <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf">https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf</a>
-   <dt id="biblio-opentype-variations">[OPENTYPE-VARIATIONS]
-   <dd><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview"><cite>OpenType Font Variations Overview</cite></a>. 23 October 2020. Note. URL: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview">https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview</a>
    <dt id="biblio-rangerequest">[RangeRequest]
    <dd>Chris Lilley; Garret Rieger; Myles Maxfield. <a href="https://www.w3.org/TR/RangeRequest/"><cite>Range Request Incremental Font Transfer</cite></a>. 30 May 2023. WD. URL: <a href="https://www.w3.org/TR/RangeRequest/">https://www.w3.org/TR/RangeRequest/</a>
-   <dt id="biblio-rfc3629">[RFC3629]
-   <dd>F. Yergeau. <a href="https://www.rfc-editor.org/rfc/rfc3629"><cite>UTF-8, a transformation format of ISO 10646</cite></a>. November 2003. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3629">https://www.rfc-editor.org/rfc/rfc3629</a>
-   <dt id="biblio-rfc4648">[RFC4648]
-   <dd>S. Josefsson. <a href="https://www.rfc-editor.org/rfc/rfc4648"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. October 2006. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>
    <dt id="biblio-woff2">[WOFF2]
    <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/"><cite>WOFF File Format 2.0</cite></a>. 10 March 2022. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
   </dl>
