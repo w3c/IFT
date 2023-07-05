@@ -9,8 +9,5 @@ RangeRequest.html: RangeRequest.bs
 feature-registry.html: feature-registry.csv registry_to_html.py
 	python3 registry_to_html.py > feature-registry.html
 
-obfuscation-blocks.html: obfuscation_blocks_to_html.py
-	python3 obfuscation_blocks_to_html.py > obfuscation-blocks.html
-
 clean:
 	rm Overview.html RangeRequest.html feature-registry.html
