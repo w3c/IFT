@@ -37,20 +37,37 @@ spec:fetch; type:dfn; for:/; text:response
 Binned Incremental Font Transfer {#binned-incxfer}
 ===========================================================
 
-Introduction to Range Request {#range-request-intro}
+Introduction {#iftb-intro}
 -----------------------------
 
 <em>This section is not normative.</em>
 
-The Range Request method is a very simple method of
-[[IFT#title|incremental font transfer]], and has no server-side requirements (other than
-the server should be able to respond to byte-based range requests). The browser simply makes range
-requests to the server for the specific bytes in the font file that it needs. In order to know which
-bytes are necessary, the browser makes one initial special request for the beginning of the file.
+Binned Incremental Font Transfer, or IFTB, is a set of file formats that allow
+an input font to be reprocessed into an <em>initial file</em> and a set of
+corresponding <em>chunk files</em>.  IFTB imposes no server-side requirements
+beyond the ability to transfer files. With this format, each glyph is assigned
+by ID to one or more "bins", each of which has a corresponding "chunk" file
+containing the outline data for those glyphs. Glyphs in bin 0 are always
+included in the initially loaded file, which also contains all other OpenType
+tables from the initial font.
 
-In order for the range request method to be as effective as possible, the font file itself should be internally arranged in a particular way, in order to decrease the number of requests the browser needs to make. Therefore, it is expected that web developers wishing to use the range request method will use font files that have had their contents already arranged optimally.
 
-This method was modelled after video playback on the web, where seeking in a video causes the browser to send a range request to the server.
+The browser starts the transfer process by loading the initial font file. It
+then uses an added IFTB table, together with the OpenType cmap table, to
+determine which additional chunks, if any, are needed to render the current
+content. It requests those chunks from the server, unpacks them as they arrive,
+integrates the extracted glyph data into the specified glyf, loca, CFF, CFF2,
+or gvar tables, and updates the IFTB table to record which chunks have been
+integrated.  As the page content is updated the chunk identification and
+loading process repeats.
+
+When desired, the initial file can be "pre-loaded" with chunks for a particular
+purpose, such as more efficient support of target script.
+
+There are also two chunk file formats. The first is the uncompressed chunk
+table structure described below. The second has the same content but with all
+data following the header encoded with [[!RFC7932|brotli compression]]. Each
+chunk is stored in its own file.
 
 Font organization {#font-organization}
 --------------------------------------
@@ -59,157 +76,460 @@ Font organization {#font-organization}
 
 <em>This section is not normative.</em>
 
-A particular organization of font files is beneficial for improving the performance of the range-request IFT method. The range-request IFT method only works with [[!TRUETYPE]], [[!OPENTYPE]], [[!WOFF]], or [[!WOFF2]] files. All of these file formats use an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#organization-of-an-opentype-font"><code>sfnt</code> wrapper</a> which provides a directory of tables inside the font file. A <code>sfnt</code>-based font file is mainly composed of a collection of independent tables.
+There are two specified input file formats. The first is an uncompressed
+variant of the OpenType "sfnt" format but with the version tag "IFTB" and an
+extra "IFTB table. The second is the WOFF2 encoding of that format with all
+tables in the same order.
 
-Issue: <a href="https://github.com/w3c/IFT/issues/59">Using WOFF2 files with range-request mechanism doesn't seem to be a viable option</a>
+Because the OpenType and WOFF2 formats are documented elsewhere, the initial
+IFTB font format is specified in terms of changes to and restrictions on those
+formats, including some specific OpenType tables.
 
 ### Introduction ### {#font-organization-introduction}
 
-The term <dfn>range-request optimized font</dfn> is used to describe a font file organized for use with the range-request IFT method. Optimizing a font for the range-request IFT method does not change the file format of the font.
+### Glyph Content ### {#iftb-glyph-content}
 
-Note: Because optimizing a font does not change its file format, no new additional tooling is necessary to interact with these optimized fonts. They are still valid fonts, but with a particular internal organization.
+The term <dfn>outline table</dfn> is used to describe these four tables, which carry different types of
+glyph outlines:
 
-<div class=example>
-The result of optimizing an OpenType font for the range-request IFT method is still a valid OpenType font. The resulting file may be larger (by byte count) than it was before optimizing it, but fewer of those bytes should be necessary for a client to download in order to render a target text.
-</div>
+-   The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff"><code>CFF</code></a>
+    table
+-   The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>CFF2</code></a>
+    table
+-   The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf"><code>glyf</code></a>
+    table and its associated
+    <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca"><code>loca</code></a>table
+-   The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>gvar</code></a>
+    table
 
-Note: There are no <code>MUST</code>-level requirements on the organization of a [=range-request optimized font=]. Any arbitrary font file may be considered to be a [=range-request optimized font=]. However, additional optimizations should increase the performance of loading in a browser via the range-request IFT method. Font creators are encouraged to enact as many of the optimizations listed in this section as are reasonable for the fonts they create.
+An IFTB font must have either one CFF table, one CFF2 table, or one pair of glyf/loca tables.  A
+variable glyf-table-based font will also have a gvar table.
 
-### Compression ### {#font-organization-compression}
+### CFF and CFF2 Requirements and Recommendations ### {#iftb-cff-requirements}
 
-Servers supporting the range-request IFT method should support compression via the <code>Content-Encoding</code> header ([[RFC9110#section-8.4]]), rather than having the font file itself be statically compressed.
+When an IFTB-encoded font includes a CFF or CFF2 table:
 
-A [=range-request optimized font=] file (the file itself) should not use any kind of compression other than [[!RFC7932]] (commonly referred to as "Brotli") compression.
+1.   The CharStrings Index MUST be the last element of the table (followed by 0 padding to a four-byte
+     word boundary).
+2.   The CharStrings Index offset size MUST be 4.
+3.   The offset of the CharStrings index from the start of the CFF table MUST be stored accurately in
+     the relevant field of the IFTB table header.
+4.   All GIDs in the binned set must be represented in the index from the start, with trailing
+     zero-offset-change entries if needed.
 
-If Brotli compression is used in a [=range-request optimized font=], it should use only one <a href="https://datatracker.ietf.org/doc/html/rfc7932#section-9.2">meta-block</a>.
+An "empty" glyph in a CFF table MUST be encoded as a single "endchar" operator. An empty glyph in a
+CFF2 table MUST be encoded as a zero-length string.
 
-If Brotli compression is used in a [=range-request optimized font=], its one meta-block should have the <a href="https://datatracker.ietf.org/doc/html/rfc7932#section-9.2"><code>ISUNCOMPRESSED</code></a> bit set to 1.
+CFF or CFF2 subroutinization is compatible with the IFTB format. However, <em>naive</em>
+subroutinization will tend to reduce chunk size while increasing the size of the initial file. Also,
+WOFF2 has often been shown to compress a non-subroutinized font more effectively than its subroutinized
+equivalent (at the cost of a significantly larger uncompressed file).  Therefore, it is recommended
+that subroutinzation either be avoided, used moderately, or customized to the specific needs of IFTB.
 
-Issue: <a href="https://github.com/w3c/IFT/issues/60">Static file compression compatibility with range-request method</a>
+### glyf/loca Requirements and Recommendations ### {#iftb-glyf-requirements}
 
-### Table Ordering ### {#font-organization-table-ordering}
+When an IFTB-encoded font includes glyf and loca tables:
 
-The term <dfn>outline table</dfn> is used to describe these three tables,
-which carry different types of glyph outlines:
+1.  The offset type of the loca table, specified in a field in the head table, MUST be the "Long"
+     version.
+2.  All GIDs in the binned set must be represented in the loca table from the start, with trailing
+     zero-offset-change entries if needed.
+3.  The tables must not be internally compressed.
 
-- The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff"><code>CFF</code></a> table
-- The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>CFF2</code></a> table
-- The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf"><code>glyf</code></a> table
+### gvar Requirements and Recommendations ### {#iftb-gvar-requirements}
 
-A [=range-request optimized font=] should have only one outline table.
+When an IFTB-encoded font includes a gvar table:
 
-No two tables in a [=range-request optimized font=] should share a tag name.
+1.   The glyphVariationData set MUST be the last element in the table (followed by 0 padding to a
+     four-byte word boundary.
+2.   The offset type MUST be Offset32.
+3.   All GIDs in the binned set MUST be represented in the array from the start, with trailing
+     zero-offset-change entries if needed.
 
+Note that the offset array itself is not required to be stored at any particular location in the table.
 
-The [=outline table=] data in a [=range-request optimized font=] should lie at the end of the file.
+### Table Ordering ### {#iftb-table-ordering}
 
-If a <code>CFF</code> table exists, the <a href="https://adobe-type-tools.github.io/font-tech-notes/pdfs/5176.CFF.pdf">CharString</a> data should lie at the end of the <code>CFF</code> table.
+No two tables in an IFTB font should share a tag name.
 
-If a <code>CFF2</code> table exists, the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#charStrings">CharString</a> data should lie at the end of the <code>CFF2</code> table.
+In a CFF or CFF2 based IFTB font that table must be last. In a glyf/loca based IFTB font the last
+tables must be glyf and loca in that order (loca following glyf is a requirement inherited from WOFF2).
+If the font contains a gvar table it must come immediately before the glyf table.
 
-Issue: <a href="https://github.com/w3c/IFT/issues/28">Font Collections support</a>
+There are no other ordering requirements. However, it is highly recommended that the IFTB and cmap
+tables come early in the list and before any other lengthy table.
 
-### Glyph Independence ### {#font-organization-glyph-independence}
-
-Note: The goal of this section is to make every glyph independent from each other.
-
-A [=range-request optimized font=] should not use <a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6glyf.html">Compound glyphs</a>.
-
-Issue: <a href="https://github.com/w3c/IFT/issues/58">Supporting fonts with composite glyphs via range-request</a>
-
-Note: Compound glyphs can be flattened by inlining their component glyphs to become additional contours.
-
-A [=range-request optimized font=] should not use <a href="https://adobe-type-tools.github.io/font-tech-notes/pdfs/5176.CFF.pdf">Subroutines</a>.
-
-Note: CFF glyph CharStrings can be flattened by inlining subroutines to become additional CharString bytes.
-
-### Glyph Order ### {#font-organization-glyph-order}
-
-Glyphs inside a [=range-request optimized font=] should be sorted in the file to keep glyphs often used in the same documents close together in the file.
-
-Note: Putting the most frequently used glyphs together in the font increases the likelihood that the browser can download a contiguous sequence of necessary glyphs in a single range-request, thereby minimizing overhead.
-
-Note: Reordering glyphs in a font is the same conceptual operation as renaming glyphs to have different glyph IDs. Therefore, this operation cannot be completed if glyph IDs must be preserved. Because glyph IDs are internal to text processing procedures and are not persisted, this requirement is not expected to be particularly burdensome.
-
-One suggested method of sorting the glyphs in the file is by [=usage document frequency=] inside a relevant [=corpus=].
-
-A <dfn>corpus</dfn> is defined to be a collection of documents, where a documents includes a collection of glyphs necessary to render some textual content.
-
-Note: For a particular website, a corpus might be defined to be individual page loads of pages on that website.
-
-The <dfn>usage document frequency</dfn> of a particular glyph inside a [=corpus=] is defined by the number of documents in the [=corpus=] which use that glyph, divided by the number of documents in the [=corpus=].
-
-Note: This is distinct, but similar, to the number of times the glyph is used throughout the entire corpus.
-
-The [=usage document frequency=] of the glyphs in a [=range-request optimized font=] should be decreasing throughout the font; that is, the most frequently used glyphs should have the lowest glyph IDs.
-
-Note: Glyph ID 0 cannot be renamed in OpenType, TrueType, WOFF, and WOFF 2 fonts. All other glyphs can be renamed.
-
-Note: Because the goal is simply to minimize overhead by placing similarly-used glyphs together, it may actually be possible to do better than ordering by simple frequency for a particular corpus. For example, some corpuses may have cliques of glyphs which have different frequencies but which nevertheless always seem to be used together.
-
-A suggested ordering is included in <a href="#suggested-glyph-character-ordering">Appendix A</a> below.
-
-Browser Behaviors {#browser-behaviors}
+IFTB Font Formats {#iftb-font-formats}
 --------------------------------------
 
-### First Request ### {#browser-behaviors-first-request}
+The specification allows for two initial font formats:
 
-When a browser encounters the CSS opt-in mechanism, it is instructed to use IFT to load the fonts. First, it follows the steps from [[IFT#method-selection|IFT method selection]]. If those steps result in using the range-request method, the rest of this section applies.
+1.   The uncompressed format is a slight variant of the OpenType "sfnt" format, but with a version tag
+     of <code>IFTB</code> instead of <code>0x00010000</code> or <code>OTTO</code>
+2.   The compressed format is a WOFF2 encoding of the uncompressed format with all tables in the same
+     order.  The sfnt "flavor" in the WOFF2 header must accordingly also be <code>IFTB</code>
 
-The IFT method selection involves a single round-trip to the server, and if the range-request method is being used, the server's response starts sending the font file to the browser. The browser should start parsing the partial font data as it is being loaded from the server. The browser should not wait until the entire file has been received before parsing its contents.
+It is expected that the client will almost always download a WOFF2-encoded file, which it will then
+unpack into the uncompressed format and modify as needed.
 
-There is a certain amount of data from the beginning of the font file which the browser should unconditionally download. The boundary at the end of this data is called the <dfn>range-request threshold</dfn>.
+Before loading a copy of the uncompressed font into the browser, or making it available to some other
+renderer, the version should be changed to <code>0x00010000</code> if the font has a glyf table or
+<code>OTTO</code> if it has a CFF or CFF2 table.  However, if the file is cached it should be stored
+with the <code>IFTB</code> version.  (The differing version is to help prevent an IFTB-encoded font
+from being used accidentally as a standard font, which will generally result in blank spaces where some
+glyphs should be rendered.)
 
-Note: The first request does not have to be a range request. If the browser expects the [=range-request threshold=] to lie within the first <code>n</code> bytes of the font, the first request may be a range request for the first <code>n</code> bytes of the font. However, a browser may instead make a non-range request, parse the data as it is being streamed from the server, and discover that it has reached the [=range-request threshold=] while data is still being streamed.
+IFTB Table {#iftb-table}
+------------------------
 
-Once all the data before the [=range-request threshold=] has been loaded by the browser, the browser may either close this connection to the server, or it may choose to leave the connection open and let the font data continue loading in the background.
+The IFTB table contains information needed to determine what chunks are needed for a given font subset
+description, and then to retrieve and integrate those chunks. It is similar in layout to analogous
+OpenType tables, and is accordingly described in terms of the [OpenType Specification Data
+Types](https://learn.microsoft.com/en-us/typography/opentype/spec/otff#data-types). As with OpenType
+all fields use Big Endian byte orderng.
 
-A browser may choose to add a <code>Range</code> header ([[RFC9110#section-14.2]]) to the initial request during the IFT method selection if it has reason to believe the range it requests will be large enough and it prefers to not close this connection to the server.
+### IFTB Table Header ### {#iftb-table-header}
 
-Note: Different browsers may choose different [=range-request thresholds=]. Some browsers may treat this threshold as occuring at the end of the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">sfnt tableDirectory</a>. Other browsers may treat this threshold as occurring just before any outline data, provided the outline data appears at the end of the font. Other browsers may place this threshold at the very beginning of the file, thereby treating the whole file as able to be downloaded with range-requests.
+```
+uint16     majorVersion   - set to 1
+uint16     minorVersion   - set to 0
+uint32     reserved       - not used, set to 0
+uint32     id[4]          - ID uniquely identifying this IFTB font
+uint16     flags          - not yet used
+uint32     chunkCount     - number of bins in this IFTB font
+uint32     glyphCount     - must match field in maxp table
+Offset32   CFFCharStringsOffset  - 0 if glyf-based
+Offset32   gidMapOffset
+Offset32   chunkOffsetListOffset
+Offset32   featureMapOffset
+```
 
-### Subsequent Requests ### {#browser-behaviors-subsequent-requests}
+### IFTB Chunk Set ### {#iftb-chunk-set}
 
-After all the data before the [=range-request threshold=] has been loaded by the browser, the browser will determine which additional byte ranges in the file are necessary to load. It will then issue HTTP Range Requests ([[RFC9110#section-14]]) for at least those ranges.
+The header is followed by the chunk set:
 
-Note: Browsers are encouraged to coalesce range requests for nearby areas of the file, to minimize the amount of range-request overhead required. Browsers are encouraged to inform these coalescing decisions from network configuration parameters and bandwidth / latency observations.
+```
+uint8     chunkSet[(chunkCount + 7) / 8]
+```
 
-Note: If the font file has followed all of the organization guidelines above, all information required for laying out content and performing shaping will lie before any of the outline data in the file, and every glyph's outline will be independent from every other glyph. Therefore, the browser can treat the [=range-request threshold=] as being just before outline data begins, and once it has loaded up to that threshold, it can lay out page content. After laying out the page, downloading all the necessary outlines can be done with a collection of independent and parallel range requests. This works particularly well for Chinese, Japanese, and Korean fonts, where 90% or more of the font data is outline data.
+The chunk set is a bit array indicating whether the corresponding chunk is
+present.  The bits for chunks 0 through 7 are in chunkSet[0], those for 8
+through 15 are in chunkSet[1], and so on.  Within a byte the lowest chunk index
+is represented by the 1s bit, then the 2s, then the 4s, and so on.
 
-Note: Another valid alternative is to treat the entire font as residing on an asynchronous virtual filesystem, and have the browser track which ranges of the font it ended up reading during its normal operation. The browser could then request those regions in range requests.
+Because chunk 0 must always be included in the initial font file, its bit is
+always set.  Other bits may also be set at the start if other chunks are <a
+href="#iftb-preloading">preloaded</a>.  This array must be updated as chunks
+are integrated into the font, and is the only part of the IFTB table that
+changes after the initial encoding into IFTB format.
 
-Server Behaviors {#server-behaviors}
-------------------------------------
+### IFTB Table Strings ### {#iftb-table-strings}
 
-Servers supporting the range-request IFT method must support range requests ([[RFC9110#section-14]]).
+The chunkMap is directly followed by two strings in this format:
 
-Servers supporting the range-request IFT method should support compression via the
-<code>Content-Encoding</code> ([[RFC9110#section-8.4]]) header or the
-<code>Transfer-Encoding</code> header ([[RFC9112#section-6.1]]), rather than having the font file
-itself be statically compressed.
+```
+uint8      stringLength
+int8       stringContent[stringLength]
+uint8      terminator    - set to 0
+```
 
-<h2 class=no-num id=priv>Privacy Considerations</h2>
+The first string is the chunkFilesURI, which is a template for forming relative the URI for a chunk
+file.  The string must contain substrings of "$1", "$2", "$3", "$4" and/or "$5", which must be replaced
+with the corresponding hexidecimal digits of the chunk index ("$1" being the ones digit, "$2" being the
+sixteens digit, and so on) to get the relative URI of the chunk. (This can then be combined with the
+URL of the initial IFTB font file to produce the absolute URL of the chunk.)
 
-Please see [[IFT#priv|Privacy Considerations]] in the main IFT document.
+The second string is the chunkRangeFileURI, which is also relative. This can be combined with the URL
+of the initial IFTB font file to produce the absolute URL of the range file. The range file contains
+all compressed chunk files in order, at offsets recorded in the chunkOffsetList.
 
-<h2 class=no-num id=sec>Security Considerations</h2>
+### IFTB gidMap ### {#iftb-gidmap}
 
-No Security issues have been raised against this document
+The gidMap maps each glyph, via GID, to a chunk index.
 
-<h2 class=no-num id=changes>Changes</h2>
+```
+uint16     firstMappedGID
+chunkIdx   chunkIndex[chunkCount - firstMappedGid + 1]
+```
 
-Since the <a href="https://www.w3.org/TR/2022/WD-IFT-20220628/">Working 
-  Draft of 28 June 2022</a> (see 
-  <a href="https://github.com/w3c/IFT/commits/main/RangeRequest.bs">commit history</a>):
+The <code>chunkIdx</code> data type is <code>uint8</code> when <code>chunkCount < 256</code> and
+<code>uint16</code> otherwise.
 
-<ul>
-  <li>Updated citations of rfc9110 and rfc9111 to use section references</li>
-  <li>Split off this range request section back into a separate document</li>
-</ul>
+When a GID is less than <code>firstMappedGID</code> it is implicitly mapped to chunk 0. For all others
+the mapping is stored as chunkIndex[GID - firstMappedGID].
 
-<h2 id="suggested-glyph-character-ordering">
-Appendix A: Suggested glyph/character ordering</h2>
+Note that the mapping for a GID corresponding to one or more Unicode codepoints has a different meaning
+than a mapping for a GID without one. In normal operation a glyph of the latter type will be loaded
+because it is included in a chunk corresponding to a different glyph with an associated codepoint. The
+mapping of other GIDs is included for unusual cases in which a client needs to load a particular glyph
+for its own reasons. (For example, a CFF font may have a CID mapping not completely replicated in the
+<code>cmap</code> table.)
 
-Note: This section describes ordering of characters, not glyph IDs, because the meaning of glyph IDs are not consistent across different fonts. To optimize a particular font according to the ordering listed here, the characters will have to be mapped to glyph IDs inside the font. This approach of mapping characters to glyphs for ordering purposes works particularly well for ideographic languages with large character sets.
+### IFTB chunkOffsetList ### {#iftb-chunkoffsetlist}
 
-Issue: <a href="https://github.com/w3c/IFT/issues/61">Populate suggested character ordering for range-request method</a>
+The chunkOffsetList is an array of chunk offsets indicating the start of the chunk in the chunk range
+file:
+
+```
+Offset32    chunkOffset[chunkCount]
+```
+
+The offset of chunk <em>i</em> is stored at <code>chunkOffset[i-1]</code> (because chunk 0 is always
+part of the initially loaded file), with chunkOffset[chunkCount] indicating the length of the last
+chunk.
+
+These offsets are normally only used when making range requests out of the chunk range file but can
+also be used to lookup the lengths of compressed chunks in advance if needed.
+
+### IFTB featureMap subtable ### {#iftb-table-featuremap}
+
+The featureMap records what feature-specific chunks, if any, correspond to a codepoint-mapped chunk:
+
+```
+uint16         featureCount
+FeatureRecord  featureRecord[featureCount]
+ChunkMapRecord chunkMapRecord[varies]
+```
+
+A <code>FeatureRecord</code> consists of these fields:
+
+```
+uint32         featureTag
+chunkIdx       firstIndex
+chunkIdx       chunkMapCount
+```
+
+As in the gidMap the <code>chunkIdx</code> data type is a <code>uint8</code> when <code>chunkCount <=
+256</code> and a <code>uint16</code> otherwise.
+
+The <code>featureRecord</code> array must be sorted by <code>featureTag</code> with any feature tag
+occurring at most once.  Only layout features that have their own chunks should be have a
+<code>FeatureRecord</code> <code>firstIndex</code> is the chunk index of the first chunk specific to
+this feature. The number of feature-specific chunks will then be <code>chunkRecordCount</code> which
+must be at least 1. The chunk correspondence is encoded in <code>ChunkMapRecords</code>
+
+```
+chunkIdx      firstChunk
+chunkIdx      lastChunk
+```
+
+The <code>chunkMapRecord</code> array contains as many entries as the sum of <code>chunkMapCount</code>
+fields in the <code>featureRecord</code> array, with <code>chunkMapRecord[0]</code> corresponding to
+the first chunk of <code>featureRecord[0]</code>,
+<code>chunkMapRecord[featureRecord[0].chunkMapCount]</code> corresponding to the first chunk of
+<code>featureRecord[1]</code>, <code>chunkMapRecord[featureRecord[0].chunkMapCount +
+chunkMapRecord[featureRecord[1].chunkMapCount]</code> corresponding to the first chunk of
+<code>featureRecord[2]</code>, and so on.
+
+<code>firstChunk</code> must be less than or equal to <code>lastChunk</code>. If <code>featureTag</code>
+is part of the set of layout features in the font subset description, and any of firstChunk through
+lastChunk are required by the set of codepoints in that description, then that feature-specfic chunk
+must also be loaded.
+
+### Optional IFTB Table Values ### {#iftb-table-optional}
+
+If a particular IFTB-encoded font does not include a range file the chunkRangeFileURI string must be
+empty. The <code>chunkOffsetList</code> can either be included for reference or omitted by setting the
+<code>chunkOffsetListOffset</code> field to 0.  If a particular font does not include separate chunk
+files the <code>chunkFilesURI</code> field must be empty.
+
+When an IFTB format font has no feature-specific chunks the <code>featureMapOffset</code> must be 0.
+
+IFTB Chunk Formats {#iftb-chunk-formats}
+----------------------------------------
+
+### The Uncompressed Chunk Format (IFTC) ### {#iftc-format}
+
+An uncompressed chunk string, which is normally produced by decoding a compressed chunk, has these
+fields:
+
+```
+uint32        version     - must be "IFTC" tag
+uint32        reserved    - must be 0
+uint32        id[4]       - unique id -- must match same fields in IFTB table
+uint32        chunkIndex  - (uint32) for potential future extensions
+uint32        length      - the length of the (uncompressed) chunk string
+uint32        glyphCount  - the number of glyphs encoded in the chunk
+uint8         tableCount  - the number of tables the chunk has data for (must be 1 or 2)
+uint16        GIDs[glyphCount]    - an array of GIDs included in the chunk
+uint32        tables[tableCount]  - an array of tables (by tag) included in the chunk.
+Offset32      offsets[glyphCount * tableCount] - an array of offsets of glyph data,
+                                                 with the first glyphCount offsets corresponding
+                                                 to table 1 and (if present) the second glyphCount
+                                                 offsets corresponding to table 2. All offsets are
+                                                 from the start of the table.
+uint8         glyphData[varies]  - the actual glyph data picked out by the offsets.
+```
+
+<code>tableCount</code> will be 2 only when there is both a <code>glyf</code> and a <code>gvar</code>
+table.  Otherwise <code>tableCount</code> will be 1 and the table will be <code>CFF </code>
+<code>CFF2</code> or <code>glyf</code>
+
+### The Compressed Chunk Format (IFTZ) ### {#iftz-format}
+
+A compressed chunk string is the same as an uncompressed chunk string except:
+
+1.  The <code>version</code> is <code>IFTZ</code>.
+2.  All data after the <code>length</code> field is [[!RFC7932|brotli compressed]]
+
+The compressed chunk contains no indication of its (compressed) length, but that length is encoded
+in the <code>chunkOffsetList</code> of the IFTB table.
+
+Browser Behaviors {#iftb-browser-behaviors}
+-------------------------------------------
+
+### First Request ### {#iftb-browser-behaviors-first-request}
+
+1.   The browser loads a font file and identifies it as an IFTB font by its "sfnt" header version (in
+     the uncompressed case) or by its WOFF2 "flavor" (in the compressed case).  These are the first
+     and second 4-byte words in the files respectively.
+2.   In the compressed case, it decodes the WOFF2 into its corresponding OTF (The browser can 
+     optionally isolate the IFTB and cmap tables early in the stream to proceed before the remaining
+     font content downloads.)
+3.   The browser determines the initial font subset description corresponding to the content it needs
+     to render using the font.  (IFTB does not provide subsetting of variable axes, so this is just
+     the sets of codepoints and layout features.)
+4.   The browser maps each codepoint in the font subset description to a GID using the cmap table. It
+     then maps that GID to a chunk index using GIDMap of the IFTB table. That index is added to a
+     "chunk set" (which could be a bitmap or std::vector<bool> indexed by chunk index.
+5.   The browser then look up each layout feature in the font subset description in the IFTB table
+     featureTable. That table maps the initial GID-mapped chunks to higher-indexed feature-specific
+     chunks. If any chunk in the set maps to a feature-specific-chunk the latter is added to the set.
+6.   The browser subtracts the list of already-included chunks recorded in the IFTB ChunkMap from the
+     chunk set.  If no chunks remain, the process skips to step XXX.
+7.   At this point there are two options for retrieving chunk contents:
+
+     Load each needed chunk using individual files:
+     1.  Calculate the hex string for the chunk index
+     2.  Get the chunkFilesURI string from the IFTB table and substitute "$1", "$2", ... with
+          the corresponding hex digit.
+     3.  Combine the relative URI with the URL of the original font to get the URL for the chunk.
+     4.  Request that file via HTTP.
+
+     Load each needed chunk from the range file:
+     1.  Get the chunkRangeFileURI from the string IFTB table.
+     2.  Combine that URI with the URL of the original font to get the URL for the range file.
+     3.  Get the byte range for each chunk from the chunkOffsetTable in the IFTB table.
+     4.  Form a HTTP range request for those byte ranges using the combined URL.
+8.   Decompress each retrieved chunk content.
+9.   Merge the glyph contents in all of the chunks into the corresponding tables, reallocating the
+     memory for the font if necessary. (All of the relevant tables use an offset array and concatenated
+     glyph data convention.)
+10.  Update the IFTB table to record the chunks added (the table will not change in length).
+11.  Update the "sfnt" headers for the correct offsets, sizes, and (if needed by the client) checksums.
+     (Only the trailing CFF, CFF2, glyf, loca and or gvar tables will change in size or location.) Also
+     update the checksumAdjustment in the head table (if needed by the client).
+12.  If caching, store the file at this point.
+13.  Update the SFNT version to 0x00010000 (for a glyf table) or "OTTO" (for a CFF or CFF2 table) and
+     also the head table checksumAdjustment again (if needed by the client).
+14. Render the text with the updated font.
+
+### Subsequent Requests ### {#iftb-browser-behaviors-subsequent-requests}
+
+Subsequent requests proceed like the initial request starting at step 3.
+
+IFTB Encoding {#iftb-encoding}
+------------------------------
+
+An input font is encoded in the IFTB format using an encoder as a separate, initial step.  If any other
+subsetting (such as removing or reducing variable axes, or removing glyphs that are not needed) is
+desired the input font should be subset prior to IFTB encoding with an appropriate tool.
+
+With IFTB only glyph data is transferred incrementally. The encoded file also
+"retains" GIDS the input font's GIDs, and therefore most tables can simply be
+copied from the source font.  However, an encoder can also deserialize and
+reserialize tables if it desires.
+
+The details of the encoding process may differ by encoder and are beyond the scope of this document.
+However, all mappings of codepoints (though GIDs) to bins and bins to feature-specific bins must meet
+this closure requirement:
+
+* The set of glyphs contained in the chunks loaded through the GID and feature maps must be a superset
+    of those in the GID closure of the font subset description.
+
+The encoder has three options for addressing with joint dependencies on individual glyphs:
+
+1.   If a glyph is needed in more than one initial "trial" bin, those bins can be combined.
+2.   Alternatively, the glyph can be included in both bins, or more than two bins.  (The glyph will
+     only be mapped to one chunk in the <code>gidMap</code>, and special care must be taken about which
+     chunk it maps to if it has an associated codepoint. However, the encoder is free to include it in
+     other bins as long as the closure requirement is met.)
+3.   If a glyph is needed in more than a few trial bins, or is otherwise complicating the binning
+     process, it can be moved to bin 0 where it will always be included in the initially loaded file.
+
+Glyph Bin Locality {#iftb-bin-locality}
+---------------------------------------
+
+An IFTB-encoded font may have as few as fifty or as many as two thousand bins.
+Higher numbers of bins may result in unacceptable overhead and diminishing
+returns. Regardless of the particular number, however, if glyphs are randomly
+distributed among bins most of them might need to be loaded in order to render
+a typical document.
+
+Therefore it is vital to efficiency to distribute glyphs among bins so that
+fewer bins are needed in a typical case.  The most basic strategy will be
+assigning glyphs to bins by frequency of use, so that more frequently needed
+glyphs will be concentrated together in bins. However, <em>just</em> ordering
+by frequency is often a mistake, because there are many more documents that
+need, for example, glyphs for writing Korean or glyphs for writing Greek than
+there are documents that need both.
+
+Therefore, it is best to start with an idea of how the encoded font will typically be used. One primary
+use-case for font augmentation is for use with CJK-oriented fonts. A given font might "specialize" in
+a given script or language subset (e.g. traditional Chinese vs Hong Kong Chinese) whereas other fonts
+might be general. If a font will be used with one language or dialect it can be encoded with frequency
+data for that specific application.
+
+If the font will be used with multiple languages and/or dialects, however, one approach is to obtain
+frequency data for each and then establish a high-frequency-glyph "cut-off" for each.  You can then
+determine the intersecting sets of high frequency glyphs and ensure these wind up in their own chunks.
+For example, if you are encoding for Japanese, Korean, and traditional Chinese, you may choose to
+consider the top 3000, 1800, and 2300 glyphs of each respectively to be high-frequency. You can then
+form a group of high frequency glyphs in all three sets, a group in both Japanese and Korean, a group
+in both Japanese and Chinese, a group in both Korean and Chinese, and then the remaining glyphs for
+each individual language, and encode each group separately (in combined order of frequency, if
+available, and in order by frequency in one language otherwise) in their own set of chunks. That way
+rendering a Chinese document can load high-frequency Chinese glyphs while avoiding Korean glyphs and
+vice-versa
+
+The assignment of high frequency glyphs to bins will have the most effect on performance.
+Low-frequency glyphs are least important, but there is still some locality to be exploited. For
+example, there is a set of Unicode codepoints used for rendering boxes. These are rarely used, but need
+one is predictive of needing the others.  As such glyphs tend to be grouped by codepoint value anyway,
+it is often sufficient to order low-frequency glyphs by codepoint when assigning them to bins.
+
+In between are the medium-frequency codepoints. When those codepoints are specific to a language or
+script, they can just be grouped and ordered by frequency in that language or script.  (This is true,
+broadly speaking, of many Hangul glyphs for writing Korean.) When multiple languages share
+medium-frequency codepoints things become trickier. One strategy is to pick one language or script and
+order the medium-frequency codepoints according to its frequency, either letting the others suffer in
+performance somewhat or, if desired, granting one or more their own IFTB encodings.
+
+Preloadng {#iftb-preloading}
+----------------------------
+
+Requesting, waiting for, and integrating chunks into an IFTB-encoded font all involve some overhead
+compared with loading an initial file that already includes that data. (The size of glyph data in a
+compressed chunk will typically be a bit larger than its size in a WOFF2-encoded initital file, as
+Brotli compression is very good at recognizing and making use of common content, and chunks tend to
+have relatively less content.)  Therefore it is best to include those glyphs that are most frequently
+used in the initial file.
+
+If a font has a single purpose, one may choose to include the high frequency codepoints in chunk 0.
+When it has multiple purposes one has the option of encoding for each purpose separately, with the
+high frequency codepoints for a given purpose in chunk 0 of its respective encoding.  However, that
+approach has several disadvantages related to file sizes and caching: The data for the entire font is
+repeated in each encoding. The number of files used is multiplied. And perhaps most importantly,
+requests for chunks are spread over the different versions, increasing the probability of a CDN cache
+miss for a given encoding. (So, for example, the caching chunks for a less common purpose won't benefit
+from the more frequent requests for chunks, and therefore the higher chance of a cache hit, for a more
+common purpose.)
+
+Instead of encoding separate copies, it will often be better to encode the font for mulitple uses, as
+described in the last section, and then to <em>pre-load</em> chunks for a given use into an initial
+copy of the font. Preloading is doing on the server-side something close to what the client would do
+after first loading the font: The chunks are "loaded", their contents are integrated into the relevant
+tables, and the IFTB chunk set is updated. After this, the file is re-encoded in WOFF2 format.  Because
+the URIs for chunks and for the range file are relative, as long as the preloaded copy of the initial
+font is served in the same directory as the original copy, subsequent chunks will be loaded in the same
+way.
