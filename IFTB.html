@@ -1,0 +1,1018 @@
+<!doctype html><html lang="en">
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+  <title>Binned Incremental Font Transfer</title>
+  <meta content="WD" name="w3c-status">
+  <meta content="Bikeshed version 6edc88947, updated Thu Aug 17 11:18:09 2023 -0700" name="generator">
+  <link href="https://www.w3.org/TR/IFTB/" rel="canonical">
+  <meta content="a256a0976aacb4b2642b2fa59e14081fb50fe691" name="document-revision">
+<style>
+    .conform:hover {background: #31668f; color: white}
+    .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
+    </style>
+<style>/* Boilerplate: style-autolinks */
+.css.css, .property.property, .descriptor.descriptor {
+    color: var(--a-normal-text);
+    font-size: inherit;
+    font-family: inherit;
+}
+.css::before, .property::before, .descriptor::before {
+    content: "‘";
+}
+.css::after, .property::after, .descriptor::after {
+    content: "’";
+}
+.property, .descriptor {
+    /* Don't wrap property and descriptor names */
+    white-space: nowrap;
+}
+.type { /* CSS value <type> */
+    font-style: italic;
+}
+pre .property::before, pre .property::after {
+    content: "";
+}
+[data-link-type="property"]::before,
+[data-link-type="propdesc"]::before,
+[data-link-type="descriptor"]::before,
+[data-link-type="value"]::before,
+[data-link-type="function"]::before,
+[data-link-type="at-rule"]::before,
+[data-link-type="selector"]::before,
+[data-link-type="maybe"]::before {
+    content: "‘";
+}
+[data-link-type="property"]::after,
+[data-link-type="propdesc"]::after,
+[data-link-type="descriptor"]::after,
+[data-link-type="value"]::after,
+[data-link-type="function"]::after,
+[data-link-type="at-rule"]::after,
+[data-link-type="selector"]::after,
+[data-link-type="maybe"]::after {
+    content: "’";
+}
+
+[data-link-type].production::before,
+[data-link-type].production::after,
+.prod [data-link-type]::before,
+.prod [data-link-type]::after {
+    content: "";
+}
+
+[data-link-type=element],
+[data-link-type=element-attr] {
+    font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+    font-size: .9em;
+}
+[data-link-type=element]::before { content: "<" }
+[data-link-type=element]::after  { content: ">" }
+
+[data-link-type=biblio] {
+    white-space: pre;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --selflink-text: black;
+        --selflink-bg: silver;
+        --selflink-hover-text: white;
+    }
+}
+</style>
+<style>/* Boilerplate: style-colors */
+
+/* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
+:root {
+    color-scheme: light dark;
+
+    --text: black;
+    --bg: white;
+
+    --unofficial-watermark: url(https://www.w3.org/StyleSheets/TR/2016/logos/UD-watermark);
+
+    --logo-bg: #1a5e9a;
+    --logo-active-bg: #c00;
+    --logo-text: white;
+
+    --tocnav-normal-text: #707070;
+    --tocnav-normal-bg: var(--bg);
+    --tocnav-hover-text: var(--tocnav-normal-text);
+    --tocnav-hover-bg: #f8f8f8;
+    --tocnav-active-text: #c00;
+    --tocnav-active-bg: var(--tocnav-normal-bg);
+
+    --tocsidebar-text: var(--text);
+    --tocsidebar-bg: #f7f8f9;
+    --tocsidebar-shadow: rgba(0,0,0,.1);
+    --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+    --toclink-text: var(--text);
+    --toclink-underline: #3980b5;
+    --toclink-visited-text: var(--toclink-text);
+    --toclink-visited-underline: #054572;
+
+    --heading-text: #005a9c;
+
+    --hr-text: var(--text);
+
+    --algo-border: #def;
+
+    --del-text: red;
+    --del-bg: transparent;
+    --ins-text: #080;
+    --ins-bg: transparent;
+
+    --a-normal-text: #034575;
+    --a-normal-underline: #bbb;
+    --a-visited-text: var(--a-normal-text);
+    --a-visited-underline: #707070;
+    --a-hover-bg: rgba(75%, 75%, 75%, .25);
+    --a-active-text: #c00;
+    --a-active-underline: #c00;
+
+    --blockquote-border: silver;
+    --blockquote-bg: transparent;
+    --blockquote-text: currentcolor;
+
+    --issue-border: #e05252;
+    --issue-bg: #fbe9e9;
+    --issue-text: var(--text);
+    --issueheading-text: #831616;
+
+    --example-border: #e0cb52;
+    --example-bg: #fcfaee;
+    --example-text: var(--text);
+    --exampleheading-text: #574b0f;
+
+    --note-border: #52e052;
+    --note-bg: #e9fbe9;
+    --note-text: var(--text);
+    --noteheading-text: hsl(120, 70%, 30%);
+    --notesummary-underline: silver;
+
+    --assertion-border: #aaa;
+    --assertion-bg: #eee;
+    --assertion-text: black;
+
+    --advisement-border: orange;
+    --advisement-bg: #fec;
+    --advisement-text: var(--text);
+    --advisementheading-text: #b35f00;
+
+    --warning-border: red;
+    --warning-bg: hsla(40,100%,50%,0.95);
+    --warning-text: var(--text);
+
+    --amendment-border: #330099;
+    --amendment-bg: #F5F0FF;
+    --amendment-text: var(--text);
+    --amendmentheading-text: #220066;
+
+    --def-border: #8ccbf2;
+    --def-bg: #def;
+    --def-text: var(--text);
+    --defrow-border: #bbd7e9;
+
+    --datacell-border: silver;
+
+    --indexinfo-text: #707070;
+
+    --indextable-hover-text: black;
+    --indextable-hover-bg: #f7f8f9;
+
+    --outdatedspec-bg: rgba(0, 0, 0, .5);
+    --outdatedspec-text: black;
+    --outdated-bg: maroon;
+    --outdated-text: white;
+    --outdated-shadow: red;
+
+    --editedrec-bg: darkorange;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #ddd;
+        --bg: black;
+
+        --unofficial-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='%23100808' transform='translate(200 200) rotate(-45) translate(-200 -200)' stroke='%23100808' stroke-width='3'%3E%3Ctext x='50%25' y='220' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EUNOFFICIAL%3C/text%3E%3Ctext x='50%25' y='305' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EDRAFT%3C/text%3E%3C/g%3E%3C/svg%3E");
+
+        --logo-bg: #1a5e9a;
+        --logo-active-bg: #c00;
+        --logo-text: white;
+
+        --tocnav-normal-text: #999;
+        --tocnav-normal-bg: var(--bg);
+        --tocnav-hover-text: var(--tocnav-normal-text);
+        --tocnav-hover-bg: #080808;
+        --tocnav-active-text: #f44;
+        --tocnav-active-bg: var(--tocnav-normal-bg);
+
+        --tocsidebar-text: var(--text);
+        --tocsidebar-bg: #080808;
+        --tocsidebar-shadow: rgba(255,255,255,.1);
+        --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+        --toclink-text: var(--text);
+        --toclink-underline: #6af;
+        --toclink-visited-text: var(--toclink-text);
+        --toclink-visited-underline: #054572;
+
+        --heading-text: #8af;
+
+        --hr-text: var(--text);
+
+        --algo-border: #456;
+
+        --del-text: #f44;
+        --del-bg: transparent;
+        --ins-text: #4a4;
+        --ins-bg: transparent;
+
+        --a-normal-text: #6af;
+        --a-normal-underline: #555;
+        --a-visited-text: var(--a-normal-text);
+        --a-visited-underline: var(--a-normal-underline);
+        --a-hover-bg: rgba(25%, 25%, 25%, .2);
+        --a-active-text: #f44;
+        --a-active-underline: var(--a-active-text);
+
+        --borderedblock-bg: rgba(255, 255, 255, .05);
+
+        --blockquote-border: silver;
+        --blockquote-bg: var(--borderedblock-bg);
+        --blockquote-text: currentcolor;
+
+        --issue-border: #e05252;
+        --issue-bg: var(--borderedblock-bg);
+        --issue-text: var(--text);
+        --issueheading-text: hsl(0deg, 70%, 70%);
+
+        --example-border: hsl(50deg, 90%, 60%);
+        --example-bg: var(--borderedblock-bg);
+        --example-text: var(--text);
+        --exampleheading-text: hsl(50deg, 70%, 70%);
+
+        --note-border: hsl(120deg, 100%, 35%);
+        --note-bg: var(--borderedblock-bg);
+        --note-text: var(--text);
+        --noteheading-text: hsl(120, 70%, 70%);
+        --notesummary-underline: silver;
+
+        --assertion-border: #444;
+        --assertion-bg: var(--borderedblock-bg);
+        --assertion-text: var(--text);
+
+        --advisement-border: orange;
+        --advisement-bg: #222218;
+        --advisement-text: var(--text);
+        --advisementheading-text: #f84;
+
+        --warning-border: red;
+        --warning-bg: hsla(40,100%,20%,0.95);
+        --warning-text: var(--text);
+
+        --amendment-border: #330099;
+        --amendment-bg: #080010;
+        --amendment-text: var(--text);
+        --amendmentheading-text: #cc00ff;
+
+        --def-border: #8ccbf2;
+        --def-bg: #080818;
+        --def-text: var(--text);
+        --defrow-border: #136;
+
+        --datacell-border: silver;
+
+        --indexinfo-text: #aaa;
+
+        --indextable-hover-text: var(--text);
+        --indextable-hover-bg: #181818;
+
+        --outdatedspec-bg: rgba(255, 255, 255, .5);
+        --outdatedspec-text: black;
+        --outdated-bg: maroon;
+        --outdated-text: white;
+        --outdated-shadow: red;
+
+        --editedrec-bg: darkorange;
+    }
+    /* In case a transparent-bg image doesn't expect to be on a dark bg,
+       which is quite common in practice... */
+    img { background: white; }
+}
+</style>
+<style>/* Boilerplate: style-counters */
+body {
+    counter-reset: example figure issue;
+}
+.issue {
+    counter-increment: issue;
+}
+.issue:not(.no-marker)::before {
+    content: "Issue " counter(issue);
+}
+
+.example {
+    counter-increment: example;
+}
+.example:not(.no-marker)::before {
+    content: "Example " counter(example);
+}
+.invalid.example:not(.no-marker)::before,
+.illegal.example:not(.no-marker)::before {
+    content: "Invalid Example" counter(example);
+}
+
+figcaption {
+    counter-increment: figure;
+}
+figcaption:not(.no-marker)::before {
+    content: "Figure " counter(figure) " ";
+}
+</style>
+<style>/* Boilerplate: style-issues */
+a[href].issue-return {
+    float: right;
+    float: inline-end;
+    color: var(--issueheading-text);
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
+<style>/* Boilerplate: style-md-lists */
+/* This is a weird hack for me not yet following the commonmark spec
+   regarding paragraph and lists. */
+[data-md] > :first-child {
+    margin-top: 0;
+}
+[data-md] > :last-child {
+    margin-bottom: 0;
+}
+</style>
+<style>/* Boilerplate: style-selflinks */
+
+:root {
+    --selflink-text: white;
+    --selflink-bg: gray;
+    --selflink-hover-text: black;
+}
+.heading, .issue, .note, .example, li, dt {
+    position: relative;
+}
+a.self-link {
+    position: absolute;
+    top: 0;
+    left: calc(-1 * (3.5rem - 26px));
+    width: calc(3.5rem - 26px);
+    height: 2em;
+    text-align: center;
+    border: none;
+    transition: opacity .2s;
+    opacity: .5;
+}
+a.self-link:hover {
+    opacity: 1;
+}
+.heading > a.self-link {
+    font-size: 83%;
+}
+.example > a.self-link,
+.note > a.self-link,
+.issue > a.self-link {
+    /* These blocks are overflow:auto, so positioning outside
+       doesn't work. */
+    left: auto;
+    right: 0;
+}
+li > a.self-link {
+    left: calc(-1 * (3.5rem - 26px) - 2em);
+}
+dfn > a.self-link {
+    top: auto;
+    left: auto;
+    opacity: 0;
+    width: 1.5em;
+    height: 1.5em;
+    background: var(--selflink-bg);
+    color: var(--selflink-text);
+    font-style: normal;
+    transition: opacity .2s, background-color .2s, color .2s;
+}
+dfn:hover > a.self-link {
+    opacity: 1;
+}
+dfn > a.self-link:hover {
+    color: var(--selflink-hover-text);
+}
+
+a.self-link::before            { content: "¶"; }
+.heading > a.self-link::before { content: "§"; }
+dfn > a.self-link::before      { content: "#"; }
+</style>
+  <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-WD" rel="stylesheet">
+ <body class="h-entry">
+  <div class="head">
+   <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
+   <h1 class="p-name no-ref" id="title">Binned Incremental Font Transfer</h1>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#WD">W3C Working Draft</a>, <time class="dt-updated" datetime="2023-08-22">22 August 2023</time></p>
+   <details open>
+    <summary>More details about this document</summary>
+    <div data-fill-with="spec-metadata">
+     <dl>
+      <dt>This version:
+      <dd><a class="u-url" href="https://www.w3.org/TR/2023/WD-IFTB-20230822/">https://www.w3.org/TR/2023/WD-IFTB-20230822/</a>
+      <dt>Latest published version:
+      <dd><a href="https://www.w3.org/TR/IFTB/">https://www.w3.org/TR/IFTB/</a>
+      <dt>Editor's Draft:
+      <dd><a href="https://w3c.github.io/IFT/IFTB.html">https://w3c.github.io/IFT/IFTB.html</a>
+      <dt>History:
+      <dd><a class="u-url" href="https://www.w3.org/standards/history/IFTB/">https://www.w3.org/standards/history/IFTB/</a>
+      <dt>Feedback:
+      <dd><span><a href="mailto:public-webfonts-wg@w3.org?subject=%5BIFTB%5D%20YOUR%20TOPIC%20HERE">public-webfonts-wg@w3.org</a> with subject line “<kbd>[IFTB] <i data-lt>… message topic …</i></kbd>” (<a href="https://lists.w3.org/Archives/Public/public-webfonts-wg/" rel="discussion">archives</a>)</span>
+      <dd><a href="https://github.com/w3c/PFE/issues/">GitHub</a>
+      <dt class="editor">Editors:
+      <dd class="editor p-author h-card vcard" data-editor-id="1438"><a class="p-name fn u-url url" href="https://svgees.us/">Chris Lilley</a> (<span class="p-org org">W3C</span>)
+      <dd class="editor p-author h-card vcard" data-editor-id="77180"><a class="p-name fn u-email email" href="mailto:mmaxfield@apple.com">Myles C. Maxfield</a> (<span class="p-org org">Apple Inc.</span>)
+      <dd class="editor p-author h-card vcard" data-editor-id="73905"><a class="p-name fn u-email email" href="mailto:grieger@google.com">Garret Rieger</a> (<span class="p-org org">Google Inc.</span>)
+     </dl>
+    </div>
+   </details>
+   <div data-fill-with="warning"></div>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2023 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/copyright-software" rel="license" title="W3C Software and Document License">permissive document license</a> rules apply. </p>
+   <hr title="Separator for header">
+  </div>
+  <div class="p-summary" data-fill-with="abstract">
+   <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
+   <p>This specification defines the range request variant of incremental font transfer.
+
+          Incremental transfer allows clients to load only the portions of the font they actually need
+          which speeds up font loads and reduces data transfer needed to load the fonts. A font can
+          be loaded over multiple requests where each request incrementally adds additional data.</p>
+  </div>
+  <h2 class="no-num no-toc no-ref heading settled" id="sotd"><span class="content">Status of this document</span></h2>
+  <div data-fill-with="status">
+   <p> <em>This section describes the status of this document at the time of
+  its publication. A list of
+  current W3C publications and the latest revision of this technical report
+  can be found in the <a href="https://www.w3.org/TR/">W3C technical reports
+  index at https://www.w3.org/TR/.</a></em> </p>
+   <p> This document was produced by the <a href="https://www.w3.org/groups/wg/webfonts">Web Fonts Working Group</a> as a Working Draft using the <a href="https://www.w3.org/2023/Process-20230612/#recs-and-notes">Recommendation
+      track</a>. This document is intended to become a W3C Recommendation. </p>
+   <p> If you wish to make comments regarding this document, please <a href="https://github.com/w3c/PFE/issues/new">file an issue on the specification repository</a>. </p>
+   <p> Publication as a Working Draft does not imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. This is a draft document and may be updated, replaced or
+  obsoleted by other documents at any time. It is inappropriate to cite this
+  document as other than work in progress. </p>
+   <p> This document was produced by groups operating under
+  the <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/">W3C Patent Policy</a>.
+  W3C maintains a <a href="https://www.w3.org/groups/wg/webfonts/ipr" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group;
+  that page also includes instructions for disclosing a patent.
+  An individual who has actual knowledge of a patent which the individual believes contains <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>. </p>
+   <p> This document is governed by the <a href="https://www.w3.org/2023/Process-20230612/" id="w3c_process_revision">12 June 2023 W3C Process Document</a>. </p>
+   <p></p>
+  </div>
+  <div data-fill-with="at-risk"></div>
+  <nav data-fill-with="table-of-contents" id="toc">
+   <h2 class="no-num no-toc no-ref" id="contents">Table of Contents</h2>
+   <ol class="toc" role="directory">
+    <li>
+     <a href="#binned-incxfer"><span class="secno">1</span> <span class="content">Binned Incremental Font Transfer</span></a>
+     <ol class="toc">
+      <li><a href="#iftb-intro"><span class="secno">1.1</span> <span class="content">Introduction</span></a>
+      <li>
+       <a href="#font-organization"><span class="secno">1.2</span> <span class="content">Font organization</span></a>
+       <ol class="toc">
+        <li><a href="#font-organization-background"><span class="secno">1.2.1</span> <span class="content">Background</span></a>
+        <li><a href="#font-organization-introduction"><span class="secno">1.2.2</span> <span class="content">Introduction</span></a>
+        <li><a href="#iftb-glyph-content"><span class="secno">1.2.3</span> <span class="content">Glyph Content</span></a>
+        <li><a href="#iftb-cff-requirements"><span class="secno">1.2.4</span> <span class="content">CFF and CFF2 Requirements and Recommendations</span></a>
+        <li><a href="#iftb-glyf-requirements"><span class="secno">1.2.5</span> <span class="content">glyf/loca Requirements and Recommendations</span></a>
+        <li><a href="#iftb-gvar-requirements"><span class="secno">1.2.6</span> <span class="content">gvar Requirements and Recommendations</span></a>
+        <li><a href="#iftb-table-ordering"><span class="secno">1.2.7</span> <span class="content">Table Ordering</span></a>
+       </ol>
+      <li><a href="#iftb-font-formats"><span class="secno">1.3</span> <span class="content">IFTB Font Formats</span></a>
+      <li>
+       <a href="#iftb-table"><span class="secno">1.4</span> <span class="content">IFTB Table</span></a>
+       <ol class="toc">
+        <li><a href="#iftb-table-header"><span class="secno">1.4.1</span> <span class="content">IFTB Table Header</span></a>
+        <li><a href="#iftb-chunk-set"><span class="secno">1.4.2</span> <span class="content">IFTB Chunk Set</span></a>
+        <li><a href="#iftb-table-strings"><span class="secno">1.4.3</span> <span class="content">IFTB Table Strings</span></a>
+        <li><a href="#iftb-gidmap"><span class="secno">1.4.4</span> <span class="content">IFTB gidMap</span></a>
+        <li><a href="#iftb-chunkoffsetlist"><span class="secno">1.4.5</span> <span class="content">IFTB chunkOffsetList</span></a>
+        <li><a href="#iftb-table-featuremap"><span class="secno">1.4.6</span> <span class="content">IFTB featureMap subtable</span></a>
+        <li><a href="#iftb-table-optional"><span class="secno">1.4.7</span> <span class="content">Optional IFTB Table Values</span></a>
+       </ol>
+      <li>
+       <a href="#iftb-chunk-formats"><span class="secno">1.5</span> <span class="content">IFTB Chunk Formats</span></a>
+       <ol class="toc">
+        <li><a href="#iftc-format"><span class="secno">1.5.1</span> <span class="content">The Uncompressed Chunk Format (IFTC)</span></a>
+        <li><a href="#iftz-format"><span class="secno">1.5.2</span> <span class="content">The Compressed Chunk Format (IFTZ)</span></a>
+       </ol>
+      <li>
+       <a href="#iftb-browser-behaviors"><span class="secno">1.6</span> <span class="content">Browser Behaviors</span></a>
+       <ol class="toc">
+        <li><a href="#iftb-browser-behaviors-first-request"><span class="secno">1.6.1</span> <span class="content">First Request</span></a>
+        <li><a href="#iftb-browser-behaviors-subsequent-requests"><span class="secno">1.6.2</span> <span class="content">Subsequent Requests</span></a>
+       </ol>
+      <li><a href="#iftb-encoding"><span class="secno">1.7</span> <span class="content">IFTB Encoding</span></a>
+      <li><a href="#iftb-bin-locality"><span class="secno">1.8</span> <span class="content">Glyph Bin Locality</span></a>
+      <li><a href="#iftb-preloading"><span class="secno">1.9</span> <span class="content">Preloadng</span></a>
+     </ol>
+    <li>
+     <a href="#w3c-conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
+     <ol class="toc">
+      <li><a href="#w3c-conventions"><span class="secno"></span> <span class="content">Document conventions</span></a>
+      <li><a href="#w3c-conformant-algorithms"><span class="secno"></span> <span class="content">Conformant Algorithms</span></a>
+     </ol>
+    <li>
+     <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
+     <ol class="toc">
+      <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+     </ol>
+    <li>
+     <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
+     <ol class="toc">
+      <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
+     </ol>
+   </ol>
+  </nav>
+  <main>
+   <h2 class="heading settled" data-level="1" id="binned-incxfer"><span class="secno">1. </span><span class="content">Binned Incremental Font Transfer</span><a class="self-link" href="#binned-incxfer"></a></h2>
+   <h3 class="heading settled" data-level="1.1" id="iftb-intro"><span class="secno">1.1. </span><span class="content">Introduction</span><a class="self-link" href="#iftb-intro"></a></h3>
+   <p><em>This section is not normative.</em></p>
+   <p>Binned Incremental Font Transfer, or IFTB, is a set of file formats that allow
+an input font to be reprocessed into an <em>initial file</em> and a set of
+corresponding <em>chunk files</em>.  IFTB imposes no server-side requirements
+beyond the ability to transfer files. With this format, each glyph is assigned
+by ID to one or more "bins", each of which has a corresponding "chunk" file
+containing the outline data for those glyphs. Glyphs in bin 0 are always
+included in the initially loaded file, which also contains all other OpenType
+tables from the initial font.</p>
+   <p>The browser starts the transfer process by loading the initial font file. It
+then uses an added IFTB table, together with the OpenType cmap table, to
+determine which additional chunks, if any, are needed to render the current
+content. It requests those chunks from the server, unpacks them as they arrive,
+integrates the extracted glyph data into the specified glyf, loca, CFF, CFF2,
+or gvar tables, and updates the IFTB table to record which chunks have been
+integrated.  As the page content is updated the chunk identification and
+loading process repeats.</p>
+   <p>When desired, the initial file can be "pre-loaded" with chunks for a particular
+purpose, such as more efficient support of target script.</p>
+   <p>There are also two chunk file formats. The first is the uncompressed chunk
+table structure described below. The second has the same content but with all
+data following the header encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a>. Each
+chunk is stored in its own file.</p>
+   <h3 class="heading settled" data-level="1.2" id="font-organization"><span class="secno">1.2. </span><span class="content">Font organization</span><a class="self-link" href="#font-organization"></a></h3>
+   <h4 class="heading settled" data-level="1.2.1" id="font-organization-background"><span class="secno">1.2.1. </span><span class="content">Background</span><a class="self-link" href="#font-organization-background"></a></h4>
+   <p><em>This section is not normative.</em></p>
+   <p>There are two specified input file formats. The first is an uncompressed
+variant of the OpenType "sfnt" format but with the version tag "IFTB" and an
+extra "IFTB table. The second is the WOFF2 encoding of that format with all
+tables in the same order.</p>
+   <p>Because the OpenType and WOFF2 formats are documented elsewhere, the initial
+IFTB font format is specified in terms of changes to and restrictions on those
+formats, including some specific OpenType tables.</p>
+   <h4 class="heading settled" data-level="1.2.2" id="font-organization-introduction"><span class="secno">1.2.2. </span><span class="content">Introduction</span><a class="self-link" href="#font-organization-introduction"></a></h4>
+   <h4 class="heading settled" data-level="1.2.3" id="iftb-glyph-content"><span class="secno">1.2.3. </span><span class="content">Glyph Content</span><a class="self-link" href="#iftb-glyph-content"></a></h4>
+   <p>The term <dfn data-dfn-type="dfn" data-noexport id="outline-table">outline table<a class="self-link" href="#outline-table"></a></dfn> is used to describe these four tables, which carry different types of
+glyph outlines:</p>
+   <ul>
+    <li data-md>
+     <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff"><code>CFF</code></a> table</p>
+    <li data-md>
+     <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>CFF2</code></a> table</p>
+    <li data-md>
+     <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf"><code>glyf</code></a> table and its associated <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca"><code>loca</code></a>table</p>
+    <li data-md>
+     <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>gvar</code></a> table</p>
+   </ul>
+   <p>An IFTB font must have either one CFF table, one CFF2 table, or one pair of glyf/loca tables.  A
+variable glyf-table-based font will also have a gvar table.</p>
+   <h4 class="heading settled" data-level="1.2.4" id="iftb-cff-requirements"><span class="secno">1.2.4. </span><span class="content">CFF and CFF2 Requirements and Recommendations</span><a class="self-link" href="#iftb-cff-requirements"></a></h4>
+   <p>When an IFTB-encoded font includes a CFF or CFF2 table:</p>
+   <ol>
+    <li data-md>
+     <p>The CharStrings Index MUST be the last element of the table (followed by 0 padding to a four-byte
+ word boundary).</p>
+    <li data-md>
+     <p>The CharStrings Index offset size MUST be 4.</p>
+    <li data-md>
+     <p>The offset of the CharStrings index from the start of the CFF table MUST be stored accurately in
+ the relevant field of the IFTB table header.</p>
+    <li data-md>
+     <p>All GIDs in the binned set must be represented in the index from the start, with trailing
+ zero-offset-change entries if needed.</p>
+   </ol>
+   <p>An "empty" glyph in a CFF table MUST be encoded as a single "endchar" operator. An empty glyph in a
+CFF2 table MUST be encoded as a zero-length string.</p>
+   <p>CFF or CFF2 subroutinization is compatible with the IFTB format. However, <em>naive</em> subroutinization will tend to reduce chunk size while increasing the size of the initial file. Also,
+WOFF2 has often been shown to compress a non-subroutinized font more effectively than its subroutinized
+equivalent (at the cost of a significantly larger uncompressed file).  Therefore, it is recommended
+that subroutinzation either be avoided, used moderately, or customized to the specific needs of IFTB.</p>
+   <h4 class="heading settled" data-level="1.2.5" id="iftb-glyf-requirements"><span class="secno">1.2.5. </span><span class="content">glyf/loca Requirements and Recommendations</span><a class="self-link" href="#iftb-glyf-requirements"></a></h4>
+   <p>When an IFTB-encoded font includes glyf and loca tables:</p>
+   <ol>
+    <li data-md>
+     <p>The offset type of the loca table, specified in a field in the head table, MUST be the "Long"
+ version.</p>
+    <li data-md>
+     <p>All GIDs in the binned set must be represented in the loca table from the start, with trailing
+ zero-offset-change entries if needed.</p>
+    <li data-md>
+     <p>The tables must not be internally compressed.</p>
+   </ol>
+   <h4 class="heading settled" data-level="1.2.6" id="iftb-gvar-requirements"><span class="secno">1.2.6. </span><span class="content">gvar Requirements and Recommendations</span><a class="self-link" href="#iftb-gvar-requirements"></a></h4>
+   <p>When an IFTB-encoded font includes a gvar table:</p>
+   <ol>
+    <li data-md>
+     <p>The glyphVariationData set MUST be the last element in the table (followed by 0 padding to a
+ four-byte word boundary.</p>
+    <li data-md>
+     <p>The offset type MUST be Offset32.</p>
+    <li data-md>
+     <p>All GIDs in the binned set MUST be represented in the array from the start, with trailing
+ zero-offset-change entries if needed.</p>
+   </ol>
+   <p>Note that the offset array itself is not required to be stored at any particular location in the table.</p>
+   <h4 class="heading settled" data-level="1.2.7" id="iftb-table-ordering"><span class="secno">1.2.7. </span><span class="content">Table Ordering</span><a class="self-link" href="#iftb-table-ordering"></a></h4>
+   <p>No two tables in an IFTB font should share a tag name.</p>
+   <p>In a CFF or CFF2 based IFTB font that table must be last. In a glyf/loca based IFTB font the last
+tables must be glyf and loca in that order (loca following glyf is a requirement inherited from WOFF2).
+If the font contains a gvar table it must come immediately before the glyf table.</p>
+   <p>There are no other ordering requirements. However, it is highly recommended that the IFTB and cmap
+tables come early in the list and before any other lengthy table.</p>
+   <h3 class="heading settled" data-level="1.3" id="iftb-font-formats"><span class="secno">1.3. </span><span class="content">IFTB Font Formats</span><a class="self-link" href="#iftb-font-formats"></a></h3>
+   <p>The specification allows for two initial font formats:</p>
+   <ol>
+    <li data-md>
+     <p>The uncompressed format is a slight variant of the OpenType "sfnt" format, but with a version tag
+ of <code>IFTB</code> instead of <code>0x00010000</code> or <code>OTTO</code></p>
+    <li data-md>
+     <p>The compressed format is a WOFF2 encoding of the uncompressed format with all tables in the same
+ order.  The sfnt "flavor" in the WOFF2 header must accordingly also be <code>IFTB</code></p>
+   </ol>
+   <p>It is expected that the client will almost always download a WOFF2-encoded file, which it will then
+unpack into the uncompressed format and modify as needed.</p>
+   <p>Before loading a copy of the uncompressed font into the browser, or making it available to some other
+renderer, the version should be changed to <code>0x00010000</code> if the font has a glyf table or <code>OTTO</code> if it has a CFF or CFF2 table.  However, if the file is cached it should be stored
+with the <code>IFTB</code> version.  (The differing version is to help prevent an IFTB-encoded font
+from being used accidentally as a standard font, which will generally result in blank spaces where some
+glyphs should be rendered.)</p>
+   <h3 class="heading settled" data-level="1.4" id="iftb-table"><span class="secno">1.4. </span><span class="content">IFTB Table</span><a class="self-link" href="#iftb-table"></a></h3>
+   <p>The IFTB table contains information needed to determine what chunks are needed for a given font subset
+description, and then to retrieve and integrate those chunks. It is similar in layout to analogous
+OpenType tables, and is accordingly described in terms of the [OpenType Specification Data
+Types](https://learn.microsoft.com/en-us/typography/opentype/spec/otff#data-types). As with OpenType
+all fields use Big Endian byte orderng.</p>
+   <h4 class="heading settled" data-level="1.4.1" id="iftb-table-header"><span class="secno">1.4.1. </span><span class="content">IFTB Table Header</span><a class="self-link" href="#iftb-table-header"></a></h4>
+<pre>uint16     majorVersion   - set to 1
+uint16     minorVersion   - set to 0
+uint32     reserved       - not used, set to 0
+uint32     id[4]          - ID uniquely identifying this IFTB font
+uint16     flags          - not yet used
+uint32     chunkCount     - number of bins in this IFTB font
+uint32     glyphCount     - must match field in maxp table
+Offset32   CFFCharStringsOffset  - 0 if glyf-based
+Offset32   gidMapOffset
+Offset32   chunkOffsetListOffset
+Offset32   featureMapOffset
+</pre>
+   <h4 class="heading settled" data-level="1.4.2" id="iftb-chunk-set"><span class="secno">1.4.2. </span><span class="content">IFTB Chunk Set</span><a class="self-link" href="#iftb-chunk-set"></a></h4>
+   <p>The header is followed by the chunk set:</p>
+<pre>uint8     chunkSet[(chunkCount + 7) / 8]
+</pre>
+   <p>The chunk set is a bit array indicating whether the corresponding chunk is
+present.  The bits for chunks 0 through 7 are in chunkSet[0], those for 8
+through 15 are in chunkSet[1], and so on.  Within a byte the lowest chunk index
+is represented by the 1s bit, then the 2s, then the 4s, and so on.</p>
+   <p>Because chunk 0 must always be included in the initial font file, its bit is
+always set.  Other bits may also be set at the start if other chunks are <a href="#iftb-preloading">preloaded</a>.  This array must be updated as chunks
+are integrated into the font, and is the only part of the IFTB table that
+changes after the initial encoding into IFTB format.</p>
+   <h4 class="heading settled" data-level="1.4.3" id="iftb-table-strings"><span class="secno">1.4.3. </span><span class="content">IFTB Table Strings</span><a class="self-link" href="#iftb-table-strings"></a></h4>
+   <p>The chunkMap is directly followed by two strings in this format:</p>
+<pre>uint8      stringLength
+int8       stringContent[stringLength]
+uint8      terminator    - set to 0
+</pre>
+   <p>The first string is the chunkFilesURI, which is a template for forming relative the URI for a chunk
+file.  The string must contain substrings of "$1", "$2", "$3", "$4" and/or "$5", which must be replaced
+with the corresponding hexidecimal digits of the chunk index ("$1" being the ones digit, "$2" being the
+sixteens digit, and so on) to get the relative URI of the chunk. (This can then be combined with the
+URL of the initial IFTB font file to produce the absolute URL of the chunk.)</p>
+   <p>The second string is the chunkRangeFileURI, which is also relative. This can be combined with the URL
+of the initial IFTB font file to produce the absolute URL of the range file. The range file contains
+all compressed chunk files in order, at offsets recorded in the chunkOffsetList.</p>
+   <h4 class="heading settled" data-level="1.4.4" id="iftb-gidmap"><span class="secno">1.4.4. </span><span class="content">IFTB gidMap</span><a class="self-link" href="#iftb-gidmap"></a></h4>
+   <p>The gidMap maps each glyph, via GID, to a chunk index.</p>
+<pre>uint16     firstMappedGID
+chunkIdx   chunkIndex[chunkCount - firstMappedGid + 1]
+</pre>
+   <p>The <code>chunkIdx</code> data type is <code>uint8</code> when <code>chunkCount &lt; 256</code> and <code>uint16</code> otherwise.</p>
+   <p>When a GID is less than <code>firstMappedGID</code> it is implicitly mapped to chunk 0. For all others
+the mapping is stored as chunkIndex[GID - firstMappedGID].</p>
+   <p>Note that the mapping for a GID corresponding to one or more Unicode codepoints has a different meaning
+than a mapping for a GID without one. In normal operation a glyph of the latter type will be loaded
+because it is included in a chunk corresponding to a different glyph with an associated codepoint. The
+mapping of other GIDs is included for unusual cases in which a client needs to load a particular glyph
+for its own reasons. (For example, a CFF font may have a CID mapping not completely replicated in the <code>cmap</code> table.)</p>
+   <h4 class="heading settled" data-level="1.4.5" id="iftb-chunkoffsetlist"><span class="secno">1.4.5. </span><span class="content">IFTB chunkOffsetList</span><a class="self-link" href="#iftb-chunkoffsetlist"></a></h4>
+   <p>The chunkOffsetList is an array of chunk offsets indicating the start of the chunk in the chunk range
+file:</p>
+<pre>Offset32    chunkOffset[chunkCount]
+</pre>
+   <p>The offset of chunk <em>i</em> is stored at <code>chunkOffset[i-1]</code> (because chunk 0 is always
+part of the initially loaded file), with chunkOffset[chunkCount] indicating the length of the last
+chunk.</p>
+   <p>These offsets are normally only used when making range requests out of the chunk range file but can
+also be used to lookup the lengths of compressed chunks in advance if needed.</p>
+   <h4 class="heading settled" data-level="1.4.6" id="iftb-table-featuremap"><span class="secno">1.4.6. </span><span class="content">IFTB featureMap subtable</span><a class="self-link" href="#iftb-table-featuremap"></a></h4>
+   <p>The featureMap records what feature-specific chunks, if any, correspond to a codepoint-mapped chunk:</p>
+<pre>uint16         featureCount
+FeatureRecord  featureRecord[featureCount]
+ChunkMapRecord chunkMapRecord[varies]
+</pre>
+   <p>A <code>FeatureRecord</code> consists of these fields:</p>
+<pre>uint32         featureTag
+chunkIdx       firstIndex
+chunkIdx       chunkMapCount
+</pre>
+   <p>As in the gidMap the <code>chunkIdx</code> data type is a <code>uint8</code> when <code>chunkCount &lt;=
+256</code> and a <code>uint16</code> otherwise.</p>
+   <p>The <code>featureRecord</code> array must be sorted by <code>featureTag</code> with any feature tag
+occurring at most once.  Only layout features that have their own chunks should be have a <code>FeatureRecord</code> <code>firstIndex</code> is the chunk index of the first chunk specific to
+this feature. The number of feature-specific chunks will then be <code>chunkRecordCount</code> which
+must be at least 1. The chunk correspondence is encoded in <code>ChunkMapRecords</code></p>
+<pre>chunkIdx      firstChunk
+chunkIdx      lastChunk
+</pre>
+   <p>The <code>chunkMapRecord</code> array contains as many entries as the sum of <code>chunkMapCount</code> fields in the <code>featureRecord</code> array, with <code>chunkMapRecord[0]</code> corresponding to
+the first chunk of <code>featureRecord[0]</code>, <code>chunkMapRecord[featureRecord[0].chunkMapCount]</code> corresponding to the first chunk of <code>featureRecord[1]</code>, <code>chunkMapRecord[featureRecord[0].chunkMapCount +
+chunkMapRecord[featureRecord[1].chunkMapCount]</code> corresponding to the first chunk of <code>featureRecord[2]</code>, and so on.</p>
+   <p><code>firstChunk</code> must be less than or equal to <code>lastChunk</code>. If <code>featureTag</code> is part of the set of layout features in the font subset description, and any of firstChunk through
+lastChunk are required by the set of codepoints in that description, then that feature-specfic chunk
+must also be loaded.</p>
+   <h4 class="heading settled" data-level="1.4.7" id="iftb-table-optional"><span class="secno">1.4.7. </span><span class="content">Optional IFTB Table Values</span><a class="self-link" href="#iftb-table-optional"></a></h4>
+   <p>If a particular IFTB-encoded font does not include a range file the chunkRangeFileURI string must be
+empty. The <code>chunkOffsetList</code> can either be included for reference or omitted by setting the <code>chunkOffsetListOffset</code> field to 0.  If a particular font does not include separate chunk
+files the <code>chunkFilesURI</code> field must be empty.</p>
+   <p>When an IFTB format font has no feature-specific chunks the <code>featureMapOffset</code> must be 0.</p>
+   <h3 class="heading settled" data-level="1.5" id="iftb-chunk-formats"><span class="secno">1.5. </span><span class="content">IFTB Chunk Formats</span><a class="self-link" href="#iftb-chunk-formats"></a></h3>
+   <h4 class="heading settled" data-level="1.5.1" id="iftc-format"><span class="secno">1.5.1. </span><span class="content">The Uncompressed Chunk Format (IFTC)</span><a class="self-link" href="#iftc-format"></a></h4>
+   <p>An uncompressed chunk string, which is normally produced by decoding a compressed chunk, has these
+fields:</p>
+<pre>uint32        version     - must be "IFTC" tag
+uint32        reserved    - must be 0
+uint32        id[4]       - unique id -- must match same fields in IFTB table
+uint32        chunkIndex  - (uint32) for potential future extensions
+uint32        length      - the length of the (uncompressed) chunk string
+uint32        glyphCount  - the number of glyphs encoded in the chunk
+uint8         tableCount  - the number of tables the chunk has data for (must be 1 or 2)
+uint16        GIDs[glyphCount]    - an array of GIDs included in the chunk
+uint32        tables[tableCount]  - an array of tables (by tag) included in the chunk.
+Offset32      offsets[glyphCount * tableCount] - an array of offsets of glyph data,
+                                                 with the first glyphCount offsets corresponding
+                                                 to table 1 and (if present) the second glyphCount
+                                                 offsets corresponding to table 2. All offsets are
+                                                 from the start of the table.
+uint8         glyphData[varies]  - the actual glyph data picked out by the offsets.
+</pre>
+   <p><code>tableCount</code> will be 2 only when there is both a <code>glyf</code> and a <code>gvar</code> table.  Otherwise <code>tableCount</code> will be 1 and the table will be <code>CFF </code> <code>CFF2</code> or <code>glyf</code></p>
+   <h4 class="heading settled" data-level="1.5.2" id="iftz-format"><span class="secno">1.5.2. </span><span class="content">The Compressed Chunk Format (IFTZ)</span><a class="self-link" href="#iftz-format"></a></h4>
+   <p>A compressed chunk string is the same as an uncompressed chunk string except:</p>
+   <ol>
+    <li data-md>
+     <p>The <code>version</code> is <code>IFTZ</code>.</p>
+    <li data-md>
+     <p>All data after the <code>length</code> field is <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compressed</a></p>
+   </ol>
+   <p>The compressed chunk contains no indication of its (compressed) length, but that length is encoded
+in the <code>chunkOffsetList</code> of the IFTB table.</p>
+   <h3 class="heading settled" data-level="1.6" id="iftb-browser-behaviors"><span class="secno">1.6. </span><span class="content">Browser Behaviors</span><a class="self-link" href="#iftb-browser-behaviors"></a></h3>
+   <h4 class="heading settled" data-level="1.6.1" id="iftb-browser-behaviors-first-request"><span class="secno">1.6.1. </span><span class="content">First Request</span><a class="self-link" href="#iftb-browser-behaviors-first-request"></a></h4>
+   <ol>
+    <li data-md>
+     <p>The browser loads a font file and identifies it as an IFTB font by its "sfnt" header version (in
+ the uncompressed case) or by its WOFF2 "flavor" (in the compressed case).  These are the first
+ and second 4-byte words in the files respectively.</p>
+    <li data-md>
+     <p>In the compressed case, it decodes the WOFF2 into its corresponding OTF (The browser can
+ optionally isolate the IFTB and cmap tables early in the stream to proceed before the remaining
+ font content downloads.)</p>
+    <li data-md>
+     <p>The browser determines the initial font subset description corresponding to the content it needs
+ to render using the font.  (IFTB does not provide subsetting of variable axes, so this is just
+ the sets of codepoints and layout features.)</p>
+    <li data-md>
+     <p>
+      The browser maps each codepoint in the font subset description to a GID using the cmap table. It
+ then maps that GID to a chunk index using GIDMap of the IFTB table. That index is added to a
+ "chunk set" (which could be a bitmap or std::vector
+      <bool> indexed by chunk index.</bool>
+     </p>
+    <li data-md>
+     <p>The browser then look up each layout feature in the font subset description in the IFTB table
+ featureTable. That table maps the initial GID-mapped chunks to higher-indexed feature-specific
+ chunks. If any chunk in the set maps to a feature-specific-chunk the latter is added to the set.</p>
+    <li data-md>
+     <p>The browser subtracts the list of already-included chunks recorded in the IFTB ChunkMap from the
+ chunk set.  If no chunks remain, the process skips to step XXX.</p>
+    <li data-md>
+     <p>At this point there are two options for retrieving chunk contents:</p>
+     <p>Load each needed chunk using individual files:</p>
+     <ol>
+      <li data-md>
+       <p>Calculate the hex string for the chunk index</p>
+      <li data-md>
+       <p>Get the chunkFilesURI string from the IFTB table and substitute "$1", "$2", ... with
+  the corresponding hex digit.</p>
+      <li data-md>
+       <p>Combine the relative URI with the URL of the original font to get the URL for the chunk.</p>
+      <li data-md>
+       <p>Request that file via HTTP.</p>
+     </ol>
+     <p>Load each needed chunk from the range file:</p>
+     <ol>
+      <li data-md>
+       <p>Get the chunkRangeFileURI from the string IFTB table.</p>
+      <li data-md>
+       <p>Combine that URI with the URL of the original font to get the URL for the range file.</p>
+      <li data-md>
+       <p>Get the byte range for each chunk from the chunkOffsetTable in the IFTB table.</p>
+      <li data-md>
+       <p>Form a HTTP range request for those byte ranges using the combined URL.</p>
+     </ol>
+    <li data-md>
+     <p>Decompress each retrieved chunk content.</p>
+    <li data-md>
+     <p>Merge the glyph contents in all of the chunks into the corresponding tables, reallocating the
+ memory for the font if necessary. (All of the relevant tables use an offset array and concatenated
+ glyph data convention.)</p>
+    <li data-md>
+     <p>Update the IFTB table to record the chunks added (the table will not change in length).</p>
+    <li data-md>
+     <p>Update the "sfnt" headers for the correct offsets, sizes, and (if needed by the client) checksums.
+ (Only the trailing CFF, CFF2, glyf, loca and or gvar tables will change in size or location.) Also
+ update the checksumAdjustment in the head table (if needed by the client).</p>
+    <li data-md>
+     <p>If caching, store the file at this point.</p>
+    <li data-md>
+     <p>Update the SFNT version to 0x00010000 (for a glyf table) or "OTTO" (for a CFF or CFF2 table) and
+ also the head table checksumAdjustment again (if needed by the client).</p>
+    <li data-md>
+     <p>Render the text with the updated font.</p>
+   </ol>
+   <h4 class="heading settled" data-level="1.6.2" id="iftb-browser-behaviors-subsequent-requests"><span class="secno">1.6.2. </span><span class="content">Subsequent Requests</span><a class="self-link" href="#iftb-browser-behaviors-subsequent-requests"></a></h4>
+   <p>Subsequent requests proceed like the initial request starting at step 3.</p>
+   <h3 class="heading settled" data-level="1.7" id="iftb-encoding"><span class="secno">1.7. </span><span class="content">IFTB Encoding</span><a class="self-link" href="#iftb-encoding"></a></h3>
+   <p>An input font is encoded in the IFTB format using an encoder as a separate, initial step.  If any other
+subsetting (such as removing or reducing variable axes, or removing glyphs that are not needed) is
+desired the input font should be subset prior to IFTB encoding with an appropriate tool.</p>
+   <p>With IFTB only glyph data is transferred incrementally. The encoded file also
+"retains" GIDS the input font’s GIDs, and therefore most tables can simply be
+copied from the source font.  However, an encoder can also deserialize and
+reserialize tables if it desires.</p>
+   <p>The details of the encoding process may differ by encoder and are beyond the scope of this document.
+However, all mappings of codepoints (though GIDs) to bins and bins to feature-specific bins must meet
+this closure requirement:</p>
+   <ul>
+    <li data-md>
+     <p>The set of glyphs contained in the chunks loaded through the GID and feature maps must be a superset
+of those in the GID closure of the font subset description.</p>
+   </ul>
+   <p>The encoder has three options for addressing with joint dependencies on individual glyphs:</p>
+   <ol>
+    <li data-md>
+     <p>If a glyph is needed in more than one initial "trial" bin, those bins can be combined.</p>
+    <li data-md>
+     <p>Alternatively, the glyph can be included in both bins, or more than two bins.  (The glyph will
+ only be mapped to one chunk in the <code>gidMap</code>, and special care must be taken about which
+ chunk it maps to if it has an associated codepoint. However, the encoder is free to include it in
+ other bins as long as the closure requirement is met.)</p>
+    <li data-md>
+     <p>If a glyph is needed in more than a few trial bins, or is otherwise complicating the binning
+ process, it can be moved to bin 0 where it will always be included in the initially loaded file.</p>
+   </ol>
+   <h3 class="heading settled" data-level="1.8" id="iftb-bin-locality"><span class="secno">1.8. </span><span class="content">Glyph Bin Locality</span><a class="self-link" href="#iftb-bin-locality"></a></h3>
+   <p>An IFTB-encoded font may have as few as fifty or as many as two thousand bins.
+Higher numbers of bins may result in unacceptable overhead and diminishing
+returns. Regardless of the particular number, however, if glyphs are randomly
+distributed among bins most of them might need to be loaded in order to render
+a typical document.</p>
+   <p>Therefore it is vital to efficiency to distribute glyphs among bins so that
+fewer bins are needed in a typical case.  The most basic strategy will be
+assigning glyphs to bins by frequency of use, so that more frequently needed
+glyphs will be concentrated together in bins. However, <em>just</em> ordering
+by frequency is often a mistake, because there are many more documents that
+need, for example, glyphs for writing Korean or glyphs for writing Greek than
+there are documents that need both.</p>
+   <p>Therefore, it is best to start with an idea of how the encoded font will typically be used. One primary
+use-case for font augmentation is for use with CJK-oriented fonts. A given font might "specialize" in
+a given script or language subset (e.g. traditional Chinese vs Hong Kong Chinese) whereas other fonts
+might be general. If a font will be used with one language or dialect it can be encoded with frequency
+data for that specific application.</p>
+   <p>If the font will be used with multiple languages and/or dialects, however, one approach is to obtain
+frequency data for each and then establish a high-frequency-glyph "cut-off" for each.  You can then
+determine the intersecting sets of high frequency glyphs and ensure these wind up in their own chunks.
+For example, if you are encoding for Japanese, Korean, and traditional Chinese, you may choose to
+consider the top 3000, 1800, and 2300 glyphs of each respectively to be high-frequency. You can then
+form a group of high frequency glyphs in all three sets, a group in both Japanese and Korean, a group
+in both Japanese and Chinese, a group in both Korean and Chinese, and then the remaining glyphs for
+each individual language, and encode each group separately (in combined order of frequency, if
+available, and in order by frequency in one language otherwise) in their own set of chunks. That way
+rendering a Chinese document can load high-frequency Chinese glyphs while avoiding Korean glyphs and
+vice-versa</p>
+   <p>The assignment of high frequency glyphs to bins will have the most effect on performance.
+Low-frequency glyphs are least important, but there is still some locality to be exploited. For
+example, there is a set of Unicode codepoints used for rendering boxes. These are rarely used, but need
+one is predictive of needing the others.  As such glyphs tend to be grouped by codepoint value anyway,
+it is often sufficient to order low-frequency glyphs by codepoint when assigning them to bins.</p>
+   <p>In between are the medium-frequency codepoints. When those codepoints are specific to a language or
+script, they can just be grouped and ordered by frequency in that language or script.  (This is true,
+broadly speaking, of many Hangul glyphs for writing Korean.) When multiple languages share
+medium-frequency codepoints things become trickier. One strategy is to pick one language or script and
+order the medium-frequency codepoints according to its frequency, either letting the others suffer in
+performance somewhat or, if desired, granting one or more their own IFTB encodings.</p>
+   <h3 class="heading settled" data-level="1.9" id="iftb-preloading"><span class="secno">1.9. </span><span class="content">Preloadng</span><a class="self-link" href="#iftb-preloading"></a></h3>
+   <p>Requesting, waiting for, and integrating chunks into an IFTB-encoded font all involve some overhead
+compared with loading an initial file that already includes that data. (The size of glyph data in a
+compressed chunk will typically be a bit larger than its size in a WOFF2-encoded initital file, as
+Brotli compression is very good at recognizing and making use of common content, and chunks tend to
+have relatively less content.)  Therefore it is best to include those glyphs that are most frequently
+used in the initial file.</p>
+   <p>If a font has a single purpose, one may choose to include the high frequency codepoints in chunk 0.
+When it has multiple purposes one has the option of encoding for each purpose separately, with the
+high frequency codepoints for a given purpose in chunk 0 of its respective encoding.  However, that
+approach has several disadvantages related to file sizes and caching: The data for the entire font is
+repeated in each encoding. The number of files used is multiplied. And perhaps most importantly,
+requests for chunks are spread over the different versions, increasing the probability of a CDN cache
+miss for a given encoding. (So, for example, the caching chunks for a less common purpose won’t benefit
+from the more frequent requests for chunks, and therefore the higher chance of a cache hit, for a more
+common purpose.)</p>
+   <p>Instead of encoding separate copies, it will often be better to encode the font for mulitple uses, as
+described in the last section, and then to <em>pre-load</em> chunks for a given use into an initial
+copy of the font. Preloading is doing on the server-side something close to what the client would do
+after first loading the font: The chunks are "loaded", their contents are integrated into the relevant
+tables, and the IFTB chunk set is updated. After this, the file is re-encoded in WOFF2 format.  Because
+the URIs for chunks and for the range file are relative, as long as the preloaded copy of the initial
+font is served in the same directory as the original copy, subsequent chunks will be loaded in the same
+way.</p>
+  </main>
+  <div data-fill-with="conformance">
+   <h2 class="no-ref no-num heading settled" id="w3c-conformance"><span class="content">Conformance</span><a class="self-link" href="#w3c-conformance"></a></h2>
+   <h3 class="no-ref no-num heading settled" id="w3c-conventions"><span class="content">Document conventions</span><a class="self-link" href="#w3c-conventions"></a></h3>
+   <p>Conformance requirements are expressed
+    with a combination of descriptive assertions
+    and RFC 2119 terminology.
+    The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL”
+    in the normative parts of this document
+    are to be interpreted as described in RFC 2119.
+    However, for readability,
+    these words do not appear in all uppercase letters in this specification. </p>
+   <p>All of the text of this specification is normative
+    except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a> </p>
+   <p>Examples in this specification are introduced with the words “for example”
+    or are set apart from the normative text
+    with <code>class="example"</code>,
+    like this: </p>
+   <div class="example" id="w3c-example">
+    <a class="self-link" href="#w3c-example"></a> 
+    <p>This is an example of an informative example. </p>
+   </div>
+   <p>Informative notes begin with the word “Note”
+    and are set apart from the normative text
+    with <code>class="note"</code>,
+    like this: </p>
+   <p class="note" role="note">Note, this is an informative note.</p>
+   <section>
+    <h3 class="no-ref no-num heading settled" id="w3c-conformant-algorithms"><span class="content">Conformant Algorithms</span><a class="self-link" href="#w3c-conformant-algorithms"></a></h3>
+    <p>Requirements phrased in the imperative as part of algorithms
+    (such as "strip any leading space characters"
+    or "return false and abort these steps")
+    are to be interpreted with the meaning of the key word
+    ("must", "should", "may", etc)
+    used in introducing the algorithm. </p>
+    <p>Conformance requirements phrased as algorithms or specific steps
+    can be implemented in any manner,
+    so long as the end result is equivalent.
+    In particular, the algorithms defined in this specification
+    are intended to be easy to understand
+    and are not intended to be performant.
+    Implementers are encouraged to optimize. </p>
+   </section>
+  </div>
+<script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
+  <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+  <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
+  <ul class="index">
+   <li><a href="#outline-table">outline table</a><span>, in § 1.2.3</span>
+  </ul>
+  <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
+  <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+  <dl>
+   <dt id="biblio-rfc2119">[RFC2119]
+   <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+   <dt id="biblio-rfc7932">[RFC7932]
+   <dd>J. Alakuijala; Z. Szabadka. <a href="https://www.rfc-editor.org/rfc/rfc7932"><cite>Brotli Compressed Data Format</cite></a>. July 2016. Informational. URL: <a href="https://www.rfc-editor.org/rfc/rfc7932">https://www.rfc-editor.org/rfc/rfc7932</a>
+  </dl>
