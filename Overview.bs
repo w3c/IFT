@@ -101,10 +101,11 @@ example, even using WOFF 2 [[WOFF2]], fonts for CJK languages are too large to b
 
 There are two different methods which can be used to incrementally transfer fonts.
 
-Patch Subset {#patch-subset}
+Patch Subset (IFTP) {#patch-subset}
 ----------------------------
 
-In the the first method, <a href="#patch-subset">Patch Subset</a> a server generates binary patches which a
+The first method, <a href="#patch-subset">Patch Subset</a> is a protocol in which a server generates
+binary patches which a
 client applies to a subset of the font in order to extend the coverage of that subset. The server
 is stateless, it does not maintain any session data for clients between requests. Thus when a client
 requests the generation of a patch from the server it has to fully describe the current subset of the
@@ -115,19 +116,30 @@ format. Typically a server will produce a patch by generating two [=font subset|
 the client currently has and one which matches the extended subset the client desires. A binary patch
 is then produced between the two subsets.
 
-Range Request {#range-request}
+Binned (IFTB) {#binned}
 ------------------------------
 
-The second
-method, <a href="#range-request-incxfer">Range Request</a>, has no server-side requirements other than the server should be able to respond to byte-based range requests. The browser makes range requests to the server for the specific bytes in the font file that it needs. In order to know which bytes are necessary, the browser makes one initial special request for the beginning of the file to obtain all required font tables, and then calculates glyph coverage and required byte ranges using font character-to-glyph mapping and glyph substitution / layout tables.
+The second method, <a href="#binned-incxfer">Binned</a>, is a font format which imposes no server-side
+requirements beyond the ability to transfer files.
+In this format each glyph is assigned by ID to one or more "bins", each of which
+has a corresponding "chunk" file containing the outline data for those glyphs. Glyphs in bin 0 are
+always included in the initially loaded file, which also contains all other OpenType tables for the
+font.
 
-In order for the range request method to be as effective as possible, the font file itself should be internally arranged in a particular way, in order to decrease the number of requests the browser needs to make. Therefore, it is expected that web developers wishing to use the range request method will use font files that have had their contents already arranged optimally.
+The browser starts the transfer process by loading the initial file. It then uses an added IFTB table,
+together with the OpenType cmap table, to determine which additional chunks, if any, are needed to
+render the current content. It then requests those chunks from the server, unpacks them, integrates the
+glyph data into the specified glyf, loca, CFF, CFF2, or gvar tables, and updates the IFTB table to
+record which chunks have been integrated. As the page content is updated the chunk identification and
+loading process repeats.
 
-This method was modeled after video playback on the web, where seeking in a video causes the browser to send a range request to the server.
+When desired, the initial file can be "pre-loaded" with chunks for a particular purpose, such as more
+efficient support of target script.
 
 Technical Motivation: Evaluation Report {#evaluation-report}
 ------------------------------------------------------------
 
+(XXX: The evaluation report does not apply to IFTB and may need updating.)
 See the Progressive Font Enrichment: Evaluation Report [[PFE-report]] for the investigation which led
 to this specification.
 
@@ -168,6 +180,7 @@ however only part of a font is expected to be needed. For example:
 * Only a small amount of text is being rendered. For example a font that is only used for a
     headline.
 
+(XXX: IFTB is closer in spirit to static subsetting, so this note may be superfluous.)
 An alternative to incremental transfer is to break a font into distinct subsets (typically by script)
 and use the unicode range feature of @font-face to load only the subsets needed. However, this can
 break rendering [[PFE-report#fail-subset]] if there are layout rules between characters in
@@ -179,8 +192,10 @@ original font and all it's layout rules.
 As discussed in the previous section the most basic implementation of incremental font transfer will
 tend to increase the total number of requests made vs traditional font loading. Since each request
 will require at least one round trip time, performance can be negatively impacted if too many requests
-are made. Both range request and patch subset allow for more codepoints then needed to be requested.
-Intelligent use of this feature by an implementation can help reduce the total number of requests
+are made. Patch subset allows a client to request more codepoints than strictly needed, and in practice
+the chunks loaded with IFTB will also contain unneeded glyphs. 
+Intelligent use of these aspects of incremental transfer by an implementation can help reduce the
+total number of requests
 being made. The evaluation report explored this by testing the performance of a basic character
 frequency based [[PFE-report#codepredict|codepoint prediction]] scheme and found it improved overall
 performance.
@@ -189,14 +204,25 @@ Performant implementations should incorporate a similar mechanism which can sele
 likely to be needed in the future and preemptively load them. This will improve performance by reducing
 the need to make additional requests for missing codepoints. The set of codepoints the client has and
 the set they are requesting can be used in conjunction with codepoint occurrence frequency and codepoint
-usage in languages/scripts  to make predictions on which additional codepoints are likely to be needed.
+usage in languages/scripts to make predictions on which additional codepoints are likely to be needed.
 
-Under range request the prediction mechanism will need to be part of the client implementation. In
-patch subset either the client and/or server implementation can include a prediction mechanism. A side
-benefit to a client side prediction mechanism is providing some obfuscation of the specific codepoints
-required by the client. This is further discussed in [[#content-inference-from-character-set]].
+With IFTB the prediction mechanism is a necessary part of the font format conversion, assigning glyphs
+to bins according to language/script and frequency. In patch subset either the client and/or server
+implementation can include a prediction mechanism. A side benefit to a client side prediction mechanism
+is providing some obfuscation of the specific codepoints required by the client. This is further
+discussed in [[#content-inference-from-character-set]].
 
-### Deciding between Patch Subset and Range Request ### {#patchsubset-vs-rangerequest}
+### Deciding between Patch Subset and IFTB ### {#patchsubset-vs-iftb}
+
+(XXX This whole section needs updating. Patch-subset is likely to return fewer codepoints, although
+with prediction and privacy that becomes less true. IFTB requires no server-side compression and
+static arrangement
+of bins makes it more compatible with caching, including regional caching. ("More compatible" in the
+sense that chunk files will see a higher cache hit rate compared with subset and patch files.) All IFTB
+data is compressed at Brotli level 11 upfront.  IFTB transfers all other tables
+up-front while patch-subset will transfer parts of some of those tables.  Also:
+IFTB does not support variable axis subsetting (unless it is statically chosen)
+while Patch Subset may support that.)
 
 From a purely performance perspective patch subset is more performant than range request. There are
 three main factors for this:
@@ -228,6 +254,10 @@ Opt-In Mechanism {#opt-in}
 ==========================
 
 <em>This section is general to both IFT methods.</em>
+
+(XXX Because IFTP is a protocol and IFTB is a format, I suspect most of this section and the related
+technology questions are superfluous.)
+
 
 Web page's can choose to opt-in to either patch subset or range request incremental transfer for a font
 via the use of a CSS font tech keyword ([[css-fonts-4#font-tech-definitions]]) inside the
@@ -272,6 +302,8 @@ subset transfer to one of the URLs depending on which version of COLR is support
 
 IFT Method Selection {#method-selection}
 ========================================
+
+(XXX This section is also superfluous.)
 
 <em>This section is general to both IFT methods.</em>
 
@@ -396,36 +428,49 @@ Offline Usage {#offline-usage}
 
 Special consideration must be taken when saving a page for offline usage that uses an incrementally
 transferred font since the saved page won't be able to increment the font if content changes (eg.
-due to JavaScript execution). In these cases the page saving mechanism should download the full font
-by making a normal GET request without the [=patch request header=] to the font url. Additionally
-when URLs are rewritten to point to the saved full font any of the incremental tech specifiers should
-be removed.
+due to JavaScript execution). In these cases, when using patch-subset the page saving mechanism
+should download the full font by making a normal GET request without the [=patch request header=]
+to the font url. When using IFTB the page saving mechanism should download and integrate all
+remaining chunks.  Additionally, when URLs are rewritten to point to the saved full font any
+of the incremental tech specifiers should be removed.
+
+
+Preliminary Definitions {#prelim-definitions}
+=============================================
+
+Font Subset Description {#font-subset-des-def}
+----------------------------------------------
+
+A <dfn>font subset description</dfn> specifies the minimum data that a [=font subset=] must possess:
+
+*  a set of codepoints,
+*  a set of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">opentype
+    layout features</a>,
+*  and (in the case of a variable font) a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a>.
+
+Glyph Closure {#glyph-closure-def}
+----------------------------------
+
+The <dfn>glyph closure</dfn> of a font subset description is the full set of glyphs in the
+font that may be needed to render any combination of the described codepoints and layout features.
+
+Font Subset {#font-subset-def}
+------------------------------
+
+A <dfn>font subset</dfn> is a version of a font file modified relative to a font subset description
+such that when the font subset is used to render any document or other text string consisting only of
+codepoints, layout features and points in design space included in that description it must render
+identically to the original font.  This includes rendering with the use of any optional typographic
+features that a renderer may choose to use from the original font, such as hinting instructions.
+
+By definition a font subset must contain the glyph closure of the font subset description, although
+it can also contain other glyphs.  The IDs of the glyphs may be remapped, with other layout-related
+tables in the font accordingly reduced to only support those glyphs. Alternatively, the IDs of the
+glyphs may be retained and complete copies of those tables included in the font subset.
+
 
 Patch Based Incremental Transfer {#patch-incxfer}
 =================================================
-
-Font Subset {#font-subset-info}
---------------------------
-
-A <dfn dfn>font subset</dfn> is a modified version of a font file that contains only the data needed to
-render a subset of:
-
-*  the codepoints,
-*  <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">OpenType layout
-    features</a>,
-*  and <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a>.
-
-supported by the original font.
-<span class="conform client server" id="conform-font-subset">
-When a subsetted font is used to render text using any combination of the subset codepoints,
-<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags">layout features</a>,
-or <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a> it must render identically to the original font. This includes rendering with
-the use of any optional typographic features that a renderer may choose to use from the original font,
-such as hinting instructions.
-</span>
-
-A <dfn dfn>font subset definition</dfn> describes the minimum data (codepoints, layout features,
-variation axis space) that a [=font subset=] must possess.
 
 Data Types {#data-types}
 ------------------------
@@ -1087,7 +1132,7 @@ The inputs to this algorithm are:
 * <var>font subset</var> (optional): previously loaded [=font subset=] for the given
     font URL, or null.
 
-* <var>desired subset definition</var>: a [=font subset definition|description=] of the desired
+* <var>desired subset description</var>: a [=font subset description|description=] of the desired
     minimum [=font subset=].
 
 * <var>codepoint coverage hint</var> (optional): A set of code points that are expected to be present in the
@@ -1100,7 +1145,7 @@ The inputs to this algorithm are:
 The algorithm outputs:
 
 * Extended Font Subset: [=font subset=] that has been updated to cover at least the requested subset
-    definition.
+    description.
 
 * Cache fields: HTTP cache fields [[rfc9111#section-5]] describing how client state
     can be cached, or null.
@@ -1118,18 +1163,18 @@ The algorithm:
          loaded font and cannot be extended any further. Return <var>font subset</var>.
 
 2. If <var>client state</var> was loaded in the previous step, remove all codepoints in
-     <var>desired subset definition</var> which are not listed in [=ClientState/codepoint_ordering=].
+     <var>desired subset description</var> which are not listed in [=ClientState/codepoint_ordering=].
      Otherwise if <var>codepoint coverage hint</var> is non-null, remove all codepoint in <var>desired subset
-     definition</var> which are not found in <var>codepoint coverage hint</var>.
+     description</var> which are not found in <var>codepoint coverage hint</var>.
 
-3. Compare the <var>desired subset definition</var> to the <var>font subset</var>. If the
-     <var>font subset</var> is a superset of <var>desired subset definition</var> then return
+3. Compare the <var>desired subset description</var> to the <var>font subset</var>. If the
+     <var>font subset</var> is a superset of <var>desired subset description</var> then return
      <var>font subset</var>, and null for the cache fields.
 
 4. Invoke [$Add codepoint groups$]. The requested codepoints input is the codepoint set from
-     <var>desired subset definition</var> minus the codepoints already in the <var>font subset</var>. Additionally
+     <var>desired subset description</var> minus the codepoints already in the <var>font subset</var>. Additionally
      pass in <var>codepoint coverage hint</var>, and <var>client state</var>.
-     Add the returned codepoints to <var>desired subset definition</var>.
+     Add the returned codepoints to <var>desired subset description</var>.
      <span class="conform client" id="conform-codepoint-obfuscation">All client implementations must perform
      this step.</span>
 
@@ -1175,7 +1220,7 @@ The algorithm:
 
      *  [=PatchRequest/codepoints_needed=]: set to the set of codepoints that the client wants to
          add to its [=font subset=]. That is the codepoint set from <var>desired subset
-         definition</var> minus the codepoints already in the <var>font subset</var>. If
+         description</var> minus the codepoints already in the <var>font subset</var>. If
          <var>client state</var> is available and has a [=ClientState/codepoint_ordering=] then
          this field should not be set.
 
@@ -1188,7 +1233,7 @@ The algorithm:
 
      *  [=PatchRequest/indices_needed=]: encodes the set of codepoints that the client wants to add to
          its [=font subset=]. That is the codepoint set from <var>desired subset
-         definition</var> minus the codepoints already in <var>font subset</var>.
+         description</var> minus the codepoints already in <var>font subset</var>.
          The codepoint values are transformed to indices by applying the [[#codepoint-reordering]]
          specified by [=ClientState/codepoint_ordering=] to each codepoint value. If
          the <var>client state</var> is not available or it does not have a
@@ -1203,7 +1248,7 @@ The algorithm:
 
      *  [=PatchRequest/features_needed=]: set to the list of feature tags that the client wants to add
          to the current <var>font subset</var>. That is the feature set from <var>desired subset
-         definition</var> minus the set of features already in <var>font subset</var>.
+         description</var> minus the set of features already in <var>font subset</var>.
          If the client wishes to add all remaining layout features from the [=original font=] to it's
          subset then this field should be unset.
 
@@ -1213,7 +1258,7 @@ The algorithm:
 
      *  [=PatchRequest/axis_space_needed=]: set to the intervals of each variable axis in the
          [=original font=] that the client wants to add to its <var>font subset</var> as defined in the
-         <var>desired subset definition</var>. If the client wants an
+         <var>desired subset description</var>. If the client wants an
          entire axis from the [=original font=] then that axis should not be listed.
 
      *  [=PatchRequest/ordering_checksum=]: If either of [=PatchRequest/indices_have=] or
@@ -1262,7 +1307,7 @@ Inputs:
 The algorithm outputs:
 
 * Extended Font Subset: [=font subset=] that has been updated to cover at least the requested subset
-    definition.
+    description.
 
 * Cache fields: HTTP cache fields [[rfc9111#section-5]] describing how client state
     can be cached, or null.
@@ -1380,7 +1425,7 @@ The inputs to this algorithm:
 * <var>fragment identifier</var> (optional): if the font at the font url is a font collection,
     the fragment identifier ([[rfc8081#section-4.2]]) identifies a single font within the collection.
 
-* <var>desired subset definition</var>: a [=font subset definition|description=] of the desired
+* <var>desired subset description</var>: a [=font subset description|description=] of the desired
     minimum [=font subset=].
 
 * <var>fetch algorithm</var>: algorithm for fetching HTTP resources, such as [[fetch]]. The remainder
@@ -1389,7 +1434,7 @@ The inputs to this algorithm:
 
 The algorithm outputs:
 
-*  A [=font subset=] which covers at minimum the input subset definition.
+*  A [=font subset=] which covers at minimum the input subset description.
 
 The algorithm:
 
@@ -1416,7 +1461,7 @@ The algorithm:
 
      *  Font subset set to the response.
 
-     *  Desired subset definition set to the input <var>desired subset definition</var>.
+     *  Desired subset description set to the input <var>desired subset description</var>.
 
      *  Fetch algorithm set to the input <var>fetch algorithm</var>.
 
@@ -1430,7 +1475,7 @@ The algorithm:
 
      *  Font subset set to null.
 
-     *  Desired subset definition set to the input <var>desired subset definition</var>.
+     *  Desired subset description set to the input <var>desired subset description</var>.
 
      *  Fetch algorithm set to the input <var>fetch algorithm</var>.
 
