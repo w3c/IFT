@@ -1274,7 +1274,7 @@ The algorithm:
      *  If it is a redirect [=status=]: follow normal redirect handling, such as
          [[fetch#http-redirect-fetch]] and then go back to step 1.
 
-     *  If [=response/status=] is 412, then the server does not recognize the codepoint ordering
+     *  If [=response/status=] is [[RFC9110#section-15.5.10|409]], then the server does not recognize the codepoint ordering
          used by the client. The client should resend the request that triggered this response but also
          set the [=PatchRequest/codepoint_ordering=] field on the request to the
          [=ClientState/codepoint_ordering=] in the client state table within <var>font subset</var>.
@@ -1494,8 +1494,8 @@ Lastly, the server can produce two variable axis spaces:
 
 <span class="conform server" id="conform-bad-reordering">
 If the server does not recognize the codepoint ordering used by the client, it must respond
-with [=response/status=] code 412. This will instruct the client to resend the request including
-the codepoint ordering it has.
+with [=response/status=] code  [[RFC9110#section-15.5.10|409]]. This will instruct the client to resend
+the request including the codepoint ordering it has.
 </span>
 
 <span class="conform server" id="conform-response-valid-patch">
@@ -1569,11 +1569,11 @@ Possible error responses:
 
 
 *  <span class="conform server" id="conform-reject-malformed-request">
-     If the request is malformed the server must instead respond with http [=response/status=] code 400
-     to indicate an error.</span>
+     If the request is malformed the server must instead respond with http [=response/status=] code
+      [[RFC9110#section-15.5.1|400]] to indicate an error.</span>
 
 *  If the requested font is not recognized by the server it should respond with http
-    [=response/status=] code 404 to indicate a not found error.
+    [=response/status=] code  [[RFC9110#section-15.5.5|404]] to indicate a not found error.
 
 ### Range Request Support ### {#range-request-support}
 
