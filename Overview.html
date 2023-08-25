@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="b5de1757e7a283300525b89d6a7323d92bb6ab28" name="document-revision">
+  <meta content="b8d67fd471ba525bcbb41c242c1fe348b1c7a484" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1764,12 +1764,16 @@ can be cached, or null.</p>
      <p>Load the <var>client state</var> from the <var>extended font subset</var>. Client state is stored in the <var>extended font subset</var> as a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by the 4-byte tag 'IFTP'. The contents of the table are a single <a data-link-type="dfn" href="#clientstate" id="ref-for-clientstate①">ClientState</a> object
 encoded via CBOR.</p>
     <li data-md>
+     <p>If a <var>client state</var> table is not present then this is the full font and no further augmentation
+  is possible. Goto step 6.</p>
+    <li data-md>
      <p>Verify that the union of the codepoints present in the <var>extended font subset</var> and all codepoints
 listed in the <var>client state</var> field <a data-link-type="dfn" href="#clientstate-missing_codepoints" id="ref-for-clientstate-missing_codepoints②">missing_codepoints</a> is equal to the set of
 codepoints asked for (union of codepoints/indices needed and codepoints/indices have) in the request
 which generated this response. If they are not equal, this is an invalid response. Invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-failed-font-load" id="ref-for-abstract-opdef-handle-failed-font-load①">Handle failed font load</a> and return the result.</p>
     <li data-md>
-     <p>Return the <var>extended font subset</var> and any cache headers that were set on the <var>server response</var>.</p>
+     <p>Return the <var>extended font subset</var>, any cache headers, and the <code>use-as-dictionary</code> header
+ that were set on the <var>server response</var>.</p>
    </ol>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-handle-failed-font-load">Handle failed font load</dfn></p>
    <p>If the font load or extension has failed the client should choose one of the following options:</p>

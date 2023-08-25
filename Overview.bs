@@ -1270,7 +1270,7 @@ The algorithm outputs:
 
 The algorithm:
 
-1.  If the <var>server response</var> has [=response/status=] other than 200:
+1. If the <var>server response</var> has [=response/status=] other than 200:
 
      *  If it is a redirect [=status=]: follow normal redirect handling, such as
          [[fetch#http-redirect-fetch]] and then go back to step 1.
@@ -1283,25 +1283,29 @@ The algorithm:
      *  All other statuses, the [=font subset=] extension has failed. Invoke
          [$Handle failed font load$] and return the result.
 
-2.  Decode the <var>server response</var> [=response/body=] by applying the appropriate decoding as
+2. Decode the <var>server response</var> [=response/body=] by applying the appropriate decoding as
      specified by the [[rfc9110#section-8.4|Content-Encoding]] header. If the
      [[rfc9110#section-8.4|Content-Encoding]] is one of those from [[#patch-encodings]] then
      the input <var>font subset</var> will be used as the source file for the decoding operation. The
      decoded response is the new <var>extended font subset</var>.
 
-3.  Load the <var>client state</var> from the <var>extended font subset</var>. Client state is stored in the
+3. Load the <var>client state</var> from the <var>extended font subset</var>. Client state is stored in the
     <var>extended font subset</var> as a
     <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>
     identified by the 4-byte tag 'IFTP'. The contents of the table are a single [=ClientState=] object
     encoded via CBOR.
 
-4. Verify that the union of the codepoints present in the <var>extended font subset</var> and all codepoints
+4. If a <var>client state</var> table is not present then this is the full font and no further augmentation
+      is possible. Goto step 6.
+
+5. Verify that the union of the codepoints present in the <var>extended font subset</var> and all codepoints
     listed in the <var>client state</var> field [=ClientState/missing_codepoints=] is equal to the set of
     codepoints asked for (union of codepoints/indices needed and codepoints/indices have) in the request
     which generated this response. If they are not equal, this is an invalid response. Invoke
     [$Handle failed font load$] and return the result.
 
-5. Return the <var>extended font subset</var> and any cache headers that were set on the <var>server response</var>.
+6. Return the <var>extended font subset</var>, any cache headers, and the <code>use-as-dictionary</code> header
+     that were set on the <var>server response</var>.
 
 <dfn abstract-op>Handle failed font load</dfn>
 
