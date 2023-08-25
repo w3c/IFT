@@ -1016,14 +1016,10 @@ For an [=AxisInterval=] object to be well formed:
     <td>[=Integer=]</td></tr>
   <tr>
     <td>10</td>
-    <td><dfn for="PatchRequest">base_checksum</dfn></td>
-    <td>[=Integer=]</td></tr>
-  <tr>
-    <td>11</td>
     <td><dfn for="PatchRequest">fragment_id</dfn>
     </td><td>[=String=]</td></tr>
   <tr>
-    <td>12</td>
+    <td>11</td>
     <td><dfn for="PatchRequest">codepoint_ordering</dfn></td><td>[=IntegerList=]</td></tr>
 </table>
 
@@ -1034,7 +1030,7 @@ For a [=PatchRequest=] object to be well formed:
     set then [=PatchRequest/ordering_checksum=] must be set.</span>
 *  <span class="conform client server" id="conform-request-base-checksum">
     If [=PatchRequest/codepoints_have=] or [=PatchRequest/indices_have=] is set to a non-empty set then
-    [=PatchRequest/original_font_checksum=] and [=PatchRequest/base_checksum=] must be set.</span>
+    [=PatchRequest/original_font_checksum=] must be set.</span>
 
 ### <dfn>ClientState</dfn> ### {#ClientState}
 
@@ -1145,10 +1141,13 @@ The algorithm:
 
      * The request URL [=url/scheme=] must be "https".
 
-     * The request URL [=url/path=] is set to the input <var>font URL</var>.
+     * The request URL [=url/path=] is set to the input <var>font URL</var> path.
 
      * The request must include an [[rfc9110#section-12.5.3|Accept-Encoding]] header which lists
          at minimum one of the encodings from [[#patch-encodings]].
+
+     * The request must include a <code>sec-available-dictionary</code> [=header=] whose value is the
+         [[FIPS-180-4|SHA-256]] hash of the input <var>font subset</var>.
 
      * If [=request/method=] is "POST" then, request [=request/body=] must be a single
          [=PatchRequest=] object encoded via CBOR.
@@ -1156,8 +1155,13 @@ The algorithm:
      * Otherwise if [=request/method=] is "GET" then, a [=header=] with name
          <code>Font-Patch-Request</code> (the <dfn export>patch request header</dfn>)
          and whose value is a single
-          [=PatchRequest=] object encoded via CBOR and then
-          base64url encoding [[rfc4648]] must be added to the request's header list.
+         [=PatchRequest=] object encoded via CBOR and then
+         base64url encoding [[rfc4648]] must be added to the request's header list.
+
+     * The request must include a [[rfc9110#section-12.5.5|Vary]] [=header=] which includes
+         at minimum <code>sec-available-dictionary</code>. Additionally, if a <code>Font-Patch-Request</code>
+         header is present then the [[rfc9110#section-12.5.5|Vary]] header must also
+         include <code>Font-Patch-Request</code>.
 
      Any request and/or url parameters which are not specified here should be set based on
      the user agent's normal handling for font requests. For example if this font load is
@@ -1224,9 +1228,6 @@ The algorithm:
      *  [=PatchRequest/original_font_checksum=]:
          Set to saved value for [=ClientState/original_font_checksum=] in the <var>client state</var>
          for this font. If there is no <var>client state</var> leave this field unset.
-
-     *  [=PatchRequest/base_checksum=]:
-         Set to the checksum of the <var>font subset</var>. See: [[#computing-checksums]].
 
      *  [=PatchRequest/fragment_id=]:
          If a <var>fragment identifier</var> was provided as an input then this field must be set to
