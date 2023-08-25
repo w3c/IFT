@@ -1158,11 +1158,6 @@ The algorithm:
          [=PatchRequest=] object encoded via CBOR and then
          base64url encoding [[rfc4648]] must be added to the request's header list.
 
-     * The request must include a [[rfc9110#section-12.5.5|Vary]] [=header=] which includes
-         at minimum <code>sec-available-dictionary</code>. Additionally, if a <code>Font-Patch-Request</code>
-         header is present then the [[rfc9110#section-12.5.5|Vary]] header must also
-         include <code>Font-Patch-Request</code>.
-
      Any request and/or url parameters which are not specified here should be set based on
      the user agent's normal handling for font requests. For example if this font load is
      from a CSS font face, then [[css-fonts-4#font-fetching-requirements]] should be followed.
@@ -1505,7 +1500,8 @@ the request including the codepoint ordering it has.
 
 <span class="conform server" id="conform-response-valid-patch">
 Otherwise when the response is decoded by the client following the process in
-[[#handling-patch-response]] to a [=font subset=] with checksum [=PatchRequest/base_checksum=] it must
+[[#handling-patch-response]] with an input [=font subset=] whose [[FIPS-180-4|SHA-256]]
+matches the value of the <code>sec-available-dictionary</code> header if it is present, it must
 result in an extended [=font subset=]:
 </span>
 
@@ -1560,6 +1556,19 @@ Additionally:
         the server should utilize one of the patch based encodings from [[#patch-encodings]]. Non-patch
         based encodings should only be used where the server is unable to recreate the client's state
         in order to generate a patch against it.
+
+   *  <span class="conform server" id="conform-response-vary">
+        The response must include a [[rfc9110#section-12.5.5|Vary]] [=header=] which includes
+        at minimum <code>Accept-Encoding</code> and <code>use-sec-available-dictionary</code>.
+        Additionally, if a <code>Font-Patch-Request</code> header is present on the request then the
+        [[rfc9110#section-12.5.5|Vary]] header must also include <code>Font-Patch-Request</code>.
+        </span>
+
+   *  The response should set a <code>use-as-dictionary</code> [=header=] whose value is:
+   
+        <code>match=&lt;path&gt;</code>
+
+        Where <code>&lt;path&gt;</code> is set to the [=url/path=] of the request.
 
 Note: if a patch subset service is composed of more than one server task and some subset of those
 tasks are using a subsetter version which produces different binary results than the rest, there is
