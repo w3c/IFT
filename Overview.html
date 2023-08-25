@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="b180b8601e32ec2178127273da828c2b08970f96" name="document-revision">
+  <meta content="7351f86cf216831dcb34ac0a1d88c1cbf88466c1" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1750,7 +1750,7 @@ can be cached, or null.</p>
       <li data-md>
        <p>If it is a redirect <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-status" id="ref-for-concept-status">status</a>: follow normal redirect handling, such as <a href="https://fetch.spec.whatwg.org/#http-redirect-fetch"><cite>Fetch</cite> § 4.4 HTTP-redirect fetch</a> and then go back to step 1.</p>
       <li data-md>
-       <p>If <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status②">status</a> is 412, then the server does not recognize the codepoint ordering
+       <p>If <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status②">status</a> is <a href="https://www.rfc-editor.org/rfc/rfc9110#section-15.5.10">409</a>, then the server does not recognize the codepoint ordering
  used by the client. The client should resend the request that triggered this response but also
  set the <a data-link-type="dfn" href="#patchrequest-codepoint_ordering" id="ref-for-patchrequest-codepoint_ordering">codepoint_ordering</a> field on the request to the <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑧">codepoint_ordering</a> in the client state table within <var>font subset</var>.</p>
       <li data-md>
@@ -1945,8 +1945,8 @@ provide the exact codepoint ordering that was used to encode <a data-link-type="
  interval from the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font⑧">original font</a>.</p>
    </ol>
    <p><span class="conform server" id="conform-bad-reordering"> If the server does not recognize the codepoint ordering used by the client, it must respond
-with <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status④">status</a> code 412. This will instruct the client to resend the request including
-the codepoint ordering it has. </span></p>
+with <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status④">status</a> code <a href="https://www.rfc-editor.org/rfc/rfc9110#section-15.5.10">409</a>. This will instruct the client to resend
+the request including the codepoint ordering it has. </span></p>
    <p><span class="conform server" id="conform-response-valid-patch"> Otherwise when the response is decoded by the client following the process in <a href="#handling-patch-response">§ 4.4.2 Handling Server Response</a> to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a> with checksum <a data-link-type="dfn" href="#patchrequest-base_checksum" id="ref-for-patchrequest-base_checksum②">base_checksum</a> it must
 result in an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑦">font subset</a>: </span></p>
    <ul>
@@ -2002,10 +2002,9 @@ same client to the same server task.</p>
    <p>Possible error responses:</p>
    <ul>
     <li data-md>
-     <p><span class="conform server" id="conform-reject-malformed-request"> If the request is malformed the server must instead respond with http <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status⑤">status</a> code 400
- to indicate an error.</span></p>
+     <p><span class="conform server" id="conform-reject-malformed-request"> If the request is malformed the server must instead respond with http <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status⑤">status</a> code <a href="https://www.rfc-editor.org/rfc/rfc9110#section-15.5.1">400</a> to indicate an error.</span></p>
     <li data-md>
-     <p>If the requested font is not recognized by the server it should respond with http <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status⑥">status</a> code 404 to indicate a not found error.</p>
+     <p>If the requested font is not recognized by the server it should respond with http <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-status" id="ref-for-concept-response-status⑥">status</a> code <a href="https://www.rfc-editor.org/rfc/rfc9110#section-15.5.5">404</a> to indicate a not found error.</p>
    </ul>
    <h4 class="heading settled" data-level="4.5.1" id="range-request-support"><span class="secno">4.5.1. </span><span class="content">Range Request Support</span><a class="self-link" href="#range-request-support"></a></h4>
    <p>A patch subset support server must also support incremental transfer via <a href="#range-request-incxfer">§ 5 Range Request Incremental Transfer</a>.
