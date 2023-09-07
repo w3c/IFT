@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="6955076d76752714eebb2297404f0857c9f10235" name="document-revision">
+  <meta content="035d0d8cc55bf4c9ac771afb7605c1e1ad1a7243" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1390,7 +1390,7 @@ bytes = [03 07 03 81 7F]
 </pre>
    </div>
    <h4 class="heading settled" data-level="4.2.7" id="featuretagset-object"><span class="secno">4.2.7. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="featuretagset">FeatureTagSet</dfn></span><a class="self-link" href="#featuretagset-object"></a></h4>
-   <p>A FeatureTagSet encodes a set of zero or more <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">OpenType layout feature tags</a>. To encode
+   <p>A FeatureTagSet encodes a set of zero or more <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout feature tags</a>. To encode
 a set of feature tags:</p>
    <ol>
     <li data-md>
@@ -1419,7 +1419,7 @@ the sorted list as a <a data-link-type="dfn" href="#sortedintegerlist" id="ref-f
    <p>When decoding a FeatureTagSet the integer values are mapped back to the original tags by reversing
 the above encoding rules.</p>
    <h4 class="heading settled" data-level="4.2.8" id="AxisSpace"><span class="secno">4.2.8. </span><span class="content"><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="axisspace">AxisSpace</dfn></span><a class="self-link" href="#AxisSpace"></a></h4>
-   <p>Stores a set of intervals on one or more open type variation axes <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#">OpenType Specification § otvaroverview#</a>.
+   <p>Stores a set of intervals on one or more variation axes <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#">OpenType Specification § otvaroverview#</a>.
 Encoded as a CBOR map (major type 5). The key in each pair is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/fvar#variationaxisrecord">axis tag</a>. It is
 encoded as a <a data-link-type="dfn" href="#bytestring" id="ref-for-bytestring⑤">ByteString</a> containing exactly 4 ASCII characters. The value in each
 pair is an <a data-link-type="dfn" href="#arrayof" id="ref-for-arrayof">ArrayOf</a>&lt;<a data-link-type="dfn" href="#axisinterval" id="ref-for-axisinterval">AxisInterval</a>>. <span class="conform client server" id="conform-axis-space-disjoint">The list of intervals for a
@@ -1689,7 +1689,7 @@ base64url encoding <a data-link-type="biblio" href="#biblio-rfc4648" title="The 
  The codepoint values are transformed to indices by applying the <a href="#codepoint-reordering">§ 4.7 Codepoint Reordering</a> specified by <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑤">codepoint_ordering</a> to each codepoint value. If
  the <var>client state</var> is not available or it does not have a <a data-link-type="dfn" href="#clientstate-codepoint_ordering" id="ref-for-clientstate-codepoint_ordering⑥">codepoint_ordering</a> then this field should not be set.</p>
       <li data-md>
-       <p><a data-link-type="dfn" href="#patchrequest-features_have" id="ref-for-patchrequest-features_have">features_have</a>: set to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">OpenType layout feature tags</a> that the current <var>font subset</var> has data
+       <p><a data-link-type="dfn" href="#patchrequest-features_have" id="ref-for-patchrequest-features_have">features_have</a>: set to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout feature tags</a> that the current <var>font subset</var> has data
  for. If the current <var>font subset</var> is not set then this
  field is left unset. Additionally, if the current <var>font subset</var> has all
  data for features present in the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font">original font</a> then this field can be unset.</p>
@@ -1930,7 +1930,7 @@ that collection that a patch is desired for. The identified font is referred to 
    </ol>
    <p class="note" role="note"><span class="marker">Note:</span> the request may optionally set <a data-link-type="dfn" href="#patchrequest-codepoint_ordering" id="ref-for-patchrequest-codepoint_ordering①">codepoint_ordering</a> which is used by the client to
 provide the exact codepoint ordering that was used to encode <a data-link-type="dfn" href="#patchrequest-indices_have" id="ref-for-patchrequest-indices_have⑥">indices_have</a> and <a data-link-type="dfn" href="#patchrequest-indices_needed" id="ref-for-patchrequest-indices_needed⑤">indices_needed</a>.</p>
-   <p>Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">OpenType layout feature tags</a>:</p>
+   <p>Likewise, the server can produce two sets of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout feature tags</a>:</p>
    <ol>
     <li data-md>
      <p>Feature tags the client’s subset has: specified by <a data-link-type="dfn" href="#patchrequest-features_have" id="ref-for-patchrequest-features_have①">features_have</a>. If the field is
@@ -1979,7 +1979,7 @@ client needs.</span></p>
        <p><span class="conform server" id="conform-response-client-state-original-axis-space"> If the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①①">original font</a> has variation axes, the <a data-link-type="dfn" href="#clientstate-original_axis_space" id="ref-for-clientstate-original_axis_space">original_axis_space</a> field must be set to the axis space covered by
  the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①②">original font</a>.</span></p>
       <li data-md>
-       <p><span class="conform server" id="conform-response-client-state-original-features"> The <a data-link-type="dfn" href="#clientstate-original_features" id="ref-for-clientstate-original_features">original_features</a> field must be set to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">OpenType layout feature tags</a> that the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①③">original font</a> has data for.</span></p>
+       <p><span class="conform server" id="conform-response-client-state-original-features"> The <a data-link-type="dfn" href="#clientstate-original_features" id="ref-for-clientstate-original_features">original_features</a> field must be set to the list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout feature tags</a> that the <a data-link-type="dfn" href="#original-font" id="ref-for-original-font①③">original font</a> has data for.</span></p>
       <li data-md>
        <p><span class="conform server" id="conform-response-client-state-missing-codepoints"> The <a data-link-type="dfn" href="#clientstate-missing_codepoints" id="ref-for-clientstate-missing_codepoints③">missing_codepoints</a> field must be set to the list of codepoints
 in that are in the set of codepoints needed or the set of codepoints the client has,
@@ -2222,7 +2222,7 @@ them from being used for tracking.</p>
 was assembled from several sources:</p>
    <ul>
     <li data-md>
-     <p>Includes all features listed in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featurelist#">OpenType layout feature registry</a>.</p>
+     <p>Includes all features listed in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featurelist#">layout feature registry</a>.</p>
     <li data-md>
      <p>The value of "Encode If" is set to "not needed" for all features which are listed as "default on" in <a data-link-type="biblio" href="#biblio-enabling-typography" title="Enabling Typography: towards a general model of OpenType Layout">[enabling-typography]</a> or are in the
 default set in the <a href="https://github.com/harfbuzz/harfbuzz/blob/main/src/hb-subset-input.cc">harfbuzz

@@ -872,7 +872,7 @@ bytes = [03 07 03 81 7F]
 ### <dfn>FeatureTagSet</dfn> ### {#featuretagset-object}
 
 A FeatureTagSet encodes a set of zero or more
-[[open-type/featuretags|OpenType layout feature tags]]. To encode
+[[open-type/featuretags|layout feature tags]]. To encode
 a set of feature tags:
 
 1. Union the set of feature tags to be encoded and the list of feature tags in [[#feature-tag-list]]. For each tag in the
@@ -900,7 +900,7 @@ the above encoding rules.
 
 ### <dfn>AxisSpace</dfn> ### {#AxisSpace}
 
-Stores a set of intervals on one or more open type variation axes [[open-type/otvaroverview]]</a>.
+Stores a set of intervals on one or more variation axes [[open-type/otvaroverview]]</a>.
 Encoded as a CBOR map (major type 5). The key in each pair is an [[open-type/fvar#variationaxisrecord|axis tag]]. It is
 encoded as a [=ByteString=] containing exactly 4 ASCII characters. The value in each
 pair is an [=ArrayOf=]&lt;[=AxisInterval=]&gt;.
@@ -1204,7 +1204,7 @@ The algorithm:
          [=ClientState/codepoint_ordering=] then this field should not be set.
 
      *  [=PatchRequest/features_have=]: set to the list of
-         [[open-type/featuretags|OpenType layout feature tags]] that the current <var>font subset</var> has data
+         [[open-type/featuretags|layout feature tags]] that the current <var>font subset</var> has data
          for. If the current <var>font subset</var> is not set then this
          field is left unset. Additionally, if the current <var>font subset</var> has all
          data for features present in the [=original font=] then this field can be unset.
@@ -1482,7 +1482,7 @@ Note: the request may optionally set [=PatchRequest/codepoint_ordering=] which i
 provide the exact codepoint ordering that was used to encode [=PatchRequest/indices_have=] and
 [=PatchRequest/indices_needed=].
 
-Likewise, the server can produce two sets of [[open-type/featuretags|OpenType layout feature tags]]:
+Likewise, the server can produce two sets of [[open-type/featuretags|layout feature tags]]:
 
 1.  Feature tags the client's subset has: specified by [=PatchRequest/features_have=]. If the field is
      unset this indicates the client's subset contains all features in the [=original font=].
@@ -1548,7 +1548,7 @@ result in an extended [=font subset=]:
 
     *  <span class="conform server" id="conform-response-client-state-original-features">
         The [=ClientState/original_features=] field must be set to the list of
-        [[open-type/featuretags|OpenType layout feature tags]] that the [=original font=] has data for.</span>
+        [[open-type/featuretags|layout feature tags]] that the [=original font=] has data for.</span>
 
     *  <span class="conform server" id="conform-response-client-state-missing-codepoints">
         The [=ClientState/missing_codepoints=] field must be set to the list of codepoints
@@ -1858,7 +1858,7 @@ Appendix A: Default Feature Tags and Encoding IDs</h2>
 was assembled from several sources:
 
 * Includes all features listed in the
-    [[open-type/featurelist|OpenType layout feature registry]].
+    [[open-type/featurelist|layout feature registry]].
 
 * The value of "Encode If" is set to "not needed" for all features which are listed as "default on" in
     [[enabling-typography]] or are in the
