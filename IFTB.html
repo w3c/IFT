@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 6edc88947, updated Thu Aug 17 11:18:09 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFTB/" rel="canonical">
-  <meta content="a256a0976aacb4b2642b2fa59e14081fb50fe691" name="document-revision">
+  <meta content="767c8ac159975742abdc328cd09515a129c16f30" name="document-revision">
 <style>
     .conform:hover {background: #31668f; color: white}
     .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -332,6 +332,59 @@ figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
 }
 </style>
+<style>/* Boilerplate: style-dfn-panel */
+:root {
+    --dfnpanel-bg: #ddd;
+    --dfnpanel-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+    }
+}
+.dfn-panel {
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.75em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--dfnpanel-bg);
+    color: var(--dfnpanel-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+.dfn-panel:not(.on) { display: none; }
+.dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
+.dfn-panel > b { display: block; }
+.dfn-panel a { color: var(--dfnpanel-text); }
+.dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel > b + b { margin-top: 0.25em; }
+.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
+.dfn-panel li a {
+    white-space: pre;
+    display: inline-block;
+    max-width: calc(300px - 1.5em - 1em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dfn-panel.activated {
+    display: inline-block;
+    position: fixed;
+    left: .5em;
+    bottom: 2em;
+    margin: 0 auto;
+    max-width: calc(100vw - 1.5em - .4em - .5em);
+    max-height: 30vh;
+}
+
+.dfn-paneled[role="button"] { cursor: pointer; }
+</style>
 <style>/* Boilerplate: style-issues */
 a[href].issue-return {
     float: right;
@@ -434,7 +487,7 @@ dfn > a.self-link::before      { content: "#"; }
       <dd><a href="https://github.com/w3c/PFE/issues/">GitHub</a>
       <dt class="editor">Editors:
       <dd class="editor p-author h-card vcard" data-editor-id="1438"><a class="p-name fn u-url url" href="https://svgees.us/">Chris Lilley</a> (<span class="p-org org">W3C</span>)
-      <dd class="editor p-author h-card vcard" data-editor-id="77180"><a class="p-name fn u-email email" href="mailto:mmaxfield@apple.com">Myles C. Maxfield</a> (<span class="p-org org">Apple Inc.</span>)
+      <dd class="editor p-author h-card vcard" data-editor-id="137857"><a class="p-name fn u-email email" href="mailto:siterum@adobe.com">Skef Iterum</a> (<span class="p-org org">Adobe Inc.</span>)
       <dd class="editor p-author h-card vcard" data-editor-id="73905"><a class="p-name fn u-email email" href="mailto:grieger@google.com">Garret Rieger</a> (<span class="p-org org">Google Inc.</span>)
      </dl>
     </div>
@@ -510,10 +563,10 @@ dfn > a.self-link::before      { content: "#"; }
         <li><a href="#iftz-format"><span class="secno">1.5.2</span> <span class="content">The Compressed Chunk Format (IFTZ)</span></a>
        </ol>
       <li>
-       <a href="#iftb-browser-behaviors"><span class="secno">1.6</span> <span class="content">Browser Behaviors</span></a>
+       <a href="#iftb-client-behaviors"><span class="secno">1.6</span> <span class="content">Client Behaviors</span></a>
        <ol class="toc">
-        <li><a href="#iftb-browser-behaviors-first-request"><span class="secno">1.6.1</span> <span class="content">First Request</span></a>
-        <li><a href="#iftb-browser-behaviors-subsequent-requests"><span class="secno">1.6.2</span> <span class="content">Subsequent Requests</span></a>
+        <li><a href="#iftb-client-behaviors-first-request"><span class="secno">1.6.1</span> <span class="content">First Request</span></a>
+        <li><a href="#iftb-client-behaviors-subsequent-requests"><span class="secno">1.6.2</span> <span class="content">Subsequent Requests</span></a>
        </ol>
       <li><a href="#iftb-encoding"><span class="secno">1.7</span> <span class="content">IFTB Encoding</span></a>
       <li><a href="#iftb-bin-locality"><span class="secno">1.8</span> <span class="content">Glyph Bin Locality</span></a>
@@ -534,6 +587,7 @@ dfn > a.self-link::before      { content: "#"; }
      <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
      <ol class="toc">
       <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
+      <li><a href="#informative"><span class="secno"></span> <span class="content">Informative References</span></a>
      </ol>
    </ol>
   </nav>
@@ -549,7 +603,7 @@ by ID to one or more "bins", each of which has a corresponding "chunk" file
 containing the outline data for those glyphs. Glyphs in bin 0 are always
 included in the initially loaded file, which also contains all other OpenType
 tables from the initial font.</p>
-   <p>The browser starts the transfer process by loading the initial font file. It
+   <p>A client starts the transfer process by loading the initial font file. It
 then uses an added IFTB table, together with the OpenType cmap table, to
 determine which additional chunks, if any, are needed to render the current
 content. It requests those chunks from the server, unpacks them as they arrive,
@@ -575,20 +629,16 @@ IFTB font format is specified in terms of changes to and restrictions on those
 formats, including some specific OpenType tables.</p>
    <h4 class="heading settled" data-level="1.2.2" id="font-organization-introduction"><span class="secno">1.2.2. </span><span class="content">Introduction</span><a class="self-link" href="#font-organization-introduction"></a></h4>
    <h4 class="heading settled" data-level="1.2.3" id="iftb-glyph-content"><span class="secno">1.2.3. </span><span class="content">Glyph Content</span><a class="self-link" href="#iftb-glyph-content"></a></h4>
-   <p>The term <dfn data-dfn-type="dfn" data-noexport id="outline-table">outline table<a class="self-link" href="#outline-table"></a></dfn> is used to describe these four tables, which carry different types of
-glyph outlines:</p>
+   <p>An IFTB encoded font must have exactly one of the following tables containing glyph outline data:</p>
    <ul>
     <li data-md>
-     <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff"><code>CFF</code></a> table</p>
+     <p>A <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff"><code>CFF</code></a> table</p>
     <li data-md>
-     <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>CFF2</code></a> table</p>
+     <p>A <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>CFF2</code></a> table</p>
     <li data-md>
-     <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf"><code>glyf</code></a> table and its associated <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca"><code>loca</code></a>table</p>
-    <li data-md>
-     <p>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>gvar</code></a> table</p>
+     <p>A <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf"><code>glyf</code></a> table and its associated <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca"><code>loca</code></a>table</p>
    </ul>
-   <p>An IFTB font must have either one CFF table, one CFF2 table, or one pair of glyf/loca tables.  A
-variable glyf-table-based font will also have a gvar table.</p>
+   <p>A font with a <code>glyf</code> table can also have a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>gvar</code></a> table.</p>
    <h4 class="heading settled" data-level="1.2.4" id="iftb-cff-requirements"><span class="secno">1.2.4. </span><span class="content">CFF and CFF2 Requirements and Recommendations</span><a class="self-link" href="#iftb-cff-requirements"></a></h4>
    <p>When an IFTB-encoded font includes a CFF or CFF2 table:</p>
    <ol>
@@ -654,11 +704,11 @@ tables come early in the list and before any other lengthy table.</p>
    </ol>
    <p>It is expected that the client will almost always download a WOFF2-encoded file, which it will then
 unpack into the uncompressed format and modify as needed.</p>
-   <p>Before loading a copy of the uncompressed font into the browser, or making it available to some other
-renderer, the version should be changed to <code>0x00010000</code> if the font has a glyf table or <code>OTTO</code> if it has a CFF or CFF2 table.  However, if the file is cached it should be stored
-with the <code>IFTB</code> version.  (The differing version is to help prevent an IFTB-encoded font
-from being used accidentally as a standard font, which will generally result in blank spaces where some
-glyphs should be rendered.)</p>
+   <p>IFTB-compatible clients are encouraged to directly support the "IFTB" SFNT version tag and to ignore
+table checksums rather than recalculating them when chunks are merged. When a client cannot be
+so-modified the version should be changed to <code>0x00010000</code> if the font has a glyf
+table or <code>OTTO</code> if it has a CFF or CFF2 table, and the checksums should be recalculated,
+prior to using the font.</p>
    <h3 class="heading settled" data-level="1.4" id="iftb-table"><span class="secno">1.4. </span><span class="content">IFTB Table</span><a class="self-link" href="#iftb-table"></a></h3>
    <p>The IFTB table contains information needed to determine what chunks are needed for a given font subset
 description, and then to retrieve and integrate those chunks. It is similar in layout to analogous
@@ -671,21 +721,23 @@ uint16     minorVersion   - set to 0
 uint32     reserved       - not used, set to 0
 uint32     id[4]          - ID uniquely identifying this IFTB font
 uint16     flags          - not yet used
-uint32     chunkCount     - number of bins in this IFTB font
+uint32     binCount       - number of bins in this IFTB font
 uint32     glyphCount     - must match field in maxp table
 Offset32   CFFCharStringsOffset  - 0 if glyf-based
 Offset32   gidMapOffset
 Offset32   chunkOffsetListOffset
 Offset32   featureMapOffset
 </pre>
+   <p>All offsets in the header are relative to the start of the IFTB table.</p>
    <h4 class="heading settled" data-level="1.4.2" id="iftb-chunk-set"><span class="secno">1.4.2. </span><span class="content">IFTB Chunk Set</span><a class="self-link" href="#iftb-chunk-set"></a></h4>
    <p>The header is followed by the chunk set:</p>
-<pre>uint8     chunkSet[(chunkCount + 7) / 8]
+<pre>uint8     chunkSet[(binCount + 7) / 8]
 </pre>
    <p>The chunk set is a bit array indicating whether the corresponding chunk is
-present.  The bits for chunks 0 through 7 are in chunkSet[0], those for 8
+already merged.  The bits for chunks 0 through 7 are in chunkSet[0], those for 8
 through 15 are in chunkSet[1], and so on.  Within a byte the lowest chunk index
-is represented by the 1s bit, then the 2s, then the 4s, and so on.</p>
+is represented by the least significant bit, then the second lowest chunk index by
+the second least significant bit, and so on.</p>
    <p>Because chunk 0 must always be included in the initial font file, its bit is
 always set.  Other bits may also be set at the start if other chunks are <a href="#iftb-preloading">preloaded</a>.  This array must be updated as chunks
 are integrated into the font, and is the only part of the IFTB table that
@@ -704,14 +756,15 @@ URL of the initial IFTB font file to produce the absolute URL of the chunk.)</p>
    <p>The second string is the chunkRangeFileURI, which is also relative. This can be combined with the URL
 of the initial IFTB font file to produce the absolute URL of the range file. The range file contains
 all compressed chunk files in order, at offsets recorded in the chunkOffsetList.</p>
+   <p>Both strings should be encoded in ASCII, with all reserved characters percent-encoded according to <a data-link-type="biblio" href="#biblio-rfc3986" title="Uniform Resource Identifier (URI): Generic Syntax">[RFC3986]</a> other than the dollar signs in the hexidecimal-representing substrings of the chunkFilesURI.</p>
    <h4 class="heading settled" data-level="1.4.4" id="iftb-gidmap"><span class="secno">1.4.4. </span><span class="content">IFTB gidMap</span><a class="self-link" href="#iftb-gidmap"></a></h4>
-   <p>The gidMap maps each glyph, via GID, to a chunk index.</p>
+   <p>The gidMap maps each glyph, via GID, to a bin index.</p>
 <pre>uint16     firstMappedGID
-chunkIdx   chunkIndex[chunkCount - firstMappedGid + 1]
+binIdx     binIndex[binCount - firstMappedGid + 1]
 </pre>
-   <p>The <code>chunkIdx</code> data type is <code>uint8</code> when <code>chunkCount &lt; 256</code> and <code>uint16</code> otherwise.</p>
+   <p>The <code>binIdx</code> data type is <code>uint8</code> when <code>binCount &lt; 256</code> and <code>uint16</code> otherwise.</p>
    <p>When a GID is less than <code>firstMappedGID</code> it is implicitly mapped to chunk 0. For all others
-the mapping is stored as chunkIndex[GID - firstMappedGID].</p>
+the mapping is stored as binIndex[GID - firstMappedGID].</p>
    <p>Note that the mapping for a GID corresponding to one or more Unicode codepoints has a different meaning
 than a mapping for a GID without one. In normal operation a glyph of the latter type will be loaded
 because it is included in a chunk corresponding to a different glyph with an associated codepoint. The
@@ -728,31 +781,32 @@ chunk.</p>
    <p>These offsets are normally only used when making range requests out of the chunk range file but can
 also be used to lookup the lengths of compressed chunks in advance if needed.</p>
    <h4 class="heading settled" data-level="1.4.6" id="iftb-table-featuremap"><span class="secno">1.4.6. </span><span class="content">IFTB featureMap subtable</span><a class="self-link" href="#iftb-table-featuremap"></a></h4>
-   <p>The featureMap records what feature-specific chunks, if any, correspond to a codepoint-mapped chunk:</p>
+   <p>XXX Most of this should be changed to be more flexible.</p>
+   <p>The featureMap records what feature-specific bins, if any, correspond to previously added bins:</p>
 <pre>uint16         featureCount
 FeatureRecord  featureRecord[featureCount]
-ChunkMapRecord chunkMapRecord[varies]
+BinMapRecord   binMapRecord[varies]
 </pre>
    <p>A <code>FeatureRecord</code> consists of these fields:</p>
 <pre>uint32         featureTag
-chunkIdx       firstIndex
-chunkIdx       chunkMapCount
+binIdx         firstIndex
+binIdx         binMapCount
 </pre>
-   <p>As in the gidMap the <code>chunkIdx</code> data type is a <code>uint8</code> when <code>chunkCount &lt;=
+   <p>As in the gidMap the <code>binIdx</code> data type is a <code>uint8</code> when <code>binCount &lt;=
 256</code> and a <code>uint16</code> otherwise.</p>
    <p>The <code>featureRecord</code> array must be sorted by <code>featureTag</code> with any feature tag
-occurring at most once.  Only layout features that have their own chunks should be have a <code>FeatureRecord</code> <code>firstIndex</code> is the chunk index of the first chunk specific to
-this feature. The number of feature-specific chunks will then be <code>chunkRecordCount</code> which
-must be at least 1. The chunk correspondence is encoded in <code>ChunkMapRecords</code></p>
-<pre>chunkIdx      firstChunk
-chunkIdx      lastChunk
+occurring at most once.  Only layout features that have their own bins should be have a <code>FeatureRecord</code>. <code>firstIndex</code> is the bin index of the first bin specific to
+this feature. The number of feature-specific bins will then be <code>binMapCount</code> which
+must be at least 1.</p>
+<pre>binIdx      firstBin
+binIdx      lastBin
 </pre>
-   <p>The <code>chunkMapRecord</code> array contains as many entries as the sum of <code>chunkMapCount</code> fields in the <code>featureRecord</code> array, with <code>chunkMapRecord[0]</code> corresponding to
-the first chunk of <code>featureRecord[0]</code>, <code>chunkMapRecord[featureRecord[0].chunkMapCount]</code> corresponding to the first chunk of <code>featureRecord[1]</code>, <code>chunkMapRecord[featureRecord[0].chunkMapCount +
-chunkMapRecord[featureRecord[1].chunkMapCount]</code> corresponding to the first chunk of <code>featureRecord[2]</code>, and so on.</p>
-   <p><code>firstChunk</code> must be less than or equal to <code>lastChunk</code>. If <code>featureTag</code> is part of the set of layout features in the font subset description, and any of firstChunk through
-lastChunk are required by the set of codepoints in that description, then that feature-specfic chunk
-must also be loaded.</p>
+   <p>The <code>binMapRecord</code> array contains as many entries as the sum of <code>binMapCount</code> fields in the <code>featureRecord</code> array, with <code>binMapRecord[0]</code> corresponding to
+the first chunk of <code>featureRecord[0]</code>, <code>binMapRecord[featureRecord[0].binMapCount]</code> corresponding to the first chunk of <code>featureRecord[1]</code>, <code>binMapRecord[featureRecord[0].binMapCount +
+binMapRecord[featureRecord[1].binMapCount]</code> corresponding to the first chunk of <code>featureRecord[2]</code>, and so on.</p>
+   <p><code>firstBin</code> must be less than or equal to <code>lastBin</code>. If <code>featureTag</code> is part of the set of layout features in the font subset description, and any of firstBin through
+lastBin are required by the set of codepoints in that description, then the chunk corresponding to
+that feature-specfic bin must also be merged.</p>
    <h4 class="heading settled" data-level="1.4.7" id="iftb-table-optional"><span class="secno">1.4.7. </span><span class="content">Optional IFTB Table Values</span><a class="self-link" href="#iftb-table-optional"></a></h4>
    <p>If a particular IFTB-encoded font does not include a range file the chunkRangeFileURI string must be
 empty. The <code>chunkOffsetList</code> can either be included for reference or omitted by setting the <code>chunkOffsetListOffset</code> field to 0.  If a particular font does not include separate chunk
@@ -778,6 +832,7 @@ Offset32      offsets[glyphCount * tableCount] - an array of offsets of glyph da
                                                  from the start of the table.
 uint8         glyphData[varies]  - the actual glyph data picked out by the offsets.
 </pre>
+   <p>All offsets are relative to the start of the chunk.</p>
    <p><code>tableCount</code> will be 2 only when there is both a <code>glyf</code> and a <code>gvar</code> table.  Otherwise <code>tableCount</code> will be 1 and the table will be <code>CFF </code> <code>CFF2</code> or <code>glyf</code></p>
    <h4 class="heading settled" data-level="1.5.2" id="iftz-format"><span class="secno">1.5.2. </span><span class="content">The Compressed Chunk Format (IFTZ)</span><a class="self-link" href="#iftz-format"></a></h4>
    <p>A compressed chunk string is the same as an uncompressed chunk string except:</p>
@@ -789,37 +844,40 @@ uint8         glyphData[varies]  - the actual glyph data picked out by the offse
    </ol>
    <p>The compressed chunk contains no indication of its (compressed) length, but that length is encoded
 in the <code>chunkOffsetList</code> of the IFTB table.</p>
-   <h3 class="heading settled" data-level="1.6" id="iftb-browser-behaviors"><span class="secno">1.6. </span><span class="content">Browser Behaviors</span><a class="self-link" href="#iftb-browser-behaviors"></a></h3>
-   <h4 class="heading settled" data-level="1.6.1" id="iftb-browser-behaviors-first-request"><span class="secno">1.6.1. </span><span class="content">First Request</span><a class="self-link" href="#iftb-browser-behaviors-first-request"></a></h4>
+   <h3 class="heading settled" data-level="1.6" id="iftb-client-behaviors"><span class="secno">1.6. </span><span class="content">Client Behaviors</span><a class="self-link" href="#iftb-client-behaviors"></a></h3>
+   <h4 class="heading settled" data-level="1.6.1" id="iftb-client-behaviors-first-request"><span class="secno">1.6.1. </span><span class="content">First Request</span><a class="self-link" href="#iftb-client-behaviors-first-request"></a></h4>
    <ol>
     <li data-md>
-     <p>The browser loads a font file and identifies it as an IFTB font by its "sfnt" header version (in
+     <p>The client loads a font file and identifies it as an IFTB font by its "sfnt" header version (in
  the uncompressed case) or by its WOFF2 "flavor" (in the compressed case).  These are the first
  and second 4-byte words in the files respectively.</p>
     <li data-md>
-     <p>In the compressed case, it decodes the WOFF2 into its corresponding OTF (The browser can
+     <p>In the compressed case, it decodes the WOFF2 into its corresponding OTF (The client can
  optionally isolate the IFTB and cmap tables early in the stream to proceed before the remaining
  font content downloads.)</p>
     <li data-md>
-     <p>The browser determines the initial font subset description corresponding to the content it needs
+     <p>The client determines the initial font subset description corresponding to the content it needs
  to render using the font.  (IFTB does not provide subsetting of variable axes, so this is just
  the sets of codepoints and layout features.)</p>
     <li data-md>
      <p>
-      The browser maps each codepoint in the font subset description to a GID using the cmap table. It
- then maps that GID to a chunk index using GIDMap of the IFTB table. That index is added to a
- "chunk set" (which could be a bitmap or std::vector
-      <bool> indexed by chunk index.</bool>
+      The client maps each codepoint in the font subset description to a GID using the cmap table. It
+ then maps that GID to a bin index using GIDMap of the IFTB table. That index is added to a
+ "bin set" (which could be a bitmap or std::vector
+      <bool> indexed by bin index).</bool>
      </p>
     <li data-md>
-     <p>The browser then look up each layout feature in the font subset description in the IFTB table
- featureTable. That table maps the initial GID-mapped chunks to higher-indexed feature-specific
- chunks. If any chunk in the set maps to a feature-specific-chunk the latter is added to the set.</p>
+     <p>The client then looks for each layout feature in the font subset description, ordered by feature
+ tag, in the IFTB table featureMap. Entires in that subtable map indexes already in the bin set to
+ additional bin indexes.  If any bin in the current set maps to an additional index the latter is
+ added to the set. (Because layout feature maps are processed in order, bins added by a previous
+ feature can affect what bins are added by subsequent features.)</p>
     <li data-md>
-     <p>The browser subtracts the list of already-included chunks recorded in the IFTB ChunkMap from the
- chunk set.  If no chunks remain, the process skips to step XXX.</p>
+     <p>The client subtracts the list of already-included chunks recorded in the IFTB ChunkMap from the
+ bin set.  If no bins remain, the process skips to step 12.</p>
     <li data-md>
-     <p>At this point there are two options for retrieving chunk contents:</p>
+     <p>At this point there are two options for retrieving the chunk contents that correspond to the
+ needed bins:</p>
      <p>Load each needed chunk using individual files:</p>
      <ol>
       <li data-md>
@@ -858,12 +916,12 @@ in the <code>chunkOffsetList</code> of the IFTB table.</p>
     <li data-md>
      <p>If caching, store the file at this point.</p>
     <li data-md>
-     <p>Update the SFNT version to 0x00010000 (for a glyf table) or "OTTO" (for a CFF or CFF2 table) and
- also the head table checksumAdjustment again (if needed by the client).</p>
+     <p>If needed by the client, update the SFNT version to 0x00010000 (for a glyf table) or "OTTO"
+ (for a CFF or CFF2 table) and modify the head table checksumAdjustment accordingly.</p>
     <li data-md>
      <p>Render the text with the updated font.</p>
    </ol>
-   <h4 class="heading settled" data-level="1.6.2" id="iftb-browser-behaviors-subsequent-requests"><span class="secno">1.6.2. </span><span class="content">Subsequent Requests</span><a class="self-link" href="#iftb-browser-behaviors-subsequent-requests"></a></h4>
+   <h4 class="heading settled" data-level="1.6.2" id="iftb-client-behaviors-subsequent-requests"><span class="secno">1.6.2. </span><span class="content">Subsequent Requests</span><a class="self-link" href="#iftb-client-behaviors-subsequent-requests"></a></h4>
    <p>Subsequent requests proceed like the initial request starting at step 3.</p>
    <h3 class="heading settled" data-level="1.7" id="iftb-encoding"><span class="secno">1.7. </span><span class="content">IFTB Encoding</span><a class="self-link" href="#iftb-encoding"></a></h3>
    <p>An input font is encoded in the IFTB format using an encoder as a separate, initial step.  If any other
@@ -875,13 +933,14 @@ copied from the source font.  However, an encoder can also deserialize and
 reserialize tables if it desires.</p>
    <p>The details of the encoding process may differ by encoder and are beyond the scope of this document.
 However, all mappings of codepoints (though GIDs) to bins and bins to feature-specific bins must meet
-this closure requirement:</p>
+this <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="closure-requirement">closure requirement</dfn>:</p>
    <ul>
     <li data-md>
      <p>The set of glyphs contained in the chunks loaded through the GID and feature maps must be a superset
-of those in the GID closure of the font subset description.</p>
+of those in the <a data-link-type="dfn">glyph closure</a> of the font subset description.</p>
    </ul>
-   <p>The encoder has three options for addressing with joint dependencies on individual glyphs:</p>
+   <p>Any of the following three strategies for addressing with joint dependencies on an individual glyph
+are valid when producing an encoding:</p>
    <ol>
     <li data-md>
      <p>If a glyph is needed in more than one initial "trial" bin, those bins can be combined.</p>
@@ -889,13 +948,14 @@ of those in the GID closure of the font subset description.</p>
      <p>Alternatively, the glyph can be included in both bins, or more than two bins.  (The glyph will
  only be mapped to one chunk in the <code>gidMap</code>, and special care must be taken about which
  chunk it maps to if it has an associated codepoint. However, the encoder is free to include it in
- other bins as long as the closure requirement is met.)</p>
+ other bins as long as the <a data-link-type="dfn" href="#closure-requirement" id="ref-for-closure-requirement">closure requirement</a> is met.)</p>
     <li data-md>
      <p>If a glyph is needed in more than a few trial bins, or is otherwise complicating the binning
  process, it can be moved to bin 0 where it will always be included in the initially loaded file.</p>
    </ol>
    <h3 class="heading settled" data-level="1.8" id="iftb-bin-locality"><span class="secno">1.8. </span><span class="content">Glyph Bin Locality</span><a class="self-link" href="#iftb-bin-locality"></a></h3>
-   <p>An IFTB-encoded font may have as few as fifty or as many as two thousand bins.
+   <p><em>This section is not normative.</em></p>
+   <p>An IFTB-encoded font could have as few as fifty or as many as two thousand bins.
 Higher numbers of bins may result in unacceptable overhead and diminishing
 returns. Regardless of the particular number, however, if glyphs are randomly
 distributed among bins most of them might need to be loaded in order to render
@@ -907,7 +967,7 @@ glyphs will be concentrated together in bins. However, <em>just</em> ordering
 by frequency is often a mistake, because there are many more documents that
 need, for example, glyphs for writing Korean or glyphs for writing Greek than
 there are documents that need both.</p>
-   <p>Therefore, it is best to start with an idea of how the encoded font will typically be used. One primary
+   <p>Accordingly, it is best to start with an idea of how the encoded font will typically be used. One primary
 use-case for font augmentation is for use with CJK-oriented fonts. A given font might "specialize" in
 a given script or language subset (e.g. traditional Chinese vs Hong Kong Chinese) whereas other fonts
 might be general. If a font will be used with one language or dialect it can be encoded with frequency
@@ -1006,7 +1066,7 @@ way.</p>
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
-   <li><a href="#outline-table">outline table</a><span>, in § 1.2.3</span>
+   <li><a href="#closure-requirement">closure requirement</a><span>, in § 1.7</span>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
@@ -1016,3 +1076,361 @@ way.</p>
    <dt id="biblio-rfc7932">[RFC7932]
    <dd>J. Alakuijala; Z. Szabadka. <a href="https://www.rfc-editor.org/rfc/rfc7932"><cite>Brotli Compressed Data Format</cite></a>. July 2016. Informational. URL: <a href="https://www.rfc-editor.org/rfc/rfc7932">https://www.rfc-editor.org/rfc/rfc7932</a>
   </dl>
+  <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
+  <dl>
+   <dt id="biblio-rfc3986">[RFC3986]
+   <dd>T. Berners-Lee; R. Fielding; L. Masinter. <a href="https://www.rfc-editor.org/rfc/rfc3986"><cite>Uniform Resource Identifier (URI): Generic Syntax</cite></a>. January 2005. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3986">https://www.rfc-editor.org/rfc/rfc3986</a>
+  </dl>
+<script>/* Boilerplate: script-dfn-panel */
+"use strict";
+{
+    const dfnsJson = window.dfnsJson || {};
+
+    function genDfnPanel({dfnID, url, dfnText, refSections, external}) {
+        return mk.aside({
+            class: "dfn-panel",
+            id: `infopanel-for-${dfnID}`,
+            "data-for": dfnID,
+            "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+            },
+            mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+                `Info about the '${dfnText}' ${external?"external":""} reference.`),
+            mk.a({href:url}, url),
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({
+                                    href: `#${ref.id}`
+                                    },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
+    function genAllDfnPanels() {
+        for(const panelData of Object.values(window.dfnpanelData)) {
+            const dfnID = panelData.dfnID;
+            const dfn = document.getElementById(dfnID);
+            if(!dfn) {
+                console.log(`Can't find dfn#${dfnID}.`, panelData);
+            } else {
+                const panel = genDfnPanel(panelData);
+                append(document.body, panel);
+                insertDfnPopupAction(dfn, panel)
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", ()=>{
+        genAllDfnPanels();
+
+        // Add popup behavior to all dfns to show the corresponding dfn-panel.
+        var dfns = queryAll('.dfn-paneled');
+        for(let dfn of dfns) { ; }
+
+        document.body.addEventListener("click", (e) => {
+            // If not handled already, just hide all dfn panels.
+            hideAllDfnPanels();
+        });
+    })
+
+
+    function hideAllDfnPanels() {
+        // Turn off any currently "on" or "activated" panels.
+        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>hideDfnPanel(el));
+    }
+
+    function showDfnPanel(dfnPanel, dfn) {
+        hideAllDfnPanels(); // Only display one at this time.
+        dfn.setAttribute("aria-expanded", "true");
+        dfnPanel.classList.add("on");
+        dfnPanel.style.left = "5px";
+        dfnPanel.style.top = "0px";
+        const panelRect = dfnPanel.getBoundingClientRect();
+        const panelWidth = panelRect.right - panelRect.left;
+        if (panelRect.right > document.body.scrollWidth) {
+            // Panel's overflowing the screen.
+            // Just drop it below the dfn and flip it rightward instead.
+            // This still wont' fix things if the screen is *really* wide,
+            // but fixing that's a lot harder without 'anchor()'.
+            dfnPanel.style.top = "1.5em";
+            dfnPanel.style.left = "auto";
+            dfnPanel.style.right = "0px";
+        }
+    }
+
+    function pinDfnPanel(dfnPanel) {
+        // Switch it to "activated" state, which pins it.
+        dfnPanel.classList.add("activated");
+        dfnPanel.style.left = null;
+        dfnPanel.style.top = null;
+    }
+
+    function hideDfnPanel(dfnPanel, dfn) {
+        if(!dfn) {
+            dfn = document.getElementById(dfnPanel.getAttribute("data-for"));
+        }
+        dfn.setAttribute("aria-expanded", "false")
+        dfnPanel.classList.remove("on");
+        dfnPanel.classList.remove("activated");
+    }
+
+    function toggleDfnPanel(dfnPanel, dfn) {
+        if(dfnPanel.classList.contains("on")) {
+            hideDfnPanel(dfnPanel, dfn);
+        } else {
+            showDfnPanel(dfnPanel, dfn);
+        }
+    }
+
+    function insertDfnPopupAction(dfn, dfnPanel) {
+        // Find dfn panel
+        const panelWrapper = document.createElement('span');
+        panelWrapper.appendChild(dfnPanel);
+        panelWrapper.style.position = "relative";
+        panelWrapper.style.height = "0px";
+        dfn.insertAdjacentElement("afterend", panelWrapper);
+        dfn.setAttribute('role', 'button');
+        dfn.setAttribute('aria-expanded', 'false')
+        dfn.tabIndex = 0;
+        dfn.classList.add('has-dfn-panel');
+        dfn.addEventListener('click', (event) => {
+            showDfnPanel(dfnPanel, dfn);
+            event.stopPropagation();
+        });
+        dfn.addEventListener('keypress', (event) => {
+            const kc = event.keyCode;
+            // 32->Space, 13->Enter
+            if(kc == 32 || kc == 13) {
+                toggleDfnPanel(dfnPanel, dfn);
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        });
+
+        dfnPanel.addEventListener('click', (event) => {
+            if (event.target.nodeName == 'A') {
+                pinDfnPanel(dfnPanel);
+            }
+            event.stopPropagation();
+        });
+
+        dfnPanel.addEventListener('keydown', (event) => {
+            if(event.keyCode == 27) { // Escape key
+                hideDfnPanel(dfnPanel, dfn);
+                event.stopPropagation();
+                event.preventDefault();
+            }
+        })
+    }
+}
+</script>
+<script>/* Boilerplate: script-dfn-panel-json */
+window.dfnpanelData = {};
+window.dfnpanelData['closure-requirement'] = {"dfnID": "closure-requirement", "url": "#closure-requirement", "dfnText": "closure requirement", "refSections": [{"refs": [{"id": "ref-for-closure-requirement"}], "title": "1.7. IFTB Encoding"}], "external": false};
+</script>
+<script>/* Boilerplate: script-dom-helper */
+function query(sel) { return document.querySelector(sel); }
+
+function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
+
+function iter(obj) {
+	if(!obj) return [];
+	var it = obj[Symbol.iterator];
+	if(it) return it;
+	return Object.entries(obj);
+}
+
+function mk(tagname, attrs, ...children) {
+	const el = document.createElement(tagname);
+	for(const [k,v] of iter(attrs)) {
+		if(k.slice(0,3) == "_on") {
+			const eventName = k.slice(3);
+			el.addEventListener(eventName, v);
+		} else if(k[0] == "_") {
+			// property, not attribute
+			el[k.slice(1)] = v;
+		} else {
+			if(v === false || v == null) {
+        continue;
+      } else if(v === true) {
+        el.setAttribute(k, "");
+        continue;
+      } else {
+  			el.setAttribute(k, v);
+      }
+		}
+	}
+	append(el, children);
+	return el;
+}
+
+/* Create shortcuts for every known HTML element */
+[
+  "a",
+  "abbr",
+  "acronym",
+  "address",
+  "applet",
+  "area",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "base",
+  "basefont",
+  "bdo",
+  "big",
+  "blockquote",
+  "body",
+  "br",
+  "button",
+  "canvas",
+  "caption",
+  "center",
+  "cite",
+  "code",
+  "col",
+  "colgroup",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "dialog",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "embed",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "font",
+  "footer",
+  "form",
+  "frame",
+  "frameset",
+  "head",
+  "header",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "html",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "map",
+  "mark",
+  "meta",
+  "meter",
+  "nav",
+  "nobr",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "param",
+  "pre",
+  "progress",
+  "q",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strike",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "template",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "u",
+  "ul",
+  "var",
+  "video",
+  "wbr",
+  "xmp",
+].forEach(tagname=>{
+	mk[tagname] = (...args) => mk(tagname, ...args);
+});
+
+function* nodesFromChildList(children) {
+	for(const child of children.flat(Infinity)) {
+		if(child instanceof Node) {
+			yield child;
+		} else {
+			yield new Text(child);
+		}
+	}
+}
+function append(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		if(el instanceof Node) el.appendChild(child);
+		else el.push(child);
+	}
+	return el;
+}
+
+function insertAfter(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		el.parentNode.insertBefore(child, el.nextSibling);
+	}
+	return el;
+}
+
+function clearContents(el) {
+	el.innerHTML = "";
+	return el;
+}
+
+function parseHTML(markup) {
+	if(markup.toLowerCase().trim().indexOf('<!doctype') === 0) {
+		const doc = document.implementation.createHTMLDocument("");
+		doc.documentElement.innerHTML = markup;
+		return doc;
+	} else {
+		const el = mk.template({});
+		el.innerHTML = markup;
+		return el.content;
+	}
+}
+</script>

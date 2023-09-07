@@ -219,8 +219,8 @@ with prediction and privacy that becomes less true. IFTB requires no server-side
 static arrangement
 of bins makes it more compatible with caching, including regional caching. ("More compatible" in the
 sense that chunk files will see a higher cache hit rate compared with subset and patch files.) All IFTB
-data is compressed at Brotli level 11 upfront.  IFTB transfers all other tables
-up-front while patch-subset will transfer parts of some of those tables.  Also:
+data can be compressed to the maximum degree supported by Brotli and WOFF2.  IFTB transfers all other
+tables up-front while patch-subset will transfer parts of some of those tables.  Also:
 IFTB does not support variable axis subsetting (unless it is statically chosen)
 while Patch Subset may support that.)
 
@@ -451,8 +451,8 @@ A <dfn>font subset description</dfn> specifies the minimum data that a [=font su
 Glyph Closure {#glyph-closure-def}
 ----------------------------------
 
-The <dfn>glyph closure</dfn> of a font subset description is the full set of glyphs in the
-font that may be needed to render any combination of the described codepoints and layout features.
+The <dfn export>glyph closure</dfn> of a [=font subset description=] is the full set of glyphs
+in the font that may be needed to render any combination of the described codepoints and layout features.
 
 Font Subset {#font-subset-def}
 ------------------------------
@@ -463,10 +463,10 @@ codepoints, layout features and points in design space included in that descript
 identically to the original font.  This includes rendering with the use of any optional typographic
 features that a renderer may choose to use from the original font, such as hinting instructions.
 
-By definition a font subset must contain the glyph closure of the font subset description, although
-it can also contain other glyphs.  The IDs of the glyphs may be remapped, with other layout-related
-tables in the font accordingly reduced to only support those glyphs. Alternatively, the IDs of the
-glyphs may be retained and complete copies of those tables included in the font subset.
+By definition a font subset must contain the [=glyph closure=] of the [=font subset description=],
+although it can also contain other glyphs.  The IDs of the glyphs may be remapped, with other
+layout-related tables in the font accordingly reduced to only support those glyphs. Alternatively,
+the IDs of the glyphs may be retained and complete copies of those tables included in the font subset.
 
 
 Patch Based Incremental Transfer {#patch-incxfer}
@@ -1766,7 +1766,7 @@ Binned Incremental Font Transfer (IFTB) {#binned-incxfer}
 ===========================================================
 
 <!-- TODO: remove obsolete tag once the separate range request spec is published -->
-Binned Incremental Font Transfer is specified in a separate document: [[IFTB obsolete]]
+Binned Incremental Font Transfer is specified in a <a href="IFTB.html">separate document</a>.
 
 <h2 class=no-num id=priv>Privacy Considerations</h2>
 

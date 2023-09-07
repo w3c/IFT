@@ -10,7 +10,7 @@ Markup Shorthands: css no
 TR: https://www.w3.org/TR/IFTB/
 ED: https://w3c.github.io/IFT/IFTB.html
 Editor: Chris Lilley, W3C, https://svgees.us/, w3cid 1438
-Editor: Myles C. Maxfield, Apple Inc., mmaxfield@apple.com, w3cid 77180
+Editor: Skef Iterum, Adobe Inc., siterum@adobe.com, w3cid 137857
 Editor: Garret Rieger, Google Inc., grieger@google.com, w3cid 73905
 Abstract: This specification defines the range request variant of incremental font transfer.
           Incremental transfer allows clients to load only the portions of the font they actually need
@@ -52,7 +52,7 @@ included in the initially loaded file, which also contains all other OpenType
 tables from the initial font.
 
 
-The browser starts the transfer process by loading the initial font file. It
+A client starts the transfer process by loading the initial font file. It
 then uses an added IFTB table, together with the OpenType cmap table, to
 determine which additional chunks, if any, are needed to render the current
 content. It requests those chunks from the server, unpacks them as they arrive,
@@ -89,21 +89,18 @@ formats, including some specific OpenType tables.
 
 ### Glyph Content ### {#iftb-glyph-content}
 
-The term <dfn>outline table</dfn> is used to describe these four tables, which carry different types of
-glyph outlines:
+An IFTB encoded font must have exactly one of the following tables containing glyph outline data:
 
--   The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff"><code>CFF</code></a>
+-   A <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff"><code>CFF</code></a>
     table
--   The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>CFF2</code></a>
+-   A <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>CFF2</code></a>
     table
--   The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf"><code>glyf</code></a>
+-   A <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf"><code>glyf</code></a>
     table and its associated
     <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca"><code>loca</code></a>table
--   The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>gvar</code></a>
-    table
 
-An IFTB font must have either one CFF table, one CFF2 table, or one pair of glyf/loca tables.  A
-variable glyf-table-based font will also have a gvar table.
+A font with a <code>glyf</code> table can also have a
+<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2"><code>gvar</code></a> table.
 
 ### CFF and CFF2 Requirements and Recommendations ### {#iftb-cff-requirements}
 
@@ -172,12 +169,11 @@ The specification allows for two initial font formats:
 It is expected that the client will almost always download a WOFF2-encoded file, which it will then
 unpack into the uncompressed format and modify as needed.
 
-Before loading a copy of the uncompressed font into the browser, or making it available to some other
-renderer, the version should be changed to <code>0x00010000</code> if the font has a glyf table or
-<code>OTTO</code> if it has a CFF or CFF2 table.  However, if the file is cached it should be stored
-with the <code>IFTB</code> version.  (The differing version is to help prevent an IFTB-encoded font
-from being used accidentally as a standard font, which will generally result in blank spaces where some
-glyphs should be rendered.)
+IFTB-compatible clients are encouraged to directly support the "IFTB" SFNT version tag and to ignore
+table checksums rather than recalculating them when chunks are merged. When a client cannot be
+so-modified the version should be changed to <code>0x00010000</code> if the font has a glyf
+table or <code>OTTO</code> if it has a CFF or CFF2 table, and the checksums should be recalculated,
+prior to using the font.
 
 IFTB Table {#iftb-table}
 ------------------------
@@ -196,7 +192,7 @@ uint16     minorVersion   - set to 0
 uint32     reserved       - not used, set to 0
 uint32     id[4]          - ID uniquely identifying this IFTB font
 uint16     flags          - not yet used
-uint32     chunkCount     - number of bins in this IFTB font
+uint32     binCount       - number of bins in this IFTB font
 uint32     glyphCount     - must match field in maxp table
 Offset32   CFFCharStringsOffset  - 0 if glyf-based
 Offset32   gidMapOffset
@@ -204,18 +200,21 @@ Offset32   chunkOffsetListOffset
 Offset32   featureMapOffset
 ```
 
+All offsets in the header are relative to the start of the IFTB table.
+
 ### IFTB Chunk Set ### {#iftb-chunk-set}
 
 The header is followed by the chunk set:
 
 ```
-uint8     chunkSet[(chunkCount + 7) / 8]
+uint8     chunkSet[(binCount + 7) / 8]
 ```
 
 The chunk set is a bit array indicating whether the corresponding chunk is
-present.  The bits for chunks 0 through 7 are in chunkSet[0], those for 8
+already merged.  The bits for chunks 0 through 7 are in chunkSet[0], those for 8
 through 15 are in chunkSet[1], and so on.  Within a byte the lowest chunk index
-is represented by the 1s bit, then the 2s, then the 4s, and so on.
+is represented by the least significant bit, then the second lowest chunk index by
+the second least significant bit, and so on.
 
 Because chunk 0 must always be included in the initial font file, its bit is
 always set.  Other bits may also be set at the start if other chunks are <a
@@ -243,20 +242,23 @@ The second string is the chunkRangeFileURI, which is also relative. This can be 
 of the initial IFTB font file to produce the absolute URL of the range file. The range file contains
 all compressed chunk files in order, at offsets recorded in the chunkOffsetList.
 
+Both strings should be encoded in ASCII, with all reserved characters percent-encoded according to
+[[RFC3986]] other than the dollar signs in the hexidecimal-representing substrings of the chunkFilesURI.
+
 ### IFTB gidMap ### {#iftb-gidmap}
 
-The gidMap maps each glyph, via GID, to a chunk index.
+The gidMap maps each glyph, via GID, to a bin index.
 
 ```
 uint16     firstMappedGID
-chunkIdx   chunkIndex[chunkCount - firstMappedGid + 1]
+binIdx     binIndex[binCount - firstMappedGid + 1]
 ```
 
-The <code>chunkIdx</code> data type is <code>uint8</code> when <code>chunkCount < 256</code> and
+The <code>binIdx</code> data type is <code>uint8</code> when <code>binCount < 256</code> and
 <code>uint16</code> otherwise.
 
 When a GID is less than <code>firstMappedGID</code> it is implicitly mapped to chunk 0. For all others
-the mapping is stored as chunkIndex[GID - firstMappedGID].
+the mapping is stored as binIndex[GID - firstMappedGID].
 
 Note that the mapping for a GID corresponding to one or more Unicode codepoints has a different meaning
 than a mapping for a GID without one. In normal operation a glyph of the latter type will be loaded
@@ -283,48 +285,51 @@ also be used to lookup the lengths of compressed chunks in advance if needed.
 
 ### IFTB featureMap subtable ### {#iftb-table-featuremap}
 
-The featureMap records what feature-specific chunks, if any, correspond to a codepoint-mapped chunk:
+XXX Most of this should be changed to be more flexible.
+
+The featureMap records what feature-specific bins, if any, correspond to previously added bins:
 
 ```
 uint16         featureCount
 FeatureRecord  featureRecord[featureCount]
-ChunkMapRecord chunkMapRecord[varies]
+BinMapRecord   binMapRecord[varies]
 ```
 
 A <code>FeatureRecord</code> consists of these fields:
 
 ```
 uint32         featureTag
-chunkIdx       firstIndex
-chunkIdx       chunkMapCount
+binIdx         firstIndex
+binIdx         binMapCount
 ```
 
-As in the gidMap the <code>chunkIdx</code> data type is a <code>uint8</code> when <code>chunkCount <=
+As in the gidMap the <code>binIdx</code> data type is a <code>uint8</code> when <code>binCount <=
 256</code> and a <code>uint16</code> otherwise.
 
 The <code>featureRecord</code> array must be sorted by <code>featureTag</code> with any feature tag
-occurring at most once.  Only layout features that have their own chunks should be have a
-<code>FeatureRecord</code> <code>firstIndex</code> is the chunk index of the first chunk specific to
-this feature. The number of feature-specific chunks will then be <code>chunkRecordCount</code> which
-must be at least 1. The chunk correspondence is encoded in <code>ChunkMapRecords</code>
+occurring at most once.  Only layout features that have their own bins should be have a
+<code>FeatureRecord</code>. <code>firstIndex</code> is the bin index of the first bin specific to
+this feature. The number of feature-specific bins will then be <code>binMapCount</code> which
+must be at least 1.
 
 ```
-chunkIdx      firstChunk
-chunkIdx      lastChunk
+binIdx      firstBin
+binIdx      lastBin
 ```
 
-The <code>chunkMapRecord</code> array contains as many entries as the sum of <code>chunkMapCount</code>
-fields in the <code>featureRecord</code> array, with <code>chunkMapRecord[0]</code> corresponding to
+The <code>binMapRecord</code> array contains as many entries as the sum of <code>binMapCount</code>
+fields in the <code>featureRecord</code> array, with <code>binMapRecord[0]</code> corresponding to
 the first chunk of <code>featureRecord[0]</code>,
-<code>chunkMapRecord[featureRecord[0].chunkMapCount]</code> corresponding to the first chunk of
-<code>featureRecord[1]</code>, <code>chunkMapRecord[featureRecord[0].chunkMapCount +
-chunkMapRecord[featureRecord[1].chunkMapCount]</code> corresponding to the first chunk of
+<code>binMapRecord[featureRecord[0].binMapCount]</code> corresponding to the first chunk of
+<code>featureRecord[1]</code>, <code>binMapRecord[featureRecord[0].binMapCount +
+binMapRecord[featureRecord[1].binMapCount]</code> corresponding to the first chunk of
 <code>featureRecord[2]</code>, and so on.
 
-<code>firstChunk</code> must be less than or equal to <code>lastChunk</code>. If <code>featureTag</code>
-is part of the set of layout features in the font subset description, and any of firstChunk through
-lastChunk are required by the set of codepoints in that description, then that feature-specfic chunk
-must also be loaded.
+<code>firstBin</code> must be less than or equal to <code>lastBin</code>. If <code>featureTag</code>
+is part of the set of layout features in the font subset description, and any of firstBin through
+lastBin are required by the set of codepoints in that description, then the chunk corresponding to
+that feature-specfic bin must also be merged.
+
 
 ### Optional IFTB Table Values ### {#iftb-table-optional}
 
@@ -361,6 +366,8 @@ Offset32      offsets[glyphCount * tableCount] - an array of offsets of glyph da
 uint8         glyphData[varies]  - the actual glyph data picked out by the offsets.
 ```
 
+All offsets are relative to the start of the chunk.
+
 <code>tableCount</code> will be 2 only when there is both a <code>glyf</code> and a <code>gvar</code>
 table.  Otherwise <code>tableCount</code> will be 1 and the table will be <code>CFF </code>
 <code>CFF2</code> or <code>glyf</code>
@@ -375,29 +382,32 @@ A compressed chunk string is the same as an uncompressed chunk string except:
 The compressed chunk contains no indication of its (compressed) length, but that length is encoded
 in the <code>chunkOffsetList</code> of the IFTB table.
 
-Browser Behaviors {#iftb-browser-behaviors}
+Client Behaviors {#iftb-client-behaviors}
 -------------------------------------------
 
-### First Request ### {#iftb-browser-behaviors-first-request}
+### First Request ### {#iftb-client-behaviors-first-request}
 
-1.   The browser loads a font file and identifies it as an IFTB font by its "sfnt" header version (in
+1.   The client loads a font file and identifies it as an IFTB font by its "sfnt" header version (in
      the uncompressed case) or by its WOFF2 "flavor" (in the compressed case).  These are the first
      and second 4-byte words in the files respectively.
-2.   In the compressed case, it decodes the WOFF2 into its corresponding OTF (The browser can 
+2.   In the compressed case, it decodes the WOFF2 into its corresponding OTF (The client can
      optionally isolate the IFTB and cmap tables early in the stream to proceed before the remaining
      font content downloads.)
-3.   The browser determines the initial font subset description corresponding to the content it needs
+3.   The client determines the initial font subset description corresponding to the content it needs
      to render using the font.  (IFTB does not provide subsetting of variable axes, so this is just
      the sets of codepoints and layout features.)
-4.   The browser maps each codepoint in the font subset description to a GID using the cmap table. It
-     then maps that GID to a chunk index using GIDMap of the IFTB table. That index is added to a
-     "chunk set" (which could be a bitmap or std::vector<bool> indexed by chunk index.
-5.   The browser then look up each layout feature in the font subset description in the IFTB table
-     featureTable. That table maps the initial GID-mapped chunks to higher-indexed feature-specific
-     chunks. If any chunk in the set maps to a feature-specific-chunk the latter is added to the set.
-6.   The browser subtracts the list of already-included chunks recorded in the IFTB ChunkMap from the
-     chunk set.  If no chunks remain, the process skips to step XXX.
-7.   At this point there are two options for retrieving chunk contents:
+4.   The client maps each codepoint in the font subset description to a GID using the cmap table. It
+     then maps that GID to a bin index using GIDMap of the IFTB table. That index is added to a
+     "bin set" (which could be a bitmap or std::vector<bool> indexed by bin index).
+5.   The client then looks for each layout feature in the font subset description, ordered by feature
+     tag, in the IFTB table featureMap. Entires in that subtable map indexes already in the bin set to
+     additional bin indexes.  If any bin in the current set maps to an additional index the latter is
+     added to the set. (Because layout feature maps are processed in order, bins added by a previous
+     feature can affect what bins are added by subsequent features.)
+6.   The client subtracts the list of already-included chunks recorded in the IFTB ChunkMap from the
+     bin set.  If no bins remain, the process skips to step 12.
+7.   At this point there are two options for retrieving the chunk contents that correspond to the
+     needed bins:
 
      Load each needed chunk using individual files:
      1.  Calculate the hex string for the chunk index
@@ -420,11 +430,11 @@ Browser Behaviors {#iftb-browser-behaviors}
      (Only the trailing CFF, CFF2, glyf, loca and or gvar tables will change in size or location.) Also
      update the checksumAdjustment in the head table (if needed by the client).
 12.  If caching, store the file at this point.
-13.  Update the SFNT version to 0x00010000 (for a glyf table) or "OTTO" (for a CFF or CFF2 table) and
-     also the head table checksumAdjustment again (if needed by the client).
+13.  If needed by the client, update the SFNT version to 0x00010000 (for a glyf table) or "OTTO"
+     (for a CFF or CFF2 table) and modify the head table checksumAdjustment accordingly.
 14. Render the text with the updated font.
 
-### Subsequent Requests ### {#iftb-browser-behaviors-subsequent-requests}
+### Subsequent Requests ### {#iftb-client-behaviors-subsequent-requests}
 
 Subsequent requests proceed like the initial request starting at step 3.
 
@@ -442,25 +452,28 @@ reserialize tables if it desires.
 
 The details of the encoding process may differ by encoder and are beyond the scope of this document.
 However, all mappings of codepoints (though GIDs) to bins and bins to feature-specific bins must meet
-this closure requirement:
+this <dfn>closure requirement</dfn>:
 
 * The set of glyphs contained in the chunks loaded through the GID and feature maps must be a superset
-    of those in the GID closure of the font subset description.
+    of those in the [=glyph closure=] of the font subset description.
 
-The encoder has three options for addressing with joint dependencies on individual glyphs:
+Any of the following three strategies for addressing with joint dependencies on an individual glyph
+are valid when producing an encoding:
 
 1.   If a glyph is needed in more than one initial "trial" bin, those bins can be combined.
 2.   Alternatively, the glyph can be included in both bins, or more than two bins.  (The glyph will
      only be mapped to one chunk in the <code>gidMap</code>, and special care must be taken about which
      chunk it maps to if it has an associated codepoint. However, the encoder is free to include it in
-     other bins as long as the closure requirement is met.)
+     other bins as long as the [=closure requirement=] is met.)
 3.   If a glyph is needed in more than a few trial bins, or is otherwise complicating the binning
      process, it can be moved to bin 0 where it will always be included in the initially loaded file.
 
 Glyph Bin Locality {#iftb-bin-locality}
 ---------------------------------------
 
-An IFTB-encoded font may have as few as fifty or as many as two thousand bins.
+<em>This section is not normative.</em>
+
+An IFTB-encoded font could have as few as fifty or as many as two thousand bins.
 Higher numbers of bins may result in unacceptable overhead and diminishing
 returns. Regardless of the particular number, however, if glyphs are randomly
 distributed among bins most of them might need to be loaded in order to render
@@ -474,7 +487,7 @@ by frequency is often a mistake, because there are many more documents that
 need, for example, glyphs for writing Korean or glyphs for writing Greek than
 there are documents that need both.
 
-Therefore, it is best to start with an idea of how the encoded font will typically be used. One primary
+Accordingly, it is best to start with an idea of how the encoded font will typically be used. One primary
 use-case for font augmentation is for use with CJK-oriented fonts. A given font might "specialize" in
 a given script or language subset (e.g. traditional Chinese vs Hong Kong Chinese) whereas other fonts
 might be general. If a font will be used with one language or dialect it can be encoded with frequency
