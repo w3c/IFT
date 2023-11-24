@@ -311,14 +311,14 @@ When the particular IFT method(s) that are supported by a server are not known, 
 determine which method to use. Different clients may support different IFT methods, and different
 servers may support different IFT methods, so a negotiation occurs as such:
 
-1.  The browser makes the first request to the server using the GET HTTP method ([[rfc9110#section-9.3.1]]).
+1.  The browser makes the first request to the server using the GET HTTP method ([[rfc9110#GET]]).
      If the client prefers the [[#patch-incxfer|patch-subset method]], it sends the relevant
      [=patch request header=]. If the client prefers the range-request method, it does not send the
      header.
 
 2.  If the server receives the patch request header and wishes to honor it, the server must reply
      according to [[#handling-patch-request]]. Otherwise, the server must reply with the
-     [[RFC9110#section-14.3|Accept-Ranges]] header, if it supports HTTP Range Requests.
+     [[RFC9110#field.accept-ranges|Accept-Ranges]] header, if it supports HTTP Range Requests.
      
 3.  If the client receives a font with a
      [[open-type/otff#table-directory|table]]
@@ -1109,7 +1109,7 @@ The algorithm outputs:
 * Extended Font Subset: [=font subset=] that has been updated to cover at least the requested subset
     definition.
 
-* Cache fields: HTTP cache fields [[rfc9111#section-5]] describing how client state
+* Cache fields: HTTP cache fields [[rfc9111#header.field.definitions]] describing how client state
     can be cached, or null.
 
 The algorithm:
@@ -1153,7 +1153,7 @@ The algorithm:
 
      * The request URL [=url/path=] is set to the input <var>font URL</var> path.
 
-     * The request must include an [[rfc9110#section-12.5.3|Accept-Encoding]] header which lists
+     * The request must include an [[rfc9110#field.accept-encoding|Accept-Encoding]] header which lists
          at minimum one of the encodings from [[#patch-encodings]].
 
      * The request must include a <code>sec-available-dictionary</code> [=header=] whose value is the
@@ -1269,7 +1269,7 @@ The algorithm outputs:
 * Extended Font Subset: [=font subset=] that has been updated to cover at least the requested subset
     definition.
 
-* Cache fields: HTTP cache fields [[rfc9111#section-5]] describing how client state
+* Cache fields: HTTP cache fields [[rfc9111#header.field.definitions]] describing how client state
     can be cached, or null.
 
 The algorithm:
@@ -1279,7 +1279,7 @@ The algorithm:
      *  If it is a redirect [=status=]: follow normal redirect handling, such as
          [[fetch#http-redirect-fetch]] and then go back to step 1.
 
-     *  If [=response/status=] is [[RFC9110#section-15.5.10|409]], then the server does not recognize the codepoint ordering
+     *  If [=response/status=] is [[RFC9110#status.409|409]], then the server does not recognize the codepoint ordering
          used by the client. The client should resend the request that triggered this response but also
          set the [=PatchRequest/codepoint_ordering=] field on the request to the
          [=ClientState/codepoint_ordering=] in the client state table within <var>font subset</var>.
@@ -1288,8 +1288,8 @@ The algorithm:
          [$Handle failed font load$] and return the result.
 
 2. Decode the <var>server response</var> [=response/body=] by applying the appropriate decoding as
-     specified by the [[rfc9110#section-8.4|Content-Encoding]] header. If the
-     [[rfc9110#section-8.4|Content-Encoding]] is one of those from [[#patch-encodings]] then
+     specified by the [[rfc9110#field.content-encoding|Content-Encoding]] header. If the
+     [[rfc9110#field.content-encoding|Content-Encoding]] is one of those from [[#patch-encodings]] then
      the input <var>font subset</var> will be used as the source file for the decoding operation. The
      decoded response is the new <var>extended font subset</var>.
 
@@ -1415,7 +1415,7 @@ The algorithm:
 
      * The request [=request/cache mode=] is "only-if-cached".
 
-2.  If the request is successful and the response is "fresh" ([[RFC9111#section-4.2]])
+2.  If the request is successful and the response is "fresh" ([[RFC9111#expiration.model]])
      then invoke [$Extend the font subset$] with:
 
      *  Font url set to the input <var>font URL</var>.
@@ -1502,7 +1502,7 @@ Lastly, the server can produce two variable axis spaces:
 
 <span class="conform server" id="conform-bad-reordering">
 If the server does not recognize the codepoint ordering used by the client, it must respond
-with [=response/status=] code  [[RFC9110#section-15.5.10|409]]. This will instruct the client to resend
+with [=response/status=] code  [[RFC9110#status.409|409]]. This will instruct the client to resend
 the request including the codepoint ordering it has.
 </span>
 
@@ -1558,16 +1558,16 @@ result in an extended [=font subset=]:
 Additionally:
 
    *  The response [=response/body=] should be encoded by one of the content encodings listed
-        in the [[rfc9110#section-12.5.3|Accept-Encoding]] header of the request. When possible
+        in the [[rfc9110#field.accept-encoding|Accept-Encoding]] header of the request. When possible
         the server should utilize one of the patch based encodings from [[#patch-encodings]]. Non-patch
         based encodings should only be used where the server is unable to recreate the client's state
         in order to generate a patch against it.
 
    *  <span class="conform server" id="conform-response-vary">
-        The response must include a [[rfc9110#section-12.5.5|Vary]] [=header=] which includes
+        The response must include a [[rfc9110#field.vary|Vary]] [=header=] which includes
         at minimum <code>Accept-Encoding</code> and <code>use-sec-available-dictionary</code>.
         Additionally, if a <code>Font-Patch-Request</code> header is present on the request then the
-        [[rfc9110#section-12.5.5|Vary]] header must also include <code>Font-Patch-Request</code>.
+        [[rfc9110#field.vary|Vary]] header must also include <code>Font-Patch-Request</code>.
         </span>
 
    *  The response should set a <code>use-as-dictionary</code> [=header=] whose value is:
@@ -1590,16 +1590,16 @@ Possible error responses:
 
 *  <span class="conform server" id="conform-reject-malformed-request">
      If the request is malformed the server must instead respond with http [=response/status=] code
-      [[RFC9110#section-15.5.1|400]] to indicate an error.</span>
+      [[RFC9110#status.400|400]] to indicate an error.</span>
 
 *  If the requested font is not recognized by the server it should respond with http
-    [=response/status=] code  [[RFC9110#section-15.5.5|404]] to indicate a not found error.
+    [=response/status=] code  [[RFC9110#status.404|404]] to indicate a not found error.
 
 ### Range Request Support ### {#range-request-support}
 
 A patch subset support server must also support incremental transfer via [[#range-request-incxfer]].
 To support range request incremental transfer the patch subset server must support HTTP range requests
-([[RFC9110#section-14]]) against the font files it provides via patch subset.
+([[RFC9110#range.requests]]) against the font files it provides via patch subset.
 
 
 Computing Checksums {#computing-checksums}
@@ -1712,7 +1712,7 @@ in little endian order.
 Patch Encodings {#patch-encodings}
 ----------------------------------
 
-The following [[rfc9110#section-8.4|content encodings]] can be used to encode a target
+The following [[rfc9110#field.content-encoding|content encodings]] can be used to encode a target
 file as a patch against a source file:
 
 <table>
@@ -1817,7 +1817,7 @@ Since the <a href="https://www.w3.org/TR/2022/WD-IFT-20220628/">Working
   <a href="https://github.com/w3c/IFT/commits/main/Overview.bs">commit history</a>):
 
 <ul>
-  <li>Updated citations of rfc9110 and rfc9111 to use section references</li>
+  <li>Updated citations of rfc9110 and rfc9111 to use new references</li>
   <li>Update privacy section to clarify purpose of checksums</li>
   <li>Split off the range request section back into a separate document</li>
   <li>Removed PatchResponse from the specification</li>
