@@ -77,7 +77,7 @@ Note: There are no <code>MUST</code>-level requirements on the organization of a
 
 ### Compression ### {#font-organization-compression}
 
-Servers supporting the range-request IFT method should support compression via the <code>Content-Encoding</code> header ([[RFC9110#section-8.4]]), rather than having the font file itself be statically compressed.
+Servers supporting the range-request IFT method should support compression via the <code>Content-Encoding</code> header ([[RFC9110#field.content-encoding]]), rather than having the font file itself be statically compressed.
 
 A [=range-request optimized font=] file (the file itself) should not use any kind of compression other than [[!RFC7932]] (commonly referred to as "Brotli") compression.
 
@@ -164,13 +164,13 @@ Note: The first request does not have to be a range request. If the browser expe
 
 Once all the data before the [=range-request threshold=] has been loaded by the browser, the browser may either close this connection to the server, or it may choose to leave the connection open and let the font data continue loading in the background.
 
-A browser may choose to add a <code>Range</code> header ([[RFC9110#section-14.2]]) to the initial request during the IFT method selection if it has reason to believe the range it requests will be large enough and it prefers to not close this connection to the server.
+A browser may choose to add a <code>Range</code> header ([[RFC9110#range.specifiers]]) to the initial request during the IFT method selection if it has reason to believe the range it requests will be large enough and it prefers to not close this connection to the server.
 
 Note: Different browsers may choose different [=range-request thresholds=]. Some browsers may treat this threshold as occuring at the end of the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">sfnt tableDirectory</a>. Other browsers may treat this threshold as occurring just before any outline data, provided the outline data appears at the end of the font. Other browsers may place this threshold at the very beginning of the file, thereby treating the whole file as able to be downloaded with range-requests.
 
 ### Subsequent Requests ### {#browser-behaviors-subsequent-requests}
 
-After all the data before the [=range-request threshold=] has been loaded by the browser, the browser will determine which additional byte ranges in the file are necessary to load. It will then issue HTTP Range Requests ([[RFC9110#section-14]]) for at least those ranges.
+After all the data before the [=range-request threshold=] has been loaded by the browser, the browser will determine which additional byte ranges in the file are necessary to load. It will then issue HTTP Range Requests ([[RFC9110#range.requests]]) for at least those ranges.
 
 Note: Browsers are encouraged to coalesce range requests for nearby areas of the file, to minimize the amount of range-request overhead required. Browsers are encouraged to inform these coalescing decisions from network configuration parameters and bandwidth / latency observations.
 
@@ -181,11 +181,11 @@ Note: Another valid alternative is to treat the entire font as residing on an as
 Server Behaviors {#server-behaviors}
 ------------------------------------
 
-Servers supporting the range-request IFT method must support range requests ([[RFC9110#section-14]]).
+Servers supporting the range-request IFT method must support range requests ([[RFC9110#range.requests]]).
 
 Servers supporting the range-request IFT method should support compression via the
-<code>Content-Encoding</code> ([[RFC9110#section-8.4]]) header or the
-<code>Transfer-Encoding</code> header ([[RFC9112#section-6.1]]), rather than having the font file
+<code>Content-Encoding</code> ([[RFC9110#field.content-encoding]]) header or the
+<code>Transfer-Encoding</code> header ([[RFC9112#field.transfer-encoding]]), rather than having the font file
 itself be statically compressed.
 
 <h2 class=no-num id=priv>Privacy Considerations</h2>
@@ -203,7 +203,7 @@ Since the <a href="https://www.w3.org/TR/2022/WD-IFT-20220628/">Working
   <a href="https://github.com/w3c/IFT/commits/main/RangeRequest.bs">commit history</a>):
 
 <ul>
-  <li>Updated citations of rfc9110 and rfc9111 to use section references</li>
+  <li>Updated citations of rfc9110 and rfc9112 to use new references</li>
   <li>Split off this range request section back into a separate document</li>
 </ul>
 
