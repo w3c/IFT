@@ -1,7 +1,10 @@
-all: Overview.html RangeRequest.html
+all: Overview.html PatchSubset.html RangeRequest.html
 
-Overview.html: Overview.bs feature-registry.html
+Overview.html: Overview.bs
 	bikeshed spec Overview.bs
+
+PatchSubset.html: PatchSubset.bs feature-registry.html
+	bikeshed spec PatchSubset.bs
 
 RangeRequest.html: RangeRequest.bs
 	bikeshed spec RangeRequest.bs
