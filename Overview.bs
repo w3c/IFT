@@ -158,7 +158,41 @@ scheme and found it improved overall performance.
 Opt-In Mechanism {#opt-in}
 ==========================
 
-TODO
+Web pages can choose to opt-in to incremental transfer for a font via the use of a CSS font tech
+keyword ([[css-fonts-4#font-tech-definitions]]) inside the ''@font-face'' block. The keyword
+<code>incremental</code> is used to indicate the referenced font contains IFT data and should
+only be loaded by a user agent which supports incremental font transfer.
+
+<div class=example>
+<pre>
+@font-face {
+    font-family: "MyCoolWebFont";
+    src: url("MyCoolWebFont.otf") tech(incremental);
+}
+</pre>
+</div>
+
+@font-face's that include the <code>incremental</code> tech keyword should also include a
+[[css-fonts-4#unicode-range-desc|unicode-range descriptor]]. This informs the client which codepoints
+are available in the font prior to making the first request, which can be used to avoid requesting
+the font unnecessarily.
+
+Note: Each individual <code>@font-face</code> block may or may not opt-in to IFT. This is due to the
+variety of ways fonts are used on web pages. Authors have control over which fonts they want to use
+this technology with, and which they do not.
+
+Note: the IFT tech keyword can be used in conjunction with other font tech specifiers to perform
+font feature selection. For example a <code>@font-face</code> could include two URLs one with
+<code>tech(incremental, color-COLRv1)</code> and the other with
+<code>tech(incremental, color-COLRv0)</code>.
+
+Offline Usage {#offline-usage}
+------------------------------
+
+Special consideration must be taken when saving a page for offline usage that uses an incrementally
+transferred font since the saved page won't be able to increment the font if content changes (eg.
+due to JavaScript execution). In these cases the page saving mechanism should produce the full font
+by using [[#extending-font-subset]] to apply all available patches listed in the font.
 
 Font Subset {#font-subset-info}
 ===============================

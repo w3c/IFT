@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="e9c4e9cbd70091a00d439fb9ca9618d90507196d" name="document-revision">
+  <meta content="14a847a2b6303c4fc246c72067110390a577cc6a" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -539,7 +539,11 @@ dfn > a.self-link::before      { content: "#"; }
         <li><a href="#reduce-requests"><span class="secno">1.2.1</span> <span class="content">Reducing the Number of Network Requests</span></a>
        </ol>
      </ol>
-    <li><a href="#opt-in"><span class="secno">2</span> <span class="content">Opt-In Mechanism</span></a>
+    <li>
+     <a href="#opt-in"><span class="secno">2</span> <span class="content">Opt-In Mechanism</span></a>
+     <ol class="toc">
+      <li><a href="#offline-usage"><span class="secno">2.1</span> <span class="content">Offline Usage</span></a>
+     </ol>
     <li><a href="#font-subset-info"><span class="secno">3</span> <span class="content">Font Subset</span></a>
     <li><a href="#font-format-extensions"><span class="secno">4</span> <span class="content">Extensions to the Font Format</span></a>
     <li><a href="#font-patch-formats"><span class="secno">5</span> <span class="content">Font Patch Formats</span></a>
@@ -567,9 +571,6 @@ dfn > a.self-link::before      { content: "#"; }
    </ol>
   </nav>
   <main>
-   <p>TODO: add section to define a font subset.
-TODO: add section to define a font subset definition.
-TODO: how does this interact with woff2</p>
    <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
    <p><em>This section is not normative.</em></p>
    <p>Incremental Font Transfer (IFT) is a technology to improve the latency of remote fonts (or "web fonts") on
@@ -635,7 +636,30 @@ currently needed, but expected to be needed in the future. Intelligent use of th
 implementation can help reduce the total number of requests being made. The evaluation report explored
 this by testing the performance of a basic character frequency based <a href="https://www.w3.org/TR/PFE-evaluation/#codepredict">codepoint prediction</a> scheme and found it improved overall performance.</p>
    <h2 class="heading settled" data-level="2" id="opt-in"><span class="secno">2. </span><span class="content">Opt-In Mechanism</span><a class="self-link" href="#opt-in"></a></h2>
-   <p>TODO</p>
+   <p>Web pages can choose to opt-in to incremental transfer for a font via the use of a CSS font tech
+keyword (<a href="https://www.w3.org/TR/css-fonts-4/#font-tech-definitions"><cite>CSS Fonts 4</cite> § 11.1 Font tech</a>) inside the ''@font-face'' block. The keyword <code>incremental</code> is used to indicate the referenced font contains IFT data and should
+only be loaded by a user agent which supports incremental font transfer.</p>
+   <div class="example" id="example-d6868efb">
+    <a class="self-link" href="#example-d6868efb"></a> 
+<pre>@font-face {
+    font-family: "MyCoolWebFont";
+    src: url("MyCoolWebFont.otf") tech(incremental);
+}
+</pre>
+   </div>
+   <p>@font-face’s that include the <code>incremental</code> tech keyword should also include a <a href="https://www.w3.org/TR/css-fonts-4/#unicode-range-desc">unicode-range descriptor</a>. This informs the client which codepoints
+are available in the font prior to making the first request, which can be used to avoid requesting
+the font unnecessarily.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Each individual <code>@font-face</code> block may or may not opt-in to IFT. This is due to the
+variety of ways fonts are used on web pages. Authors have control over which fonts they want to use
+this technology with, and which they do not.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> the IFT tech keyword can be used in conjunction with other font tech specifiers to perform
+font feature selection. For example a <code>@font-face</code> could include two URLs one with <code>tech(incremental, color-COLRv1)</code> and the other with <code>tech(incremental, color-COLRv0)</code>.</p>
+   <h3 class="heading settled" data-level="2.1" id="offline-usage"><span class="secno">2.1. </span><span class="content">Offline Usage</span><a class="self-link" href="#offline-usage"></a></h3>
+   <p>Special consideration must be taken when saving a page for offline usage that uses an incrementally
+transferred font since the saved page won’t be able to increment the font if content changes (eg.
+due to JavaScript execution). In these cases the page saving mechanism should produce the full font
+by using <a href="#extending-font-subset">§ 6 Extending a Font Subset</a> to apply all available patches listed in the font.</p>
    <h2 class="heading settled" data-level="3" id="font-subset-info"><span class="secno">3. </span><span class="content">Font Subset</span><a class="self-link" href="#font-subset-info"></a></h2>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-subset">font subset</dfn> is a modified version of a font file <a data-link-type="biblio" href="#biblio-iso14496-22" title="Information technology — Coding of audio-visual objects — Part 22: Open Font Format">[iso14496-22]</a> that contains only the data
 needed to render a subset of:</p>
@@ -654,7 +678,8 @@ features that a renderer may choose to use from the original font, such as hinti
 variation axis space) that a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset">font subset</a> must possess.</p>
    <p class="note" role="note"><span class="marker">Note:</span> For convenience the remainder of this document links to the <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">[open-type]</a> specification which is a copy of <a data-link-type="biblio" href="#biblio-iso14496-22" title="Information technology — Coding of audio-visual objects — Part 22: Open Font Format">[iso14496-22]</a>.</p>
    <h2 class="heading settled" data-level="4" id="font-format-extensions"><span class="secno">4. </span><span class="content">Extensions to the Font Format</span><a class="self-link" href="#font-format-extensions"></a></h2>
-   <p>TODO</p>
+   <p>TODO
+TODO: how does this interact with woff2</p>
    <h2 class="heading settled" data-level="5" id="font-patch-formats"><span class="secno">5. </span><span class="content">Font Patch Formats</span><a class="self-link" href="#font-patch-formats"></a></h2>
    <p>TODO</p>
    <h2 class="heading settled" data-level="6" id="extending-font-subset"><span class="secno">6. </span><span class="content">Extending a Font Subset</span><a class="self-link" href="#extending-font-subset"></a></h2>
@@ -756,6 +781,8 @@ variation axis space) that a <a data-link-type="dfn" href="#font-subset" id="ref
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
+   <dt id="biblio-css-fonts-4">[CSS-FONTS-4]
+   <dd>John Daggett; Myles Maxfield; Chris Lilley. <a href="https://www.w3.org/TR/css-fonts-4/"><cite>CSS Fonts Module Level 4</cite></a>. 21 December 2021. WD. URL: <a href="https://www.w3.org/TR/css-fonts-4/">https://www.w3.org/TR/css-fonts-4/</a>
    <dt id="biblio-iso14496-22">[ISO14496-22]
    <dd><a href="https://www.iso.org/standard/74461.html"><cite>Information technology — Coding of audio-visual objects — Part 22: Open Font Format</cite></a>. January 2019. Published. URL: <a href="https://www.iso.org/standard/74461.html">https://www.iso.org/standard/74461.html</a>
    <dt id="biblio-open-type">[OPEN-TYPE]
