@@ -224,7 +224,63 @@ TODO: how does this interact with woff2
 Font Patch Formats {#font-patch-formats}
 ========================================
 
-TODO
+In incremental font transfer [=font subset|font subsets=] are extended by loading and applying patches. Due to the different
+capabilities required in different situations this specification defines three different patch formats that can be used.
+
+## Definitions ## {#font-patch-definitions}
+
+A <dfn dfn>font patch</dfn> is a file which encodes changes to be made to an existing font file. Patches are used to extend
+an existing [=font subset=] and provide expanded coverage.
+
+A <dfn dfn>patch format</dfn> is a specified encoding used to encode changes to be applied to a [=font subset=] into a
+[=font patch=]. Every [=patch format=] has an associated  <dfn dfn>patch application algorithm</dfn> which takes a
+[=font subset=] and a [=font patch=] encoded in the [=patch format=] as input and outputs a new extended
+[=font subset=]. Each patch application algorithm can be categorized as either independent or dependent. Given a set of
+[=font patch|font patches=], <code>P</code>, that are valid to be applied to a specific [=font subset=], <code>F</code>:
+
+* <dfn dfn>dependent</dfn> patches are only valid to be applied to [=font subset=] <code>F</code>. Applying any patches from
+    <code>P</code> to [=font subset=] <code>F</code> will change the subset and thus invalidate any remaining dependent patches
+    in <code>P</code>.
+
+* <dfn dfn>independent</dfn> patches are only valid to be applied to [=font subset=] <code>F</code> and any [=font subset=] derived
+    from F by the application of one or more independent patches from <code>P</code>.
+
+## Formats Summary ## {#font-patch-formats-summary}
+
+The following patch formats are defined by this specification:
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>Shared Brotli</td>
+    <td>[=dependent=]</td>
+    <td>A shared brotli encoded binary diff that uses the entire [=font subset=] as a base.</td>
+  </tr>
+  <tr>
+    <td>Per Table Shared Brotli</td>
+    <td>[=dependent=]</td>
+    <td>A collection of shared brotli encoded binary diffs that use tables from the [=font subset=] as bases.</td>
+  </tr>
+  <tr>
+    <td>Glyph Keyed</td>
+    <td>[=independent=]</td>
+    <td>Contains a collection of opaque binary blobs, each associated with a glyph id and table.</td>
+  </tr>
+</table>
+
+More detailed descriptions of each algorithm can be found in the proceeding sections.
+
+
+
+<!---
+TODO: Sub-sections for the three patch types.
+--->
+
+
 
 Extending a Font Subset {#extending-font-subset}
 ================================================
