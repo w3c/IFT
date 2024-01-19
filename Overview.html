@@ -6,10 +6,23 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="2edfe2de4e92545e8c4dc44c60378212b9d23e30" name="document-revision">
+  <meta content="d17b3553ac35a2bc2000ae2ed24330a67a35c818" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
+
+table {
+  width: 100%;
+}
+
+table, tr {
+  border: 1px solid #aaa;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.5rem;
+}
 </style>
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -464,6 +477,27 @@ a.self-link::before            { content: "¶"; }
 .heading > a.self-link::before { content: "§"; }
 dfn > a.self-link::before      { content: "#"; }
 </style>
+<style>/* Boilerplate: style-style-var-click-highlighting */
+/*
+Colors were chosen in Lab using https://nixsensor.com/free-color-converter/
+D50 2deg illuminant, L in [0,100], a and b in [-128, 128]
+0 = lab(85,0,85)
+1 = lab(85,80,30)
+2 = lab(85,-40,40)
+3 = lab(85,-50,0)
+4 = lab(85,5,15)
+5 = lab(85,-10,-50)
+6 = lab(85,35,-15)
+*/
+var { cursor: pointer; }
+var.selected0 { background-color: #F4D200; box-shadow: 0 0 0 2px #F4D200; }
+var.selected1 { background-color: #FF87A2; box-shadow: 0 0 0 2px #FF87A2; }
+var.selected2 { background-color: #96E885; box-shadow: 0 0 0 2px #96E885; }
+var.selected3 { background-color: #3EEED2; box-shadow: 0 0 0 2px #3EEED2; }
+var.selected4 { background-color: #EACFB6; box-shadow: 0 0 0 2px #EACFB6; }
+var.selected5 { background-color: #82DDFF; box-shadow: 0 0 0 2px #82DDFF; }
+var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
+</style>
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-WD" rel="stylesheet">
  <body class="h-entry">
   <div class="head">
@@ -545,14 +579,22 @@ dfn > a.self-link::before      { content: "#"; }
       <li><a href="#offline-usage"><span class="secno">2.1</span> <span class="content">Offline Usage</span></a>
      </ol>
     <li><a href="#font-subset-info"><span class="secno">3</span> <span class="content">Font Subset</span></a>
-    <li><a href="#font-format-extensions"><span class="secno">4</span> <span class="content">Extensions to the Font Format</span></a>
+    <li><a href="#data-types"><span class="secno">4</span> <span class="content">Data Types</span></a>
+    <li><a href="#font-format-extensions"><span class="secno">5</span> <span class="content">Extensions to the Font Format</span></a>
     <li>
-     <a href="#font-patch-formats"><span class="secno">5</span> <span class="content">Font Patch Formats</span></a>
+     <a href="#font-patch-formats"><span class="secno">6</span> <span class="content">Font Patch Formats</span></a>
      <ol class="toc">
-      <li><a href="#font-patch-definitions"><span class="secno">5.1</span> <span class="content">Definitions</span></a>
-      <li><a href="#font-patch-formats-summary"><span class="secno">5.2</span> <span class="content">Formats Summary</span></a>
+      <li><a href="#font-patch-definitions"><span class="secno">6.1</span> <span class="content">Definitions</span></a>
+      <li><a href="#font-patch-formats-summary"><span class="secno">6.2</span> <span class="content">Formats Summary</span></a>
+      <li>
+       <a href="#shared-brotli"><span class="secno">6.3</span> <span class="content">Shared Brotli Patch</span></a>
+       <ol class="toc">
+        <li><a href="#apply-shared-brotli"><span class="secno">6.3.1</span> <span class="content">Applying Shared Brotli Patches</span></a>
+       </ol>
+      <li><a href="#per-table-shared-brotli"><span class="secno">6.4</span> <span class="content">Per Table Shard Brotli</span></a>
+      <li><a href="#glyph-keyed"><span class="secno">6.5</span> <span class="content">Glyph Keyed</span></a>
      </ol>
-    <li><a href="#extending-font-subset"><span class="secno">6</span> <span class="content">Extending a Font Subset</span></a>
+    <li><a href="#extending-font-subset"><span class="secno">7</span> <span class="content">Extending a Font Subset</span></a>
     <li><a href="#priv"><span class="secno"></span> <span class="content">Privacy Considerations</span></a>
     <li><a href="#sec"><span class="secno"></span> <span class="content">Security Considerations</span></a>
     <li><a href="#changes"><span class="secno"></span> <span class="content">Changes</span></a>
@@ -664,7 +706,7 @@ font feature selection. For example a <code>@font-face</code> could include two 
    <p>Special consideration must be taken when saving a page for offline usage that uses an incrementally
 transferred font since the saved page won’t be able to increment the font if content changes (eg.
 due to JavaScript execution). In these cases the page saving mechanism should produce the full font
-by using <a href="#extending-font-subset">§ 6 Extending a Font Subset</a> to apply all available patches listed in the font.</p>
+by using <a href="#extending-font-subset">§ 7 Extending a Font Subset</a> to apply all available patches listed in the font.</p>
    <h2 class="heading settled" data-level="3" id="font-subset-info"><span class="secno">3. </span><span class="content">Font Subset</span><a class="self-link" href="#font-subset-info"></a></h2>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-subset">font subset</dfn> is a modified version of a font file <a data-link-type="biblio" href="#biblio-iso14496-22" title="Information technology — Coding of audio-visual objects — Part 22: Open Font Format">[iso14496-22]</a> that contains only the data
 needed to render a subset of:</p>
@@ -682,16 +724,17 @@ features that a renderer may choose to use from the original font, such as hinti
    <p>A <dfn data-dfn-type="dfn" data-noexport id="font-subset-definition">font subset definition<a class="self-link" href="#font-subset-definition"></a></dfn> describes the minimum data (codepoints, layout features,
 variation axis space) that a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset">font subset</a> must possess.</p>
    <p class="note" role="note"><span class="marker">Note:</span> For convenience the remainder of this document links to the <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">[open-type]</a> specification which is a copy of <a data-link-type="biblio" href="#biblio-iso14496-22" title="Information technology — Coding of audio-visual objects — Part 22: Open Font Format">[iso14496-22]</a>.</p>
-   <h2 class="heading settled" data-level="4" id="font-format-extensions"><span class="secno">4. </span><span class="content">Extensions to the Font Format</span><a class="self-link" href="#font-format-extensions"></a></h2>
-   <p>TODO
-TODO: how does this interact with woff2</p>
-   <h2 class="heading settled" data-level="5" id="font-patch-formats"><span class="secno">5. </span><span class="content">Font Patch Formats</span><a class="self-link" href="#font-patch-formats"></a></h2>
+   <h2 class="heading settled" data-level="4" id="data-types"><span class="secno">4. </span><span class="content">Data Types</span><a class="self-link" href="#data-types"></a></h2>
+   <p>Encoded data structures in the remainder of this specification are described in terms of the data types defined
+in <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types">OpenType Specification § otff#data-types</a>. As with OpenType all fields use Big Endian byte ordering.</p>
+   <h2 class="heading settled" data-level="5" id="font-format-extensions"><span class="secno">5. </span><span class="content">Extensions to the Font Format</span><a class="self-link" href="#font-format-extensions"></a></h2>
+   <h2 class="heading settled" data-level="6" id="font-patch-formats"><span class="secno">6. </span><span class="content">Font Patch Formats</span><a class="self-link" href="#font-patch-formats"></a></h2>
    <p>In incremental font transfer <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①">font subsets</a> are extended by loading and applying patches. Due to the different
 capabilities required in different situations this specification defines three different patch formats that can be used.</p>
-   <h3 class="heading settled" data-level="5.1" id="font-patch-definitions"><span class="secno">5.1. </span><span class="content">Definitions</span><a class="self-link" href="#font-patch-definitions"></a></h3>
+   <h3 class="heading settled" data-level="6.1" id="font-patch-definitions"><span class="secno">6.1. </span><span class="content">Definitions</span><a class="self-link" href="#font-patch-definitions"></a></h3>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-patch">font patch</dfn> is a file which encodes changes to be made to an existing font file. Patches are used to extend
 an existing <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②">font subset</a> and provide expanded coverage.</p>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-format">patch format</dfn> is a specified encoding used to encode changes to be applied to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③">font subset</a> into a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch">font patch</a>. Every <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format">patch format</a> has an associated <dfn data-dfn-type="dfn" data-noexport id="patch-application-algorithm">patch application algorithm<a class="self-link" href="#patch-application-algorithm"></a></dfn> which takes a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a> and a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch①">font patch</a> encoded in the <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format①">patch format</a> as input and outputs a new extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a>. Each patch application algorithm can be categorized as either independent or dependent. Given a set of <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch②">font patches</a>, <code>P</code>, that are valid to be applied to a specific <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a>, <code>F</code>:</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-format">patch format</dfn> is a specified encoding used to encode changes to be applied to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③">font subset</a> into a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch">font patch</a>. Every <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format">patch format</a> has an associated <dfn data-dfn-type="dfn" data-noexport id="patch-application-algorithm">patch application algorithm<a class="self-link" href="#patch-application-algorithm"></a></dfn> which takes a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a> and a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch①">font patch</a> encoded in the <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format①">patch format</a> as input and outputs a new extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a>. Each patch application algorithm can be categorized as either independent or dependent. Given a set of <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch②">font patches</a>, <code>P</code>, that are all valid to be applied to a specific <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a>, <code>F</code>:</p>
    <ul>
     <li data-md>
      <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="dependent">dependent</dfn> patches are only valid to be applied to <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font subset</a> <code>F</code>. Applying any patches from <code>P</code> to <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑧">font subset</a> <code>F</code> will change the subset and thus invalidate any remaining dependent patches
@@ -700,7 +743,7 @@ in <code>P</code>.</p>
      <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="independent">independent</dfn> patches are only valid to be applied to <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑨">font subset</a> <code>F</code> and any <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⓪">font subset</a> derived
 from F by the application of one or more independent patches from <code>P</code>.</p>
    </ul>
-   <h3 class="heading settled" data-level="5.2" id="font-patch-formats-summary"><span class="secno">5.2. </span><span class="content">Formats Summary</span><a class="self-link" href="#font-patch-formats-summary"></a></h3>
+   <h3 class="heading settled" data-level="6.2" id="font-patch-formats-summary"><span class="secno">6.2. </span><span class="content">Formats Summary</span><a class="self-link" href="#font-patch-formats-summary"></a></h3>
    <p>The following patch formats are defined by this specification:</p>
    <table>
     <tbody>
@@ -722,7 +765,64 @@ from F by the application of one or more independent patches from <code>P</code>
       <td>Contains a collection of opaque binary blobs, each associated with a glyph id and table.
    </table>
    <p>More detailed descriptions of each algorithm can be found in the proceeding sections.</p>
-   <h2 class="heading settled" data-level="6" id="extending-font-subset"><span class="secno">6. </span><span class="content">Extending a Font Subset</span><a class="self-link" href="#extending-font-subset"></a></h2>
+   <h3 class="heading settled" data-level="6.3" id="shared-brotli"><span class="secno">6.3. </span><span class="content">Shared Brotli Patch</span><a class="self-link" href="#shared-brotli"></a></h3>
+   <p>In a shared brotli patch the target file is encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the
+source file as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. A shared brotli encoded patch consists
+of a short header followed by brotli encoded data.</p>
+   <p><dfn data-dfn-type="dfn" data-noexport id="shared-brotli-patch">Shared brotli patch<a class="self-link" href="#shared-brotli-patch"></a></dfn> encoding:</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>Type
+      <th>Name
+      <th>Description
+     <tr>
+      <td>Tag
+      <td><dfn class="dfn-paneled" data-dfn-for="Shared brotli patch" data-dfn-type="dfn" data-noexport id="shared-brotli-patch-format">format</dfn>
+      <td>Identifies the encoding as shared brotli, set to 'sbr '
+     <tr>
+      <td>uint32
+      <td><dfn class="dfn-paneled" data-dfn-for="Shared brotli patch" data-dfn-type="dfn" data-noexport id="shared-brotli-patch-id">id</dfn>[4]
+      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a> which this patch can be applied too.
+     <tr>
+      <td>uint8
+      <td><dfn class="dfn-paneled" data-dfn-for="Shared brotli patch" data-dfn-type="dfn" data-noexport id="shared-brotli-patch-brotlistream">brotliStream</dfn>[variable]
+      <td>Brotli encoded byte stream.
+   </table>
+   <h4 class="heading settled algorithm" data-algorithm="Applying Shared Brotli Patches" data-level="6.3.1" id="apply-shared-brotli"><span class="secno">6.3.1. </span><span class="content">Applying Shared Brotli Patches</span><a class="self-link" href="#apply-shared-brotli"></a></h4>
+   <p>This algorithm is used to apply a shared brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a> to cover additional codepoints,
+features, and/or design-variation space.</p>
+   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-shared-brotli-patch">Apply shared brotli patch<a class="self-link" href="#abstract-opdef-apply-shared-brotli-patch"></a></dfn></p>
+   <p>The inputs to this algorithm are:</p>
+   <ul>
+    <li data-md>
+     <p><var>base font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a> which is to be extended.</p>
+    <li data-md>
+     <p><var>patch</var>: a shared brotli patch to be applied to <var>base font subset</var>.</p>
+   </ul>
+   <p>The algorithm outputs:</p>
+   <ul>
+    <li data-md>
+     <p><var>extended font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a> that has been extended by the <var>patch</var>.</p>
+   </ul>
+   <p>The algorithm:</p>
+   <ol>
+    <li data-md>
+     <p>Check that the <a data-link-type="dfn" href="#shared-brotli-patch-format" id="ref-for-shared-brotli-patch-format">format</a> field in <var>patch</var> is equal to 'sbr ', if it is
+not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
+an error.</p>
+    <li data-md>
+     <p>Check that the <a data-link-type="dfn" href="#shared-brotli-patch-id" id="ref-for-shared-brotli-patch-id">id</a> field in <var>patch</var> is equal to the at least one of the ids
+found in the 'IFT ' or 'IFTX' table of <var>base font subset</var>. If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table then patch application has failed,
+return an error.</p>
+    <li data-md>
+     <p>Decode the brotli encoded data in <a data-link-type="dfn" href="#shared-brotli-patch-brotlistream" id="ref-for-shared-brotli-patch-brotlistream">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a> and
+using the <var>base font subset</var> as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. Return the decoded
+result as the <var>extended font subset</var></p>
+   </ol>
+   <h3 class="heading settled" data-level="6.4" id="per-table-shared-brotli"><span class="secno">6.4. </span><span class="content">Per Table Shard Brotli</span><a class="self-link" href="#per-table-shared-brotli"></a></h3>
+   <h3 class="heading settled" data-level="6.5" id="glyph-keyed"><span class="secno">6.5. </span><span class="content">Glyph Keyed</span><a class="self-link" href="#glyph-keyed"></a></h3>
+   <h2 class="heading settled" data-level="7" id="extending-font-subset"><span class="secno">7. </span><span class="content">Extending a Font Subset</span><a class="self-link" href="#extending-font-subset"></a></h2>
    <p>TODO</p>
    <h2 class="no-num heading settled" id="priv"><span class="content">Privacy Considerations</span><a class="self-link" href="#priv"></a></h2>
    <p>TODO</p>
@@ -815,13 +915,18 @@ from F by the application of one or more independent patches from <code>P</code>
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
-   <li><a href="#dependent">dependent</a><span>, in § 5.1</span>
-   <li><a href="#font-patch">font patch</a><span>, in § 5.1</span>
+   <li><a href="#abstract-opdef-apply-shared-brotli-patch">Apply shared brotli patch</a><span>, in § 6.3.1</span>
+   <li><a href="#shared-brotli-patch-brotlistream">brotliStream</a><span>, in § 6.3</span>
+   <li><a href="#dependent">dependent</a><span>, in § 6.1</span>
+   <li><a href="#font-patch">font patch</a><span>, in § 6.1</span>
    <li><a href="#font-subset">font subset</a><span>, in § 3</span>
    <li><a href="#font-subset-definition">font subset definition</a><span>, in § 3</span>
-   <li><a href="#independent">independent</a><span>, in § 5.1</span>
-   <li><a href="#patch-application-algorithm">patch application algorithm</a><span>, in § 5.1</span>
-   <li><a href="#patch-format">patch format</a><span>, in § 5.1</span>
+   <li><a href="#shared-brotli-patch-format">format</a><span>, in § 6.3</span>
+   <li><a href="#shared-brotli-patch-id">id</a><span>, in § 6.3</span>
+   <li><a href="#independent">independent</a><span>, in § 6.1</span>
+   <li><a href="#patch-application-algorithm">patch application algorithm</a><span>, in § 6.1</span>
+   <li><a href="#patch-format">patch format</a><span>, in § 6.1</span>
+   <li><a href="#shared-brotli-patch">Shared brotli patch</a><span>, in § 6.3</span>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
@@ -836,6 +941,10 @@ from F by the application of one or more independent patches from <code>P</code>
    <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/"><cite>Progressive Font Enrichment: Evaluation Report</cite></a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+   <dt id="biblio-rfc7932">[RFC7932]
+   <dd>J. Alakuijala; Z. Szabadka. <a href="https://www.rfc-editor.org/rfc/rfc7932"><cite>Brotli Compressed Data Format</cite></a>. July 2016. Informational. URL: <a href="https://www.rfc-editor.org/rfc/rfc7932">https://www.rfc-editor.org/rfc/rfc7932</a>
+   <dt id="biblio-shared-brotli">[Shared-Brotli]
+   <dd>J. Alakuijala; et al. <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09"><cite>Shared Brotli Compressed Data Format</cite></a>. 27 Jul 2021. Internet Draft. URL: <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09">https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
@@ -997,11 +1106,14 @@ from F by the application of one or more independent patches from <code>P</code>
 </script>
 <script>/* Boilerplate: script-dfn-panel-json */
 window.dfnpanelData = {};
-window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "5. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2461"}, {"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}], "title": "5.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2460"}, {"id": "ref-for-font-subset\u2460\u2461"}], "title": "5.2. Formats Summary"}], "external": false};
-window.dfnpanelData['font-patch'] = {"dfnID": "font-patch", "url": "#font-patch", "dfnText": "font patch", "refSections": [{"refs": [{"id": "ref-for-font-patch"}, {"id": "ref-for-font-patch\u2460"}, {"id": "ref-for-font-patch\u2461"}], "title": "5.1. Definitions"}], "external": false};
-window.dfnpanelData['patch-format'] = {"dfnID": "patch-format", "url": "#patch-format", "dfnText": "patch format", "refSections": [{"refs": [{"id": "ref-for-patch-format"}, {"id": "ref-for-patch-format\u2460"}], "title": "5.1. Definitions"}], "external": false};
-window.dfnpanelData['dependent'] = {"dfnID": "dependent", "url": "#dependent", "dfnText": "dependent", "refSections": [{"refs": [{"id": "ref-for-dependent"}, {"id": "ref-for-dependent\u2460"}], "title": "5.2. Formats Summary"}], "external": false};
-window.dfnpanelData['independent'] = {"dfnID": "independent", "url": "#independent", "dfnText": "independent", "refSections": [{"refs": [{"id": "ref-for-independent"}], "title": "5.2. Formats Summary"}], "external": false};
+window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "6. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2461"}, {"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}], "title": "6.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2460"}, {"id": "ref-for-font-subset\u2460\u2461"}], "title": "6.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2462"}], "title": "6.3. Shared Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}, {"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}], "title": "6.3.1. Applying Shared Brotli Patches"}], "external": false};
+window.dfnpanelData['font-patch'] = {"dfnID": "font-patch", "url": "#font-patch", "dfnText": "font patch", "refSections": [{"refs": [{"id": "ref-for-font-patch"}, {"id": "ref-for-font-patch\u2460"}, {"id": "ref-for-font-patch\u2461"}], "title": "6.1. Definitions"}], "external": false};
+window.dfnpanelData['patch-format'] = {"dfnID": "patch-format", "url": "#patch-format", "dfnText": "patch format", "refSections": [{"refs": [{"id": "ref-for-patch-format"}, {"id": "ref-for-patch-format\u2460"}], "title": "6.1. Definitions"}], "external": false};
+window.dfnpanelData['dependent'] = {"dfnID": "dependent", "url": "#dependent", "dfnText": "dependent", "refSections": [{"refs": [{"id": "ref-for-dependent"}, {"id": "ref-for-dependent\u2460"}], "title": "6.2. Formats Summary"}], "external": false};
+window.dfnpanelData['independent'] = {"dfnID": "independent", "url": "#independent", "dfnText": "independent", "refSections": [{"refs": [{"id": "ref-for-independent"}], "title": "6.2. Formats Summary"}], "external": false};
+window.dfnpanelData['shared-brotli-patch-format'] = {"dfnID": "shared-brotli-patch-format", "url": "#shared-brotli-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-shared-brotli-patch-format"}], "title": "6.3.1. Applying Shared Brotli Patches"}], "external": false};
+window.dfnpanelData['shared-brotli-patch-id'] = {"dfnID": "shared-brotli-patch-id", "url": "#shared-brotli-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-shared-brotli-patch-id"}], "title": "6.3.1. Applying Shared Brotli Patches"}], "external": false};
+window.dfnpanelData['shared-brotli-patch-brotlistream'] = {"dfnID": "shared-brotli-patch-brotlistream", "url": "#shared-brotli-patch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-shared-brotli-patch-brotlistream"}], "title": "6.3.1. Applying Shared Brotli Patches"}], "external": false};
 </script>
 <script>/* Boilerplate: script-dom-helper */
 function query(sel) { return document.querySelector(sel); }
@@ -1197,5 +1309,103 @@ function parseHTML(markup) {
 		el.innerHTML = markup;
 		return el.content;
 	}
+}
+</script>
+<script>/* Boilerplate: script-var-click-highlighting */
+/*
+Color-choosing design:
+
+Colors are ordered by goodness.
+Each color has a usage count (initially zero).
+Each variable has a last-used color.
+
+* If the var has a last-used color, and that color's usage is 0,
+    return that color.
+* Otherwise, return the lowest-indexed color with the lowest usage.
+    Increment the color's usage and set it as the last-used color
+    for that var.
+* On unclicking, decrement usage of the color.
+*/
+"use strict";
+{
+    document.addEventListener("click", e=>{
+        if(e.target.nodeName == "VAR") {
+            highlightSameAlgoVars(e.target);
+        }
+    });
+    const indexCounts = new Map();
+    const indexNames = new Map();
+    function highlightSameAlgoVars(v) {
+        // Find the algorithm container.
+        let algoContainer = null;
+        let searchEl = v;
+        while(algoContainer == null && searchEl != document.body) {
+            searchEl = searchEl.parentNode;
+            if(searchEl.hasAttribute("data-algorithm")) {
+                algoContainer = searchEl;
+            }
+        }
+
+        // Not highlighting document-global vars,
+        // too likely to be unrelated.
+        if(algoContainer == null) return;
+
+        const algoName = algoContainer.getAttribute("data-algorithm");
+        const varName = getVarName(v);
+        const addClass = !v.classList.contains("selected");
+        let highlightClass = null;
+        if(addClass) {
+            const index = chooseHighlightIndex(algoName, varName);
+            indexCounts.get(algoName)[index] += 1;
+            indexNames.set(algoName+"///"+varName, index);
+            highlightClass = nameFromIndex(index);
+        } else {
+            const index = previousHighlightIndex(algoName, varName);
+            indexCounts.get(algoName)[index] -= 1;
+            highlightClass = nameFromIndex(index);
+        }
+
+        // Find all same-name vars, and toggle their class appropriately.
+        for(const el of algoContainer.querySelectorAll("var")) {
+            if(getVarName(el) == varName) {
+                el.classList.toggle("selected", addClass);
+                el.classList.toggle(highlightClass, addClass);
+            }
+        }
+    }
+    function getVarName(el) {
+        return el.textContent.replace(/(\s|\xa0)+/, " ").trim();
+    }
+    function chooseHighlightIndex(algoName, varName) {
+        let indexes = null;
+        if(indexCounts.has(algoName)) {
+            indexes = indexCounts.get(algoName);
+        } else {
+            // 7 classes right now
+            indexes = [0,0,0,0,0,0,0];
+            indexCounts.set(algoName, indexes);
+        }
+
+        // If the element was recently unclicked,
+        // *and* that color is still unclaimed,
+        // give it back the same color.
+        const lastIndex = previousHighlightIndex(algoName, varName);
+        if(indexes[lastIndex] === 0) return lastIndex;
+
+        // Find the earliest index with the lowest count.
+        const minCount = Math.min.apply(null, indexes);
+        let index = null;
+        for(var i = 0; i < indexes.length; i++) {
+            if(indexes[i] == minCount) {
+                return i;
+            }
+        }
+    }
+    function previousHighlightIndex(algoName, varName) {
+        return indexNames.get(algoName+"///"+varName);
+    }
+    function nameFromIndex(index) {
+        return "selected" + index;
+    }
 }
 </script>
