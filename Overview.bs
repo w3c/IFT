@@ -256,7 +256,7 @@ an existing [=font subset=] and provide expanded coverage.
 A <dfn dfn>patch format</dfn> is a specified encoding used to encode changes to be applied to a [=font subset=] into a
 [=font patch=]. Every [=patch format=] has an associated  <dfn dfn>patch application algorithm</dfn> which takes a
 [=font subset=] and a [=font patch=] encoded in the [=patch format=] as input and outputs a new extended
-[=font subset=]. Each patch application algorithm can be categorized as either independent or dependent. Given a set of
+[=font subset=]. Each [=patch application algorithm=] can be categorized as either independent or dependent. Given a set of
 [=font patch|font patches=], <code>P</code>, that are all valid to be applied to a specific [=font subset=], <code>F</code>:
 
 <!-- TODO this dependent definition is too strict, dependent patches can in some cases be applied to font subset even if it
@@ -278,14 +278,13 @@ The following patch formats are defined by this specification:
     <th>Type</th>
     <th>Description</th>
   </tr>
-  <!-- TODO: include a reserved field for future expansions? -->
   <tr>
-    <td>Shared Brotli</td>
+    <td>[[#shared-brotli]]</td>
     <td>[=dependent=]</td>
     <td>A shared brotli encoded binary diff that uses the entire [=font subset=] as a base.</td>
   </tr>
   <tr>
-    <td>Per Table Shared Brotli</td>
+    <td>[[#per-table-shared-brotli]]</td>
     <td>[=dependent=]</td>
     <td>A collection of shared brotli encoded binary diffs that use tables from the [=font subset=] as bases.</td>
   </tr>
@@ -309,6 +308,8 @@ of a short header followed by brotli encoded data.
   <tr>
     <th>Type</th><th>Name</th><th>Description</th>
   </tr>
+  <!-- TODO: include a reserved field for future expansions? -->
+  <!-- TODO: include a version field? -->
   <tr>
     <td>Tag</td>
     <td><dfn for="Shared brotli patch">format</dfn></td>
@@ -338,7 +339,7 @@ The inputs to this algorithm are:
 
 * <var>base font subset</var>: a [=font subset=] which is to be extended.
 
-* <var>patch</var>: a shared brotli patch to be applied to <var>base font subset</var>.
+* <var>patch</var>: a [=shared brotli patch=] to be applied to <var>base font subset</var>.
 
 The algorithm outputs:
 
@@ -360,7 +361,71 @@ The algorithm:
     using the <var>base font subset</var> as a [[Shared-Brotli#section-3.2|shared LZ77 dictionary]]. Return the decoded
     result as the <var>extended font subset</var>
 
-## Per Table Shard Brotli ## {#per-table-shared-brotli}
+## Per Table Shared Brotli ## {#per-table-shared-brotli}
+
+A per table shared brotli patch contains a collection of patches which are applied to the individual
+[[open-type/otff#table-directory|font tables]] in the input font file. Each table patch is encoded with
+[[!RFC7932|brotli compression]] using the corresponding table from the input font file as a
+[[Shared-Brotli#section-3.2|shared LZ77 dictionary]]. A per table shared brotli encoded patch consists of a short header followed
+by one or more brotli encoded patches. In addition to patching tables, patches may also replace (existing table data is not used)
+or remove tables in a [=font subset=].
+
+<dfn>Per table shared brotli patch</dfn> encoding:
+<table>
+  <!-- TODO: reserved flags and/or version field? -->
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>Tag</td>
+    <td><dfn for="Per table shared brotli patch">format</dfn></td>
+    <td>Identifies the encoding as shared brotli, set to 'sbrt'</td>
+  </tr>
+  <tr>
+    <!-- TODO link to the IFT table section on ID once added. -->
+    <td>uint32</td>
+    <td><dfn for="Per table shared brotli patch">id</dfn>[4]</td>
+    <td>The id of the [=font subset=] which this patch can be applied too.</td>
+  </tr>
+  <tr>
+    <td>uint16</td>
+    <td><dfn for="Per table shared brotli patch">patchesCount</dfn></td>
+    <td>The number of entries in the patches array.</td>
+  </tr>
+  <tr>
+    <td>Offset32</td>
+    <td><dfn for="Per table shared brotli patch">patches</dfn>[patchesCount+1]</td>
+    <td>Each entry is an offset from the start of this table to a [=TablePatch=]. Offsets are sorted in ascending order</td>
+  </tr>
+</table>
+
+The difference between two consecutive offsets in the [=Per table shared brotli patch/patches=] array gives the size
+of that [=TablePatch=].
+
+<dfn>TablePatch</dfn> encoding:
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>Tag</td>
+    <td><dfn for="TablePatch">tag</dfn></td>
+    <td>The tag that identifies the [[open-type/otff#table-directory|font table]] this patch applies too.</td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="TablePatch">flags</dfn></td>
+    <td>Bit-field. If bit 0 (least significant bit) is set this patch replaces the existing table. If bit 1 is set this table is removed.</td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="TablePatch">brotliStream</dfn>[varies]</td>
+    <td>Brotli encoded byte stream.</td>
+  </tr>
+</table>
+
+
+<h4 algorithm id="apply-shared-brotli">Applying Per Table Shared Brotli Patches</h4>
 
 <!-- TODO -->
 
