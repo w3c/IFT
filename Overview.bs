@@ -425,28 +425,78 @@ of that [=TablePatch=].
 </table>
 
 
-<h4 algorithm id="apply-shared-brotli">Applying Per Table Shared Brotli Patches</h4>
+<h4 algorithm id="apply-per-table-shared-brotli">Applying Per Table Shared Brotli Patches</h4>
 
-<!-- TODO -->
+This algorithm is used to apply a per table shared brotli patch to extend a [=font subset=] to cover additional codepoints,
+features, and/or design-variation space.
+
+<dfn abstract-op>Apply per table shared brotli patch</dfn>
+
+The inputs to this algorithm are:
+
+* <var>base font subset</var>: a [=font subset=] which is to be extended.
+
+* <var>patch</var>: a [=per table shared brotli patch=] to be applied to <var>base font subset</var>.
+
+The algorithm outputs:
+
+* <var>extended font subset</var>: a [=font subset=] that has been extended by the <var>patch</var>.
+
+The algorithm:
+
+1. Check that the [=Per table shared brotli patch/format=] field in <var>patch</var> is equal to 'sbrt', if it is
+    not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
+    an error.
+
+<!-- TODO: link to IFT/IFTX section once it's written for the id field. -->
+2. Check that the [=Per table shared brotli patch/id=] field in <var>patch</var> is equal to the at least one of the ids
+    found in the 'IFT ' or 'IFTX' table of <var>base font subset</var>. If there is no match, or
+    <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table then patch application has failed,
+    return an error.
+
+3. For each entry in [=Per table shared brotli patch/patches=], with index <var>i</var>:
+
+    *  Find the [=TablePatch=] associated with index <var>i</var>. The object starts at the offset
+        [=Per table shared brotli patch/patches|patches[i]=] and ends at the offset [=Per table shared brotli patch/patches|patches[i+1]=].
+        Both offsets are relative to the start of the <var>patch</var>.
+
+    *  If an entry in [=Per table shared brotli patch/patches=] was previously applied that has the same [=TablePatch/tag=] as
+        this entry, then ignore this entry and continue the iteration to the next one. Entries are processed in same order as they
+        are listed in the [=Per table shared brotli patch/patches=] array.
+
+
+    *  If bit 0 (least significant bit) of [=TablePatch/flags=] is set then, decode [=TablePatch/brotliStream=] following
+        [[RFC7932#section-10]]. No shared dictionary is used. Add a [[open-type/otff#table-directory|table]] to
+        <var>extended font subset</var> identified by [=TablePatch/tag=] with it's contents set to the decoded [=TablePatch/brotliStream=].
+
+    *  If bit 1 of [=TablePatch/flags=] is set then, do not copy or add a [[open-type/otff#table-directory|table]] to
+        <var>extended font subset</var> identified by [=TablePatch/tag=].
+
+    *  Otherwise, decode [=TablePatch/brotliStream=] following [[RFC7932#section-10]] and using the
+        [[open-type/otff#table-directory|table]] identified by [=TablePatch/tag=] in <var>base font subset</var>
+        as a [[Shared-Brotli#section-3.2|shared LZ77 dictionary]]. Add a [[open-type/otff#table-directory|table]] to
+        <var>extended font subset</var> identified by [=TablePatch/tag=] with it's contents set to the decoded [=TablePatch/brotliStream=].
+
+4. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
+    the entries processed in step 3, add a copy of that table to <var>extended font subset</var>.
 
 ## Glyph Keyed ## {#glyph-keyed}
 
 <!-- TODO -->
 
 
-
 Extending a Font Subset {#extending-font-subset}
 ================================================
 
-TODO
+<!-- TODO -->
 
 <h2 class=no-num id=priv>Privacy Considerations</h2>
 
-TODO
+<!-- TODO -->
 
 <h2 class=no-num id=sec>Security Considerations</h2>
 
-TODO
+<!-- TODO -->
 
 <h2 class=no-num id=changes>Changes</h2>
 
