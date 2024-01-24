@@ -310,10 +310,11 @@ of a short header followed by brotli encoded data.
   </tr>
   <!-- TODO: include a reserved field for future expansions? -->
   <!-- TODO: include a version field? -->
+  <!-- TODO: field for the uncompressed length of brotliStream? -->
   <tr>
     <td>Tag</td>
     <td><dfn for="Shared brotli patch">format</dfn></td>
-    <td>Identifies the encoding as shared brotli, set to 'sbr '</td>
+    <td>Identifies the encoding as shared brotli, set to 'ifbr'</td>
   </tr>
   <tr>
     <!-- TODO link to the IFT table section on ID once added. -->
@@ -347,7 +348,7 @@ The algorithm outputs:
 
 The algorithm:
 
-1. Check that the [=Shared brotli patch/format=] field in <var>patch</var> is equal to 'sbr ', if it is
+1. Check that the [=Shared brotli patch/format=] field in <var>patch</var> is equal to 'ifbr', if it is
     not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
     an error.
 
@@ -379,7 +380,7 @@ or remove tables in a [=font subset=].
   <tr>
     <td>Tag</td>
     <td><dfn for="Per table shared brotli patch">format</dfn></td>
-    <td>Identifies the encoding as shared brotli, set to 'sbrt'</td>
+    <td>Identifies the encoding as shared brotli, set to 'ifbt'</td>
   </tr>
   <tr>
     <!-- TODO link to the IFT table section on ID once added. -->
@@ -395,7 +396,7 @@ or remove tables in a [=font subset=].
   <tr>
     <td>Offset32</td>
     <td><dfn for="Per table shared brotli patch">patches</dfn>[patchesCount+1]</td>
-    <td>Each entry is an offset from the start of this table to a [=TablePatch=]. Offsets are sorted in ascending order</td>
+    <td>Each entry is an offset from the start of this table to a [=TablePatch=]. Offsets are sorted in ascending order.</td>
   </tr>
 </table>
 
@@ -404,6 +405,7 @@ of that [=TablePatch=].
 
 <dfn>TablePatch</dfn> encoding:
 <table>
+  <!-- TODO: field for the uncompressed length of brotliStream? -->
   <tr>
     <th>Type</th><th>Name</th><th>Description</th>
   </tr>
@@ -419,7 +421,7 @@ of that [=TablePatch=].
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="TablePatch">brotliStream</dfn>[varies]</td>
+    <td><dfn for="TablePatch">brotliStream</dfn>[variable]</td>
     <td>Brotli encoded byte stream.</td>
   </tr>
 </table>
@@ -444,7 +446,7 @@ The algorithm outputs:
 
 The algorithm:
 
-1. Check that the [=Per table shared brotli patch/format=] field in <var>patch</var> is equal to 'sbrt', if it is
+1. Check that the [=Per table shared brotli patch/format=] field in <var>patch</var> is equal to 'ifbt', if it is
     not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
     an error.
 
@@ -482,7 +484,92 @@ The algorithm:
 
 ## Glyph Keyed ## {#glyph-keyed}
 
-<!-- TODO -->
+A glyph keyed patch contains a collection of data chunks that are each associated with a glyph index and a
+[[open-type/otff#table-directory|font table]]. The encoded data replaces any existing data for that glyph index in the referenced
+[[open-type/otff#table-directory|table]]. Glyph keyed patches can encode data for [[open-type/glyf|glyf]]/[[open-type/loca|loca]],
+[[open-type/gvar|gvar]], [[open-type/cff|CFF]], and [[open-type/cff2|CFF2]] tables.
+
+<dfn>Glyph keyed patch</dfn> encoding:
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>Tag</td>
+    <td><dfn for="Glyph keyed patch">format</dfn></td>
+    <td>Identifies the encoding as glyph keyed, set to 'ifgk'</td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td>reserved</td>
+    <td>Reserved for future use, set to 0.</td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Glyph keyed patch">id</dfn>[4]</td>
+    <td>The id of the [=font subset=] which this patch can be applied too.</td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Glyph keyed patch">length</dfn></td>
+    <td>The uncompressed length of [=Glyph keyed patch/brotliStream=].</td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Glyph keyed patch">brotliStream</dfn>[variable]</td>
+    <td>Brotli encoded [=GlyphPatches=] table.</td>
+  </tr>
+</table>
+
+<dfn>GlyphPatches</dfn> encoding:
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="GlyphPatches">glyphCount</dfn></td>
+    <td>The number of glyphs encoded in the patch.</td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="GlyphPatches">tableCount</dfn></td>
+    <td>The number of [[open-type/otff#table-directory|tables]] the patch has data for.</td>
+  </tr>
+  <tr>
+    <!-- TODO: support larger than 16 bit glyphs. -->
+    <td>uint16</td>
+    <td><dfn for="GlyphPatches">glyphIds</dfn>[glyphCount]</td>
+    <td>An array of glyph indices included in the patch.</td>
+  </tr>
+  <tr>
+    <td>Tag</td>
+    <td><dfn for="GlyphPatches">tables</dfn>[tableCount]</td>
+    <td>An array of [[open-type/otff#table-directory|tables]] (by tag) included in the patch.</td>
+  </tr>
+  <tr>
+    <td>Offset32</td>
+    <td><dfn for="GlyphPatches">glyphDataOffsets</dfn>[glyphCount * tableCount + 1]</td>
+    <td>
+      An array of offsets of to glyph data for each table. The first [=GlyphPatches/glyphCount=] offsets corresponding to
+      [=GlyphPatches/tables|tables[0]=], the next [=GlyphPatches/glyphCount=] offsets (if present) corresponding to
+      [=GlyphPatches/tables|tables[1]=], and so on. All offsets are from the start of the [=GlyphPatches=] table.
+      Offsets are sorted in ascending order.
+    </td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="GlyphPatches">glyphData</dfn>[variable]</td>
+    <td>
+      The actual glyph data picked out by the offsets.
+    </td>
+  </tr>
+</table>
+
+The difference between two consecutive offsets in the [=GlyphPatches/glyphDataOffsets=] array gives the size
+of that glyph data.
+
+<!-- TODO add application algo -->
 
 
 Extending a Font Subset {#extending-font-subset}
