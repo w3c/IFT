@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="e16685dc8e1e550bf2a461595a3beb80f6bc1e37" name="document-revision">
+  <meta content="01e9bc134b3b8f97245e5478ab2cd70e6af9c705" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -783,7 +783,7 @@ of a short header followed by brotli encoded data.</p>
      <tr>
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="Shared brotli patch" data-dfn-type="dfn" data-noexport id="shared-brotli-patch-format">format</dfn>
-      <td>Identifies the encoding as shared brotli, set to 'sbr '
+      <td>Identifies the encoding as shared brotli, set to 'ifbr'
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Shared brotli patch" data-dfn-type="dfn" data-noexport id="shared-brotli-patch-id">id</dfn>[4]
@@ -812,7 +812,7 @@ features, and/or design-variation space.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#shared-brotli-patch-format" id="ref-for-shared-brotli-patch-format">format</a> field in <var>patch</var> is equal to 'sbr ', if it is
+     <p>Check that the <a data-link-type="dfn" href="#shared-brotli-patch-format" id="ref-for-shared-brotli-patch-format">format</a> field in <var>patch</var> is equal to 'ifbr', if it is
 not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
 an error.</p>
     <li data-md>
@@ -838,7 +838,7 @@ or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-fo
      <tr>
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="Per table shared brotli patch" data-dfn-type="dfn" data-noexport id="per-table-shared-brotli-patch-format">format</dfn>
-      <td>Identifies the encoding as shared brotli, set to 'sbrt'
+      <td>Identifies the encoding as shared brotli, set to 'ifbt'
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Per table shared brotli patch" data-dfn-type="dfn" data-noexport id="per-table-shared-brotli-patch-id">id</dfn>[4]
@@ -850,7 +850,7 @@ or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-fo
      <tr>
       <td>Offset32
       <td><dfn class="dfn-paneled" data-dfn-for="Per table shared brotli patch" data-dfn-type="dfn" data-noexport id="per-table-shared-brotli-patch-patches">patches</dfn>[patchesCount+1]
-      <td>Each entry is an offset from the start of this table to a <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch">TablePatch</a>. Offsets are sorted in ascending order
+      <td>Each entry is an offset from the start of this table to a <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch">TablePatch</a>. Offsets are sorted in ascending order.
    </table>
    <p>The difference between two consecutive offsets in the <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches">patches</a> array gives the size
 of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">TablePatch</a>.</p>
@@ -871,7 +871,7 @@ of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">Ta
       <td>Bit-field. If bit 0 (least significant bit) is set this patch replaces the existing table. If bit 1 is set this table is removed.
      <tr>
       <td>uint8
-      <td><dfn class="dfn-paneled" data-dfn-for="TablePatch" data-dfn-type="dfn" data-noexport id="tablepatch-brotlistream">brotliStream</dfn>[varies]
+      <td><dfn class="dfn-paneled" data-dfn-for="TablePatch" data-dfn-type="dfn" data-noexport id="tablepatch-brotlistream">brotliStream</dfn>[variable]
       <td>Brotli encoded byte stream.
    </table>
    <h4 class="heading settled algorithm" data-algorithm="Applying Per Table Shared Brotli Patches" data-level="6.4.1" id="apply-per-table-shared-brotli"><span class="secno">6.4.1. </span><span class="content">Applying Per Table Shared Brotli Patches</span><a class="self-link" href="#apply-per-table-shared-brotli"></a></h4>
@@ -893,7 +893,7 @@ features, and/or design-variation space.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#per-table-shared-brotli-patch-format" id="ref-for-per-table-shared-brotli-patch-format">format</a> field in <var>patch</var> is equal to 'sbrt', if it is
+     <p>Check that the <a data-link-type="dfn" href="#per-table-shared-brotli-patch-format" id="ref-for-per-table-shared-brotli-patch-format">format</a> field in <var>patch</var> is equal to 'ifbt', if it is
 not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
 an error.</p>
     <li data-md>
@@ -922,6 +922,70 @@ are listed in the <a data-link-type="dfn" href="#per-table-shared-brotli-patch-p
 the entries processed in step 3, add a copy of that table to <var>extended font subset</var>.</p>
    </ol>
    <h3 class="heading settled" data-level="6.5" id="glyph-keyed"><span class="secno">6.5. </span><span class="content">Glyph Keyed</span><a class="self-link" href="#glyph-keyed"></a></h3>
+   <p>A glyph keyed patch contains a collection of data chunks that are each associated with a glyph index and a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a>. The encoded data replaces any existing data for that glyph index in the referenced <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Glyph keyed patches can encode data for <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>/<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, and <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> tables.</p>
+   <p><dfn data-dfn-type="dfn" data-noexport id="glyph-keyed-patch">Glyph keyed patch<a class="self-link" href="#glyph-keyed-patch"></a></dfn> encoding:</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>Type
+      <th>Name
+      <th>Description
+     <tr>
+      <td>Tag
+      <td><dfn data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-format">format<a class="self-link" href="#glyph-keyed-patch-format"></a></dfn>
+      <td>Identifies the encoding as glyph keyed, set to 'ifgk'
+     <tr>
+      <td>uint32
+      <td>reserved
+      <td>Reserved for future use, set to 0.
+     <tr>
+      <td>uint32
+      <td><dfn data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-id">id<a class="self-link" href="#glyph-keyed-patch-id"></a></dfn>[4]
+      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a> which this patch can be applied too.
+     <tr>
+      <td>uint32
+      <td><dfn data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-length">length<a class="self-link" href="#glyph-keyed-patch-length"></a></dfn>
+      <td>The uncompressed length of <a data-link-type="dfn" href="#glyph-keyed-patch-brotlistream" id="ref-for-glyph-keyed-patch-brotlistream">brotliStream</a>.
+     <tr>
+      <td>uint8
+      <td><dfn class="dfn-paneled" data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-brotlistream">brotliStream</dfn>[variable]
+      <td>Brotli encoded <a data-link-type="dfn" href="#glyphpatches" id="ref-for-glyphpatches">GlyphPatches</a> table.
+   </table>
+   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="glyphpatches">GlyphPatches</dfn> encoding:</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>Type
+      <th>Name
+      <th>Description
+     <tr>
+      <td>uint32
+      <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphcount">glyphCount</dfn>
+      <td>The number of glyphs encoded in the patch.
+     <tr>
+      <td>uint8
+      <td><dfn data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-tablecount">tableCount<a class="self-link" href="#glyphpatches-tablecount"></a></dfn>
+      <td>The number of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> the patch has data for.
+     <tr>
+      <td>uint16
+      <td><dfn data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphids">glyphIds<a class="self-link" href="#glyphpatches-glyphids"></a></dfn>[glyphCount]
+      <td>An array of glyph indices included in the patch.
+     <tr>
+      <td>Tag
+      <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-tables">tables</dfn>[tableCount]
+      <td>An array of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> (by tag) included in the patch.
+     <tr>
+      <td>Offset32
+      <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphdataoffsets">glyphDataOffsets</dfn>[glyphCount * tableCount + 1]
+      <td> An array of offsets of to glyph data for each table. The first <a data-link-type="dfn" href="#glyphpatches-glyphcount" id="ref-for-glyphpatches-glyphcount">glyphCount</a> offsets corresponding to <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables">tables[0]</a>, the next <a data-link-type="dfn" href="#glyphpatches-glyphcount" id="ref-for-glyphpatches-glyphcount①">glyphCount</a> offsets (if present) corresponding to <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables①">tables[1]</a>, and so on. All offsets are from the start of the <a data-link-type="dfn" href="#glyphpatches" id="ref-for-glyphpatches①">GlyphPatches</a> table.
+      Offsets are sorted in ascending order. 
+     <tr>
+      <td>uint8
+      <td><dfn data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphdata">glyphData<a class="self-link" href="#glyphpatches-glyphdata"></a></dfn>[variable]
+      <td> The actual glyph data picked out by the offsets. 
+   </table>
+   <p>The difference between two consecutive offsets in the <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets">glyphDataOffsets</a> array gives the size
+of that glyph data.</p>
    <h2 class="heading settled" data-level="7" id="extending-font-subset"><span class="secno">7. </span><span class="content">Extending a Font Subset</span><a class="self-link" href="#extending-font-subset"></a></h2>
    <h2 class="no-num heading settled" id="priv"><span class="content">Privacy Considerations</span><a class="self-link" href="#priv"></a></h2>
    <h2 class="no-num heading settled" id="sec"><span class="content">Security Considerations</span><a class="self-link" href="#sec"></a></h2>
@@ -1017,6 +1081,7 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
    <li>
     brotliStream
     <ul>
+     <li><a href="#glyph-keyed-patch-brotlistream">dfn for Glyph keyed patch</a><span>, in § 6.5</span>
      <li><a href="#shared-brotli-patch-brotlistream">dfn for Shared brotli patch</a><span>, in § 6.3</span>
      <li><a href="#tablepatch-brotlistream">dfn for TablePatch</a><span>, in § 6.4</span>
     </ul>
@@ -1028,23 +1093,34 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
    <li>
     format
     <ul>
+     <li><a href="#glyph-keyed-patch-format">dfn for Glyph keyed patch</a><span>, in § 6.5</span>
      <li><a href="#per-table-shared-brotli-patch-format">dfn for Per table shared brotli patch</a><span>, in § 6.4</span>
      <li><a href="#shared-brotli-patch-format">dfn for Shared brotli patch</a><span>, in § 6.3</span>
     </ul>
+   <li><a href="#glyphpatches-glyphcount">glyphCount</a><span>, in § 6.5</span>
+   <li><a href="#glyphpatches-glyphdata">glyphData</a><span>, in § 6.5</span>
+   <li><a href="#glyphpatches-glyphdataoffsets">glyphDataOffsets</a><span>, in § 6.5</span>
+   <li><a href="#glyphpatches-glyphids">glyphIds</a><span>, in § 6.5</span>
+   <li><a href="#glyph-keyed-patch">Glyph keyed patch</a><span>, in § 6.5</span>
+   <li><a href="#glyphpatches">GlyphPatches</a><span>, in § 6.5</span>
    <li>
     id
     <ul>
+     <li><a href="#glyph-keyed-patch-id">dfn for Glyph keyed patch</a><span>, in § 6.5</span>
      <li><a href="#per-table-shared-brotli-patch-id">dfn for Per table shared brotli patch</a><span>, in § 6.4</span>
      <li><a href="#shared-brotli-patch-id">dfn for Shared brotli patch</a><span>, in § 6.3</span>
     </ul>
    <li><a href="#independent">independent</a><span>, in § 6.1</span>
+   <li><a href="#glyph-keyed-patch-length">length</a><span>, in § 6.5</span>
    <li><a href="#patch-application-algorithm">patch application algorithm</a><span>, in § 6.1</span>
    <li><a href="#per-table-shared-brotli-patch-patches">patches</a><span>, in § 6.4</span>
    <li><a href="#per-table-shared-brotli-patch-patchescount">patchesCount</a><span>, in § 6.4</span>
    <li><a href="#patch-format">patch format</a><span>, in § 6.1</span>
    <li><a href="#per-table-shared-brotli-patch">Per table shared brotli patch</a><span>, in § 6.4</span>
    <li><a href="#shared-brotli-patch">Shared brotli patch</a><span>, in § 6.3</span>
+   <li><a href="#glyphpatches-tablecount">tableCount</a><span>, in § 6.5</span>
    <li><a href="#tablepatch">TablePatch</a><span>, in § 6.4</span>
+   <li><a href="#glyphpatches-tables">tables</a><span>, in § 6.5</span>
    <li><a href="#tablepatch-tag">tag</a><span>, in § 6.4</span>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
@@ -1225,7 +1301,7 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
 </script>
 <script>/* Boilerplate: script-dfn-panel-json */
 window.dfnpanelData = {};
-window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "6. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2461"}, {"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}], "title": "6.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2460"}, {"id": "ref-for-font-subset\u2460\u2461"}], "title": "6.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2462"}], "title": "6.3. Shared Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}, {"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}], "title": "6.3.1. Applying Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2466"}, {"id": "ref-for-font-subset\u2460\u2467"}], "title": "6.4. Per Table Shared Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2468"}, {"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
+window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "6. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2461"}, {"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}], "title": "6.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2460"}, {"id": "ref-for-font-subset\u2460\u2461"}], "title": "6.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2462"}], "title": "6.3. Shared Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}, {"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}], "title": "6.3.1. Applying Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2466"}, {"id": "ref-for-font-subset\u2460\u2467"}], "title": "6.4. Per Table Shared Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2468"}, {"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2461"}], "title": "6.5. Glyph Keyed"}], "external": false};
 window.dfnpanelData['font-patch'] = {"dfnID": "font-patch", "url": "#font-patch", "dfnText": "font patch", "refSections": [{"refs": [{"id": "ref-for-font-patch"}, {"id": "ref-for-font-patch\u2460"}, {"id": "ref-for-font-patch\u2461"}], "title": "6.1. Definitions"}], "external": false};
 window.dfnpanelData['patch-format'] = {"dfnID": "patch-format", "url": "#patch-format", "dfnText": "patch format", "refSections": [{"refs": [{"id": "ref-for-patch-format"}, {"id": "ref-for-patch-format\u2460"}], "title": "6.1. Definitions"}], "external": false};
 window.dfnpanelData['patch-application-algorithm'] = {"dfnID": "patch-application-algorithm", "url": "#patch-application-algorithm", "dfnText": "patch application algorithm", "refSections": [{"refs": [{"id": "ref-for-patch-application-algorithm"}], "title": "6.1. Definitions"}], "external": false};
@@ -1243,6 +1319,11 @@ window.dfnpanelData['tablepatch'] = {"dfnID": "tablepatch", "url": "#tablepatch"
 window.dfnpanelData['tablepatch-tag'] = {"dfnID": "tablepatch-tag", "url": "#tablepatch-tag", "dfnText": "tag", "refSections": [{"refs": [{"id": "ref-for-tablepatch-tag"}, {"id": "ref-for-tablepatch-tag\u2460"}, {"id": "ref-for-tablepatch-tag\u2461"}, {"id": "ref-for-tablepatch-tag\u2462"}, {"id": "ref-for-tablepatch-tag\u2463"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
 window.dfnpanelData['tablepatch-flags'] = {"dfnID": "tablepatch-flags", "url": "#tablepatch-flags", "dfnText": "flags", "refSections": [{"refs": [{"id": "ref-for-tablepatch-flags"}, {"id": "ref-for-tablepatch-flags\u2460"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
 window.dfnpanelData['tablepatch-brotlistream'] = {"dfnID": "tablepatch-brotlistream", "url": "#tablepatch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-tablepatch-brotlistream"}, {"id": "ref-for-tablepatch-brotlistream\u2460"}, {"id": "ref-for-tablepatch-brotlistream\u2461"}, {"id": "ref-for-tablepatch-brotlistream\u2462"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
+window.dfnpanelData['glyph-keyed-patch-brotlistream'] = {"dfnID": "glyph-keyed-patch-brotlistream", "url": "#glyph-keyed-patch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch-brotlistream"}], "title": "6.5. Glyph Keyed"}], "external": false};
+window.dfnpanelData['glyphpatches'] = {"dfnID": "glyphpatches", "url": "#glyphpatches", "dfnText": "GlyphPatches", "refSections": [{"refs": [{"id": "ref-for-glyphpatches"}, {"id": "ref-for-glyphpatches\u2460"}], "title": "6.5. Glyph Keyed"}], "external": false};
+window.dfnpanelData['glyphpatches-glyphcount'] = {"dfnID": "glyphpatches-glyphcount", "url": "#glyphpatches-glyphcount", "dfnText": "glyphCount", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-glyphcount"}, {"id": "ref-for-glyphpatches-glyphcount\u2460"}], "title": "6.5. Glyph Keyed"}], "external": false};
+window.dfnpanelData['glyphpatches-tables'] = {"dfnID": "glyphpatches-tables", "url": "#glyphpatches-tables", "dfnText": "tables", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-tables"}, {"id": "ref-for-glyphpatches-tables\u2460"}], "title": "6.5. Glyph Keyed"}], "external": false};
+window.dfnpanelData['glyphpatches-glyphdataoffsets'] = {"dfnID": "glyphpatches-glyphdataoffsets", "url": "#glyphpatches-glyphdataoffsets", "dfnText": "glyphDataOffsets", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-glyphdataoffsets"}], "title": "6.5. Glyph Keyed"}], "external": false};
 </script>
 <script>/* Boilerplate: script-dom-helper */
 function query(sel) { return document.querySelector(sel); }
