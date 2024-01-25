@@ -248,7 +248,8 @@ Font Patch Formats {#font-patch-formats}
 In incremental font transfer [=font subset|font subsets=] are extended by loading and applying patches. Due to the different
 capabilities required in different situations this specification defines three different patch formats that can be used.
 
-## Definitions ## {#font-patch-definitions}
+Definitions {#font-patch-definitions}
+-------------------------------------
 
 A <dfn dfn>font patch</dfn> is a file which encodes changes to be made to an existing font file. Patches are used to extend
 an existing [=font subset=] and provide expanded coverage.
@@ -268,7 +269,8 @@ A <dfn dfn>patch format</dfn> is a specified encoding used to encode changes to 
 * <dfn dfn>independent</dfn> patches are only valid to be applied to [=font subset=] <code>F</code> and any [=font subset=] derived
     from F by the application of one or more independent patches from <code>P</code>.
 
-## Formats Summary ## {#font-patch-formats-summary}
+Formats Summary {#font-patch-formats-summary}
+---------------------------------------------
 
 The following patch formats are defined by this specification:
 
@@ -297,7 +299,8 @@ The following patch formats are defined by this specification:
 
 More detailed descriptions of each algorithm can be found in the proceeding sections.
 
-## Shared Brotli Patch ## {#shared-brotli}
+Shared Brotli Patch {#shared-brotli}
+------------------------------------
 
 In a shared brotli patch the target file is encoded with [[!RFC7932|brotli compression]] using the
 source file as a [[Shared-Brotli#section-3.2|shared LZ77 dictionary]]. A shared brotli encoded patch consists
@@ -362,7 +365,8 @@ The algorithm:
     using the <var>base font subset</var> as a [[Shared-Brotli#section-3.2|shared LZ77 dictionary]]. Return the decoded
     result as the <var>extended font subset</var>
 
-## Per Table Shared Brotli ## {#per-table-shared-brotli}
+Per Table Shared Brotli {#per-table-shared-brotli}
+--------------------------------------------------
 
 A per table shared brotli patch contains a collection of patches which are applied to the individual
 [[open-type/otff#table-directory|font tables]] in the input font file. Each table patch is encoded with
@@ -482,7 +486,8 @@ The algorithm:
 4. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
     the entries processed in step 3, add a copy of that table to <var>extended font subset</var>.
 
-## Glyph Keyed ## {#glyph-keyed}
+Glyph Keyed {#glyph-keyed}
+--------------------------
 
 A glyph keyed patch contains a collection of data chunks that are each associated with a glyph index and a
 [[open-type/otff#table-directory|font table]]. The encoded data replaces any existing data for that glyph index in the referenced
