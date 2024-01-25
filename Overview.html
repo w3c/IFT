@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="01e9bc134b3b8f97245e5478ab2cd70e6af9c705" name="document-revision">
+  <meta content="7631d26dbb50b9d35b9e0b8e1bad8705ea8a5bb8" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -596,7 +596,11 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
        <ol class="toc">
         <li><a href="#apply-per-table-shared-brotli"><span class="secno">6.4.1</span> <span class="content">Applying Per Table Shared Brotli Patches</span></a>
        </ol>
-      <li><a href="#glyph-keyed"><span class="secno">6.5</span> <span class="content">Glyph Keyed</span></a>
+      <li>
+       <a href="#glyph-keyed"><span class="secno">6.5</span> <span class="content">Glyph Keyed</span></a>
+       <ol class="toc">
+        <li><a href="#apply-glyph-keyed"><span class="secno">6.5.1</span> <span class="content">Applying Glyph Keyed Patches</span></a>
+       </ol>
      </ol>
     <li><a href="#extending-font-subset"><span class="secno">7</span> <span class="content">Extending a Font Subset</span></a>
     <li><a href="#priv"><span class="secno"></span> <span class="content">Privacy Considerations</span></a>
@@ -923,7 +927,7 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
    </ol>
    <h3 class="heading settled" data-level="6.5" id="glyph-keyed"><span class="secno">6.5. </span><span class="content">Glyph Keyed</span><a class="self-link" href="#glyph-keyed"></a></h3>
    <p>A glyph keyed patch contains a collection of data chunks that are each associated with a glyph index and a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a>. The encoded data replaces any existing data for that glyph index in the referenced <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Glyph keyed patches can encode data for <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>/<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, and <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> tables.</p>
-   <p><dfn data-dfn-type="dfn" data-noexport id="glyph-keyed-patch">Glyph keyed patch<a class="self-link" href="#glyph-keyed-patch"></a></dfn> encoding:</p>
+   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch">Glyph keyed patch</dfn> encoding:</p>
    <table>
     <tbody>
      <tr>
@@ -932,7 +936,7 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
       <th>Description
      <tr>
       <td>Tag
-      <td><dfn data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-format">format<a class="self-link" href="#glyph-keyed-patch-format"></a></dfn>
+      <td><dfn class="dfn-paneled" data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-format">format</dfn>
       <td>Identifies the encoding as glyph keyed, set to 'ifgk'
      <tr>
       <td>uint32
@@ -940,7 +944,7 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
       <td>Reserved for future use, set to 0.
      <tr>
       <td>uint32
-      <td><dfn data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-id">id<a class="self-link" href="#glyph-keyed-patch-id"></a></dfn>[4]
+      <td><dfn class="dfn-paneled" data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-id">id</dfn>[4]
       <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a> which this patch can be applied too.
      <tr>
       <td>uint32
@@ -968,7 +972,7 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
       <td>The number of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> the patch has data for.
      <tr>
       <td>uint16
-      <td><dfn data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphids">glyphIds<a class="self-link" href="#glyphpatches-glyphids"></a></dfn>[glyphCount]
+      <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphids">glyphIds</dfn>[glyphCount]
       <td>An array of glyph indices included in the patch.
      <tr>
       <td>Tag
@@ -981,11 +985,67 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
       Offsets are sorted in ascending order. 
      <tr>
       <td>uint8
-      <td><dfn data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphdata">glyphData<a class="self-link" href="#glyphpatches-glyphdata"></a></dfn>[variable]
+      <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphdata">glyphData</dfn>[variable]
       <td> The actual glyph data picked out by the offsets. 
    </table>
    <p>The difference between two consecutive offsets in the <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets">glyphDataOffsets</a> array gives the size
 of that glyph data.</p>
+   <h4 class="heading settled algorithm" data-algorithm="Applying Glyph Keyed Patches" data-level="6.5.1" id="apply-glyph-keyed"><span class="secno">6.5.1. </span><span class="content">Applying Glyph Keyed Patches</span><a class="self-link" href="#apply-glyph-keyed"></a></h4>
+   <p>This algorithm is used to apply a glyph keyed patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②③">font subset</a> to cover additional codepoints,
+features, and/or design-variation space.</p>
+   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-glyph-keyed-patch">Apply glyph keyed patch<a class="self-link" href="#abstract-opdef-apply-glyph-keyed-patch"></a></dfn></p>
+   <p>The inputs to this algorithm are:</p>
+   <ul>
+    <li data-md>
+     <p><var>base font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②④">font subset</a> which is to be extended.</p>
+    <li data-md>
+     <p><var>patch</var>: a <a data-link-type="dfn" href="#glyph-keyed-patch" id="ref-for-glyph-keyed-patch">glyph keyed patch</a> to be applied to <var>base font subset</var>.</p>
+   </ul>
+   <p>The algorithm outputs:</p>
+   <ul>
+    <li data-md>
+     <p><var>extended font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⑤">font subset</a> that has been extended by the <var>patch</var>.</p>
+   </ul>
+   <p>The algorithm:</p>
+   <ol>
+    <li data-md>
+     <p>Check that the <a data-link-type="dfn" href="#glyph-keyed-patch-format" id="ref-for-glyph-keyed-patch-format">format</a> field in <var>patch</var> is equal to 'ifgk', if it is
+not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
+an error.</p>
+    <li data-md>
+     <p>Check that the <a data-link-type="dfn" href="#glyph-keyed-patch-id" id="ref-for-glyph-keyed-patch-id">id</a> field in <var>patch</var> is equal to the at least one of the ids
+found in the 'IFT ' or 'IFTX' table of <var>base font subset</var>. If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table then patch application has failed,
+return an error.</p>
+    <li data-md>
+     <p>Decode the brotli encoded data in <a data-link-type="dfn" href="#glyph-keyed-patch-brotlistream" id="ref-for-glyph-keyed-patch-brotlistream①">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a>. The
+decoded data is a <a data-link-type="dfn" href="#glyphpatches" id="ref-for-glyphpatches②">GlyphPatches</a> table.</p>
+    <li data-md>
+     <p>For each <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a> listed in <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables②">tables</a>, with index <code>i</code>:</p>
+     <ul>
+      <li data-md>
+       <p>Using the corresponding table in <var>base font subset</var>, synthesize
+a new table where the data for each glyph is replaced with the data corresponding to that glyph index
+from <a data-link-type="dfn" href="#glyphpatches-glyphdata" id="ref-for-glyphpatches-glyphdata">glyphData</a> if present, otherwise copied from the corresponding table in <var>base font subset</var> for
+that glyph index.</p>
+      <li data-md>
+       <p>The patch glyph data for a glyph index is located by finding <a data-link-type="dfn" href="#glyphpatches-glyphids" id="ref-for-glyphpatches-glyphids">glyphIds[j]</a> equal to the glyph index. The
+offset to the associated glyph data is <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets①">glyphDataOffsets[i * glyphCount + j]</a>. The length
+of the associated glyph data is <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets②">glyphDataOffsets[i * glyphCount + j + 1]</a> minus <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets③">glyphDataOffsets[i * glyphCount + j]</a>.</p>
+      <li data-md>
+       <p>The specific process for synthesizing the new table, depends on the specified format of the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Any non-glyph associated data should be copied from the table in <var>base font subset</var>. Tables of the type <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>/<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, or <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> are supported. Entries for tables
+of any other types must be ignored.</p>
+      <li data-md>
+       <p>If <var>base font subset</var> does not have a matching table, return an error.</p>
+      <li data-md>
+       <p>Insert the synthesized table into <var>extended font subset</var>.</p>
+     </ul>
+    <li data-md>
+     <p>For each <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> in <var>base font subset</var> which has a tag that was not found in any of
+the entries processed in step 4, add a copy of that table to <var>extended font subset</var>.</p>
+    <li data-md>
+     <p>Modify the mappings in the IFT and IFTX table(s) in <var>extended font subset</var> if present to remove any mapping entries
+that map to this patch.</p>
+   </ol>
    <h2 class="heading settled" data-level="7" id="extending-font-subset"><span class="secno">7. </span><span class="content">Extending a Font Subset</span><a class="self-link" href="#extending-font-subset"></a></h2>
    <h2 class="no-num heading settled" id="priv"><span class="content">Privacy Considerations</span><a class="self-link" href="#priv"></a></h2>
    <h2 class="no-num heading settled" id="sec"><span class="content">Security Considerations</span><a class="self-link" href="#sec"></a></h2>
@@ -1076,6 +1136,7 @@ of that glyph data.</p>
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
+   <li><a href="#abstract-opdef-apply-glyph-keyed-patch">Apply glyph keyed patch</a><span>, in § 6.5.1</span>
    <li><a href="#abstract-opdef-apply-per-table-shared-brotli-patch">Apply per table shared brotli patch</a><span>, in § 6.4.1</span>
    <li><a href="#abstract-opdef-apply-shared-brotli-patch">Apply shared brotli patch</a><span>, in § 6.3.1</span>
    <li>
@@ -1301,7 +1362,7 @@ of that glyph data.</p>
 </script>
 <script>/* Boilerplate: script-dfn-panel-json */
 window.dfnpanelData = {};
-window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "6. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2461"}, {"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}], "title": "6.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2460"}, {"id": "ref-for-font-subset\u2460\u2461"}], "title": "6.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2462"}], "title": "6.3. Shared Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}, {"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}], "title": "6.3.1. Applying Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2466"}, {"id": "ref-for-font-subset\u2460\u2467"}], "title": "6.4. Per Table Shared Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2468"}, {"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2461"}], "title": "6.5. Glyph Keyed"}], "external": false};
+window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "6. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2461"}, {"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}], "title": "6.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2460"}, {"id": "ref-for-font-subset\u2460\u2461"}], "title": "6.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2462"}], "title": "6.3. Shared Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}, {"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}], "title": "6.3.1. Applying Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2466"}, {"id": "ref-for-font-subset\u2460\u2467"}], "title": "6.4. Per Table Shared Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2468"}, {"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2461"}], "title": "6.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2462"}, {"id": "ref-for-font-subset\u2461\u2463"}, {"id": "ref-for-font-subset\u2461\u2464"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
 window.dfnpanelData['font-patch'] = {"dfnID": "font-patch", "url": "#font-patch", "dfnText": "font patch", "refSections": [{"refs": [{"id": "ref-for-font-patch"}, {"id": "ref-for-font-patch\u2460"}, {"id": "ref-for-font-patch\u2461"}], "title": "6.1. Definitions"}], "external": false};
 window.dfnpanelData['patch-format'] = {"dfnID": "patch-format", "url": "#patch-format", "dfnText": "patch format", "refSections": [{"refs": [{"id": "ref-for-patch-format"}, {"id": "ref-for-patch-format\u2460"}], "title": "6.1. Definitions"}], "external": false};
 window.dfnpanelData['patch-application-algorithm'] = {"dfnID": "patch-application-algorithm", "url": "#patch-application-algorithm", "dfnText": "patch application algorithm", "refSections": [{"refs": [{"id": "ref-for-patch-application-algorithm"}], "title": "6.1. Definitions"}], "external": false};
@@ -1319,11 +1380,16 @@ window.dfnpanelData['tablepatch'] = {"dfnID": "tablepatch", "url": "#tablepatch"
 window.dfnpanelData['tablepatch-tag'] = {"dfnID": "tablepatch-tag", "url": "#tablepatch-tag", "dfnText": "tag", "refSections": [{"refs": [{"id": "ref-for-tablepatch-tag"}, {"id": "ref-for-tablepatch-tag\u2460"}, {"id": "ref-for-tablepatch-tag\u2461"}, {"id": "ref-for-tablepatch-tag\u2462"}, {"id": "ref-for-tablepatch-tag\u2463"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
 window.dfnpanelData['tablepatch-flags'] = {"dfnID": "tablepatch-flags", "url": "#tablepatch-flags", "dfnText": "flags", "refSections": [{"refs": [{"id": "ref-for-tablepatch-flags"}, {"id": "ref-for-tablepatch-flags\u2460"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
 window.dfnpanelData['tablepatch-brotlistream'] = {"dfnID": "tablepatch-brotlistream", "url": "#tablepatch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-tablepatch-brotlistream"}, {"id": "ref-for-tablepatch-brotlistream\u2460"}, {"id": "ref-for-tablepatch-brotlistream\u2461"}, {"id": "ref-for-tablepatch-brotlistream\u2462"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
-window.dfnpanelData['glyph-keyed-patch-brotlistream'] = {"dfnID": "glyph-keyed-patch-brotlistream", "url": "#glyph-keyed-patch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch-brotlistream"}], "title": "6.5. Glyph Keyed"}], "external": false};
-window.dfnpanelData['glyphpatches'] = {"dfnID": "glyphpatches", "url": "#glyphpatches", "dfnText": "GlyphPatches", "refSections": [{"refs": [{"id": "ref-for-glyphpatches"}, {"id": "ref-for-glyphpatches\u2460"}], "title": "6.5. Glyph Keyed"}], "external": false};
+window.dfnpanelData['glyph-keyed-patch'] = {"dfnID": "glyph-keyed-patch", "url": "#glyph-keyed-patch", "dfnText": "Glyph keyed patch", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
+window.dfnpanelData['glyph-keyed-patch-format'] = {"dfnID": "glyph-keyed-patch-format", "url": "#glyph-keyed-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch-format"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
+window.dfnpanelData['glyph-keyed-patch-id'] = {"dfnID": "glyph-keyed-patch-id", "url": "#glyph-keyed-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch-id"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
+window.dfnpanelData['glyph-keyed-patch-brotlistream'] = {"dfnID": "glyph-keyed-patch-brotlistream", "url": "#glyph-keyed-patch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch-brotlistream"}], "title": "6.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-glyph-keyed-patch-brotlistream\u2460"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
+window.dfnpanelData['glyphpatches'] = {"dfnID": "glyphpatches", "url": "#glyphpatches", "dfnText": "GlyphPatches", "refSections": [{"refs": [{"id": "ref-for-glyphpatches"}, {"id": "ref-for-glyphpatches\u2460"}], "title": "6.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-glyphpatches\u2461"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
 window.dfnpanelData['glyphpatches-glyphcount'] = {"dfnID": "glyphpatches-glyphcount", "url": "#glyphpatches-glyphcount", "dfnText": "glyphCount", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-glyphcount"}, {"id": "ref-for-glyphpatches-glyphcount\u2460"}], "title": "6.5. Glyph Keyed"}], "external": false};
-window.dfnpanelData['glyphpatches-tables'] = {"dfnID": "glyphpatches-tables", "url": "#glyphpatches-tables", "dfnText": "tables", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-tables"}, {"id": "ref-for-glyphpatches-tables\u2460"}], "title": "6.5. Glyph Keyed"}], "external": false};
-window.dfnpanelData['glyphpatches-glyphdataoffsets'] = {"dfnID": "glyphpatches-glyphdataoffsets", "url": "#glyphpatches-glyphdataoffsets", "dfnText": "glyphDataOffsets", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-glyphdataoffsets"}], "title": "6.5. Glyph Keyed"}], "external": false};
+window.dfnpanelData['glyphpatches-glyphids'] = {"dfnID": "glyphpatches-glyphids", "url": "#glyphpatches-glyphids", "dfnText": "glyphIds", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-glyphids"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
+window.dfnpanelData['glyphpatches-tables'] = {"dfnID": "glyphpatches-tables", "url": "#glyphpatches-tables", "dfnText": "tables", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-tables"}, {"id": "ref-for-glyphpatches-tables\u2460"}], "title": "6.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-glyphpatches-tables\u2461"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
+window.dfnpanelData['glyphpatches-glyphdataoffsets'] = {"dfnID": "glyphpatches-glyphdataoffsets", "url": "#glyphpatches-glyphdataoffsets", "dfnText": "glyphDataOffsets", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-glyphdataoffsets"}], "title": "6.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-glyphpatches-glyphdataoffsets\u2460"}, {"id": "ref-for-glyphpatches-glyphdataoffsets\u2461"}, {"id": "ref-for-glyphpatches-glyphdataoffsets\u2462"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
+window.dfnpanelData['glyphpatches-glyphdata'] = {"dfnID": "glyphpatches-glyphdata", "url": "#glyphpatches-glyphdata", "dfnText": "glyphData", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-glyphdata"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
 </script>
 <script>/* Boilerplate: script-dom-helper */
 function query(sel) { return document.querySelector(sel); }

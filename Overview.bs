@@ -509,6 +509,7 @@ A glyph keyed patch contains a collection of data chunks that are each associate
     <td><dfn for="Glyph keyed patch">id</dfn>[4]</td>
     <td>The id of the [=font subset=] which this patch can be applied too.</td>
   </tr>
+  <!-- TODO: we probably need patch id to allow for removal in step 6. -->
   <tr>
     <td>uint32</td>
     <td><dfn for="Glyph keyed patch">length</dfn></td>
@@ -569,8 +570,65 @@ A glyph keyed patch contains a collection of data chunks that are each associate
 The difference between two consecutive offsets in the [=GlyphPatches/glyphDataOffsets=] array gives the size
 of that glyph data.
 
-<!-- TODO add application algo -->
+<h4 algorithm id="apply-glyph-keyed">Applying Glyph Keyed Patches</h4>
 
+This algorithm is used to apply a glyph keyed patch to extend a [=font subset=] to cover additional codepoints,
+features, and/or design-variation space.
+
+<dfn abstract-op>Apply glyph keyed patch</dfn>
+
+The inputs to this algorithm are:
+
+* <var>base font subset</var>: a [=font subset=] which is to be extended.
+
+* <var>patch</var>: a [=glyph keyed patch=] to be applied to <var>base font subset</var>.
+
+The algorithm outputs:
+
+* <var>extended font subset</var>: a [=font subset=] that has been extended by the <var>patch</var>.
+
+The algorithm:
+
+1. Check that the [=Glyph keyed patch/format=] field in <var>patch</var> is equal to 'ifgk', if it is
+    not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
+    an error.
+
+<!-- TODO: link to IFT/IFTX section once it's written for the id field. -->
+2. Check that the [=Glyph keyed patch/id=] field in <var>patch</var> is equal to the at least one of the ids
+    found in the 'IFT ' or 'IFTX' table of <var>base font subset</var>. If there is no match, or
+    <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table then patch application has failed,
+    return an error.
+
+3. Decode the brotli encoded data in [=Glyph keyed patch/brotliStream=] following [[RFC7932#section-10]]. The
+    decoded data is a [=GlyphPatches=] table.
+
+4. For each [[open-type/otff#table-directory|font table]] listed in [=GlyphPatches/tables=], with index <code>i</code>:
+
+    *  Using the corresponding table in <var>base font subset</var>, synthesize
+        a new table where the data for each glyph is replaced with the data corresponding to that glyph index
+        from [=GlyphPatches/glyphData=] if present, otherwise copied from the corresponding table in <var>base font subset</var> for
+        that glyph index.
+
+    *  The patch glyph data for a glyph index is located by finding  [=GlyphPatches/glyphIds|glyphIds[j]=] equal to the glyph index. The
+        offset to the associated glyph data is [=GlyphPatches/glyphDataOffsets|glyphDataOffsets[i * glyphCount + j]=]. The length
+        of the associated glyph data is [=GlyphPatches/glyphDataOffsets|glyphDataOffsets[i * glyphCount + j + 1]=] minus
+        [=GlyphPatches/glyphDataOffsets|glyphDataOffsets[i * glyphCount + j]=].
+
+    *  The specific process for synthesizing the new table, depends on the specified format of the
+        [[open-type/otff#table-directory|table]]. Any non-glyph associated data should be copied from the table in
+        <var>base font subset</var>. Tables of the type [[open-type/glyf|glyf]]/[[open-type/loca|loca]],
+        [[open-type/gvar|gvar]], [[open-type/cff|CFF]], or [[open-type/cff2|CFF2]] are supported. Entries for tables
+        of any other types must be ignored.
+
+    *  If <var>base font subset</var> does not have a matching table, return an error.
+
+    *  Insert the synthesized table into <var>extended font subset</var>.
+
+5. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
+    the entries processed in step 4, add a copy of that table to <var>extended font subset</var>.
+
+6. Modify the mappings in the IFT and IFTX table(s) in <var>extended font subset</var> if present to remove any mapping entries
+    that map to this patch. <!-- TODO: this needs to be made more detailed once we have the mapping format sections -->
 
 Extending a Font Subset {#extending-font-subset}
 ================================================
