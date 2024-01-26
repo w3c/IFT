@@ -256,8 +256,9 @@ patch types. For example all patches of one type can be specified in the 'IFT ' 
 Patch Map Table {#patch-map}
 ----------------------------
 
-A patch map table encodes a list of entries, where each entry has a key and value. The key is a [=font subset definition=] and
-the value is a URL and the [[#font-patch-formats]] used by the data at the URL. A map is encoded in one of two formats:
+A patch map table encodes a list of <dfn dfn>patch map entries</dfn>, where each entry has a key and value. The key is a
+[=font subset definition=] and the value is a URL and the [[#font-patch-formats]] used by the data at the URL. A map is
+encoded in one of two formats:
 
 *  Format 1: a limited, but more compact encoding. Encodes a one-to-one mapping from glyph id to patch URLs. Does not support
     [=font subset definitions=] with design space or entries with overlapping subset definitions.
@@ -454,6 +455,61 @@ A feature map table associates combinations of [[open-type/featuretags|feature t
 </table>
 
 An entry map record matches any entry indices that are greater than or equal to firstEntryIndex and less than or equal to  lastEntryIndex.
+
+<h4 algorithm id="interpreting-patch-map-format-1">Interpreting Format 1 Patch Map</h4>
+
+This algorithm is convert a format 1 patch map into a list of [=patch map entries=].
+
+<dfn abstract-op>Interpret Format 1 Patch Map</dfn>
+
+The inputs to this algorithm are:
+
+* <var>patch map</var>: a [[#patch-map-format-1]] encoded patch map.
+
+* <var>font subset</var>: the [=font subset=] which contains <var>patch map</var>.
+
+The algorithm outputs:
+
+* <var>entry list</var>: a list of [=patch map entries=].
+
+The algorithm:
+
+1.  Check that the <var>patch map</var> is valid according to the requirements in [[#patch-map-format-1]]. If it is not return an error.
+
+2.  For each unique <var>entry index</var> in [=Glyph Map=]:
+
+    <!-- TODO: use ol and style which characters instead of numbers -->
+    *  a. If the bit for <var>entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
+        <var>entry index</var>.
+
+    *  b. Collect the set of glyph indices that map to the <var>entry index</var>.
+
+    *  c. Convert the set of glyph indices to a set of unicode code points using the code point to glyph mapping in the
+        [[open-type/cmap|cmap]] table of <var>font subset</var>. Ignore any glyph indices that are not mapped by [[open-type/cmap|cmap]].
+
+    *  d. Convert <var>entry index</var> into a URL by applying [=Format 1 Patch Map/uriTemplate=] following [[#url-templates]].
+
+    *  e. Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains only the unicode code point set and
+        maps to the generated URL and the patch encoding specified by [=Format 1 Patch Map/patchEncoding=].
+
+3.  For each [=FeatureRecord=] and associated [=EntryMapRecord=] in [=Feature Map/featureRecords=]:
+
+    *  For each <var>entry index</var> between [=EntryMapRecord/firstEntryIndex=] (inclusive) and [=EntryMapRecord/lastEntryIndex=]
+        (inclusive), find the set of unicode codepoints associated with that entry index using the same process as in step 2b through
+        2c.
+
+        *  Compute <var>mapped entry index</var> =
+            [=FeatureRecord/firstEntryIndex|FeatureRecord::firstEntryIndex=] +
+            <var>entry index</var> - [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=].
+            
+        *  Convert <var>mapped entry index</var> into a URL by applying [=Format 1 Patch Map/uriTemplate=] following [[#url-templates]].
+
+        *  If the bit for <var>mapped entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
+            <var>entry index</var>.
+
+        *  Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains the unicode code point set and
+            a feature tag set containing only [=FeatureRecord/featureTag=]. The entry  maps to the generated URL and the patch encoding
+            specified by [=Format 1 Patch Map/patchEncoding=].
 
 ### Patch Map Table: Format 2 ### {#patch-map-format-2}
 

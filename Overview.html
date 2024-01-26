@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="ec1174e579f41084743e4d06ddce352d3d79b10b" name="document-revision">
+  <meta content="87dbd2f99954ce6e2d3783fdbf39db24c18d31fd" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -591,7 +591,8 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
        <a href="#patch-map"><span class="secno">5.1</span> <span class="content">Patch Map Table</span></a>
        <ol class="toc">
         <li><a href="#patch-map-format-1"><span class="secno">5.1.1</span> <span class="content">Patch Map Table: Format 1</span></a>
-        <li><a href="#patch-map-format-2"><span class="secno">5.1.2</span> <span class="content">Patch Map Table: Format 2</span></a>
+        <li><a href="#interpreting-patch-map-format-1"><span class="secno">5.1.2</span> <span class="content">Interpreting Format 1 Patch Map</span></a>
+        <li><a href="#patch-map-format-2"><span class="secno">5.1.3</span> <span class="content">Patch Map Table: Format 2</span></a>
        </ol>
      </ol>
     <li>
@@ -758,8 +759,8 @@ The mappings from the two tables is unioned together to produce the final mappin
 patch types. For example all patches of one type can be specified in the 'IFT ' table, and all patches of a second type in the
 'IFTX' table. Then those patches can make updates only to one of the mapping tables and avoid making conflicting updates.</p>
    <h3 class="heading settled" data-level="5.1" id="patch-map"><span class="secno">5.1. </span><span class="content">Patch Map Table</span><a class="self-link" href="#patch-map"></a></h3>
-   <p>A patch map table encodes a list of entries, where each entry has a key and value. The key is a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">font subset definition</a> and
-the value is a URL and the <a href="#font-patch-formats">§ 6 Font Patch Formats</a> used by the data at the URL. A map is encoded in one of two formats:</p>
+   <p>A patch map table encodes a list of <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map-entries">patch map entries</dfn>, where each entry has a key and value. The key is a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">font subset definition</a> and the value is a URL and the <a href="#font-patch-formats">§ 6 Font Patch Formats</a> used by the data at the URL. A map is
+encoded in one of two formats:</p>
    <ul>
     <li data-md>
      <p>Format 1: a limited, but more compact encoding. Encodes a one-to-one mapping from glyph id to patch URLs. Does not support <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition②">font subset definitions</a> with design space or entries with overlapping subset definitions.</p>
@@ -805,7 +806,7 @@ compact then format 1.</p>
       <td>Offset to a <a data-link-type="dfn" href="#feature-map" id="ref-for-feature-map">Feature Map</a> sub table. Offset is from the start of this table.
      <tr>
       <td>uint8
-      <td><dfn data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-appliedentriesbitmap">appliedEntriesBitMap<a class="self-link" href="#format-1-patch-map-appliedentriesbitmap"></a></dfn>[(entryCount + 7)/8]
+      <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-appliedentriesbitmap">appliedEntriesBitMap</dfn>[(entryCount + 7)/8]
       <td> A bit map which tracks which entries have been applied. If bit <code>i</code> is set that indicates the patch for entry <code>i</code> has been applied to this font. Bit 0 is the least significant bit of appliedEntriesBitMap[0], while bit 7 is
       the most significant bit. Bit 8 is the least significant bit of appliedEntriesBitMap[1] and so on. 
      <tr>
@@ -814,11 +815,11 @@ compact then format 1.</p>
       <td> Length of the uriTemplate string. 
      <tr>
       <td>uint8
-      <td><dfn data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-uritemplate">uriTemplate<a class="self-link" href="#format-1-patch-map-uritemplate"></a></dfn>[uriTemplateLength]
+      <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-uritemplate">uriTemplate</dfn>[uriTemplateLength]
       <td> A <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string. Contains a template (TODO) which is used to produce URLs associated with each entry. 
      <tr>
       <td>uint8
-      <td><dfn data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-patchencoding">patchEncoding<a class="self-link" href="#format-1-patch-map-patchencoding"></a></dfn>
+      <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-patchencoding">patchEncoding</dfn>
       <td> Specifies the format of the patches linked to by uriTemplate. Using the ID number from the <a href="#font-patch-formats-summary">§ 6.2 Formats Summary</a> table. 
    </table>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="glyph-map">Glyph Map</dfn> encoding:</p>
@@ -877,7 +878,7 @@ compact then format 1.</p>
       <td>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tag</a> this mapping is for.
      <tr>
       <td>uint8/uint16
-      <td><dfn data-dfn-for="FeatureRecord" data-dfn-type="dfn" data-noexport id="featurerecord-firstentryindex">firstEntryIndex<a class="self-link" href="#featurerecord-firstentryindex"></a></dfn>
+      <td><dfn class="dfn-paneled" data-dfn-for="FeatureRecord" data-dfn-type="dfn" data-noexport id="featurerecord-firstentryindex">firstEntryIndex</dfn>
       <td> uint8 if <a data-link-type="dfn" href="#format-1-patch-map-entrycount" id="ref-for-format-1-patch-map-entrycount①">entryCount</a> is less than 256, otherwise uint16.
       The first entry index this record maps too. 
      <tr>
@@ -895,29 +896,83 @@ compact then format 1.</p>
       <th>Description
      <tr>
       <td>uint8/uint16
-      <td><dfn data-dfn-for="EntryMapRecord" data-dfn-type="dfn" data-noexport id="entrymaprecord-firstentryindex">firstEntryIndex<a class="self-link" href="#entrymaprecord-firstentryindex"></a></dfn>
+      <td><dfn class="dfn-paneled" data-dfn-for="EntryMapRecord" data-dfn-type="dfn" data-noexport id="entrymaprecord-firstentryindex">firstEntryIndex</dfn>
       <td> uint8 if <a data-link-type="dfn" href="#format-1-patch-map-entrycount" id="ref-for-format-1-patch-map-entrycount③">entryCount</a> is less than 256, otherwise uint16. 
      <tr>
       <td>uint8/uint16
-      <td><dfn data-dfn-for="EntryMapRecord" data-dfn-type="dfn" data-noexport id="entrymaprecord-lastentryindex">lastEntryIndex<a class="self-link" href="#entrymaprecord-lastentryindex"></a></dfn>
+      <td><dfn class="dfn-paneled" data-dfn-for="EntryMapRecord" data-dfn-type="dfn" data-noexport id="entrymaprecord-lastentryindex">lastEntryIndex</dfn>
       <td> uint8 if <a data-link-type="dfn" href="#format-1-patch-map-entrycount" id="ref-for-format-1-patch-map-entrycount④">entryCount</a> is less than 256, otherwise uint16.
       Must be greater than or equal to firstEntryIndex. 
    </table>
    <p>An entry map record matches any entry indices that are greater than or equal to firstEntryIndex and less than or equal to  lastEntryIndex.</p>
-   <h4 class="heading settled" data-level="5.1.2" id="patch-map-format-2"><span class="secno">5.1.2. </span><span class="content">Patch Map Table: Format 2</span><a class="self-link" href="#patch-map-format-2"></a></h4>
+   <h4 class="heading settled algorithm" data-algorithm="Interpreting Format 1 Patch Map" data-level="5.1.2" id="interpreting-patch-map-format-1"><span class="secno">5.1.2. </span><span class="content">Interpreting Format 1 Patch Map</span><a class="self-link" href="#interpreting-patch-map-format-1"></a></h4>
+   <p>This algorithm is convert a format 1 patch map into a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries">patch map entries</a>.</p>
+   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map<a class="self-link" href="#abstract-opdef-interpret-format-1-patch-map"></a></dfn></p>
+   <p>The inputs to this algorithm are:</p>
+   <ul>
+    <li data-md>
+     <p><var>patch map</var>: a <a href="#patch-map-format-1">§ 5.1.1 Patch Map Table: Format 1</a> encoded patch map.</p>
+    <li data-md>
+     <p><var>font subset</var>: the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①">font subset</a> which contains <var>patch map</var>.</p>
+   </ul>
+   <p>The algorithm outputs:</p>
+   <ul>
+    <li data-md>
+     <p><var>entry list</var>: a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①">patch map entries</a>.</p>
+   </ul>
+   <p>The algorithm:</p>
+   <ol>
+    <li data-md>
+     <p>Check that the <var>patch map</var> is valid according to the requirements in <a href="#patch-map-format-1">§ 5.1.1 Patch Map Table: Format 1</a>. If it is not return an error.</p>
+    <li data-md>
+     <p>For each unique <var>entry index</var> in <a data-link-type="dfn" href="#glyph-map" id="ref-for-glyph-map①">Glyph Map</a>:</p>
+     <ul>
+      <li data-md>
+       <p>a. If the bit for <var>entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap">appliedEntriesBitMap</a> is set to 1, skip this <var>entry index</var>.</p>
+      <li data-md>
+       <p>b. Collect the set of glyph indices that map to the <var>entry index</var>.</p>
+      <li data-md>
+       <p>c. Convert the set of glyph indices to a set of unicode code points using the code point to glyph mapping in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table of <var>font subset</var>. Ignore any glyph indices that are not mapped by <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a>.</p>
+      <li data-md>
+       <p>d. Convert <var>entry index</var> into a URL by applying <a data-link-type="dfn" href="#format-1-patch-map-uritemplate" id="ref-for-format-1-patch-map-uritemplate">uriTemplate</a> following <a href="#url-templates">§ 4.1 URL Templates</a>.</p>
+      <li data-md>
+       <p>e. Add an <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries②">entry</a> to <var>entry list</var> whose subset definition contains only the unicode code point set and
+maps to the generated URL and the patch encoding specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id="ref-for-format-1-patch-map-patchencoding">patchEncoding</a>.</p>
+     </ul>
+    <li data-md>
+     <p>For each <a data-link-type="dfn" href="#featurerecord" id="ref-for-featurerecord①">FeatureRecord</a> and associated <a data-link-type="dfn" href="#entrymaprecord" id="ref-for-entrymaprecord②">EntryMapRecord</a> in <a data-link-type="dfn" href="#feature-map-featurerecords" id="ref-for-feature-map-featurerecords①">featureRecords</a>:</p>
+     <ul>
+      <li data-md>
+       <p>For each <var>entry index</var> between <a data-link-type="dfn" href="#entrymaprecord-firstentryindex" id="ref-for-entrymaprecord-firstentryindex">firstEntryIndex</a> (inclusive) and <a data-link-type="dfn" href="#entrymaprecord-lastentryindex" id="ref-for-entrymaprecord-lastentryindex">lastEntryIndex</a> (inclusive), find the set of unicode codepoints associated with that entry index using the same process as in step 2b through
+2c.</p>
+       <ul>
+        <li data-md>
+         <p>Compute <var>mapped entry index</var> = <a data-link-type="dfn" href="#featurerecord-firstentryindex" id="ref-for-featurerecord-firstentryindex">FeatureRecord::firstEntryIndex</a> + <var>entry index</var> - <a data-link-type="dfn" href="#entrymaprecord-firstentryindex" id="ref-for-entrymaprecord-firstentryindex①">EntryMapRecord::firstEntryIndex</a>.</p>
+        <li data-md>
+         <p>Convert <var>mapped entry index</var> into a URL by applying <a data-link-type="dfn" href="#format-1-patch-map-uritemplate" id="ref-for-format-1-patch-map-uritemplate①">uriTemplate</a> following <a href="#url-templates">§ 4.1 URL Templates</a>.</p>
+        <li data-md>
+         <p>If the bit for <var>mapped entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap①">appliedEntriesBitMap</a> is set to 1, skip this <var>entry index</var>.</p>
+        <li data-md>
+         <p>Add an <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries③">entry</a> to <var>entry list</var> whose subset definition contains the unicode code point set and
+a feature tag set containing only <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag①">featureTag</a>. The entry  maps to the generated URL and the patch encoding
+specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id="ref-for-format-1-patch-map-patchencoding①">patchEncoding</a>.</p>
+       </ul>
+     </ul>
+   </ol>
+   <h4 class="heading settled" data-level="5.1.3" id="patch-map-format-2"><span class="secno">5.1.3. </span><span class="content">Patch Map Table: Format 2</span><a class="self-link" href="#patch-map-format-2"></a></h4>
    <h2 class="heading settled" data-level="6" id="font-patch-formats"><span class="secno">6. </span><span class="content">Font Patch Formats</span><a class="self-link" href="#font-patch-formats"></a></h2>
-   <p>In incremental font transfer <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①">font subsets</a> are extended by loading and applying patches. Due to the different
+   <p>In incremental font transfer <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②">font subsets</a> are extended by loading and applying patches. Due to the different
 capabilities required in different situations this specification defines three different patch formats that can be used.</p>
    <h3 class="heading settled" data-level="6.1" id="font-patch-definitions"><span class="secno">6.1. </span><span class="content">Definitions</span><a class="self-link" href="#font-patch-definitions"></a></h3>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-patch">font patch</dfn> is a file which encodes changes to be made to an existing font file. Patches are used to extend
-an existing <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②">font subset</a> and provide expanded coverage.</p>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-format">patch format</dfn> is a specified encoding used to encode changes to be applied to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③">font subset</a> into a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch">font patch</a>. Every <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format">patch format</a> has an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-application-algorithm">patch application algorithm</dfn> which takes a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a> and a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch①">font patch</a> encoded in the <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format①">patch format</a> as input and outputs a new extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a>. Each <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm">patch application algorithm</a> can be categorized as either independent or dependent. Given a set of <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch②">font patches</a>, <code>P</code>, that are all valid to be applied to a specific <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a>, <code>F</code>:</p>
+an existing <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③">font subset</a> and provide expanded coverage.</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-format">patch format</dfn> is a specified encoding used to encode changes to be applied to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a> into a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch">font patch</a>. Every <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format">patch format</a> has an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-application-algorithm">patch application algorithm</dfn> which takes a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> and a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch①">font patch</a> encoded in the <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format①">patch format</a> as input and outputs a new extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a>. Each <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm">patch application algorithm</a> can be categorized as either independent or dependent. Given a set of <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch②">font patches</a>, <code>P</code>, that are all valid to be applied to a specific <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font subset</a>, <code>F</code>:</p>
    <ul>
     <li data-md>
-     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="dependent">dependent</dfn> patches are only valid to be applied to <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font subset</a> <code>F</code>. Applying any patches from <code>P</code> to <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑧">font subset</a> <code>F</code> will change the subset and thus invalidate any remaining dependent patches
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="dependent">dependent</dfn> patches are only valid to be applied to <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑧">font subset</a> <code>F</code>. Applying any patches from <code>P</code> to <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑨">font subset</a> <code>F</code> will change the subset and thus invalidate any remaining dependent patches
 in <code>P</code>.</p>
     <li data-md>
-     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="independent">independent</dfn> patches are only valid to be applied to <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑨">font subset</a> <code>F</code> and any <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⓪">font subset</a> derived
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="independent">independent</dfn> patches are only valid to be applied to <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⓪">font subset</a> <code>F</code> and any <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①①">font subset</a> derived
 from F by the application of one or more independent patches from <code>P</code>.</p>
    </ul>
    <h3 class="heading settled" data-level="6.2" id="font-patch-formats-summary"><span class="secno">6.2. </span><span class="content">Formats Summary</span><a class="self-link" href="#font-patch-formats-summary"></a></h3>
@@ -933,12 +988,12 @@ from F by the application of one or more independent patches from <code>P</code>
       <td><a href="#shared-brotli">§ 6.3 Shared Brotli Patch</a>
       <td><a data-link-type="dfn" href="#dependent" id="ref-for-dependent">dependent</a>
       <td>1
-      <td>A shared brotli encoded binary diff that uses the entire <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①①">font subset</a> as a base.
+      <td>A shared brotli encoded binary diff that uses the entire <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①②">font subset</a> as a base.
      <tr>
       <td><a href="#per-table-shared-brotli">§ 6.4 Per Table Shared Brotli</a>
       <td><a data-link-type="dfn" href="#dependent" id="ref-for-dependent①">dependent</a>
       <td>2
-      <td>A collection of shared brotli encoded binary diffs that use tables from the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①②">font subset</a> as bases.
+      <td>A collection of shared brotli encoded binary diffs that use tables from the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a> as bases.
      <tr>
       <td>Glyph Keyed
       <td><a data-link-type="dfn" href="#independent" id="ref-for-independent">independent</a>
@@ -964,27 +1019,27 @@ of a short header followed by brotli encoded data.</p>
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Shared brotli patch" data-dfn-type="dfn" data-noexport id="shared-brotli-patch-id">id</dfn>[4]
-      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a> which this patch can be applied too.
+      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a> which this patch can be applied too.
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Shared brotli patch" data-dfn-type="dfn" data-noexport id="shared-brotli-patch-brotlistream">brotliStream</dfn>[variable]
       <td>Brotli encoded byte stream.
    </table>
    <h4 class="heading settled algorithm" data-algorithm="Applying Shared Brotli Patches" data-level="6.3.1" id="apply-shared-brotli"><span class="secno">6.3.1. </span><span class="content">Applying Shared Brotli Patches</span><a class="self-link" href="#apply-shared-brotli"></a></h4>
-   <p>This algorithm is used to apply a shared brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a> to cover additional codepoints,
+   <p>This algorithm is used to apply a shared brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a> to cover additional codepoints,
 features, and/or design-variation space.</p>
    <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-shared-brotli-patch">Apply shared brotli patch<a class="self-link" href="#abstract-opdef-apply-shared-brotli-patch"></a></dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
     <li data-md>
-     <p><var>base font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a> which is to be extended.</p>
+     <p><var>base font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a> which is to be extended.</p>
     <li data-md>
      <p><var>patch</var>: a <a data-link-type="dfn" href="#shared-brotli-patch" id="ref-for-shared-brotli-patch">shared brotli patch</a> to be applied to <var>base font subset</var>.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p><var>extended font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a> that has been extended by the <var>patch</var>.</p>
+     <p><var>extended font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑦">font subset</a> that has been extended by the <var>patch</var>.</p>
    </ul>
    <p>The algorithm:</p>
    <ol>
@@ -1004,7 +1059,7 @@ result as the <var>extended font subset</var></p>
    <h3 class="heading settled" data-level="6.4" id="per-table-shared-brotli"><span class="secno">6.4. </span><span class="content">Per Table Shared Brotli</span><a class="self-link" href="#per-table-shared-brotli"></a></h3>
    <p>A per table shared brotli patch contains a collection of patches which are applied to the individual <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font tables</a> in the input font file. Each table patch is encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the corresponding table from the input font file as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. A per table shared brotli encoded patch consists of a short header followed
 by one or more brotli encoded patches. In addition to patching tables, patches may also replace (existing table data is not used)
-or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑦">font subset</a>.</p>
+or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑧">font subset</a>.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="per-table-shared-brotli-patch">Per table shared brotli patch</dfn> encoding:</p>
    <table>
     <tbody>
@@ -1019,7 +1074,7 @@ or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-fo
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Per table shared brotli patch" data-dfn-type="dfn" data-noexport id="per-table-shared-brotli-patch-id">id</dfn>[4]
-      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑧">font subset</a> which this patch can be applied too.
+      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑨">font subset</a> which this patch can be applied too.
      <tr>
       <td>uint16
       <td><dfn data-dfn-for="Per table shared brotli patch" data-dfn-type="dfn" data-noexport id="per-table-shared-brotli-patch-patchescount">patchesCount<a class="self-link" href="#per-table-shared-brotli-patch-patchescount"></a></dfn>
@@ -1052,20 +1107,20 @@ of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">Ta
       <td>Brotli encoded byte stream.
    </table>
    <h4 class="heading settled algorithm" data-algorithm="Applying Per Table Shared Brotli Patches" data-level="6.4.1" id="apply-per-table-shared-brotli"><span class="secno">6.4.1. </span><span class="content">Applying Per Table Shared Brotli Patches</span><a class="self-link" href="#apply-per-table-shared-brotli"></a></h4>
-   <p>This algorithm is used to apply a per table shared brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑨">font subset</a> to cover additional codepoints,
+   <p>This algorithm is used to apply a per table shared brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⓪">font subset</a> to cover additional codepoints,
 features, and/or design-variation space.</p>
    <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-per-table-shared-brotli-patch">Apply per table shared brotli patch<a class="self-link" href="#abstract-opdef-apply-per-table-shared-brotli-patch"></a></dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
     <li data-md>
-     <p><var>base font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⓪">font subset</a> which is to be extended.</p>
+     <p><var>base font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②①">font subset</a> which is to be extended.</p>
     <li data-md>
      <p><var>patch</var>: a <a data-link-type="dfn" href="#per-table-shared-brotli-patch" id="ref-for-per-table-shared-brotli-patch">per table shared brotli patch</a> to be applied to <var>base font subset</var>.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p><var>extended font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②①">font subset</a> that has been extended by the <var>patch</var>.</p>
+     <p><var>extended font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a> that has been extended by the <var>patch</var>.</p>
    </ul>
    <p>The algorithm:</p>
    <ol>
@@ -1118,7 +1173,7 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-id">id</dfn>[4]
-      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a> which this patch can be applied too.
+      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②③">font subset</a> which this patch can be applied too.
      <tr>
       <td>uint32
       <td><dfn data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-length">length<a class="self-link" href="#glyph-keyed-patch-length"></a></dfn>
@@ -1164,20 +1219,20 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
    <p>The difference between two consecutive offsets in the <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets">glyphDataOffsets</a> array gives the size
 of that glyph data.</p>
    <h4 class="heading settled algorithm" data-algorithm="Applying Glyph Keyed Patches" data-level="6.5.1" id="apply-glyph-keyed"><span class="secno">6.5.1. </span><span class="content">Applying Glyph Keyed Patches</span><a class="self-link" href="#apply-glyph-keyed"></a></h4>
-   <p>This algorithm is used to apply a glyph keyed patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②③">font subset</a> to cover additional codepoints,
+   <p>This algorithm is used to apply a glyph keyed patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②④">font subset</a> to cover additional codepoints,
 features, and/or design-variation space.</p>
    <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-glyph-keyed-patch">Apply glyph keyed patch<a class="self-link" href="#abstract-opdef-apply-glyph-keyed-patch"></a></dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
     <li data-md>
-     <p><var>base font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②④">font subset</a> which is to be extended.</p>
+     <p><var>base font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⑤">font subset</a> which is to be extended.</p>
     <li data-md>
      <p><var>patch</var>: a <a data-link-type="dfn" href="#glyph-keyed-patch" id="ref-for-glyph-keyed-patch">glyph keyed patch</a> to be applied to <var>base font subset</var>.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p><var>extended font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⑤">font subset</a> that has been extended by the <var>patch</var>.</p>
+     <p><var>extended font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⑥">font subset</a> that has been extended by the <var>patch</var>.</p>
    </ul>
    <p>The algorithm:</p>
    <ol>
@@ -1374,6 +1429,7 @@ that map to this patch.</p>
      <li><a href="#shared-brotli-patch-id">dfn for Shared brotli patch</a><span>, in § 6.3</span>
     </ul>
    <li><a href="#independent">independent</a><span>, in § 6.1</span>
+   <li><a href="#abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</a><span>, in § 5.1.2</span>
    <li><a href="#entrymaprecord-lastentryindex">lastEntryIndex</a><span>, in § 5.1.1</span>
    <li><a href="#glyph-keyed-patch-length">length</a><span>, in § 6.5</span>
    <li><a href="#patch-application-algorithm">patch application algorithm</a><span>, in § 6.1</span>
@@ -1381,6 +1437,7 @@ that map to this patch.</p>
    <li><a href="#per-table-shared-brotli-patch-patches">patches</a><span>, in § 6.4</span>
    <li><a href="#per-table-shared-brotli-patch-patchescount">patchesCount</a><span>, in § 6.4</span>
    <li><a href="#patch-format">patch format</a><span>, in § 6.1</span>
+   <li><a href="#patch-map-entries">patch map entries</a><span>, in § 5.1</span>
    <li><a href="#per-table-shared-brotli-patch">Per table shared brotli patch</a><span>, in § 6.4</span>
    <li><a href="#format-1-patch-map-reserved">reserved</a><span>, in § 5.1.1</span>
    <li><a href="#shared-brotli-patch">Shared brotli patch</a><span>, in § 6.3</span>
@@ -1571,17 +1628,24 @@ that map to this patch.</p>
 </script>
 <script>/* Boilerplate: script-dfn-panel-json */
 window.dfnpanelData = {};
-window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "6. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2461"}, {"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}], "title": "6.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2460"}, {"id": "ref-for-font-subset\u2460\u2461"}], "title": "6.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2462"}], "title": "6.3. Shared Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}, {"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}], "title": "6.3.1. Applying Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2466"}, {"id": "ref-for-font-subset\u2460\u2467"}], "title": "6.4. Per Table Shared Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2468"}, {"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2461"}], "title": "6.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2462"}, {"id": "ref-for-font-subset\u2461\u2463"}, {"id": "ref-for-font-subset\u2461\u2464"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
+window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}, {"refs": [{"id": "ref-for-font-subset\u2461"}], "title": "6. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}, {"id": "ref-for-font-subset\u2460\u2460"}], "title": "6.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2461"}, {"id": "ref-for-font-subset\u2460\u2462"}], "title": "6.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}], "title": "6.3. Shared Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}, {"id": "ref-for-font-subset\u2460\u2466"}], "title": "6.3.1. Applying Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2467"}, {"id": "ref-for-font-subset\u2460\u2468"}], "title": "6.4. Per Table Shared Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}, {"id": "ref-for-font-subset\u2461\u2461"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2462"}], "title": "6.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2463"}, {"id": "ref-for-font-subset\u2461\u2464"}, {"id": "ref-for-font-subset\u2461\u2465"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
 window.dfnpanelData['font-subset-definition'] = {"dfnID": "font-subset-definition", "url": "#font-subset-definition", "dfnText": "font subset definition", "refSections": [{"refs": [{"id": "ref-for-font-subset-definition"}], "title": "5. Extensions to the Font Format"}, {"refs": [{"id": "ref-for-font-subset-definition\u2460"}, {"id": "ref-for-font-subset-definition\u2461"}], "title": "5.1. Patch Map Table"}], "external": false};
+window.dfnpanelData['patch-map-entries'] = {"dfnID": "patch-map-entries", "url": "#patch-map-entries", "dfnText": "patch map entries", "refSections": [{"refs": [{"id": "ref-for-patch-map-entries"}, {"id": "ref-for-patch-map-entries\u2460"}, {"id": "ref-for-patch-map-entries\u2461"}, {"id": "ref-for-patch-map-entries\u2462"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
 window.dfnpanelData['format-1-patch-map-entrycount'] = {"dfnID": "format-1-patch-map-entrycount", "url": "#format-1-patch-map-entrycount", "dfnText": "entryCount", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-entrycount"}, {"id": "ref-for-format-1-patch-map-entrycount\u2460"}, {"id": "ref-for-format-1-patch-map-entrycount\u2461"}, {"id": "ref-for-format-1-patch-map-entrycount\u2462"}, {"id": "ref-for-format-1-patch-map-entrycount\u2463"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
 window.dfnpanelData['format-1-patch-map-glyphcount'] = {"dfnID": "format-1-patch-map-glyphcount", "url": "#format-1-patch-map-glyphcount", "dfnText": "glyphCount", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-glyphcount"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['glyph-map'] = {"dfnID": "glyph-map", "url": "#glyph-map", "dfnText": "Glyph Map", "refSections": [{"refs": [{"id": "ref-for-glyph-map"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
+window.dfnpanelData['format-1-patch-map-appliedentriesbitmap'] = {"dfnID": "format-1-patch-map-appliedentriesbitmap", "url": "#format-1-patch-map-appliedentriesbitmap", "dfnText": "appliedEntriesBitMap", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-appliedentriesbitmap"}, {"id": "ref-for-format-1-patch-map-appliedentriesbitmap\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
+window.dfnpanelData['format-1-patch-map-uritemplate'] = {"dfnID": "format-1-patch-map-uritemplate", "url": "#format-1-patch-map-uritemplate", "dfnText": "uriTemplate", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-uritemplate"}, {"id": "ref-for-format-1-patch-map-uritemplate\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
+window.dfnpanelData['format-1-patch-map-patchencoding'] = {"dfnID": "format-1-patch-map-patchencoding", "url": "#format-1-patch-map-patchencoding", "dfnText": "patchEncoding", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-patchencoding"}, {"id": "ref-for-format-1-patch-map-patchencoding\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
+window.dfnpanelData['glyph-map'] = {"dfnID": "glyph-map", "url": "#glyph-map", "dfnText": "Glyph Map", "refSections": [{"refs": [{"id": "ref-for-glyph-map"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-glyph-map\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
 window.dfnpanelData['feature-map'] = {"dfnID": "feature-map", "url": "#feature-map", "dfnText": "Feature Map", "refSections": [{"refs": [{"id": "ref-for-feature-map"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['feature-map-featurerecords'] = {"dfnID": "feature-map-featurerecords", "url": "#feature-map-featurerecords", "dfnText": "featureRecords", "refSections": [{"refs": [{"id": "ref-for-feature-map-featurerecords"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['featurerecord'] = {"dfnID": "featurerecord", "url": "#featurerecord", "dfnText": "FeatureRecord", "refSections": [{"refs": [{"id": "ref-for-featurerecord"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['featurerecord-featuretag'] = {"dfnID": "featurerecord-featuretag", "url": "#featurerecord-featuretag", "dfnText": "featureTag", "refSections": [{"refs": [{"id": "ref-for-featurerecord-featuretag"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
+window.dfnpanelData['feature-map-featurerecords'] = {"dfnID": "feature-map-featurerecords", "url": "#feature-map-featurerecords", "dfnText": "featureRecords", "refSections": [{"refs": [{"id": "ref-for-feature-map-featurerecords"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-feature-map-featurerecords\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
+window.dfnpanelData['featurerecord'] = {"dfnID": "featurerecord", "url": "#featurerecord", "dfnText": "FeatureRecord", "refSections": [{"refs": [{"id": "ref-for-featurerecord"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-featurerecord\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
+window.dfnpanelData['featurerecord-featuretag'] = {"dfnID": "featurerecord-featuretag", "url": "#featurerecord-featuretag", "dfnText": "featureTag", "refSections": [{"refs": [{"id": "ref-for-featurerecord-featuretag"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-featurerecord-featuretag\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
+window.dfnpanelData['featurerecord-firstentryindex'] = {"dfnID": "featurerecord-firstentryindex", "url": "#featurerecord-firstentryindex", "dfnText": "firstEntryIndex", "refSections": [{"refs": [{"id": "ref-for-featurerecord-firstentryindex"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
 window.dfnpanelData['featurerecord-entrymapcount'] = {"dfnID": "featurerecord-entrymapcount", "url": "#featurerecord-entrymapcount", "dfnText": "entryMapCount", "refSections": [{"refs": [{"id": "ref-for-featurerecord-entrymapcount"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['entrymaprecord'] = {"dfnID": "entrymaprecord", "url": "#entrymaprecord", "dfnText": "EntryMapRecord", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord"}, {"id": "ref-for-entrymaprecord\u2460"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
+window.dfnpanelData['entrymaprecord'] = {"dfnID": "entrymaprecord", "url": "#entrymaprecord", "dfnText": "EntryMapRecord", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord"}, {"id": "ref-for-entrymaprecord\u2460"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-entrymaprecord\u2461"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
+window.dfnpanelData['entrymaprecord-firstentryindex'] = {"dfnID": "entrymaprecord-firstentryindex", "url": "#entrymaprecord-firstentryindex", "dfnText": "firstEntryIndex", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord-firstentryindex"}, {"id": "ref-for-entrymaprecord-firstentryindex\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
+window.dfnpanelData['entrymaprecord-lastentryindex'] = {"dfnID": "entrymaprecord-lastentryindex", "url": "#entrymaprecord-lastentryindex", "dfnText": "lastEntryIndex", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord-lastentryindex"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
 window.dfnpanelData['font-patch'] = {"dfnID": "font-patch", "url": "#font-patch", "dfnText": "font patch", "refSections": [{"refs": [{"id": "ref-for-font-patch"}, {"id": "ref-for-font-patch\u2460"}, {"id": "ref-for-font-patch\u2461"}], "title": "6.1. Definitions"}], "external": false};
 window.dfnpanelData['patch-format'] = {"dfnID": "patch-format", "url": "#patch-format", "dfnText": "patch format", "refSections": [{"refs": [{"id": "ref-for-patch-format"}, {"id": "ref-for-patch-format\u2460"}], "title": "6.1. Definitions"}], "external": false};
 window.dfnpanelData['patch-application-algorithm'] = {"dfnID": "patch-application-algorithm", "url": "#patch-application-algorithm", "dfnText": "patch application algorithm", "refSections": [{"refs": [{"id": "ref-for-patch-application-algorithm"}], "title": "6.1. Definitions"}], "external": false};
