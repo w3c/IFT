@@ -234,6 +234,11 @@ Data Types {#data-types}
 Encoded data structures in the remainder of this specification are described in terms of the data types defined
 in [[open-type/otff#data-types]]. As with OpenType all fields use Big Endian byte ordering.
 
+URL Templates {#url-templates}
+------------------------------
+
+<!-- TODO write this -->
+
 Extensions to the Font Format {#font-format-extensions}
 =======================================================
 
@@ -263,6 +268,7 @@ the value is a URL and the [[#font-patch-formats]] used by the data at the URL. 
 ### Patch Map Table: Format 1 ### {#patch-map-format-1}
 
 <!-- TODO: summary of this format -->
+<!-- TODO: provide normative validation requirements for each encoding -->
 
 <dfn>Format 1 Patch Map</dfn> encoding:
 <table>
@@ -303,8 +309,7 @@ the value is a URL and the [[#font-patch-formats]] used by the data at the URL. 
   <tr>
     <td>Offset32</td>
     <td><dfn for="Format 1 Patch Map">featureMapOffset</dfn></td>
-    <!-- TODO link -->
-    <td>Offset to the feature map sub table. Offset is from the start of this table.</td>
+    <td>Offset to a [=Feature Map=] sub table. Offset is from the start of this table.</td>
   </tr>
   <tr>
     <td>uint8</td>
@@ -329,6 +334,13 @@ the value is a URL and the [[#font-patch-formats]] used by the data at the URL. 
       A [[UTF-8]] encoded string. Contains a template (TODO) which is used to produce URLs associated with each entry.
     </td>
   </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Format 1 Patch Map">patchEncoding</dfn></td>
+    <td>
+      Specifies the format of the patches linked to by uriTemplate. Using the ID number from the [[#font-patch-formats-summary]] table.
+    </td>
+  </tr>
 </table>
 
 <dfn>Glyph Map</dfn> encoding:
@@ -346,14 +358,102 @@ A glyph map table associates each glyph index in the font with an entry index.
   </tr>
   <tr>
     <td>uint8/uint16</td>
-    <td><dfn for="Glyph Map">entryIndex</dfn>[[=Format 1 Patch Map/glyphCount=] - firstMappedGlyph + 1]</td>
+    <td><dfn for="Glyph Map">entryIndex</dfn>[[=Format 1 Patch Map/glyphCount=] - firstMappedGlyph]</td>
     <td>
       The entry index for glyph <code>i</code> is stored in entryIndex[<code>i</code> - firstMappedGlyph]. Array members
-      are uint8 if [=Format 1 Patch Map/entryCount=] is less than 255, otherwise they are uint16.
+      are uint8 if [=Format 1 Patch Map/entryCount=] is less than 256, otherwise they are uint16.
     </td>
   </tr>
 </table>
 
+
+<dfn>Feature Map</dfn> encoding:
+
+A feature map table associates combinations of [[open-type/featuretags|feature tags]] and glyphs with an entry index.
+
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>uint16</td>
+    <td><dfn for="Feature Map">featureCount</dfn></td>
+    <td>Number of featureRecords.</td>
+  </tr>
+  <tr>
+    <td>[=FeatureRecord=]</td>
+    <td><dfn for="Feature Map">featureRecords</dfn>[featureCount]</td>
+    <td>
+      Provides mappings for a specific  [[open-type/featuretags|feature tag]]. Sorted by [=FeatureRecord/featureTag=]
+      with any feature tag occurring at most once.
+    </td>
+  </tr>
+  <tr>
+    <td>[=EntryMapRecord=]</td>
+    <td><dfn for="Feature Map">entryMapRecords</dfn>[variable]</td>
+    <td>
+      Provides the key (entry index) for each feature mapping. The entryMapRecords array contains as many entries as the sum of
+      the [=FeatureRecord/entryMapCount=] fields in the [=Feature Map/featureRecords=] array, with entryMapRecords[0] corresponding
+      to the first entry of featureRecords[0], entryMapRecords[featureRecord[0].entryMapCount] corresponding to the first entry of
+      featureRecords[1], entryMapRecords[featureRecords[0].entryMapCount + featureRecord[1].entryMapCount]] corresponding to the
+      first entry of featureRecords[2], and so on.
+    </td>
+  </tr>
+</table>
+
+<dfn>FeatureRecord</dfn> encoding:
+
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>Tag</td>
+    <td><dfn for="FeatureRecord">featureTag</dfn></td>
+    <td>The [[open-type/featuretags|feature tag]] this mapping is for.</td>
+  </tr>
+  <tr>
+    <td>uint8/uint16</td>
+    <td><dfn for="FeatureRecord">firstEntryIndex</dfn></td>
+    <td>
+      uint8 if [=Format 1 Patch Map/entryCount=] is less than 256, otherwise uint16.
+      The first entry index this record maps too.
+    </td>
+  </tr>
+  <tr>
+    <td>uint8/uint16</td>
+    <td><dfn for="FeatureRecord">entryMapCount</dfn></td>
+    <td>
+      uint8 if [=Format 1 Patch Map/entryCount=] is less than 256, otherwise uint16.
+      The number of [=EntryMapRecord=]s associated with this feature.
+    </td>
+  </tr>
+</table>
+
+<dfn>EntryMapRecord</dfn> encoding:
+
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>uint8/uint16</td>
+    <td><dfn for="EntryMapRecord">firstEntryIndex</dfn></td>
+    <td>
+      uint8 if [=Format 1 Patch Map/entryCount=] is less than 256, otherwise uint16.
+    </td>
+  </tr>
+    <tr>
+    <td>uint8/uint16</td>
+    <td><dfn for="EntryMapRecord">lastEntryIndex</dfn></td>
+    <td>
+      uint8 if [=Format 1 Patch Map/entryCount=] is less than 256, otherwise uint16.
+      Must be greater than or equal to firstEntryIndex.
+    </td>
+  </tr>
+</table>
+
+An entry map record matches any entry indices that are greater than or equal to firstEntryIndex and less than or equal to  lastEntryIndex.
 
 ### Patch Map Table: Format 2 ### {#patch-map-format-2}
 
@@ -403,21 +503,25 @@ The following patch formats are defined by this specification:
   <tr>
     <th>Name</th>
     <th>Type</th>
+    <th>ID</th>
     <th>Description</th>
   </tr>
   <tr>
     <td>[[#shared-brotli]]</td>
     <td>[=dependent=]</td>
+    <td>1</td>
     <td>A shared brotli encoded binary diff that uses the entire [=font subset=] as a base.</td>
   </tr>
   <tr>
     <td>[[#per-table-shared-brotli]]</td>
     <td>[=dependent=]</td>
+    <td>2</td>
     <td>A collection of shared brotli encoded binary diffs that use tables from the [=font subset=] as bases.</td>
   </tr>
   <tr>
     <td>Glyph Keyed</td>
     <td>[=independent=]</td>
+    <td>3</td>
     <td>Contains a collection of opaque binary blobs, each associated with a glyph id and table.</td>
   </tr>
 </table>
