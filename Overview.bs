@@ -237,6 +237,131 @@ in [[open-type/otff#data-types]]. As with OpenType all fields use Big Endian byt
 Extensions to the Font Format {#font-format-extensions}
 =======================================================
 
+Incremental fonts follow the existing [[open-type|OpenType]] format, but include two new [[open-type/otff#table-directory|tables]]:
+'IFT ' and 'IFTX'. These new tables are both [[#patch-map|patch maps]], which encode a collection of mappings from
+[=font subset definition|font subset definitions=] to URLs which host [[#font-patch-formats|patches]] that extend the incremental font.
+The mappings from the two tables is unioned together to produce the final mapping. All incremental fonts must contain at least an
+'IFT ' table. The 'IFTX' table is optional.
+
+Note: allowing the mapping to be split between two distinct tables allows an incremental font to more easily make use of multiple
+patch types. For example all patches of one type can be specified in the 'IFT ' table, and all patches of a second type in the
+'IFTX' table. Then those patches can make updates only to one of the mapping tables and avoid making conflicting updates.
+
+
+Patch Map Table {#patch-map}
+----------------------------
+
+A patch map table encodes a list of entries, where each entry has a key and value. The key is a [=font subset definition=] and
+the value is a URL and the [[#font-patch-formats]] used by the data at the URL. A map is encoded in one of two formats:
+
+*  Format 1: a limited, but more compact encoding. Encodes a one-to-one mapping from glyph id to patch URLs. Does not support
+    [=font subset definitions=] with design space or entries with overlapping subset definitions.
+
+*  Format 2: can encode arbitrary mappings including ones with design space or overlapping subset definitions. However, typically less
+    compact then format 1.
+
+### Patch Map Table: Format 1 ### {#patch-map-format-1}
+
+<!-- TODO: summary of this format -->
+
+<dfn>Format 1 Patch Map</dfn> encoding:
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Format 1 Patch Map">format</dfn></td>
+    <td>Set to 1, identifies this as format 1.</td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Format 1 Patch Map">reserved</dfn></td>
+    <td>Not used, set to 0.</td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Format 1 Patch Map">id</dfn>[4]</td>
+    <td>Unique ID used to identify patches that are compatible with this font.</td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Format 1 Patch Map">entryCount</dfn></td>
+    <td>Number of entries encoded in this table.</td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Format 1 Patch Map">glyphCount</dfn></td>
+    <td>Number of glyphs that mappings are provided for. Must match the numGlyphs field from [[open-type/maxp|maxp]].</td>
+  </tr>
+  <tr>
+    <td>Offset32</td>
+    <td><dfn for="Format 1 Patch Map">glyphMapOffset</dfn></td>
+    <!-- TODO link -->
+    <td>Offset to a [=Glyph Map=] sub table. Offset is from the start of this table.</td>
+  </tr>
+  <tr>
+    <td>Offset32</td>
+    <td><dfn for="Format 1 Patch Map">featureMapOffset</dfn></td>
+    <!-- TODO link -->
+    <td>Offset to the feature map sub table. Offset is from the start of this table.</td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Format 1 Patch Map">appliedEntriesBitMap</dfn>[(entryCount + 7)/8]</td>
+    <td>
+      A bit map which tracks which entries have been applied. If bit <code>i</code> is set that indicates the patch for entry
+      <code>i</code> has been applied to this font. Bit 0 is the least significant bit of appliedEntriesBitMap[0], while bit 7 is
+      the most significant bit. Bit 8 is the least significant bit of appliedEntriesBitMap[1] and so on.
+    </td>
+  </tr>
+  <tr>
+    <td>uint16</td>
+    <td><dfn for="Format 1 Patch Map">uriTemplateLength</dfn></td>
+    <td>
+      Length of the uriTemplate string.
+    </td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Format 1 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
+    <td>
+      A [[UTF-8]] encoded string. Contains a template (TODO) which is used to produce URLs associated with each entry.
+    </td>
+  </tr>
+</table>
+
+<dfn>Glyph Map</dfn> encoding:
+
+A glyph map table associates each glyph index in the font with an entry index.
+
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>uint16</td>
+    <td><dfn for="Glyph Map">firstMappedGlyph</dfn></td>
+    <td>All glyph indices less than firstMappedGlyph are implicitly mapped to entry index 0.</td>
+  </tr>
+  <tr>
+    <td>uint8/uint16</td>
+    <td><dfn for="Glyph Map">entryIndex</dfn>[[=Format 1 Patch Map/glyphCount=] - firstMappedGlyph + 1]</td>
+    <td>
+      The entry index for glyph <code>i</code> is stored in entryIndex[<code>i</code> - firstMappedGlyph]. Array members
+      are uint8 if [=Format 1 Patch Map/entryCount=] is less than 255, otherwise they are uint16.
+    </td>
+  </tr>
+</table>
+
+
+### Patch Map Table: Format 2 ### {#patch-map-format-2}
+
+
+<!-- TODO add algorithm explaining how to union the two tables -->
+
+
+
 <!-- 
 TODO:
 - how does this interact with woff2
