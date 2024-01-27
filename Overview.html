@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="87dbd2f99954ce6e2d3783fdbf39db24c18d31fd" name="document-revision">
+  <meta content="45e163e3ab1d4f2b433e5241ddbe7cc85feccddc" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -582,7 +582,7 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
     <li>
      <a href="#data-types"><span class="secno">4</span> <span class="content">Data Types</span></a>
      <ol class="toc">
-      <li><a href="#url-templates"><span class="secno">4.1</span> <span class="content">URL Templates</span></a>
+      <li><a href="#uri-templates"><span class="secno">4.1</span> <span class="content">URI Templates</span></a>
      </ol>
     <li>
      <a href="#font-format-extensions"><span class="secno">5</span> <span class="content">Extensions to the Font Format</span></a>
@@ -590,9 +590,12 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
       <li>
        <a href="#patch-map"><span class="secno">5.1</span> <span class="content">Patch Map Table</span></a>
        <ol class="toc">
-        <li><a href="#patch-map-format-1"><span class="secno">5.1.1</span> <span class="content">Patch Map Table: Format 1</span></a>
-        <li><a href="#interpreting-patch-map-format-1"><span class="secno">5.1.2</span> <span class="content">Interpreting Format 1 Patch Map</span></a>
-        <li><a href="#patch-map-format-2"><span class="secno">5.1.3</span> <span class="content">Patch Map Table: Format 2</span></a>
+        <li>
+         <a href="#patch-map-format-1"><span class="secno">5.1.1</span> <span class="content">Patch Map Table: Format 1</span></a>
+         <ol class="toc">
+          <li><a href="#interpreting-patch-map-format-1"><span class="secno">5.1.1.1</span> <span class="content">Interpreting Format 1</span></a>
+         </ol>
+        <li><a href="#patch-map-format-2"><span class="secno">5.1.2</span> <span class="content">Patch Map Table: Format 2</span></a>
        </ol>
      </ol>
     <li>
@@ -749,7 +752,54 @@ variation axis space) that a <a data-link-type="dfn" href="#font-subset" id="ref
    <h2 class="heading settled" data-level="4" id="data-types"><span class="secno">4. </span><span class="content">Data Types</span><a class="self-link" href="#data-types"></a></h2>
    <p>Encoded data structures in the remainder of this specification are described in terms of the data types defined
 in <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types">OpenType Specification § otff#data-types</a>. As with OpenType all fields use Big Endian byte ordering.</p>
-   <h3 class="heading settled" data-level="4.1" id="url-templates"><span class="secno">4.1. </span><span class="content">URL Templates</span><a class="self-link" href="#url-templates"></a></h3>
+   <h3 class="heading settled" data-level="4.1" id="uri-templates"><span class="secno">4.1. </span><span class="content">URI Templates</span><a class="self-link" href="#uri-templates"></a></h3>
+   <p>URI templates <a data-link-type="biblio" href="#biblio-rfc6570" title="URI Template">[rfc6570]</a> are used to convert numeric indices into URIs where patch files are located. Given a numeric index value,
+several variables are defined which are used to produce the expansion of the template:</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>Variable
+      <th>Value
+     <tr>
+      <td>id
+      <td> The numeric index value converted to a string in hexadecimal representation (using the digits 0-9, A-F). No padding with 0’s is
+      used. 
+     <tr>
+      <td>d1
+      <td>The first digit (least significant digit) of the numeric index in hexadecimal.
+     <tr>
+      <td>d2
+      <td>The second digit of the numeric index in hexadecimal, or 0 if the index does not have a second digit
+     <tr>
+      <td>d3
+      <td>The third digit of the numeric index in hexadecimal, or 0 if the index does not have a third digit
+     <tr>
+      <td>d4
+      <td>The fourth digit of the numeric index in hexadecimal, or 0 if the index does not have a fourth digit
+   </table>
+   <div class="example" id="example-2dff77c0">
+    <a class="self-link" href="#example-2dff77c0"></a> 
+    <p>Some example inputs and the corresponding expansions:</p>
+    <table>
+     <tbody>
+      <tr>
+       <th>Template
+       <th>Input Index
+       <th>Expansion
+      <tr>
+       <td>//foo.bar/{id}
+       <td>123
+       <td>//foo.bar/7B
+      <tr>
+       <td>//foo.bar{/d1,d2,id}
+       <td>123
+       <td>//foo.bar/B/7/7B
+      <tr>
+       <td>//foo.bar{/d1,d2,d3,id}
+       <td>123
+       <td>//foo.bar/B/7/0/7B
+    </table>
+   </div>
    <h2 class="heading settled" data-level="5" id="font-format-extensions"><span class="secno">5. </span><span class="content">Extensions to the Font Format</span><a class="self-link" href="#font-format-extensions"></a></h2>
    <p>Incremental fonts follow the existing <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> format, but include two new <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a>:
 'IFT ' and 'IFTX'. These new tables are both <a href="#patch-map">patch maps</a>, which encode a collection of mappings from <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">font subset definitions</a> to URLs which host <a href="#font-patch-formats">patches</a> that extend the incremental font.
@@ -905,7 +955,7 @@ compact then format 1.</p>
       Must be greater than or equal to firstEntryIndex. 
    </table>
    <p>An entry map record matches any entry indices that are greater than or equal to firstEntryIndex and less than or equal to  lastEntryIndex.</p>
-   <h4 class="heading settled algorithm" data-algorithm="Interpreting Format 1 Patch Map" data-level="5.1.2" id="interpreting-patch-map-format-1"><span class="secno">5.1.2. </span><span class="content">Interpreting Format 1 Patch Map</span><a class="self-link" href="#interpreting-patch-map-format-1"></a></h4>
+   <h5 class="heading settled algorithm" data-algorithm="Interpreting Format 1" data-level="5.1.1.1" id="interpreting-patch-map-format-1"><span class="secno">5.1.1.1. </span><span class="content">Interpreting Format 1</span><a class="self-link" href="#interpreting-patch-map-format-1"></a></h5>
    <p>This algorithm is convert a format 1 patch map into a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries">patch map entries</a>.</p>
    <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map<a class="self-link" href="#abstract-opdef-interpret-format-1-patch-map"></a></dfn></p>
    <p>The inputs to this algorithm are:</p>
@@ -934,7 +984,7 @@ compact then format 1.</p>
       <li data-md>
        <p>c. Convert the set of glyph indices to a set of unicode code points using the code point to glyph mapping in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table of <var>font subset</var>. Ignore any glyph indices that are not mapped by <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a>.</p>
       <li data-md>
-       <p>d. Convert <var>entry index</var> into a URL by applying <a data-link-type="dfn" href="#format-1-patch-map-uritemplate" id="ref-for-format-1-patch-map-uritemplate">uriTemplate</a> following <a href="#url-templates">§ 4.1 URL Templates</a>.</p>
+       <p>d. Convert <var>entry index</var> into a URL by applying <a data-link-type="dfn" href="#format-1-patch-map-uritemplate" id="ref-for-format-1-patch-map-uritemplate">uriTemplate</a> following <a href="#uri-templates">§ 4.1 URI Templates</a>.</p>
       <li data-md>
        <p>e. Add an <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries②">entry</a> to <var>entry list</var> whose subset definition contains only the unicode code point set and
 maps to the generated URL and the patch encoding specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id="ref-for-format-1-patch-map-patchencoding">patchEncoding</a>.</p>
@@ -949,7 +999,7 @@ maps to the generated URL and the patch encoding specified by <a data-link-type=
         <li data-md>
          <p>Compute <var>mapped entry index</var> = <a data-link-type="dfn" href="#featurerecord-firstentryindex" id="ref-for-featurerecord-firstentryindex">FeatureRecord::firstEntryIndex</a> + <var>entry index</var> - <a data-link-type="dfn" href="#entrymaprecord-firstentryindex" id="ref-for-entrymaprecord-firstentryindex①">EntryMapRecord::firstEntryIndex</a>.</p>
         <li data-md>
-         <p>Convert <var>mapped entry index</var> into a URL by applying <a data-link-type="dfn" href="#format-1-patch-map-uritemplate" id="ref-for-format-1-patch-map-uritemplate①">uriTemplate</a> following <a href="#url-templates">§ 4.1 URL Templates</a>.</p>
+         <p>Convert <var>mapped entry index</var> into a URL by applying <a data-link-type="dfn" href="#format-1-patch-map-uritemplate" id="ref-for-format-1-patch-map-uritemplate①">uriTemplate</a> following <a href="#uri-templates">§ 4.1 URI Templates</a>.</p>
         <li data-md>
          <p>If the bit for <var>mapped entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap①">appliedEntriesBitMap</a> is set to 1, skip this <var>entry index</var>.</p>
         <li data-md>
@@ -959,7 +1009,7 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
        </ul>
      </ul>
    </ol>
-   <h4 class="heading settled" data-level="5.1.3" id="patch-map-format-2"><span class="secno">5.1.3. </span><span class="content">Patch Map Table: Format 2</span><a class="self-link" href="#patch-map-format-2"></a></h4>
+   <h4 class="heading settled" data-level="5.1.2" id="patch-map-format-2"><span class="secno">5.1.2. </span><span class="content">Patch Map Table: Format 2</span><a class="self-link" href="#patch-map-format-2"></a></h4>
    <h2 class="heading settled" data-level="6" id="font-patch-formats"><span class="secno">6. </span><span class="content">Font Patch Formats</span><a class="self-link" href="#font-patch-formats"></a></h2>
    <p>In incremental font transfer <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②">font subsets</a> are extended by loading and applying patches. Due to the different
 capabilities required in different situations this specification defines three different patch formats that can be used.</p>
@@ -1429,7 +1479,7 @@ that map to this patch.</p>
      <li><a href="#shared-brotli-patch-id">dfn for Shared brotli patch</a><span>, in § 6.3</span>
     </ul>
    <li><a href="#independent">independent</a><span>, in § 6.1</span>
-   <li><a href="#abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</a><span>, in § 5.1.2</span>
+   <li><a href="#abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</a><span>, in § 5.1.1.1</span>
    <li><a href="#entrymaprecord-lastentryindex">lastEntryIndex</a><span>, in § 5.1.1</span>
    <li><a href="#glyph-keyed-patch-length">length</a><span>, in § 6.5</span>
    <li><a href="#patch-application-algorithm">patch application algorithm</a><span>, in § 6.1</span>
@@ -1461,15 +1511,17 @@ that map to this patch.</p>
    <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/"><cite>Progressive Font Enrichment: Evaluation Report</cite></a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+   <dt id="biblio-rfc6570">[RFC6570]
+   <dd>J. Gregorio; et al. <a href="https://www.rfc-editor.org/rfc/rfc6570"><cite>URI Template</cite></a>. March 2012. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc6570">https://www.rfc-editor.org/rfc/rfc6570</a>
    <dt id="biblio-rfc7932">[RFC7932]
    <dd>J. Alakuijala; Z. Szabadka. <a href="https://www.rfc-editor.org/rfc/rfc7932"><cite>Brotli Compressed Data Format</cite></a>. July 2016. Informational. URL: <a href="https://www.rfc-editor.org/rfc/rfc7932">https://www.rfc-editor.org/rfc/rfc7932</a>
    <dt id="biblio-shared-brotli">[Shared-Brotli]
    <dd>J. Alakuijala; et al. <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09"><cite>Shared Brotli Compressed Data Format</cite></a>. 27 Jul 2021. Internet Draft. URL: <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09">https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09</a>
+   <dt id="biblio-utf-8">[UTF-8]
+   <dd>F. Yergeau. <a href="https://www.rfc-editor.org/rfc/rfc3629"><cite>UTF-8, a transformation format of ISO 10646</cite></a>. November 2003. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3629">https://www.rfc-editor.org/rfc/rfc3629</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
-   <dt id="biblio-utf-8">[UTF-8]
-   <dd>F. Yergeau. <a href="https://www.rfc-editor.org/rfc/rfc3629"><cite>UTF-8, a transformation format of ISO 10646</cite></a>. November 2003. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3629">https://www.rfc-editor.org/rfc/rfc3629</a>
    <dt id="biblio-woff2">[WOFF2]
    <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/"><cite>WOFF File Format 2.0</cite></a>. 10 March 2022. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
   </dl>
@@ -1628,24 +1680,24 @@ that map to this patch.</p>
 </script>
 <script>/* Boilerplate: script-dfn-panel-json */
 window.dfnpanelData = {};
-window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}, {"refs": [{"id": "ref-for-font-subset\u2461"}], "title": "6. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}, {"id": "ref-for-font-subset\u2460\u2460"}], "title": "6.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2461"}, {"id": "ref-for-font-subset\u2460\u2462"}], "title": "6.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}], "title": "6.3. Shared Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}, {"id": "ref-for-font-subset\u2460\u2466"}], "title": "6.3.1. Applying Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2467"}, {"id": "ref-for-font-subset\u2460\u2468"}], "title": "6.4. Per Table Shared Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}, {"id": "ref-for-font-subset\u2461\u2461"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2462"}], "title": "6.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2463"}, {"id": "ref-for-font-subset\u2461\u2464"}, {"id": "ref-for-font-subset\u2461\u2465"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
+window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "5.1.1.1. Interpreting Format 1"}, {"refs": [{"id": "ref-for-font-subset\u2461"}], "title": "6. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}, {"id": "ref-for-font-subset\u2460\u2460"}], "title": "6.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2461"}, {"id": "ref-for-font-subset\u2460\u2462"}], "title": "6.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}], "title": "6.3. Shared Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}, {"id": "ref-for-font-subset\u2460\u2466"}], "title": "6.3.1. Applying Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2467"}, {"id": "ref-for-font-subset\u2460\u2468"}], "title": "6.4. Per Table Shared Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}, {"id": "ref-for-font-subset\u2461\u2461"}], "title": "6.4.1. Applying Per Table Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2462"}], "title": "6.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2463"}, {"id": "ref-for-font-subset\u2461\u2464"}, {"id": "ref-for-font-subset\u2461\u2465"}], "title": "6.5.1. Applying Glyph Keyed Patches"}], "external": false};
 window.dfnpanelData['font-subset-definition'] = {"dfnID": "font-subset-definition", "url": "#font-subset-definition", "dfnText": "font subset definition", "refSections": [{"refs": [{"id": "ref-for-font-subset-definition"}], "title": "5. Extensions to the Font Format"}, {"refs": [{"id": "ref-for-font-subset-definition\u2460"}, {"id": "ref-for-font-subset-definition\u2461"}], "title": "5.1. Patch Map Table"}], "external": false};
-window.dfnpanelData['patch-map-entries'] = {"dfnID": "patch-map-entries", "url": "#patch-map-entries", "dfnText": "patch map entries", "refSections": [{"refs": [{"id": "ref-for-patch-map-entries"}, {"id": "ref-for-patch-map-entries\u2460"}, {"id": "ref-for-patch-map-entries\u2461"}, {"id": "ref-for-patch-map-entries\u2462"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
+window.dfnpanelData['patch-map-entries'] = {"dfnID": "patch-map-entries", "url": "#patch-map-entries", "dfnText": "patch map entries", "refSections": [{"refs": [{"id": "ref-for-patch-map-entries"}, {"id": "ref-for-patch-map-entries\u2460"}, {"id": "ref-for-patch-map-entries\u2461"}, {"id": "ref-for-patch-map-entries\u2462"}], "title": "5.1.1.1. Interpreting Format 1"}], "external": false};
 window.dfnpanelData['format-1-patch-map-entrycount'] = {"dfnID": "format-1-patch-map-entrycount", "url": "#format-1-patch-map-entrycount", "dfnText": "entryCount", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-entrycount"}, {"id": "ref-for-format-1-patch-map-entrycount\u2460"}, {"id": "ref-for-format-1-patch-map-entrycount\u2461"}, {"id": "ref-for-format-1-patch-map-entrycount\u2462"}, {"id": "ref-for-format-1-patch-map-entrycount\u2463"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
 window.dfnpanelData['format-1-patch-map-glyphcount'] = {"dfnID": "format-1-patch-map-glyphcount", "url": "#format-1-patch-map-glyphcount", "dfnText": "glyphCount", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-glyphcount"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['format-1-patch-map-appliedentriesbitmap'] = {"dfnID": "format-1-patch-map-appliedentriesbitmap", "url": "#format-1-patch-map-appliedentriesbitmap", "dfnText": "appliedEntriesBitMap", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-appliedentriesbitmap"}, {"id": "ref-for-format-1-patch-map-appliedentriesbitmap\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
-window.dfnpanelData['format-1-patch-map-uritemplate'] = {"dfnID": "format-1-patch-map-uritemplate", "url": "#format-1-patch-map-uritemplate", "dfnText": "uriTemplate", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-uritemplate"}, {"id": "ref-for-format-1-patch-map-uritemplate\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
-window.dfnpanelData['format-1-patch-map-patchencoding'] = {"dfnID": "format-1-patch-map-patchencoding", "url": "#format-1-patch-map-patchencoding", "dfnText": "patchEncoding", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-patchencoding"}, {"id": "ref-for-format-1-patch-map-patchencoding\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
-window.dfnpanelData['glyph-map'] = {"dfnID": "glyph-map", "url": "#glyph-map", "dfnText": "Glyph Map", "refSections": [{"refs": [{"id": "ref-for-glyph-map"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-glyph-map\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
+window.dfnpanelData['format-1-patch-map-appliedentriesbitmap'] = {"dfnID": "format-1-patch-map-appliedentriesbitmap", "url": "#format-1-patch-map-appliedentriesbitmap", "dfnText": "appliedEntriesBitMap", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-appliedentriesbitmap"}, {"id": "ref-for-format-1-patch-map-appliedentriesbitmap\u2460"}], "title": "5.1.1.1. Interpreting Format 1"}], "external": false};
+window.dfnpanelData['format-1-patch-map-uritemplate'] = {"dfnID": "format-1-patch-map-uritemplate", "url": "#format-1-patch-map-uritemplate", "dfnText": "uriTemplate", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-uritemplate"}, {"id": "ref-for-format-1-patch-map-uritemplate\u2460"}], "title": "5.1.1.1. Interpreting Format 1"}], "external": false};
+window.dfnpanelData['format-1-patch-map-patchencoding'] = {"dfnID": "format-1-patch-map-patchencoding", "url": "#format-1-patch-map-patchencoding", "dfnText": "patchEncoding", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-patchencoding"}, {"id": "ref-for-format-1-patch-map-patchencoding\u2460"}], "title": "5.1.1.1. Interpreting Format 1"}], "external": false};
+window.dfnpanelData['glyph-map'] = {"dfnID": "glyph-map", "url": "#glyph-map", "dfnText": "Glyph Map", "refSections": [{"refs": [{"id": "ref-for-glyph-map"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-glyph-map\u2460"}], "title": "5.1.1.1. Interpreting Format 1"}], "external": false};
 window.dfnpanelData['feature-map'] = {"dfnID": "feature-map", "url": "#feature-map", "dfnText": "Feature Map", "refSections": [{"refs": [{"id": "ref-for-feature-map"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['feature-map-featurerecords'] = {"dfnID": "feature-map-featurerecords", "url": "#feature-map-featurerecords", "dfnText": "featureRecords", "refSections": [{"refs": [{"id": "ref-for-feature-map-featurerecords"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-feature-map-featurerecords\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
-window.dfnpanelData['featurerecord'] = {"dfnID": "featurerecord", "url": "#featurerecord", "dfnText": "FeatureRecord", "refSections": [{"refs": [{"id": "ref-for-featurerecord"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-featurerecord\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
-window.dfnpanelData['featurerecord-featuretag'] = {"dfnID": "featurerecord-featuretag", "url": "#featurerecord-featuretag", "dfnText": "featureTag", "refSections": [{"refs": [{"id": "ref-for-featurerecord-featuretag"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-featurerecord-featuretag\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
-window.dfnpanelData['featurerecord-firstentryindex'] = {"dfnID": "featurerecord-firstentryindex", "url": "#featurerecord-firstentryindex", "dfnText": "firstEntryIndex", "refSections": [{"refs": [{"id": "ref-for-featurerecord-firstentryindex"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
+window.dfnpanelData['feature-map-featurerecords'] = {"dfnID": "feature-map-featurerecords", "url": "#feature-map-featurerecords", "dfnText": "featureRecords", "refSections": [{"refs": [{"id": "ref-for-feature-map-featurerecords"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-feature-map-featurerecords\u2460"}], "title": "5.1.1.1. Interpreting Format 1"}], "external": false};
+window.dfnpanelData['featurerecord'] = {"dfnID": "featurerecord", "url": "#featurerecord", "dfnText": "FeatureRecord", "refSections": [{"refs": [{"id": "ref-for-featurerecord"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-featurerecord\u2460"}], "title": "5.1.1.1. Interpreting Format 1"}], "external": false};
+window.dfnpanelData['featurerecord-featuretag'] = {"dfnID": "featurerecord-featuretag", "url": "#featurerecord-featuretag", "dfnText": "featureTag", "refSections": [{"refs": [{"id": "ref-for-featurerecord-featuretag"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-featurerecord-featuretag\u2460"}], "title": "5.1.1.1. Interpreting Format 1"}], "external": false};
+window.dfnpanelData['featurerecord-firstentryindex'] = {"dfnID": "featurerecord-firstentryindex", "url": "#featurerecord-firstentryindex", "dfnText": "firstEntryIndex", "refSections": [{"refs": [{"id": "ref-for-featurerecord-firstentryindex"}], "title": "5.1.1.1. Interpreting Format 1"}], "external": false};
 window.dfnpanelData['featurerecord-entrymapcount'] = {"dfnID": "featurerecord-entrymapcount", "url": "#featurerecord-entrymapcount", "dfnText": "entryMapCount", "refSections": [{"refs": [{"id": "ref-for-featurerecord-entrymapcount"}], "title": "5.1.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['entrymaprecord'] = {"dfnID": "entrymaprecord", "url": "#entrymaprecord", "dfnText": "EntryMapRecord", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord"}, {"id": "ref-for-entrymaprecord\u2460"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-entrymaprecord\u2461"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
-window.dfnpanelData['entrymaprecord-firstentryindex'] = {"dfnID": "entrymaprecord-firstentryindex", "url": "#entrymaprecord-firstentryindex", "dfnText": "firstEntryIndex", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord-firstentryindex"}, {"id": "ref-for-entrymaprecord-firstentryindex\u2460"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
-window.dfnpanelData['entrymaprecord-lastentryindex'] = {"dfnID": "entrymaprecord-lastentryindex", "url": "#entrymaprecord-lastentryindex", "dfnText": "lastEntryIndex", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord-lastentryindex"}], "title": "5.1.2. Interpreting Format 1 Patch Map"}], "external": false};
+window.dfnpanelData['entrymaprecord'] = {"dfnID": "entrymaprecord", "url": "#entrymaprecord", "dfnText": "EntryMapRecord", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord"}, {"id": "ref-for-entrymaprecord\u2460"}], "title": "5.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-entrymaprecord\u2461"}], "title": "5.1.1.1. Interpreting Format 1"}], "external": false};
+window.dfnpanelData['entrymaprecord-firstentryindex'] = {"dfnID": "entrymaprecord-firstentryindex", "url": "#entrymaprecord-firstentryindex", "dfnText": "firstEntryIndex", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord-firstentryindex"}, {"id": "ref-for-entrymaprecord-firstentryindex\u2460"}], "title": "5.1.1.1. Interpreting Format 1"}], "external": false};
+window.dfnpanelData['entrymaprecord-lastentryindex'] = {"dfnID": "entrymaprecord-lastentryindex", "url": "#entrymaprecord-lastentryindex", "dfnText": "lastEntryIndex", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord-lastentryindex"}], "title": "5.1.1.1. Interpreting Format 1"}], "external": false};
 window.dfnpanelData['font-patch'] = {"dfnID": "font-patch", "url": "#font-patch", "dfnText": "font patch", "refSections": [{"refs": [{"id": "ref-for-font-patch"}, {"id": "ref-for-font-patch\u2460"}, {"id": "ref-for-font-patch\u2461"}], "title": "6.1. Definitions"}], "external": false};
 window.dfnpanelData['patch-format'] = {"dfnID": "patch-format", "url": "#patch-format", "dfnText": "patch format", "refSections": [{"refs": [{"id": "ref-for-patch-format"}, {"id": "ref-for-patch-format\u2460"}], "title": "6.1. Definitions"}], "external": false};
 window.dfnpanelData['patch-application-algorithm'] = {"dfnID": "patch-application-algorithm", "url": "#patch-application-algorithm", "dfnText": "patch application algorithm", "refSections": [{"refs": [{"id": "ref-for-patch-application-algorithm"}], "title": "6.1. Definitions"}], "external": false};
