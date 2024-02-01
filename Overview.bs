@@ -195,7 +195,7 @@ variety of ways fonts are used on web pages. Authors have control over which fon
 this technology with, and which they do not.
 
 Note: the IFT tech keyword can be used in conjunction with other font tech specifiers to perform
-font feature selection. For example a <code>@font-face</code> could include two URLs one with
+font feature selection. For example a <code>@font-face</code> could include two URIs one with
 <code>tech(incremental, color-COLRv1)</code> and the other with
 <code>tech(incremental, color-COLRv0)</code>.
 
@@ -292,9 +292,10 @@ Some example inputs and the corresponding expansions:
 Extensions to the Font Format {#font-format-extensions}
 =======================================================
 
-Incremental fonts follow the existing [[open-type|OpenType]] format, but include two new [[open-type/otff#table-directory|tables]]:
+An <dfn dfn>incremental font</dfn> follows the existing [[open-type|OpenType]] format, but include two new
+[[open-type/otff#table-directory|tables]]:
 'IFT ' and 'IFTX'. These new tables are both [[#patch-map|patch maps]], which encode a collection of mappings from
-[=font subset definition|font subset definitions=] to URLs which host [[#font-patch-formats|patches]] that extend the incremental font.
+[=font subset definition|font subset definitions=] to URIs which host [[#font-patch-formats|patches]] that extend the incremental font.
 The mappings from the two tables is unioned together to produce the final mapping. All incremental fonts must contain at least an
 'IFT ' table. The 'IFTX' table is optional.
 
@@ -307,10 +308,10 @@ Patch Map Table {#patch-map}
 ----------------------------
 
 A patch map table encodes a list of <dfn dfn>patch map entries</dfn>, where each entry has a key and value. The key is a
-[=font subset definition=] and the value is a URL and the [[#font-patch-formats]] used by the data at the URL. A map is
+[=font subset definition=] and the value is a URI and the [[#font-patch-formats]] used by the data at the URI. A map is
 encoded in one of two formats:
 
-*  Format 1: a limited, but more compact encoding. Encodes a one-to-one mapping from glyph id to patch URLs. Does not support
+*  Format 1: a limited, but more compact encoding. Encodes a one-to-one mapping from glyph id to patch URIs. Does not support
     [=font subset definitions=] with design space or entries with overlapping subset definitions.
 
 *  Format 2: can encode arbitrary mappings including ones with design space or overlapping subset definitions. However, typically less
@@ -383,7 +384,7 @@ encoded in one of two formats:
     <td>uint8</td>
     <td><dfn for="Format 1 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
     <td>
-      A [[!UTF-8]] encoded string. Contains a template (TODO) which is used to produce URLs associated with each entry.
+      A [[!UTF-8]] encoded string. Contains a template (TODO) which is used to produce URIs associated with each entry.
     </td>
   </tr>
   <tr>
@@ -538,10 +539,10 @@ The algorithm:
     *  c. Convert the set of glyph indices to a set of unicode code points using the code point to glyph mapping in the
         [[open-type/cmap|cmap]] table of <var>font subset</var>. Ignore any glyph indices that are not mapped by [[open-type/cmap|cmap]].
 
-    *  d. Convert <var>entry index</var> into a URL by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
+    *  d. Convert <var>entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
 
     *  e. Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains only the unicode code point set and
-        maps to the generated URL and the patch encoding specified by [=Format 1 Patch Map/patchEncoding=].
+        maps to the generated URI and the patch encoding specified by [=Format 1 Patch Map/patchEncoding=].
 
 3.  For each [=FeatureRecord=] and associated [=EntryMapRecord=] in [=Feature Map/featureRecords=]:
 
@@ -553,13 +554,13 @@ The algorithm:
             [=FeatureRecord/firstEntryIndex|FeatureRecord::firstEntryIndex=] +
             <var>entry index</var> - [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=].
             
-        *  Convert <var>mapped entry index</var> into a URL by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
+        *  Convert <var>mapped entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
 
         *  If the bit for <var>mapped entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
             <var>entry index</var>.
 
         *  Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains the unicode code point set and
-            a feature tag set containing only [=FeatureRecord/featureTag=]. The entry  maps to the generated URL and the patch encoding
+            a feature tag set containing only [=FeatureRecord/featureTag=]. The entry  maps to the generated URI and the patch encoding
             specified by [=Format 1 Patch Map/patchEncoding=].
 
 ### Patch Map Table: Format 2 ### {#patch-map-format-2}
@@ -971,10 +972,101 @@ The algorithm:
 6. Modify the mappings in the IFT and IFTX table(s) in <var>extended font subset</var> if present to remove any mapping entries
     that map to this patch. <!-- TODO: this needs to be made more detailed once we have the mapping format sections -->
 
-Extending a Font Subset {#extending-font-subset}
-================================================
+<!--Extending a Font Subset {#extending-font-subset}
+================================================-->
+
+<h2 algorithm id="extending-font-subset">Extending a Font Subset</h2>
+
+This sections defines the algorithm that a client uses to extend an [=incremental font|incremental=] [=font subset=] to cover additional
+codepoints, layout features and/or design space.
+
+<dfn abstract-op>Extend a Font Subset</dfn>
+
+The inputs to this algorithm are:
+
+* <var>font subset</var>: an [=incremental font|incremental=] [=font subset=].
+
+* <var>target subset definition</var>: the [=font subset definition=] that the client wants to extend <var>font subset</var> to cover.
+
+The algorithm outputs:
+
+* <var>extended font subset</var>: an extended version of <var>font subset</var>. May or may not be an [=incremental font=].
+
+The algorithm:
+
+1.  Set <var>extended font subset</var> to <var>font subset</var>.
+
+2.  Load the 'IFT ' and 'IFTX' (if present) mapping [[open-type/otff#table-directory|tables]] from <var>extended font subset</var>. Both
+    tables are formatted as a [[#patch-map]]. Check that they are valid according to the requirements in [[#patch-map]]. If either table
+    is not valid, invoke [$Handle errors$]. If <var>extended font subset</var> does not have an 'IFT ' table, then it is not an
+    [=incremental font=] and cannot be extended, return <var>extended font subset</var>.
+
+<!-- TODO: reference format 2 interpret algorithm once defined. -->
+3.  For each of [[open-type/otff#table-directory|tables]] 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
+    invoking [$Interpret Format 1 Patch Map$]. Concatenate the output entry lists into a single list, <var>entry list</var>.
+
+4.  For each <var>entry</var> in <var>entry list</var> invoke [$Check entry intersection$] with <var>entry</var> and
+    <var>target subset definition</var> as inputs, if it returns false remove <var>entry</var>
+    from <var>entry list</var>.
+
+5.  If <var>entry list</var> is empty then the extension operation is finished, return <var>extended font subset</var>.
+
+6.  If <var>entry list</var> contains one or more [=patch map entries=] which have a patch format that is [=dependent=]. Select exactly
+    one of the [=dependent=] entries in <var>entry list</var> and remove all others. The criteria for selecting the single [=dependent=]
+    entry is left up to the implementation to decide.
+
+7.  For each <var>entry</var> in <var>entry list</var> invoke [$Load patch file$] with the entries URI. Collect the returned patch
+    files into <var>patch list</var>.
+
+8.  For each <var>patch</var> in <var>patch list</var> use the appropriate application algorithm (matching the patches format) from
+    [[#font-patch-formats]] to apply the <var>patch</var> to <var>extended font subset</var>. The order of patch application is left up to
+    the implementation.
+
+9.  Go to step 2.
+
+<!-- TODO: provide criteria to exit if stuck in an infinite loop. Could require that no specific URL is loaded more than once?
+           Could require that each patch application result in an extended coverage in some way? Also allow the client to define
+	   an max iteration count? -->
+    
+<dfn abstract-op>Check entry intersection</dfn>
+
+The inputs to this algorithm are:
+
+*   <var>mapping entry</var>: a [=patch map entries|patch map entry=].
+
+*   <var>subset definition</var>: a [=font subset definition=].
+
+The algorithm outputs:
+
+*   <var>intersects</var>: true if <var>subset definition</var> intersects <var>mapping entry</var>, otherwise false.
+
+The algorithm:
+
+1.  TODO
+
+<dfn abstract-op>Load patch file</dfn>
+
+<!-- TODO: when discussing how to load patches via URI's we need to define what they are relative too -->
+<!-- TODO: ref fetch spec like we did in the patch subset spec. -->
+
+The inputs to this algorithm are:
+
+*   <var>URI</var>: a URI identifying the patch file to load.
+
+The algorithm outputs:
+
+*   <var>patch file</var>: the patch file identified by <var>URI</var>.
+
+The algorithm:
+
+1.  TODO
+
+<dfn abstract-op>Handle errors</dfn>
 
 <!-- TODO -->
+
+<!-- TODO: we should consider defining a valid encoded IFT font as one that produces a correct font subset for the corresponding
+           definition in the entry. This would likely be the only requirement made for encoders. -->
 
 <h2 class=no-num id=priv>Privacy Considerations</h2>
 
