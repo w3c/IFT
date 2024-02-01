@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="0b4daa783887cc923658069d08a049f57135be11" name="document-revision">
+  <meta content="aa1ba8219946b1cb1b387280b8fb8313ab6d6b27" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -905,7 +905,7 @@ compact then format 1.</p>
      <tr>
       <td><a data-link-type="dfn" href="#featurerecord" id="ref-for-featurerecord">FeatureRecord</a>
       <td><dfn class="dfn-paneled" data-dfn-for="Feature Map" data-dfn-type="dfn" data-noexport id="feature-map-featurerecords">featureRecords</dfn>[featureCount]
-      <td> Provides mappings for a specific <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tag</a>. Sorted by <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag">featureTag</a> with any feature tag occurring at most once. 
+      <td> Provides mappings for a specific <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tag</a>. Must be sorted by <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag">featureTag</a> with any feature tag occurring at most once. 
      <tr>
       <td><a data-link-type="dfn" href="#entrymaprecord" id="ref-for-entrymaprecord">EntryMapRecord</a>
       <td><dfn data-dfn-for="Feature Map" data-dfn-type="dfn" data-noexport id="feature-map-entrymaprecords">entryMapRecords<a class="self-link" href="#feature-map-entrymaprecords"></a></dfn>[variable]
@@ -1011,7 +1011,7 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
    </ol>
    <h4 class="heading settled" data-level="5.1.2" id="patch-map-format-2"><span class="secno">5.1.2. </span><span class="content">Patch Map Table: Format 2</span><a class="self-link" href="#patch-map-format-2"></a></h4>
    <h2 class="heading settled" data-level="6" id="font-patch-formats"><span class="secno">6. </span><span class="content">Font Patch Formats</span><a class="self-link" href="#font-patch-formats"></a></h2>
-   <p>In incremental font transfer <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②">font subsets</a> are extended by loading and applying patches. Due to the different
+   <p>In incremental font transfer <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②">font subsets</a> are extended by applying patches. Due to the different
 capabilities required in different situations this specification defines three different patch formats that can be used.</p>
    <h3 class="heading settled" data-level="6.1" id="font-patch-definitions"><span class="secno">6.1. </span><span class="content">Definitions</span><a class="self-link" href="#font-patch-definitions"></a></h3>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-patch">font patch</dfn> is a file which encodes changes to be made to an existing font file. Patches are used to extend
@@ -1045,7 +1045,7 @@ from F by the application of one or more independent patches from <code>P</code>
       <td>2
       <td>A collection of shared brotli encoded binary diffs that use tables from the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a> as bases.
      <tr>
-      <td>Glyph Keyed
+      <td><a href="#glyph-keyed">§ 6.5 Glyph Keyed</a>
       <td><a data-link-type="dfn" href="#independent" id="ref-for-independent">independent</a>
       <td>3
       <td>Contains a collection of opaque binary blobs, each associated with a glyph id and table.
@@ -1132,7 +1132,7 @@ or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-fo
      <tr>
       <td>Offset32
       <td><dfn class="dfn-paneled" data-dfn-for="Per table shared brotli patch" data-dfn-type="dfn" data-noexport id="per-table-shared-brotli-patch-patches">patches</dfn>[patchesCount+1]
-      <td>Each entry is an offset from the start of this table to a <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch">TablePatch</a>. Offsets are sorted in ascending order.
+      <td>Each entry is an offset from the start of this table to a <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch">TablePatch</a>. Offsets must be sorted in ascending order.
    </table>
    <p>The difference between two consecutive offsets in the <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches">patches</a> array gives the size
 of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">TablePatch</a>.</p>
@@ -1186,8 +1186,8 @@ return an error.</p>
      <p>For each entry in <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches①">patches</a>, with index <var>i</var>:</p>
      <ul>
       <li data-md>
-       <p>Find the <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch②">TablePatch</a> associated with index <var>i</var>. The object starts at the offset <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches②">patches[i]</a> and ends at the offset <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches③">patches[i+1]</a>.
-Both offsets are relative to the start of the <var>patch</var>.</p>
+       <p>Find the <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch②">TablePatch</a> associated with index <var>i</var>. The object starts at the offset <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches②">patches[i]</a> (inclusive) and ends at the offset <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches③">patches[i+1]</a> (exclusive). Both offsets are relative to the start of
+the <var>patch</var>.</p>
       <li data-md>
        <p>If an entry in <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches④">patches</a> was previously applied that has the same <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag">tag</a> as
 this entry, then ignore this entry and continue the iteration to the next one. Entries are processed in same order as they
@@ -1260,7 +1260,7 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
       <td>Offset32
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphdataoffsets">glyphDataOffsets</dfn>[glyphCount * tableCount + 1]
       <td> An array of offsets of to glyph data for each table. The first <a data-link-type="dfn" href="#glyphpatches-glyphcount" id="ref-for-glyphpatches-glyphcount">glyphCount</a> offsets corresponding to <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables">tables[0]</a>, the next <a data-link-type="dfn" href="#glyphpatches-glyphcount" id="ref-for-glyphpatches-glyphcount①">glyphCount</a> offsets (if present) corresponding to <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables①">tables[1]</a>, and so on. All offsets are from the start of the <a data-link-type="dfn" href="#glyphpatches" id="ref-for-glyphpatches①">GlyphPatches</a> table.
-      Offsets are sorted in ascending order. 
+      Offsets must be sorted in ascending order. 
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphdata">glyphData</dfn>[variable]

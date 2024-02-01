@@ -437,7 +437,7 @@ A feature map table associates combinations of [[open-type/featuretags|feature t
     <td>[=FeatureRecord=]</td>
     <td><dfn for="Feature Map">featureRecords</dfn>[featureCount]</td>
     <td>
-      Provides mappings for a specific  [[open-type/featuretags|feature tag]]. Sorted by [=FeatureRecord/featureTag=]
+      Provides mappings for a specific  [[open-type/featuretags|feature tag]]. Must be sorted by [=FeatureRecord/featureTag=]
       with any feature tag occurring at most once.
     </td>
   </tr>
@@ -578,7 +578,7 @@ TODO:
 Font Patch Formats {#font-patch-formats}
 ========================================
 
-In incremental font transfer [=font subset|font subsets=] are extended by loading and applying patches. Due to the different
+In incremental font transfer [=font subset|font subsets=] are extended by applying patches. Due to the different
 capabilities required in different situations this specification defines three different patch formats that can be used.
 
 Definitions {#font-patch-definitions}
@@ -627,7 +627,7 @@ The following patch formats are defined by this specification:
     <td>A collection of shared brotli encoded binary diffs that use tables from the [=font subset=] as bases.</td>
   </tr>
   <tr>
-    <td>Glyph Keyed</td>
+    <td>[[#glyph-keyed]]</td>
     <td>[=independent=]</td>
     <td>3</td>
     <td>Contains a collection of opaque binary blobs, each associated with a glyph id and table.</td>
@@ -737,7 +737,7 @@ or remove tables in a [=font subset=].
   <tr>
     <td>Offset32</td>
     <td><dfn for="Per table shared brotli patch">patches</dfn>[patchesCount+1]</td>
-    <td>Each entry is an offset from the start of this table to a [=TablePatch=]. Offsets are sorted in ascending order.</td>
+    <td>Each entry is an offset from the start of this table to a [=TablePatch=]. Offsets must be sorted in ascending order.</td>
   </tr>
 </table>
 
@@ -800,8 +800,9 @@ The algorithm:
 3. For each entry in [=Per table shared brotli patch/patches=], with index <var>i</var>:
 
     *  Find the [=TablePatch=] associated with index <var>i</var>. The object starts at the offset
-        [=Per table shared brotli patch/patches|patches[i]=] and ends at the offset [=Per table shared brotli patch/patches|patches[i+1]=].
-        Both offsets are relative to the start of the <var>patch</var>.
+        [=Per table shared brotli patch/patches|patches[i]=] (inclusive) and ends at the offset
+        [=Per table shared brotli patch/patches|patches[i+1]=] (exclusive). Both offsets are relative to the start of
+        the <var>patch</var>.
 
     *  If an entry in [=Per table shared brotli patch/patches=] was previously applied that has the same [=TablePatch/tag=] as
         this entry, then ignore this entry and continue the iteration to the next one. Entries are processed in same order as they
@@ -897,7 +898,7 @@ A glyph keyed patch contains a collection of data chunks that are each associate
       An array of offsets of to glyph data for each table. The first [=GlyphPatches/glyphCount=] offsets corresponding to
       [=GlyphPatches/tables|tables[0]=], the next [=GlyphPatches/glyphCount=] offsets (if present) corresponding to
       [=GlyphPatches/tables|tables[1]=], and so on. All offsets are from the start of the [=GlyphPatches=] table.
-      Offsets are sorted in ascending order.
+      Offsets must be sorted in ascending order.
     </td>
   </tr>
   <tr>
