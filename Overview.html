@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="c5ff1f5d425f2cc1f4f5f36bf67c7c109dc2d32a" name="document-revision">
+  <meta content="0b4daa783887cc923658069d08a049f57135be11" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1383,7 +1383,25 @@ the implementation.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>TODO</p>
+     <p>For each set in <var>subset definition</var> (codepoints, feature tags, design space) check if the set intersects
+ the corresponding set from <var>mapping entry</var>. A set intersects when:</p>
+     <table>
+      <tbody>
+       <tr>
+        <th>
+        <th>subset definition set is empty
+        <th>subset definition set is not empty
+       <tr>
+        <th>mapping entry set is empty
+        <td>true
+        <td>true
+       <tr>
+        <th>mapping entry set is not empty
+        <td>false
+        <td>true if the two sets intersect
+     </table>
+    <li data-md>
+     <p>If all sets checked in step 1 intersect then return true for <var>intersects</var> otherwise false.</p>
    </ol>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-load-patch-file">Load patch file</dfn></p>
    <p>The inputs to this algorithm are:</p>

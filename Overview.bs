@@ -1042,7 +1042,22 @@ The algorithm outputs:
 
 The algorithm:
 
-1.  TODO
+1.  For each set in <var>subset definition</var> (codepoints, feature tags, design space) check if the set intersects
+     the corresponding set from <var>mapping entry</var>. A set intersects when:
+
+     <table>
+       <tr>
+         <th></th><th>subset definition set is empty</th><th>subset definition set is not empty</th>
+       </tr>
+       <tr>
+         <th>mapping entry set is empty</th><td>true</td><td>true</td>
+       </tr>
+       <tr>
+         <th>mapping entry set is not empty</th><td>false</td><td>true if the two sets intersect</td>
+       </tr>
+     </table>
+
+2. If all sets checked in step 1 intersect then return true for <var>intersects</var> otherwise false.
 
 <dfn abstract-op>Load patch file</dfn>
 
