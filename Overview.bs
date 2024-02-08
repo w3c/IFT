@@ -94,6 +94,13 @@ th, td {
 Introduction {#intro}
 =====================
 
+<!-- TODO: from feedback:
+     1. Move the "does not break layout" up to the end of the introduction.
+     2. Add variable fonts where only a subset of axes are needed to 1.2 -->
+
+<!-- TODO: consider recommended hosting by at least HTTP2 capable server for performance of making multiple patch requests in parallel. -->
+
+
 <em>This section is not normative.</em>
 
 Incremental Font Transfer (IFT) is a technology to improve the latency of remote fonts (or "web fonts") on
@@ -122,9 +129,9 @@ to this specification.
 Performance Considerations and the use of Incremental Font Transfer {#performance-considerations}
 -------------------------------------------------------------------------------------------------
 
-Using incremental transfer may not always be beneficial, depending on the characteristics of the font
-and the content being rendered. This section provides non-normative guidance to help decide when
-incremental transfer should be utilized.
+Using incremental transfer may not always be beneficial, depending on the characteristics of the font,
+the network, and the content being rendered. This section provides non-normative guidance to help decide
+when incremental transfer should be utilized.
 
 Incrementally loading a font has a fundamental performance trade off versus loading the whole font.
 Simplistically, under incremental transfer less bytes may be transferred at the potential cost of
@@ -185,6 +192,9 @@ only be loaded by a user agent which supports incremental font transfer.
 </pre>
 </div>
 
+<!-- TODO: the unicode range requirement should very likely be removed. This was copied from patch subset
+     where it provided significant value in allowing early pruning of the codepoints in the first request.
+     That's no longer needed in the new scheme. -->
 @font-face's that include the <code>incremental</code> tech keyword should also include a
 [[css-fonts-4#unicode-range-desc|unicode-range descriptor]]. This informs the client which codepoints
 are available in the font prior to making the first request, which can be used to avoid requesting
@@ -206,6 +216,16 @@ Special consideration must be taken when saving a page for offline usage that us
 transferred font since the saved page won't be able to increment the font if content changes (eg.
 due to JavaScript execution). In these cases the page saving mechanism should produce the full font
 by using [[#extending-font-subset]] to apply all available patches listed in the font.
+
+<!-- TODO: Add a new section which details how to get a "fully expanded font" will be used here and in the encoder requirements. -->
+
+<!-- TODO we need more intro/guidance material before diving in to the details:
+1. Provide a high level overview of the 3 major sections (extensions, patch formats, and extending)
+2. Describe how they function together to allow augmentation of a IFT font.
+3. Describe roughly how a font would be made incremental.
+3. Add an encoders considerations section, that provides some guidance for how an encoder could be built/work.
+4. Add a section that discusses requirements on the encoder/encoding: 1. consistency and 2. functional equivalence.
+-->
 
 Font Subset {#font-subset-info}
 ===============================
@@ -231,8 +251,10 @@ Note: For convenience the remainder of this document links to the [[open-type]] 
 Data Types {#data-types}
 ========================
 
+<!-- TODO: downgrade this to a subsection of the "Extensions to the Font Format" section -->
+
 Encoded data structures in the remainder of this specification are described in terms of the data types defined
-in [[open-type/otff#data-types]]. As with OpenType all fields use Big Endian byte ordering.
+in [[open-type/otff#data-types]]. As with the rest of OpenType, all fields use Big Endian byte ordering.
 
 URI Templates {#uri-templates}
 ------------------------------
@@ -291,6 +313,8 @@ Some example inputs and the corresponding expansions:
 
 Extensions to the Font Format {#font-format-extensions}
 =======================================================
+
+<!-- TODO: Note that these new tables are extensions specific to this specification and not part of the broader open type specifications. -->
 
 An <dfn dfn>incremental font</dfn> follows the existing [[open-type|OpenType]] format, but include two new
 [[open-type/otff#table-directory|tables]]:
@@ -634,7 +658,7 @@ The following patch formats are defined by this specification:
   </tr>
 </table>
 
-More detailed descriptions of each algorithm can be found in the proceeding sections.
+More detailed descriptions of each algorithm can be found in the following sections.
 
 Shared Brotli Patch {#shared-brotli}
 ------------------------------------
@@ -1028,6 +1052,7 @@ The algorithm:
 <!-- TODO: provide criteria to exit if stuck in an infinite loop. Could require that no specific URL is loaded more than once?
            Could require that each patch application result in an extended coverage in some way? Also allow the client to define
 	   an max iteration count? -->
+<!-- TODO: also consider adding additional changes to prevent degenerate behaviour from happening (eg. iteration limits, minimum codepoint group sizes). -->
     
 <dfn abstract-op>Check entry intersection</dfn>
 
@@ -1064,6 +1089,7 @@ The algorithm:
 
 <!-- TODO: when discussing how to load patches via URI's we need to define what they are relative too -->
 <!-- TODO: ref fetch spec like we did in the patch subset spec. -->
+<!-- TODO: consider requiring HTTPS (or disallowing HTTP specifically if we want to allow file:// and other url types) -->
 
 The inputs to this algorithm are:
 
@@ -1086,51 +1112,19 @@ The algorithm:
 
 <h2 class=no-num id=priv>Privacy Considerations</h2>
 
-<!-- TODO -->
+<!-- TODO: content from the previous spec should be a good starting point, but will need changes. -->
 
 <h2 class=no-num id=sec>Security Considerations</h2>
 
-<!-- TODO -->
+<!-- TODO: content from the previous spec should be a good starting point. -->
 
 <h2 class=no-num id=changes>Changes</h2>
 
-Since the <a href="https://www.w3.org/TR/2022/WD-IFT-20220628/">Working 
-  Draft of 28 June 2022</a> (see 
+Since the <a href="https://www.w3.org/TR/2023/WD-IFT-20230530/">Working 
+  Draft of 30 May 2023</a> (see 
   <a href="https://github.com/w3c/IFT/commits/main/Overview.bs">commit history</a>):
 
 <ul>
   <li>Complete rewrite of the specification. Separate 'Patch Subset' and 'Range Request' methods have been removed in favour
       of a single unified approach.</li>
-  <li>Updated citations of rfc9110 and rfc9111 to use new references</li>
-  <li>Update privacy section to clarify purpose of checksums</li>
-  <li>Split off the range request section back into a separate document</li>
-  <li>Removed PatchResponse from the specification</li>
-  <li>Removed remaining reference to the old client state</li>
-  <li>Consistently used term 'font collection'</li>
-  <li>Made IFTP table references consistent</li>
-  <li>Added an id for offline usage header</li>
-  <li>Updated the responding to patch request section for client state changes</li>
-  <li>Updated loading with a cache section for client state changes</li>
-  <li>Added client side handling of new unrecognized_ordering field</li>
-  <li>Updated handling failed font load section for client state</li>
-  <li>Updated the 'Extending font subset' section for client state changes</li>
-  <li>Added ClientState object schema</li>
-  <li>Added a small section about handling saving a page for offline usage</li>
-  <li>Expanded section on reducing the number of network requests</li>
-  <li>Clarified how brotli patches are made</li>
-  <li>Removed ordering and patched checksum from server response</li>
-  <li>Improved markup of algorithms</li>
-  <li>Bumped shared brotli spec version to the most recent</li>
-  <li>Added a 'should' requirement to have client support both methods</li>
-  <li>Added a note about how feature selection interacts with IFT method selection</li>
-  <li>Removed mentioned of Transfer-Encoding which isn't support beyond HTTP 1.1</li>
-  <li>Added note about what happens when specified method changes to auto</li>
-  <li>Reworded IFT Method Selection section to make it more clear</li>
-  <li>Added a note about incremental-auto possibly triggering a preflight request</li>
-  <li>Dropped use of query parameter with GET</li>
-  <li>Updated IFT Method Fallback matrices</li>
-  <li>Updated method selection and negotiation sections to support content specified method selection via CSS font tech</li>
-  <li>Added "Performance Considerations" section</li>
-  <li>Shrank Integer primitive range to match that of an int64_t</li>
-  <li>Made HTTP RFC references more specific</li>
 </ul>
