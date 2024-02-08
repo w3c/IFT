@@ -112,18 +112,61 @@ The success of WebFonts is unevenly distributed. This specification allows WebFo
 slow networks, very large fonts, or complex subsetting requirements currently preclude their use. For
 example, even using WOFF 2 [[WOFF2]], fonts for CJK languages are too large to be practical.
 
-At a high level IFT works as follows:
-* The client downloads an initial font file, which contains some subset of data from the original font.
-* Inside the font file there is [[#font-format-extensions|embedded data]] which informs the client about
-    a set of [[#font-patch-formats|patches]] which are available and can be used to extend the font.
-* The client [[#extending-font-subset|selects, downloads, and applies]] these patches to extend the initial font to
-    cover additional characters.
-
 Technical Motivation: Evaluation Report {#evaluation-report}
 ------------------------------------------------------------
 
 See the Progressive Font Enrichment: Evaluation Report [[PFE-report]] for the investigation which led
 to this specification.
+
+How it works {#how-it-works}
+----------------------------
+
+An IFT font is a regular [[open-type|OpenType]] font that is extended to include the incremental functionality via the addition
+of a two new [[open-type/otff#table-directory|tables]]. Using these new tables the font can be augmented (eg. to cover more codepoints)
+by loading and applying patches to it.
+
+The IFT technology has four main pieces:
+
+*  [[#font-format-extensions]]: defines the new tables which contain a list of patches that are available to be applied to a font.
+
+*  [[#font-patch-formats]]: defines three different types of patches that can be used. These range from generic binary patches, to a patch
+     format that is specific to the font format.
+
+*  [[#extending-font-subset]]: provides the algorithm that is used by a client to select and apply patches.
+
+*  [[#encoder]]: encoders create the font and associated patches that form an incremental font.
+
+At a high level an IFT font is used like this:
+
+1. The client downloads an initial font file, which contains some subset of data from the full version of the font.
+
+2. Inside the font file there is [[#font-format-extensions|embedded data]] which informs the client about
+    a set of [[#font-patch-formats|patches]] which are available and can be used to extend the font.
+
+3. Based on the content the client is trying to render it [[#extending-font-subset|selects, downloads, and applies]] these patches to
+    extend the font to cover additional characters. This step is repeated every time new content is being rendered.
+
+Creating an Incremental Font {#making-incremental-fonts}
+--------------------------------------------------------
+
+It is expected that the most common way to produce an incremental font will be to convert an existing font to use the incremental
+encoding defined in this specification. At a high level converting an existing font to be incremental will look like this:
+
+
+1.  Create the base [[#font-subset-info|subset]], this will be the initial font file the client will load and usually will include the data
+     from the original font that is expected to be always needed.
+
+2.  Choose a segmentation of the font. Individual segments will be added to the base subset by the client using patches. Choosing an
+     appropriate segmentation is one of the most important parts of producing an efficient encoding.
+
+
+3.  Based on the chosen segmentation generate a set of patches where each patch will add the data for a particular segment.
+
+4.  Add a [[#font-format-extensions|patch mapping]] to the base subset. This mapping lists all of the available patch files,
+    the url they reside at, and information on what data the patch will add to the font.
+
+Note: this is a highly simplified description of creating an incremental font, a more in-depth discussion of generating an encoding and
+requirements on the encoding can be found in the [[#encoder]] section.
 
 Performance Considerations and the use of Incremental Font Transfer {#performance-considerations}
 -------------------------------------------------------------------------------------------------
@@ -588,10 +631,8 @@ The algorithm:
 
 ### Patch Map Table: Format 2 ### {#patch-map-format-2}
 
-
 <!-- TODO add algorithm explaining how to union the two tables -->
-
-
+Coming soon.
 
 <!-- 
 TODO:
@@ -996,9 +1037,6 @@ The algorithm:
 6. Modify the mappings in the IFT and IFTX table(s) in <var>extended font subset</var> if present to remove any mapping entries
     that map to this patch. <!-- TODO: this needs to be made more detailed once we have the mapping format sections -->
 
-<!--Extending a Font Subset {#extending-font-subset}
-================================================-->
-
 <h2 algorithm id="extending-font-subset">Extending a Font Subset</h2>
 
 This sections defines the algorithm that a client uses to extend an [=incremental font|incremental=] [=font subset=] to cover additional
@@ -1100,20 +1138,53 @@ The algorithm outputs:
 
 The algorithm:
 
-1.  TODO
+1.  TODO Coming soon.
 
 <dfn abstract-op>Handle errors</dfn>
+
+Coming soon.
 
 <!-- TODO -->
 
 <!-- TODO: we should consider defining a valid encoded IFT font as one that produces a correct font subset for the corresponding
            definition in the entry. This would likely be the only requirement made for encoders. -->
 
+
+Encoder {#encoder}
+==================
+
+Coming soon.
+
+<!-- TODO
+
+Topics to cover:
+
+- define fully expanding a IFT font (can be a sub section of the extending the font section).
+- An encoder is something that produces an IFT encoded font.
+- Explicitly state that encoder implementation is not defined here and the only compliance requirements are:
+  - Produce a valid font with at least an IFT table (optionally IFTX) that conforms to the requirements in that section.
+  - The encoded font and collection of patches satisify the consistency (MUST) and rendering equivalence (SHOULD) requirements in relation
+    to the fully expanded font
+- SHOULD: if a encoder is converting an existing font to incremental it should retain all of the existing functional from that font.
+
+- Encoder guidance (non-normative): here we can discuss some high level strategies for producing a useful encoding.
+  - choosing segmentations. Grouping things that are needed at the same time together. Choosing an appropriate granularity.
+  - Choosing which type of patches to use.
+  - Forming patch graphs and why this is crucial for using dependent patch types.
+  - Considerations for mixing dependent and independent patches.
+  - Managing the number of patches.
+
+-->
+
 <h2 class=no-num id=priv>Privacy Considerations</h2>
+
+Coming soon.
 
 <!-- TODO: content from the previous spec should be a good starting point, but will need changes. -->
 
 <h2 class=no-num id=sec>Security Considerations</h2>
+
+Coming soon.
 
 <!-- TODO: content from the previous spec should be a good starting point. -->
 
