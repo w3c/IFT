@@ -118,8 +118,8 @@ Technical Motivation: Evaluation Report {#evaluation-report}
 See the Progressive Font Enrichment: Evaluation Report [[PFE-report]] for the investigation which led
 to this specification.
 
-How it works {#how-it-works}
-----------------------------
+Overview {#overview}
+--------------------
 
 An IFT font is a regular [[open-type|OpenType]] font that is extended to include the incremental functionality via the addition
 of a two new [[open-type/otff#table-directory|tables]]. Using these new tables the font can be augmented (eg. to cover more codepoints)
@@ -259,8 +259,12 @@ transferred font since the saved page won't be able to increment the font if con
 due to JavaScript execution). In these cases the page saving mechanism should fully expand the incremental font
 by invoking [$Fully Expand a Font Subset$] and replace references to the incremental font with the fully expanded one.
 
-Font Subset {#font-subset-info}
+
+Definitions {#definitions}
 ===============================
+
+Font Subset {#font-subset-info}
+-------------------------------
 
 A <dfn dfn>font subset</dfn> is a modified version of a font file [[!iso14496-22]] that contains only the data
 needed to render a subset of:
@@ -282,9 +286,7 @@ Note: For convenience the remainder of this document links to the [[open-type]] 
 [[!iso14496-22]].
 
 Data Types {#data-types}
-========================
-
-<!-- TODO: downgrade this to a subsection of the "Extensions to the Font Format" section -->
+------------------------
 
 Encoded data structures in the remainder of this specification are described in terms of the data types defined
 in [[open-type/otff#data-types]]. As with the rest of OpenType, all fields use Big Endian byte ordering.
@@ -350,11 +352,10 @@ Extensions to the Font Format {#font-format-extensions}
 <!-- TODO: Note that these new tables are extensions specific to this specification and not part of the broader open type specifications. -->
 
 An <dfn dfn>incremental font</dfn> follows the existing [[open-type|OpenType]] format, but include two new
-[[open-type/otff#table-directory|tables]]:
-'IFT ' and 'IFTX'. These new tables are both [[#patch-map|patch maps]], which encode a collection of mappings from
-[=font subset definition|font subset definitions=] to URIs which host [[#font-patch-formats|patches]] that extend the incremental font.
-The mappings from the two tables is unioned together to produce the final mapping. All incremental fonts must contain at least an
-'IFT ' table. The 'IFTX' table is optional.
+[[open-type/otff#table-directory|tables]] identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both
+[[#patch-map|patch maps]], which encode a collection of mappings from [=font subset definition|font subset definitions=] to URIs which
+host [[#font-patch-formats|patches]] that extend the incremental font. The mappings from the two tables is unioned together to produce
+the final mapping. All incremental fonts must contain at least an 'IFT ' table. The 'IFTX' table is optional.
 
 Note: allowing the mapping to be split between two distinct tables allows an incremental font to more easily make use of multiple
 patch types. For example all patches of one type can be specified in the 'IFT ' table, and all patches of a second type in the
