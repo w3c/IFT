@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="7cab4c439932bdfaca27b487e6c81f9eb156f8a0" name="document-revision">
+  <meta content="f49f395431fb08bf3ad7f47f6d9123647362eaf9" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -711,7 +711,7 @@ contains the results of simulating incremental font transfer across three catego
 (<a href="https://www.w3.org/TR/PFE-evaluation/#langtype">Progressive Font Enrichment: Evaluation Report § langtype</a>). See it’s conclusions <a href="https://www.w3.org/TR/PFE-evaluation/#conclusions">Progressive Font Enrichment: Evaluation Report § conclusions</a> for a discussion of the
 anticipated performance of incremental font transfer across the language categories.</p>
    <p>Next, how much of the font is expected to be needed? If it’s expected that most of the font will be
-needed to render the content then incremental font transfer is unlikely to be beneficial. In many cases
+needed to render the content, then incremental font transfer is unlikely to be beneficial. In many cases
 however only part of a font is expected to be needed. For example:</p>
    <ul>
     <li data-md>
@@ -837,7 +837,7 @@ host <a href="#font-patch-formats">patches</a> that extend the incremental font.
 the final mapping. All incremental fonts must contain at least an 'IFT ' table. The 'IFTX' table is optional.</p>
    <p class="note" role="note"><span class="marker">Note:</span> allowing the mapping to be split between two distinct tables allows an incremental font to more easily make use of multiple
 patch types. For example all patches of one type can be specified in the 'IFT ' table, and all patches of a second type in the
-'IFTX' table. Then those patches can make updates only to one of the mapping tables and avoid making conflicting updates.</p>
+'IFTX' table. Those patches can make updates only to one of the mapping tables and avoid making conflicting updates.</p>
    <h3 class="heading settled" data-level="4.1" id="patch-map"><span class="secno">4.1. </span><span class="content">Patch Map Table</span><a class="self-link" href="#patch-map"></a></h3>
    <p>A patch map table encodes a list of <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map-entries">patch map entries</dfn>, where each entry has a key and value. The key is a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">font subset definition</a> and the value is a URI and the <a href="#font-patch-formats">§ 5 Font Patch Formats</a> used by the data at the URI. A map is
 encoded in one of two formats:</p>
@@ -846,7 +846,7 @@ encoded in one of two formats:</p>
      <p>Format 1: a limited, but more compact encoding. Encodes a one-to-one mapping from glyph id to patch URIs. Does not support <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition②">font subset definitions</a> with design space or entries with overlapping subset definitions.</p>
     <li data-md>
      <p>Format 2: can encode arbitrary mappings including ones with design space or overlapping subset definitions. However, typically less
-compact then format 1.</p>
+compact than format 1.</p>
    </ul>
    <h4 class="heading settled" data-level="4.1.1" id="patch-map-format-1"><span class="secno">4.1.1. </span><span class="content">Patch Map Table: Format 1</span><a class="self-link" href="#patch-map-format-1"></a></h4>
    <p><dfn data-dfn-type="dfn" data-noexport id="format-1-patch-map">Format 1 Patch Map<a class="self-link" href="#format-1-patch-map"></a></dfn> encoding:</p>
@@ -986,7 +986,7 @@ compact then format 1.</p>
    </table>
    <p>An entry map record matches any entry indices that are greater than or equal to firstEntryIndex and less than or equal to  lastEntryIndex.</p>
    <h5 class="heading settled algorithm" data-algorithm="Interpreting Format 1" data-level="4.1.1.1" id="interpreting-patch-map-format-1"><span class="secno">4.1.1.1. </span><span class="content">Interpreting Format 1</span><a class="self-link" href="#interpreting-patch-map-format-1"></a></h5>
-   <p>This algorithm is convert a format 1 patch map into a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries">patch map entries</a>.</p>
+   <p>This algorithm is used to convert a format 1 patch map into a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries">patch map entries</a>.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
@@ -1126,11 +1126,11 @@ features, and/or design-variation space.</p>
    <ol>
     <li data-md>
      <p>Check that the <a data-link-type="dfn" href="#shared-brotli-patch-format" id="ref-for-shared-brotli-patch-format">format</a> field in <var>patch</var> is equal to 'ifbr', if it is
-not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
+not equal, then <var>patch</var> is not correctly formatted. Patch application has failed, return
 an error.</p>
     <li data-md>
      <p>Check that the <a data-link-type="dfn" href="#shared-brotli-patch-id" id="ref-for-shared-brotli-patch-id">id</a> field in <var>patch</var> is equal to the at least one of the ids
-found in the 'IFT ' or 'IFTX' table of <var>base font subset</var>. If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table then patch application has failed,
+found in the 'IFT ' or 'IFTX' table of <var>base font subset</var>. If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application has failed,
 return an error.</p>
     <li data-md>
      <p>Decode the brotli encoded data in <a data-link-type="dfn" href="#shared-brotli-patch-brotlistream" id="ref-for-shared-brotli-patch-brotlistream">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a> and
@@ -1211,7 +1211,7 @@ not equal then <var>patch</var> is not correctly formatted. Patch application ha
 an error.</p>
     <li data-md>
      <p>Check that the <a data-link-type="dfn" href="#per-table-shared-brotli-patch-id" id="ref-for-per-table-shared-brotli-patch-id">id</a> field in <var>patch</var> is equal to the at least one of the ids
-found in the 'IFT ' or 'IFTX' table of <var>base font subset</var>. If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table then patch application has failed,
+found in the 'IFT ' or 'IFTX' table of <var>base font subset</var>. If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application has failed,
 return an error.</p>
     <li data-md>
      <p>For each entry in <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches①">patches</a>, with index <var>i</var>:</p>
@@ -1224,9 +1224,9 @@ the <var>patch</var>.</p>
 this entry, then ignore this entry and continue the iteration to the next one. Entries are processed in same order as they
 are listed in the <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches⑤">patches</a> array.</p>
       <li data-md>
-       <p>If bit 0 (least significant bit) of <a data-link-type="dfn" href="#tablepatch-flags" id="ref-for-tablepatch-flags">flags</a> is set then, decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a>. No shared dictionary is used. Add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag①">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream①">brotliStream</a>.</p>
+       <p>If bit 0 (least significant bit) of <a data-link-type="dfn" href="#tablepatch-flags" id="ref-for-tablepatch-flags">flags</a> is set, then decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a>. No shared dictionary is used. Add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag①">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream①">brotliStream</a>.</p>
       <li data-md>
-       <p>If bit 1 of <a data-link-type="dfn" href="#tablepatch-flags" id="ref-for-tablepatch-flags①">flags</a> is set then, do not copy or add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag②">tag</a>.</p>
+       <p>If bit 1 of <a data-link-type="dfn" href="#tablepatch-flags" id="ref-for-tablepatch-flags①">flags</a> is set, then do not copy or add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag②">tag</a>.</p>
       <li data-md>
        <p>Otherwise, decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream②">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a> and using the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag③">tag</a> in <var>base font subset</var> as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. Add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag④">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream③">brotliStream</a>.</p>
      </ul>
@@ -1319,11 +1319,11 @@ features, and/or design-variation space.</p>
    <ol>
     <li data-md>
      <p>Check that the <a data-link-type="dfn" href="#glyph-keyed-patch-format" id="ref-for-glyph-keyed-patch-format">format</a> field in <var>patch</var> is equal to 'ifgk', if it is
-not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
+not equal, then <var>patch</var> is not correctly formatted and patch application has failed, return
 an error.</p>
     <li data-md>
      <p>Check that the <a data-link-type="dfn" href="#glyph-keyed-patch-id" id="ref-for-glyph-keyed-patch-id">id</a> field in <var>patch</var> is equal to the at least one of the ids
-found in the 'IFT ' or 'IFTX' table of <var>base font subset</var>. If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table then patch application has failed,
+found in the 'IFT ' or 'IFTX' table of <var>base font subset</var>. If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application has failed,
 return an error.</p>
     <li data-md>
      <p>Decode the brotli encoded data in <a data-link-type="dfn" href="#glyph-keyed-patch-brotlistream" id="ref-for-glyph-keyed-patch-brotlistream①">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a>. The
@@ -1385,10 +1385,10 @@ invoking <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-
     <li data-md>
      <p>For each <var>entry</var> in <var>entry list</var> invoke <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection">Check entry intersection</a> with <var>entry</var> and <var>target subset definition</var> as inputs, if it returns false remove <var>entry</var> from <var>entry list</var>.</p>
     <li data-md>
-     <p>If <var>entry list</var> is empty then the extension operation is finished, return <var>extended font subset</var>.</p>
+     <p>If <var>entry list</var> is empty, then the extension operation is finished, return <var>extended font subset</var>.</p>
     <li data-md>
-     <p>If <var>entry list</var> contains one or more <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries④">patch map entries</a> which have a patch format that is <a data-link-type="dfn" href="#dependent" id="ref-for-dependent②">dependent</a>. Select exactly
-one of the <a data-link-type="dfn" href="#dependent" id="ref-for-dependent③">dependent</a> entries in <var>entry list</var> and remove all others. The criteria for selecting the single <a data-link-type="dfn" href="#dependent" id="ref-for-dependent④">dependent</a> entry is left up to the implementation to decide.</p>
+     <p>If <var>entry list</var> contains one or more <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries④">patch map entries</a> which have a patch format that is <a data-link-type="dfn" href="#dependent" id="ref-for-dependent②">dependent</a>, then select
+exactly one of the <a data-link-type="dfn" href="#dependent" id="ref-for-dependent③">dependent</a> entries in <var>entry list</var> and remove all others. The criteria for selecting the single <a data-link-type="dfn" href="#dependent" id="ref-for-dependent④">dependent</a> entry is left up to the implementation to decide.</p>
     <li data-md>
      <p>For each <var>entry</var> in <var>entry list</var> invoke <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the entries URI. Collect the returned patch
 files into <var>patch list</var>.</p>
@@ -1432,7 +1432,7 @@ the implementation.</p>
         <td>true if the two sets intersect
      </table>
     <li data-md>
-     <p>If all sets checked in step 1 intersect then return true for <var>intersects</var> otherwise false.</p>
+     <p>If all sets checked in step 1 intersect, then return true for <var>intersects</var> otherwise false.</p>
    </ol>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-load-patch-file">Load patch file</dfn></p>
    <p>The inputs to this algorithm are:</p>
