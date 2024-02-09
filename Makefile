@@ -1,4 +1,4 @@
-all: Overview.html PatchSubset.html RangeRequest.html
+all: Overview.html
 
 Overview.html: Overview.bs
 	bikeshed spec Overview.bs
