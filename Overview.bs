@@ -273,14 +273,13 @@ needed to render a subset of:
 *  [[open-type/featuretags|layout features]],
 *  and [[open-type/otvaroverview#terminology|design-variation space]].
 
-<!-- TODO consider downgrading must to should, because there is no canonical renderer that could be used to validate this -->
 supported by the original font. When a subsetted font is used to render text using any combination of the subset
 codepoints, [[open-type/featuretags|layout features]], or [[open-type/otvaroverview#terminology|design-variation space]]
-it must render identically to the original font. This includes rendering with the use of any optional typographic
+it should render identically to the original font. This includes rendering with the use of any optional typographic
 features that a renderer may choose to use from the original font, such as hinting instructions.
 
 A <dfn dfn>font subset definition</dfn> describes the minimum data (codepoints, layout features,
-variation axis space) that a [=font subset=] must possess.
+variation axis space) that a [=font subset=] should possess.
 
 Note: For convenience the remainder of this document links to the [[open-type]] specification which is a copy of
 [[!iso14496-22]].
@@ -1166,13 +1165,38 @@ The algorithm:
 Encoder {#encoder}
 ==================
 
+An encoder is a tool which produces an [=incremental font=] and set of associated [=font patch|patches=].
+The [=incremental font=] and associated patches produced by a compliant encoder:
+
+*  Must meet all of the requirements in [[#font-format-extensions]] and [[#font-patch-formats]].
+
+*  Must be consistent, that is: for any possible [=font subset definition=] the result of invoking [$Extend a Font Subset$] 
+    with that subset definition and the [=incremental font=] must always be the same regardless of the particular order
+    of dependent patch selection chosen in step 6 of [$Extend a Font Subset$]. 
+
+*  Should preserve the functionality of the fully expanded font, that is:
+    Given the [$Fully Expand a Font Subset|fully expanded font$] derived from the [=incremental font=], then
+    for any arrangement of content which is fully covered by a [=font subset definition=] the [=font subset=]
+    produced by invoking [$Extend a Font Subset$] with the [=incremental font=] and that definition should
+    be a [=font subset=] of the fully expanded font.
+
+When an encoder is used to transform an existing font into an [=incremental font=] the associated
+[$Fully Expand a Font Subset|fully expanded font$] should be equal to the input font, and it's strongly encouraged that
+the encoder should preserve functionality as described above. This ensures that when used by a conformant client the [=incremental font=]
+will behave, with respect to rendering, identically to the original font.
+
+
+Encoder Considerations {#encoder-considerations}
+------------------------------------------------
+
+<em>This section is not normative.</em>
+
 Coming soon.
 
 <!-- TODO
 
 Topics to cover:
 
-- define fully expanding a IFT font (can be a sub section of the extending the font section).
 - An encoder is something that produces an IFT encoded font.
 - Explicitly state that encoder implementation is not defined here and the only compliance requirements are:
   - Produce a valid font with at least an IFT table (optionally IFTX) that conforms to the requirements in that section.
