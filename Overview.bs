@@ -1191,27 +1191,65 @@ Encoder Considerations {#encoder-considerations}
 
 <em>This section is not normative.</em>
 
-Coming soon.
+The details of the encoding process may differ by encoder and are beyond the scope of this document. However, this section provides
+guidance that encoder implementations may want to consider.
 
-<!-- TODO
+<b>Utilize an existing font subsetter implementation</b>
 
-Topics to cover:
+<!-- TODO: A high quality encoder should preserve functionality as discussed above. Existing font subsetters can be used to assist
+     constructing encodings that meet this requirement. They provide all of the logic needed to preserve functionality. High quality
+     open source subsetters exist -->
 
-- An encoder is something that produces an IFT encoded font.
-- Explicitly state that encoder implementation is not defined here and the only compliance requirements are:
-  - Produce a valid font with at least an IFT table (optionally IFTX) that conforms to the requirements in that section.
-  - The encoded font and collection of patches satisify the consistency (MUST) and rendering equivalence (SHOULD) requirements in relation
-    to the fully expanded font
-- SHOULD: if a encoder is converting an existing font to incremental it should retain all of the existing functional from that font.
+<!-- TODO: describe a simple encoder which utilizes only a subsetter -->
 
-- Encoder guidance (non-normative): here we can discuss some high level strategies for producing a useful encoding.
-  - choosing segmentations. Grouping things that are needed at the same time together. Choosing an appropriate granularity.
-  - Choosing which type of patches to use.
-  - Forming patch graphs and why this is crucial for using dependent patch types.
-  - Considerations for mixing dependent and independent patches.
-  - Managing the number of patches.
+<b>Choosing segmentations</b>
 
--->
+One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. To maximize
+efficiency the encoder should try and group data (eg. codepoints) that are commonly used together into the same segments. This will
+reduce the amount of unneeded data load by clients when extending the font. The encoder must also decide the size of segments. Smaller
+segments will produce more patches, and thus incur more overhead by requiring more network requests, but will typically result in less
+unneeded data in each segment compared to larger segments. When segmenting codepoints, data on codepoint usage frequency can be helpful
+to guide segmentation.
+
+During segmentation an encoder should also consider how codepoints interact with each other in the font. Keeping interacting codepoints
+in the same segment can avoid having to duplicate data between patches, which may be necessary to preserve the functionality of the
+original font when interacting codepoints reside in different segments.
+
+<b>Dependent patches can form patch graphs</b>
+
+<!-- TODO:
+     a dependent patch can modify the mapping table to point to new patches which are valid against the updated font subset.
+     This forms a graph, and it can be helpful to reason about the encoding in terms of the graph.
+     Since only one dependent patch can be applied and loaded at a time the graph can encode edges that patch in multiple segments
+     in a single patch, alongside patches that patch in single segments. -->
+
+
+<b>Choosing patch formats</b>
+
+An encoder must choose the appropriate patch type to use. Dependent patches allow all types of data in the font to be patched, while
+independent patches are limited to updating outline and variation delta data. However, using dependent patches can cause the number of
+patches to increase exponentially as the number of segments increases.  Independent patches on the other hand scale linearly with the
+number of segments.
+
+Dependent patches are most useful when a font has sizable non-outline data and requires only a small number of segments. Independent
+patches are most useful when a fonts data is primarily in the outline tables and the font would benefit from using a large segment count.
+
+Using per-table brotli patches and two mapping tables it becomes possible to mix both indepedent and dependent patching in the same
+incremental font. This can be accomplished by:
+
+1. Keep all dependent patch entries in one mapping table and all independent entries in the other mapping table.
+2. Use per-table shared brotli patches to update all tables except for the tables touched by the independent patches (outline,
+    variation deltas, and the independent patch mapping table). These patches should use a small number of large segments to keep
+    the patch count reasonable.
+3. Lastly, use independent patches to update the remaining tables, here much smaller fine-grained segments can be utilized without
+    required too many patches.
+
+
+<b>Managing the number of patches</b>
+
+<!-- TODO:
+  - Max depth and/or combining segments at lower depths.
+  -->
 
 <h2 class=no-num id=priv>Privacy Considerations</h2>
 
