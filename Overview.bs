@@ -1168,22 +1168,38 @@ Encoder {#encoder}
 An encoder is a tool which produces an [=incremental font=] and set of associated [=font patch|patches=].
 The [=incremental font=] and associated patches produced by a compliant encoder:
 
-*  Must meet all of the requirements in [[#font-format-extensions]] and [[#font-patch-formats]].
+1.  Must meet all of the requirements in [[#font-format-extensions]] and [[#font-patch-formats]].
 
-*  Must be consistent, that is: for any possible [=font subset definition=] the result of invoking [$Extend a Font Subset$] 
+2.  Must be consistent, that is: for any possible [=font subset definition=] the result of invoking [$Extend a Font Subset$] 
     with that subset definition and the [=incremental font=] must always be the same regardless of the particular order
     of dependent patch selection chosen in step 6 of [$Extend a Font Subset$].
 
-*  Should preserve the functionality of the fully expanded font, that is:
-    given the [$Fully Expand a Font Subset|fully expanded font$] derived from the [=incremental font=]
-    and any content, then the [=font subset=] produced by invoking [$Extend a Font Subset$] with the
-    [=incremental font=] and the minimal subset definition covering that content should
-    render identically to the fully expanded font for that content.
+3.  Should preserve the functionality of the fully expanded font, that is:
+     given the [$Fully Expand a Font Subset|fully expanded font$] derived from the [=incremental font=]
+     and any content, then the [=font subset=] produced by invoking [$Extend a Font Subset$] with the
+     [=incremental font=] and the minimal subset definition covering that content should
+     render identically to the fully expanded font for that content.
 
-When an encoder is used to transform an existing font into an [=incremental font=] the associated
-[$Fully Expand a Font Subset|fully expanded font$] should be equal to the input font, and it's strongly encouraged that
-the encoder should preserve functionality as described above. This ensures that when used by a conformant client the [=incremental font=]
-will behave, with respect to rendering, identically to the original font.
+4.  When an encoder is used to transform an existing font into an [=incremental font=] the associated
+     [$Fully Expand a Font Subset|fully expanded font$] should be equal to the existing font.
+
+When an encoder is used to transform an existing font file into and [=incremental font=] and a client is implemented according to the
+other sections of this document, the intent of the IFT specification is that appearance and behavior of the font in the client will be the
+same as if the entire file were transferred to the client. A primary goal of the IFT specification is that the IFT format and protocol can
+serve as a neutral medium for font transfer, comparable to WOFF2. If an encoder produces an encoding from a source font which meets all of
+the above requirements (1. through 4.), then the encoding will preserve all of the functionality of the original font.
+
+This may be important for cases where a foundry or other rights-owner of a font wants be confident that the encoding and transfer of that
+font using IFT will not change its behavior and therefore the intent of the font's creators. Licenses or contracts might then include
+requirements about IFT conformance, and situations in which re-encoding a font in WOFF2 format is de facto permissible due to its
+content-neutrality might also permit IFT encoding of that font.
+
+However, nothing about these requirements on encoding conformance is meant to rule out or deprecate the possibility and practical use of
+encodings that do not preserve all of the functionality of a source font. Any encoding meeting the minimum requirements (1. and 2. above)
+is valid and may have an appropriate use. Under some circumstances it might be desirable for an encoded font to omit support for some
+functionality/data from all of its patch files even if those were included in the original font file. In other cases a font might be
+directly encoded into the IFT format from font authoring source files.
+
 
 Encoder Considerations {#encoder-considerations}
 ------------------------------------------------
