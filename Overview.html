@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="3c2018f57f8eb4346f8ac7920f07848481f09d65" name="document-revision">
+  <meta content="bd53e4b272a3e46dc3fb59ce13672a9e0af8cd65" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1481,7 +1481,7 @@ the <var>expanded font</var>.</p>
    <h2 class="heading settled" data-level="7" id="encoder"><span class="secno">7. </span><span class="content">Encoder</span><a class="self-link" href="#encoder"></a></h2>
    <p>An encoder is a tool which produces an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑤">incremental font</a> and set of associated <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch③">patches</a>.
 The <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑥">incremental font</a> and associated patches produced by a compliant encoder:</p>
-   <ul>
+   <ol>
     <li data-md>
      <p>Must meet all of the requirements in <a href="#font-format-extensions">§ 4 Extensions to the Font Format</a> and <a href="#font-patch-formats">§ 5 Font Patch Formats</a>.</p>
     <li data-md>
@@ -1489,11 +1489,25 @@ The <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-fon
 of dependent patch selection chosen in step 6 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset②">Extend a Font Subset</a>.</p>
     <li data-md>
      <p>Should preserve the functionality of the fully expanded font, that is:
-given the <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset①">fully expanded font</a> derived from the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑧">incremental font</a> and any content, then the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③⓪">font subset</a> produced by invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset③">Extend a Font Subset</a> with the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑨">incremental font</a> and the minimal subset definition covering that content should
-render identically to the fully expanded font for that content.</p>
-   </ul>
-   <p>When an encoder is used to transform an existing font into an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⓪">incremental font</a> the associated <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset②">fully expanded font</a> should be equal to the input font, and it’s strongly encouraged that
-the encoder should preserve functionality as described above. This ensures that when used by a conformant client the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①①">incremental font</a> will behave, with respect to rendering, identically to the original font.</p>
+ given the <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset①">fully expanded font</a> derived from the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑧">incremental font</a> and any content, then the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③⓪">font subset</a> produced by invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset③">Extend a Font Subset</a> with the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑨">incremental font</a> and the minimal subset definition covering that content should
+ render identically to the fully expanded font for that content.</p>
+    <li data-md>
+     <p>When an encoder is used to transform an existing font into an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⓪">incremental font</a> the associated <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset②">fully expanded font</a> should be equal to the existing font.</p>
+   </ol>
+   <p>When an encoder is used to transform an existing font file into and <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①①">incremental font</a> and a client is implemented according to the
+other sections of this document, the intent of the IFT specification is that appearance and behavior of the font in the client will be the
+same as if the entire file were transferred to the client. A primary goal of the IFT specification is that the IFT format and protocol can
+serve as a neutral medium for font transfer, comparable to WOFF2. If an encoder produces an encoding from a source font which meets all of
+the above requirements (1. through 4.), then the encoding will preserve all of the functionality of the original font.</p>
+   <p>This may be important for cases where a foundry or other rights-owner of a font wants be confident that the encoding and transfer of that
+font using IFT will not change its behavior and therefore the intent of the font’s creators. Licenses or contracts might then include
+requirements about IFT conformance, and situations in which re-encoding a font in WOFF2 format is de facto permissible due to its
+content-neutrality might also permit IFT encoding of that font.</p>
+   <p>However, nothing about these requirements on encoding conformance is meant to rule out or deprecate the possibility and practical use of
+encodings that do not preserve all of the functionality of a source font. Any encoding meeting the minimum requirements (1. and 2. above)
+is valid and may have an appropriate use. Under some circumstances it might be desirable for an encoded font to omit support for some
+functionality/data from all of its patch files even if those were included in the original font file. In other cases a font might be
+directly encoded into the IFT format from font authoring source files.</p>
    <h3 class="heading settled" data-level="7.1" id="encoder-considerations"><span class="secno">7.1. </span><span class="content">Encoder Considerations</span><a class="self-link" href="#encoder-considerations"></a></h3>
    <p><em>This section is not normative.</em></p>
    <p>The details of the encoding process may differ by encoder and are beyond the scope of this document. However, this section provides
