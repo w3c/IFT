@@ -1172,19 +1172,18 @@ The [=incremental font=] and associated patches produced by a compliant encoder:
 
 *  Must be consistent, that is: for any possible [=font subset definition=] the result of invoking [$Extend a Font Subset$] 
     with that subset definition and the [=incremental font=] must always be the same regardless of the particular order
-    of dependent patch selection chosen in step 6 of [$Extend a Font Subset$]. 
+    of dependent patch selection chosen in step 6 of [$Extend a Font Subset$].
 
 *  Should preserve the functionality of the fully expanded font, that is:
-    Given the [$Fully Expand a Font Subset|fully expanded font$] derived from the [=incremental font=], then
-    for any arrangement of content which is fully covered by a [=font subset definition=] the [=font subset=]
-    produced by invoking [$Extend a Font Subset$] with the [=incremental font=] and that definition should
-    be a [=font subset=] of the fully expanded font.
+    given the [$Fully Expand a Font Subset|fully expanded font$] derived from the [=incremental font=]
+    and any content, then the [=font subset=] produced by invoking [$Extend a Font Subset$] with the
+    [=incremental font=] and the minimal subset definition covering that content should
+    render identically to the fully expanded font for that content.
 
 When an encoder is used to transform an existing font into an [=incremental font=] the associated
 [$Fully Expand a Font Subset|fully expanded font$] should be equal to the input font, and it's strongly encouraged that
 the encoder should preserve functionality as described above. This ensures that when used by a conformant client the [=incremental font=]
 will behave, with respect to rendering, identically to the original font.
-
 
 Encoder Considerations {#encoder-considerations}
 ------------------------------------------------
