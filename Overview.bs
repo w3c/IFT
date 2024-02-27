@@ -110,7 +110,7 @@ necessary text can be rendered with that font.
 
 The success of WebFonts is unevenly distributed. This specification allows WebFonts to be used where
 slow networks, very large fonts, or complex subsetting requirements currently preclude their use. For
-example, even using WOFF 2 [[WOFF2]], fonts for CJK languages are too large to be practical.
+example, even using WOFF 2 [[WOFF2]], fonts for CJK languages can be too large to be practical.
 
 Technical Motivation: Evaluation Report {#evaluation-report}
 ------------------------------------------------------------
@@ -121,30 +121,29 @@ to this specification.
 Overview {#overview}
 --------------------
 
-An IFT font is a regular [[open-type|OpenType]] font that is extended to include the incremental functionality via the addition
-of a two new [[open-type/otff#table-directory|tables]]. Using these new tables the font can be augmented (eg. to cover more codepoints)
+An IFT font is a regular [[open-type|OpenType]] font that is reformated to include incremental functionality, partly in virtue of
+of two additional [[open-type/otff#table-directory|tables]]. Using these new tables the font can be augmented (eg. to cover more codepoints)
 by loading and applying patches to it.
 
 The IFT technology has four main pieces:
 
 *  [[#font-format-extensions]]: defines the new tables which contain a list of patches that are available to be applied to a font.
 
-*  [[#font-patch-formats]]: defines three different types of patches that can be used. These range from generic binary patches, to a patch
-     format that is specific to the font format.
+*  [[#font-patch-formats]]: defines three different types of patches that can be used. Two are "generic" binary patches, one is
+     specific to the font's format for storing glyph data.
 
 *  [[#extending-font-subset]]: provides the algorithm that is used by a client to select and apply patches.
 
-*  [[#encoder]]: encoders create the font and associated patches that form an incremental font.
+*  [[#encoder]]: creates the font and associated patches that form an incremental font.
 
 At a high level an IFT font is used like this:
 
-1. The client downloads an initial font file, which contains some subset of data from the full version of the font.
+1. The client downloads an initial font file, which contains some initial subset of data from the full version of the font along with
+   [[#font-format-extensions|embedded data]] describing the set of [[#font-patch-formats|patches]] which can be used to extend 
+   the font.
 
-2. Inside the font file there is [[#font-format-extensions|embedded data]] which informs the client about
-    a set of [[#font-patch-formats|patches]] which are available and can be used to extend the font.
-
-3. Based on the content the client is trying to render it [[#extending-font-subset|selects, downloads, and applies]] these patches to
-    extend the font to cover additional characters. This step is repeated every time new content is being rendered.
+2. Based on the content to be rendered, the client [[#extending-font-subset|selects, downloads, and applies]] patches to extend 
+   the font to cover additional characters. This step is repeats each time there is new content.
 
 Creating an Incremental Font {#making-incremental-fonts}
 --------------------------------------------------------
@@ -152,18 +151,17 @@ Creating an Incremental Font {#making-incremental-fonts}
 It is expected that the most common way to produce an incremental font will be to convert an existing font to use the incremental
 encoding defined in this specification. At a high level converting an existing font to be incremental will look like this:
 
-
-1.  Create the base [[#font-subset-info|subset]], this will be the initial font file the client will load and usually will include the data
-     from the original font that is expected to be always needed.
+1.  Choose the content of the initial [[#font-subset-info|subset]], this will be included in the initial font file the client loads
+    and usually consists of any data from the original font that is expected to always be needed.
 
 2.  Choose a segmentation of the font. Individual segments will be added to the base subset by the client using patches. Choosing an
-     appropriate segmentation is one of the most important parts of producing an efficient encoding.
+    appropriate segmentation is one of the most important parts of producing an efficient encoding.
 
+3.  Based on these choices, generate a set of patches, where each patch adds the data for a particular segment relative to either
+    the initial font file or a previous patch.
 
-3.  Based on the chosen segmentation generate a set of patches where each patch will add the data for a particular segment.
-
-4.  Add a [[#font-format-extensions|patch mapping]] to the base subset. This mapping lists all of the available patch files,
-    the url they reside at, and information on what data the patch will add to the font.
+4.  Generate the initial font file including the initial subset and a [[#font-format-extensions|patch mapping]]. This mapping
+    lists all of the available patch files, the url they reside at, and information on what data the patch will add to the font.
 
 Note: this is a highly simplified description of creating an incremental font, a more in-depth discussion of generating an encoding and
 requirements on the encoding can be found in the [[#encoder]] section.
@@ -200,17 +198,18 @@ however only part of a font is expected to be needed. For example:
     headline.
 
 An alternative to incremental transfer is to break a font into distinct subsets (typically by script)
-and use the unicode range feature of @font-face to load only the subsets needed. However, this can
-break rendering [[PFE-report#fail-subset]] if there are layout rules between characters in
-different subsets. Incremental font transfer does not suffer from this issue as it maintains the
-original font and all it's layout rules.
+and use the unicode range feature of @font-face to load only the subsets needed. However, this can alter
+the rendering of some content [[PFE-report#fail-subset]] if there are layout rules between characters in
+different subsets. Incremental font transfer does not suffer from this issue as it can emcompass the
+original font and all of it's layout rules.
 
 ### Reducing the Number of Network Requests ### {#reduce-requests}
 
 As discussed in the previous section the most basic implementation of incremental font transfer will
 tend to increase the total number of requests made vs traditional font loading. Since each augmentation
-will require at least one round trip time, performance can be negatively impacted if too many requests
-are made. It's possible for a client to preemptively request patches for codepoints that are not
+will typically require at least one round trip time, performance can be negatively impacted if too many requests
+are made. Depending on which patch types are available and how much information is provided in the 
+[[#font-format-extensions|patch mapping]], a client might preemptively request patches for codepoints that are not
 currently needed, but expected to be needed in the future. Intelligent use of this feature by an
 implementation can help reduce the total number of requests being made. The evaluation report explored
 this by testing the performance of a basic character frequency based [[PFE-report#codepredict|codepoint prediction]]
@@ -259,6 +258,7 @@ transferred font since the saved page won't be able to increment the font if con
 due to JavaScript execution). In these cases the page saving mechanism should fully expand the incremental font
 by invoking [$Fully Expand a Font Subset$] and replace references to the incremental font with the fully expanded one.
 
+<!-- TODO: I'm wondering about this. Should the norm really be to download the whole font "just in case"? -->
 
 Definitions {#definitions}
 ===============================
@@ -275,11 +275,11 @@ needed to render a subset of:
 
 supported by the original font. When a subsetted font is used to render text using any combination of the subset
 codepoints, [[open-type/featuretags|layout features]], or [[open-type/otvaroverview#terminology|design-variation space]]
-it should render identically to the original font. This includes rendering with the use of any optional typographic
+it must render identically to the original font. This includes rendering with the use of any optional typographic
 features that a renderer may choose to use from the original font, such as hinting instructions.
 
 A <dfn dfn>font subset definition</dfn> describes the minimum data (codepoints, layout features,
-variation axis space) that a [=font subset=] should possess.
+variation axis space) that a [=font subset=] must support.
 
 Note: For convenience the remainder of this document links to the [[open-type]] specification which is a copy of
 [[!iso14496-22]].
@@ -288,7 +288,7 @@ Data Types {#data-types}
 ------------------------
 
 Encoded data structures in the remainder of this specification are described in terms of the data types defined
-in [[open-type/otff#data-types]]. As with the rest of OpenType, all fields use Big Endian byte ordering.
+in [[open-type/otff#data-types]]. As with the rest of OpenType, all fields use "big-endian" byte ordering.
 
 URI Templates {#uri-templates}
 ------------------------------
@@ -353,8 +353,9 @@ Extensions to the Font Format {#font-format-extensions}
 An <dfn dfn>incremental font</dfn> follows the existing [[open-type|OpenType]] format, but include two new
 [[open-type/otff#table-directory|tables]] identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both
 [[#patch-map|patch maps]], which encode a collection of mappings from [=font subset definition|font subset definitions=] to URIs which
-host [[#font-patch-formats|patches]] that extend the incremental font. The mappings from the two tables is unioned together to produce
-the final mapping. All incremental fonts must contain at least an 'IFT ' table. The 'IFTX' table is optional.
+host [[#font-patch-formats|patches]] that extend the incremental font. All incremental fonts must contain the 'IFT ' table.
+The 'IFTX' table is optional. When both tables are present, the mapping of the font as a whole is the union of the mappings of
+the two tables.
 
 Note: allowing the mapping to be split between two distinct tables allows an incremental font to more easily make use of multiple
 patch types. For example all patches of one type can be specified in the 'IFT ' table, and all patches of a second type in the
@@ -368,11 +369,11 @@ A patch map table encodes a list of <dfn dfn>patch map entries</dfn>, where each
 [=font subset definition=] and the value is a URI and the [[#font-patch-formats]] used by the data at the URI. A map is
 encoded in one of two formats:
 
-*  Format 1: a limited, but more compact encoding. Encodes a one-to-one mapping from glyph id to patch URIs. Does not support
-    [=font subset definitions=] with design space or entries with overlapping subset definitions.
+*  Format 1: a limited, but more compact encoding. It encodes a one-to-one mapping from glyph id to patch URIs. It does
+    not support [=font subset definitions=] with design space or entries with overlapping subset definitions.
 
-*  Format 2: can encode arbitrary mappings including ones with design space or overlapping subset definitions. However, typically less
-    compact than format 1.
+*  Format 2: can encode arbitrary mappings including ones with design space or overlapping subset definitions. However, it
+    is typically less compact than format 1.
 
 ### Patch Map Table: Format 1 ### {#patch-map-format-1}
 
@@ -633,18 +634,20 @@ TODO:
 Font Patch Formats {#font-patch-formats}
 ========================================
 
-In incremental font transfer [=font subset|font subsets=] are extended by applying patches. Due to the different
-capabilities required in different situations this specification defines three different patch formats that can be used.
+In incremental font transfer [=font subset|font subsets=] are extended by applying patches.
+This specification defines three patch formats, each appropriate to its own set of augmentation scenarios. A single
+encoding can make use of more than one patch format.
 
 Definitions {#font-patch-definitions}
 -------------------------------------
 
-A <dfn dfn>font patch</dfn> is a file which encodes changes to be made to an existing font file. Patches are used to extend
+A <dfn dfn>font patch</dfn> is a file which encodes changes to be made to an IFT-encoded font. Patches are used to extend
 an existing [=font subset=] and provide expanded coverage.
 
-A <dfn dfn>patch format</dfn> is a specified encoding used to encode changes to be applied to a [=font subset=] into a
-[=font patch=]. Every [=patch format=] has an associated  <dfn dfn>patch application algorithm</dfn> which takes a
-[=font subset=] and a [=font patch=] encoded in the [=patch format=] as input and outputs a new extended
+A <dfn dfn>patch format</dfn> is a specified encoding of changes to be applied relative to a [=font subset=]. A set of
+changes encoded according to the format is a [=font patch=]. Each [=patch format=] has an associated 
+<dfn dfn>patch application algorithm</dfn> which takes a
+[=font subset=] and a [=font patch=] encoded in the [=patch format=] as input and outputs an extended
 [=font subset=]. Each [=patch application algorithm=] can be categorized as either independent or dependent. Given a set of
 [=font patch|font patches=], <code>P</code>, that are all valid to be applied to a specific [=font subset=], <code>F</code>:
 
