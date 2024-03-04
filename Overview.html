@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="bd53e4b272a3e46dc3fb59ce13672a9e0af8cd65" name="document-revision">
+  <meta content="bec0db47e3db30924456223afc29dc26e9b4ad51" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -503,7 +503,7 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-02-15">15 February 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-03-04">4 March 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -586,7 +586,11 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
          <ol class="toc">
           <li><a href="#interpreting-patch-map-format-1"><span class="secno">4.1.1.1</span> <span class="content">Interpreting Format 1</span></a>
          </ol>
-        <li><a href="#patch-map-format-2"><span class="secno">4.1.2</span> <span class="content">Patch Map Table: Format 2</span></a>
+        <li>
+         <a href="#patch-map-format-2"><span class="secno">4.1.2</span> <span class="content">Patch Map Table: Format 2</span></a>
+         <ol class="toc">
+          <li><a href="#sparse-bit-set-decoding"><span class="secno">4.1.2.1</span> <span class="content">Sparse Bit Set</span></a>
+         </ol>
        </ol>
      </ol>
     <li>
@@ -652,52 +656,51 @@ decreasing the perceived latency between the time when a browser realizes it nee
 necessary text can be rendered with that font.</p>
    <p>The success of WebFonts is unevenly distributed. This specification allows WebFonts to be used where
 slow networks, very large fonts, or complex subsetting requirements currently preclude their use. For
-example, even using WOFF 2 <a data-link-type="biblio" href="#biblio-woff2" title="WOFF File Format 2.0">[WOFF2]</a>, fonts for CJK languages are too large to be practical.</p>
+example, even using WOFF 2 <a data-link-type="biblio" href="#biblio-woff2" title="WOFF File Format 2.0">[WOFF2]</a>, fonts for CJK languages can be too large to be practical.</p>
    <h3 class="heading settled" data-level="1.1" id="evaluation-report"><span class="secno">1.1. </span><span class="content">Technical Motivation: Evaluation Report</span><a class="self-link" href="#evaluation-report"></a></h3>
    <p>See the Progressive Font Enrichment: Evaluation Report <a data-link-type="biblio" href="#biblio-pfe-report" title="Progressive Font Enrichment: Evaluation Report">[PFE-report]</a> for the investigation which led
 to this specification.</p>
    <h3 class="heading settled" data-level="1.2" id="overview"><span class="secno">1.2. </span><span class="content">Overview</span><a class="self-link" href="#overview"></a></h3>
-   <p>An IFT font is a regular <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> font that is extended to include the incremental functionality via the addition
-of a two new <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a>. Using these new tables the font can be augmented (eg. to cover more codepoints)
+   <p>An IFT font is a regular <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> font that is reformated to include incremental functionality, partly in virtue of
+of two additional <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a>. Using these new tables the font can be augmented (eg. to cover more codepoints)
 by loading and applying patches to it.</p>
    <p>The IFT technology has four main pieces:</p>
    <ul>
     <li data-md>
      <p><a href="#font-format-extensions">§ 4 Extensions to the Font Format</a>: defines the new tables which contain a list of patches that are available to be applied to a font.</p>
     <li data-md>
-     <p><a href="#font-patch-formats">§ 5 Font Patch Formats</a>: defines three different types of patches that can be used. These range from generic binary patches, to a patch
- format that is specific to the font format.</p>
+     <p><a href="#font-patch-formats">§ 5 Font Patch Formats</a>: defines three different types of patches that can be used. Two are "generic" binary patches, one is
+ specific to the font’s format for storing glyph data.</p>
     <li data-md>
      <p><a href="#extending-font-subset">§ 6 Extending a Font Subset</a>: provides the algorithm that is used by a client to select and apply patches.</p>
     <li data-md>
-     <p><a href="#encoder">§ 7 Encoder</a>: encoders create the font and associated patches that form an incremental font.</p>
+     <p><a href="#encoder">§ 7 Encoder</a>: creates the font and associated patches that form an incremental font.</p>
    </ul>
    <p>At a high level an IFT font is used like this:</p>
    <ol>
     <li data-md>
-     <p>The client downloads an initial font file, which contains some subset of data from the full version of the font.</p>
+     <p>The client downloads an initial font file, which contains some initial subset of data from the full version of the font along with <a href="#font-format-extensions">embedded data</a> describing the set of <a href="#font-patch-formats">patches</a> which can be used to extend 
+the font.</p>
     <li data-md>
-     <p>Inside the font file there is <a href="#font-format-extensions">embedded data</a> which informs the client about
-a set of <a href="#font-patch-formats">patches</a> which are available and can be used to extend the font.</p>
-    <li data-md>
-     <p>Based on the content the client is trying to render it <a href="#extending-font-subset">selects, downloads, and applies</a> these patches to
-extend the font to cover additional characters. This step is repeated every time new content is being rendered.</p>
+     <p>Based on the content to be rendered, the client <a href="#extending-font-subset">selects, downloads, and applies</a> patches to extend
+the font to cover additional characters. This step is repeated each time there is new content.</p>
    </ol>
    <h3 class="heading settled" data-level="1.3" id="making-incremental-fonts"><span class="secno">1.3. </span><span class="content">Creating an Incremental Font</span><a class="self-link" href="#making-incremental-fonts"></a></h3>
    <p>It is expected that the most common way to produce an incremental font will be to convert an existing font to use the incremental
 encoding defined in this specification. At a high level converting an existing font to be incremental will look like this:</p>
    <ol>
     <li data-md>
-     <p>Create the base <a href="#font-subset-info">subset</a>, this will be the initial font file the client will load and usually will include the data
- from the original font that is expected to be always needed.</p>
+     <p>Choose the content of the initial <a href="#font-subset-info">subset</a>, this will be included in the initial font file the client loads
+and usually consists of any data from the original font that is expected to always be needed.</p>
     <li data-md>
      <p>Choose a segmentation of the font. Individual segments will be added to the base subset by the client using patches. Choosing an
- appropriate segmentation is one of the most important parts of producing an efficient encoding.</p>
+appropriate segmentation is one of the most important parts of producing an efficient encoding.</p>
     <li data-md>
-     <p>Based on the chosen segmentation generate a set of patches where each patch will add the data for a particular segment.</p>
+     <p>Based on these choices, generate a set of patches, where each patch adds the data for a particular segment relative to either
+the initial font file or a previous patch.</p>
     <li data-md>
-     <p>Add a <a href="#font-format-extensions">patch mapping</a> to the base subset. This mapping lists all of the available patch files,
-the url they reside at, and information on what data the patch will add to the font.</p>
+     <p>Generate the initial font file including the initial subset and a <a href="#font-format-extensions">patch mapping</a>. This mapping
+lists all of the available patch files, the url they reside at, and information on what data the patch will add to the font.</p>
    </ol>
    <p class="note" role="note"><span class="marker">Note:</span> this is a highly simplified description of creating an incremental font, a more in-depth discussion of generating an encoding and
 requirements on the encoding can be found in the <a href="#encoder">§ 7 Encoder</a> section.</p>
@@ -729,15 +732,15 @@ often the case for Chinese, Japanese, Korean, Emoji, and Icon fonts.</p>
 headline.</p>
    </ul>
    <p>An alternative to incremental transfer is to break a font into distinct subsets (typically by script)
-and use the unicode range feature of @font-face to load only the subsets needed. However, this can
-break rendering <a href="https://www.w3.org/TR/PFE-evaluation/#fail-subset">Progressive Font Enrichment: Evaluation Report § fail-subset</a> if there are layout rules between characters in
-different subsets. Incremental font transfer does not suffer from this issue as it maintains the
-original font and all it’s layout rules.</p>
+and use the unicode range feature of @font-face to load only the subsets needed. However, this can alter
+the rendering of some content <a href="https://www.w3.org/TR/PFE-evaluation/#fail-subset">Progressive Font Enrichment: Evaluation Report § fail-subset</a> if there are layout rules between characters in
+different subsets. Incremental font transfer does not suffer from this issue as it can emcompass the
+original font and all of it’s layout rules.</p>
    <h4 class="heading settled" data-level="1.4.1" id="reduce-requests"><span class="secno">1.4.1. </span><span class="content">Reducing the Number of Network Requests</span><a class="self-link" href="#reduce-requests"></a></h4>
    <p>As discussed in the previous section the most basic implementation of incremental font transfer will
 tend to increase the total number of requests made vs traditional font loading. Since each augmentation
-will require at least one round trip time, performance can be negatively impacted if too many requests
-are made. It’s possible for a client to preemptively request patches for codepoints that are not
+will typically require at least one round trip time, performance can be negatively impacted if too many requests
+are made. Depending on which patch types are available and how much information is provided in the <a href="#font-format-extensions">patch mapping</a>, a client might preemptively request patches for codepoints that are not
 currently needed, but expected to be needed in the future. Intelligent use of this feature by an
 implementation can help reduce the total number of requests being made. The evaluation report explored
 this by testing the performance of a basic character frequency based <a href="https://www.w3.org/TR/PFE-evaluation/#codepredict">codepoint prediction</a> scheme and found it improved overall performance.</p>
@@ -782,11 +785,11 @@ needed to render a subset of:</p>
 codepoints, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a>, or <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a> it should render identically to the original font. This includes rendering with the use of any optional typographic
 features that a renderer may choose to use from the original font, such as hinting instructions.</p>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-subset-definition">font subset definition</dfn> describes the minimum data (codepoints, layout features,
-variation axis space) that a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset">font subset</a> should possess.</p>
+variation axis space) that a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset">font subset</a> should support.</p>
    <p class="note" role="note"><span class="marker">Note:</span> For convenience the remainder of this document links to the <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">[open-type]</a> specification which is a copy of <a data-link-type="biblio" href="#biblio-iso14496-22" title="Information technology — Coding of audio-visual objects — Part 22: Open Font Format">[iso14496-22]</a>.</p>
    <h3 class="heading settled" data-level="3.2" id="data-types"><span class="secno">3.2. </span><span class="content">Data Types</span><a class="self-link" href="#data-types"></a></h3>
    <p>Encoded data structures in the remainder of this specification are described in terms of the data types defined
-in <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types">OpenType Specification § otff#data-types</a>. As with the rest of OpenType, all fields use Big Endian byte ordering.</p>
+in <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types">OpenType Specification § otff#data-types</a>. As with the rest of OpenType, all fields use "big-endian" byte ordering.</p>
    <h3 class="heading settled" data-level="3.3" id="uri-templates"><span class="secno">3.3. </span><span class="content">URI Templates</span><a class="self-link" href="#uri-templates"></a></h3>
    <p>URI templates <a data-link-type="biblio" href="#biblio-rfc6570" title="URI Template">[rfc6570]</a> are used to convert numeric indices into URIs where patch files are located. Given a numeric index value,
 several variables are defined which are used to produce the expansion of the template:</p>
@@ -837,8 +840,9 @@ several variables are defined which are used to produce the expansion of the tem
    </div>
    <h2 class="heading settled" data-level="4" id="font-format-extensions"><span class="secno">4. </span><span class="content">Extensions to the Font Format</span><a class="self-link" href="#font-format-extensions"></a></h2>
    <p>An <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="incremental-font">incremental font</dfn> follows the existing <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> format, but include two new <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both <a href="#patch-map">patch maps</a>, which encode a collection of mappings from <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">font subset definitions</a> to URIs which
-host <a href="#font-patch-formats">patches</a> that extend the incremental font. The mappings from the two tables is unioned together to produce
-the final mapping. All incremental fonts must contain at least an 'IFT ' table. The 'IFTX' table is optional.</p>
+host <a href="#font-patch-formats">patches</a> that extend the incremental font. All incremental fonts must contain the 'IFT ' table.
+The 'IFTX' table is optional. When both tables are present, the mapping of the font as a whole is the union of the mappings of
+the two tables.</p>
    <p class="note" role="note"><span class="marker">Note:</span> allowing the mapping to be split between two distinct tables allows an incremental font to more easily make use of multiple
 patch types. For example all patches of one type can be specified in the 'IFT ' table, and all patches of a second type in the
 'IFTX' table. Those patches can make updates only to one of the mapping tables and avoid making conflicting updates.</p>
@@ -847,10 +851,11 @@ patch types. For example all patches of one type can be specified in the 'IFT ' 
 encoded in one of two formats:</p>
    <ul>
     <li data-md>
-     <p>Format 1: a limited, but more compact encoding. Encodes a one-to-one mapping from glyph id to patch URIs. Does not support <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition②">font subset definitions</a> with design space or entries with overlapping subset definitions.</p>
+     <p>Format 1: a limited, but more compact encoding. It encodes a one-to-one mapping from glyph id to patch URIs. It does
+not support <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition②">font subset definitions</a> with design space or entries with overlapping subset definitions.</p>
     <li data-md>
-     <p>Format 2: can encode arbitrary mappings including ones with design space or overlapping subset definitions. However, typically less
-compact than format 1.</p>
+     <p>Format 2: can encode arbitrary mappings including ones with design space or overlapping subset definitions. However, it
+is typically less compact than format 1.</p>
    </ul>
    <h4 class="heading settled" data-level="4.1.1" id="patch-map-format-1"><span class="secno">4.1.1. </span><span class="content">Patch Map Table: Format 1</span><a class="self-link" href="#patch-map-format-1"></a></h4>
    <p><dfn data-dfn-type="dfn" data-noexport id="format-1-patch-map">Format 1 Patch Map<a class="self-link" href="#format-1-patch-map"></a></dfn> encoding:</p>
@@ -1045,13 +1050,161 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
    </ol>
    <h4 class="heading settled" data-level="4.1.2" id="patch-map-format-2"><span class="secno">4.1.2. </span><span class="content">Patch Map Table: Format 2</span><a class="self-link" href="#patch-map-format-2"></a></h4>
    <p>Coming soon.</p>
+   <h5 class="heading settled algorithm" data-algorithm="Sparse Bit Set" data-level="4.1.2.1" id="sparse-bit-set-decoding"><span class="secno">4.1.2.1. </span><span class="content">Sparse Bit Set</span><a class="self-link" href="#sparse-bit-set-decoding"></a></h5>
+   <p>A sparse bit set is a data structure which compactly stores a set of distinct unsigned integers. The set is represented as a tree where
+each node has a fixed number of children that recursively sub-divides an interval into equal partitions. A tree of height <i>H</i> with
+branching factor <i>B</i> can store set membership for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree
+is encoded into an array of bytes for transport.</p>
+   <p><dfn data-dfn-type="dfn" data-noexport id="sparse-bit-set">Sparse Bit Set<a class="self-link" href="#sparse-bit-set"></a></dfn> encoding:</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>Type
+      <th>Name
+      <th>Description
+     <tr>
+      <td>uint8
+      <td>header
+      <td>Bits 0 (least significant) and 1 encode the trees branch factor <i>B</i>. Bits 2 through 6 are a 5-bit unsigned integer which
+        encodes the value of <i>H</i>. Bit 7 is set to 0 and reserved for future use. 
+     <tr>
+      <td>uint8
+      <td>treeData[variable]
+      <td>Binary encoding of the tree.
+   </table>
+   <p>The exact length of <var>treeData</var> is initially unknown, it’s length is determined by executing the decoding algorithm. When using
+branch factors of 2 or 4 the last node may only partially consume the bits in a byte. In that case all remaining bits are unused and
+ignored.</p>
+   <p><dfn data-dfn-type="dfn" data-noexport id="branch-factor-encoding">Branch Factor Encoding<a class="self-link" href="#branch-factor-encoding"></a></dfn>:</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>Bit 1
+      <th>Bit 0
+      <th>Branch Factor (B)
+     <tr>
+      <td>0
+      <td>0
+      <td>2
+     <tr>
+      <td>0
+      <td>1
+      <td>4
+     <tr>
+      <td>1
+      <td>0
+      <td>8
+     <tr>
+      <td>1
+      <td>1
+      <td>32
+   </table>
+   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-decoding-sparse-bit-set-treedata">Decoding sparse bit set treeData<a class="self-link" href="#abstract-opdef-decoding-sparse-bit-set-treedata"></a></dfn></p>
+   <p>The inputs to this algorithm are:</p>
+   <ul>
+    <li data-md>
+     <p><var>H</var>: the tree height, <var>H</var>, from the header byte.</p>
+    <li data-md>
+     <p><var>B</var>: the branch factor, <var>B</var>, from the header byte.</p>
+    <li data-md>
+     <p><var>treeData</var>: array of bytes to be decoded.</p>
+   </ul>
+   <p>The algorithm outputs:</p>
+   <ul>
+    <li data-md>
+     <p><var>S</var>: a set of unsigned integers.</p>
+   </ul>
+   <p>The algorithm, using a FIFO (first in first out) queue <var>Q</var>:</p>
+   <ol>
+    <li data-md>
+     <p>If <var>H</var> is equal to 0, then this is an empty set and no bytes of <var>treeData</var> are consumed. Return an empty set.</p>
+    <li data-md>
+     <p>Insert the tuple (0, 1) into <var>Q</var>.</p>
+    <li data-md>
+     <p>Initialize <var>S</var> to an empty set.</p>
+    <li data-md>
+     <p><var>treeData</var> is interpreted as a string of bits where the least significant bit of <var>treeData</var>[0] is the first bit in
+ the string, the most significant bit of <var>treeData</var>[0] is the 8th bit, and so on.</p>
+    <li data-md>
+     <p>If <var>Q</var> is empty return <var>S</var>.</p>
+    <li data-md>
+     <p>Extract the next tuple <var>t</var> from <var>Q</var>. The first value of
+ in <var>t</var> is <var>start</var> and the second value is <var>depth</var>.</p>
+    <li data-md>
+     <p>Remove the next <var>B</var> bits from the <var>treeData</var> bit string. The first removed bit is <i>v<sub>1</sub></i>,
+ the second is <i>v<sub>2</sub></i>, and so on until the last removed bit which is <i>v<sub>B</sub></i>. If prior to removal there
+ were less than <var>B</var> bits left in <var>treeData</var>, then <var>treeData</var> is malformed, return an error.</p>
+    <li data-md>
+     <p>If all bits <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i> are 0, then insert all integers in the interval
+[<var>start</var>, <var>start</var> + <var>B</var><sup><var>H</var> - <var>depth</var> + 1</sup>)
+into <var>S</var>. Go to step 5.</p>
+    <li data-md>
+     <p>For each <i>v<sub>i</sub></i> which is equal to 1 in <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i>:
+ If <var>depth</var> is equal to <var>H</var> add
+ integer <var>start</var> + <i>i</i> - 1 to <var>S</var>. Otherwise, insert the tuple
+ (<var>start</var> + (i - 1) * <var>B</var><sup><var>H</var> - <var>depth</var></sup>, <var>depth</var> + 1)
+ into <var>Q</var>.</p>
+    <li data-md>
+     <p>Go to step 5.</p>
+   </ol>
+   <p class="note" role="note"><span class="marker">Note:</span> when encoding sparse bit sets the encoder can use any of the possible branching factors, but it is recommended to
+use 4 as that has <a href="https://github.com/w3c/PFE-analysis/blob/main/results/set_encoding_branch_factor.md">been shown</a> to give the smallest encodings for most unicode codepoint sets typically encountered.</p>
+   <div class="example" id="example-eb491b43">
+    <a class="self-link" href="#example-eb491b43"></a> The set {2, 33, 323} in a tree with a branching factor of 8 can be encoded as the bit string: 
+<pre>bit string:
+|-- header --|- lvl 0 |---- level 1 ----|------- level 2 -----------|
+| B=8 H=3    |   n0   |   n1       n2   |   n3       n4       n5    |
+[ 01  11000 0 10000100 10001000 10000000 00100000 01000000 00010000 ]
+
+Which then becomes the byte string:
+[
+  0b00001110,
+  0b00100001,
+  0b00010001,
+  0b00000001,
+  0b00000100,
+  0b00000010,
+  0b00001000
+]
+</pre>
+   </div>
+   <div class="example" id="example-e803ad63">
+    <a class="self-link" href="#example-e803ad63"></a> The empty set in a tree with a branching factor of 2 is encoded as the bit string: 
+<pre>bit string:
+|-- header -- |
+| B=2 H=0     |
+[ 00  00000 0 ]
+
+Which then becomes the byte string:
+[
+  0b00000000,
+]
+</pre>
+   </div>
+   <div class="example" id="example-cc307778">
+    <a class="self-link" href="#example-cc307778"></a> The set {0, 1, 2, ..., 17} can be encoded with a branching factor of 4 as: 
+<pre>bit string:
+|-- header --| l0 |- lvl 1 -| l2  |
+| B=4 H=3    | n0 | n1 | n2 | n3  |
+[ 10  11000 0 1100 0000 1000 1100 ]
+
+byte string:
+[
+  0b00001101,
+  0b00000011,
+  0b00110001
+]
+</pre>
+   </div>
    <h2 class="heading settled" data-level="5" id="font-patch-formats"><span class="secno">5. </span><span class="content">Font Patch Formats</span><a class="self-link" href="#font-patch-formats"></a></h2>
-   <p>In incremental font transfer <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②">font subsets</a> are extended by applying patches. Due to the different
-capabilities required in different situations this specification defines three different patch formats that can be used.</p>
+   <p>In incremental font transfer <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②">font subsets</a> are extended by applying patches.
+This specification defines three patch formats, each appropriate to its own set of augmentation scenarios. A single
+encoding can make use of more than one patch format.</p>
    <h3 class="heading settled" data-level="5.1" id="font-patch-definitions"><span class="secno">5.1. </span><span class="content">Definitions</span><a class="self-link" href="#font-patch-definitions"></a></h3>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-patch">font patch</dfn> is a file which encodes changes to be made to an existing font file. Patches are used to extend
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-patch">font patch</dfn> is a file which encodes changes to be made to an IFT-encoded font. Patches are used to extend
 an existing <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③">font subset</a> and provide expanded coverage.</p>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-format">patch format</dfn> is a specified encoding used to encode changes to be applied to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a> into a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch">font patch</a>. Every <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format">patch format</a> has an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-application-algorithm">patch application algorithm</dfn> which takes a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> and a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch①">font patch</a> encoded in the <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format①">patch format</a> as input and outputs a new extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a>. Each <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm">patch application algorithm</a> can be categorized as either independent or dependent. Given a set of <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch②">font patches</a>, <code>P</code>, that are all valid to be applied to a specific <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font subset</a>, <code>F</code>:</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-format">patch format</dfn> is a specified encoding of changes to be applied relative to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a>. A set of
+changes encoded according to the format is a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch">font patch</a>. Each <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format">patch format</a> has an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-application-algorithm">patch application algorithm</dfn> which takes a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> and a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch①">font patch</a> encoded in the <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format①">patch format</a> as input and outputs an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a>. Each <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm">patch application algorithm</a> can be categorized as either independent or dependent. Given a set of <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch②">font patches</a>, <code>P</code>, that are all valid to be applied to a specific <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font subset</a>, <code>F</code>:</p>
    <ul>
     <li data-md>
      <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="dependent">dependent</dfn> patches are only valid to be applied to <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑧">font subset</a> <code>F</code>. Applying any patches from <code>P</code> to <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑨">font subset</a> <code>F</code> will change the subset and thus invalidate any remaining dependent patches
@@ -1608,6 +1761,7 @@ required too many patches.</p>
    <li><a href="#abstract-opdef-apply-glyph-keyed-patch">Apply glyph keyed patch</a><span>, in § 5.5.1</span>
    <li><a href="#abstract-opdef-apply-per-table-shared-brotli-patch">Apply per table shared brotli patch</a><span>, in § 5.4.1</span>
    <li><a href="#abstract-opdef-apply-shared-brotli-patch">Apply shared brotli patch</a><span>, in § 5.3.1</span>
+   <li><a href="#branch-factor-encoding">Branch Factor Encoding</a><span>, in § 4.1.2.1</span>
    <li>
     brotliStream
     <ul>
@@ -1616,6 +1770,7 @@ required too many patches.</p>
      <li><a href="#tablepatch-brotlistream">dfn for TablePatch</a><span>, in § 5.4</span>
     </ul>
    <li><a href="#abstract-opdef-check-entry-intersection">Check entry intersection</a><span>, in § 6</span>
+   <li><a href="#abstract-opdef-decoding-sparse-bit-set-treedata">Decoding sparse bit set treeData</a><span>, in § 4.1.2.1</span>
    <li><a href="#dependent">dependent</a><span>, in § 5.1</span>
    <li><a href="#format-1-patch-map-entrycount">entryCount</a><span>, in § 4.1.1</span>
    <li><a href="#glyph-map-entryindex">entryIndex</a><span>, in § 4.1.1</span>
@@ -1687,6 +1842,7 @@ required too many patches.</p>
    <li><a href="#per-table-shared-brotli-patch">Per table shared brotli patch</a><span>, in § 5.4</span>
    <li><a href="#format-1-patch-map-reserved">reserved</a><span>, in § 4.1.1</span>
    <li><a href="#shared-brotli-patch">Shared brotli patch</a><span>, in § 5.3</span>
+   <li><a href="#sparse-bit-set">Sparse Bit Set</a><span>, in § 4.1.2.1</span>
    <li><a href="#glyphpatches-tablecount">tableCount</a><span>, in § 5.5</span>
    <li><a href="#tablepatch">TablePatch</a><span>, in § 5.4</span>
    <li><a href="#glyphpatches-tables">tables</a><span>, in § 5.5</span>
