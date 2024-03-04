@@ -139,11 +139,11 @@ The IFT technology has four main pieces:
 At a high level an IFT font is used like this:
 
 1. The client downloads an initial font file, which contains some initial subset of data from the full version of the font along with
-   [[#font-format-extensions|embedded data]] describing the set of [[#font-patch-formats|patches]] which can be used to extend 
-   the font.
+    [[#font-format-extensions|embedded data]] describing the set of [[#font-patch-formats|patches]] which can be used to extend 
+    the font.
 
 2. Based on the content to be rendered, the client [[#extending-font-subset|selects, downloads, and applies]] patches to extend 
-   the font to cover additional characters. This step is repeated each time there is new content.
+    the font to cover additional characters. This step is repeated each time there is new content.
 
 Creating an Incremental Font {#making-incremental-fonts}
 --------------------------------------------------------
@@ -630,6 +630,162 @@ Coming soon.
 TODO:
 - how does this interact with woff2
 -->
+
+<h5 algorithm id="sparse-bit-set-decoding">Sparse Bit Set</h5>
+
+A sparse bit set is a data structure which compactly stores a set of distinct unsigned integers. The set is represented as a tree where
+each node has a fixed number of children that recursively sub-divides an interval into equal partitions. A tree of height <i>H</i> with
+branching factor <i>B</i> can store set membership for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree
+is encoded into an array of bytes for transport.
+
+<dfn>Sparse Bit Set</dfn> encoding:
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td>header</td>
+    <td>Bits 0 (least significant) and 1 encode the trees branch factor <i>B</i>. Bits 2 through 6 are a 5-bit unsigned integer which
+        encodes the value of <i>H</i>. Bit 7 is set to 0 and reserved for future use.
+    </td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td>treeData[variable]</td>
+    <td>Binary encoding of the tree.</td>
+  </tr>
+</table>
+
+The exact length of <var>treeData</var> is initially unknown, it's length is determined by executing the decoding algorithm. When using
+branch factors of 2 or 4 the last node may only partially consume the bits in a byte. In that case all remaining bits are unused and
+ignored.
+
+<dfn>Branch Factor Encoding</dfn>:
+<table>
+  <tr>
+    <th>Bit 1</th><th>Bit 0</th><th>Branch Factor (B)</th>
+  </tr>
+  <tr>
+    <td>0</td><td>0</td><td>2</td>
+  </tr>
+  <tr>
+    <td>0</td><td>1</td><td>4</td>
+  </tr>
+  <tr>
+    <td>1</td><td>0</td><td>8</td>
+  </tr>
+  <tr>
+    <td>1</td><td>1</td><td>32</td>
+  </tr>
+</table>
+
+<dfn abstract-op>Decoding sparse bit set treeData</dfn>
+
+The inputs to this algorithm are:
+
+* <var>H</var>: the tree height, <var>H</var>, from the header byte.
+
+* <var>B</var>: the branch factor, <var>B</var>, from the header byte.
+
+* <var>treeData</var>: array of bytes to be decoded.
+
+The algorithm outputs:
+
+* <var>S</var>: a set of unsigned integers.
+
+The algorithm, using a FIFO (first in first out) queue <var>Q</var>:
+
+1.  If <var>H</var> is equal to 0, then this is an empty set and no bytes of <var>treeData</var> are consumed. Return an empty set.
+
+2.  Insert the tuple (0, 1) into <var>Q</var>.
+
+3.  Initialize <var>S</var> to an empty set.
+
+4.  <var>treeData</var> is interpreted as a string of bits where the least significant bit of <var>treeData</var>[0] is the first bit in
+     the string, the most significant bit of <var>treeData</var>[0] is the 8th bit, and so on.
+
+5.  If <var>Q</var> is empty return <var>S</var>.
+
+6.  Extract the next tuple <var>t</var> from <var>Q</var>. The first value of
+     in <var>t</var> is <var>start</var> and the second value is <var>depth</var>.
+
+7.  Remove the next <var>B</var> bits from the <var>treeData</var> bit string. The first removed bit is <i>v<sub>1</sub></i>,
+     the second is <i>v<sub>2</sub></i>, and so on until the last removed bit which is <i>v<sub>B</sub></i>. If prior to removal there
+     were less than <var>B</var> bits left in <var>treeData</var>, then <var>treeData</var> is malformed, return an error.
+
+8.  If all bits <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i> are 0, then insert all integers in the interval
+    [<var>start</var>, <var>start</var> + <var>B</var><sup><var>H</var> - <var>depth</var> + 1</sup>)
+    into <var>S</var>. Go to step 5.
+
+9.  For each <i>v<sub>i</sub></i> which is equal to 1 in <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i>:
+     If <var>depth</var> is equal to <var>H</var> add
+     integer <var>start</var> + <i>i</i> - 1 to <var>S</var>. Otherwise, insert the tuple
+     (<var>start</var> + (i - 1) * <var>B</var><sup><var>H</var> - <var>depth</var></sup>, <var>depth</var> + 1)
+     into <var>Q</var>.
+
+10.  Go to step 5.
+
+Note: when encoding sparse bit sets the encoder can use any of the possible branching factors, but it is recommended to
+use 4 as that has <a href="https://github.com/w3c/PFE-analysis/blob/main/results/set_encoding_branch_factor.md">been shown</a>
+to give the smallest encodings for most unicode codepoint sets typically encountered.
+
+
+<div class=example>
+  The set {2, 33, 323} in a tree with a branching factor of 8 can be encoded as the bit string:
+
+  ```
+  bit string:
+  |-- header --|- lvl 0 |---- level 1 ----|------- level 2 -----------|
+  | B=8 H=3    |   n0   |   n1       n2   |   n3       n4       n5    |
+  [ 01  11000 0 10000100 10001000 10000000 00100000 01000000 00010000 ]
+
+  Which then becomes the byte string:
+  [
+    0b00001110,
+    0b00100001,
+    0b00010001,
+    0b00000001,
+    0b00000100,
+    0b00000010,
+    0b00001000
+  ]
+  ```
+</div>
+
+<div class=example>
+  The empty set in a tree with a branching factor of 2 is encoded as the bit string:
+
+  ```
+  bit string:
+  |-- header -- |
+  | B=2 H=0     |
+  [ 00  00000 0 ]
+
+  Which then becomes the byte string:
+  [
+    0b00000000,
+  ]
+  ```
+</div>
+
+<div class=example>
+  The set {0, 1, 2, ..., 17} can be encoded with a branching factor of 4 as:
+
+  ```
+  bit string:
+  |-- header --| l0 |- lvl 1 -| l2  |
+  | B=4 H=3    | n0 | n1 | n2 | n3  |
+  [ 10  11000 0 1100 0000 1000 1100 ]
+
+  byte string:
+  [
+    0b00001101,
+    0b00000011,
+    0b00110001
+  ]
+  ```
+</div>
 
 Font Patch Formats {#font-patch-formats}
 ========================================
