@@ -361,6 +361,9 @@ Note: allowing the mapping to be split between two distinct tables allows an inc
 patch types. For example all patches of one type can be specified in the 'IFT ' table, and all patches of a second type in the
 'IFTX' table. Those patches can make updates only to one of the mapping tables and avoid making conflicting updates.
 
+<!-- TODO add algorithm explaining how to union the two tables -->
+<!-- TODO: how does this interact with woff2 -->
+
 
 Patch Map Table {#patch-map}
 ----------------------------
@@ -442,7 +445,7 @@ encoded in one of two formats:
     <td>uint8</td>
     <td><dfn for="Format 1 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
     <td>
-      A [[!UTF-8]] encoded string. Contains a template (TODO) which is used to produce URIs associated with each entry.
+      A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URIs associated with each entry.
     </td>
   </tr>
   <tr>
@@ -623,13 +626,208 @@ The algorithm:
 
 ### Patch Map Table: Format 2 ### {#patch-map-format-2}
 
-<!-- TODO add algorithm explaining how to union the two tables -->
-Coming soon.
+<!-- TODO: summary of this format -->
+<!-- TODO: provide normative validation requirements for each encoding -->
+<!-- TODO: clean up unreferenced definitions -->
 
-<!-- 
-TODO:
-- how does this interact with woff2
--->
+<dfn>Format 2 Patch Map</dfn> encoding:
+
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Format 2 Patch Map">format</dfn></td>
+    <td>Set to 2, identifies this as format 2.</td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Format 2 Patch Map">reserved</dfn></td>
+    <td>Not used, set to 0.</td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Format 2 Patch Map">id</dfn>[4]</td>
+    <td>Unique ID used to identify patches that are compatible with this font.</td>
+  </tr>
+  <tr>
+    <td>uint8</td> <!-- TODO: uint32 to match format 1? -->
+    <td><dfn for="Format 2 Patch Map">defaultPatchEncoding</dfn></td>
+    <td>
+      Specifies the format of the patches linked to by uriTemplate. Using the ID number from the [[#font-patch-formats-summary]] table.
+    </td>
+  </tr>
+  <tr>
+    <td>uint16</td> <!-- TODO: uint32 to match format 1? -->
+    <td><dfn for="Format 2 Patch Map">entryCount</dfn></td>
+    <td>Number of entries encoded in this table.</td>
+  </tr>
+  <tr>
+    <td>Offset32</td>
+    <td><dfn for="Format 2 Patch Map">entries</dfn></td>
+    <td>Offset to a [=Mapping Entries=] sub table. Offset is from the start of this table.</td>
+  </tr>
+  <tr>
+    <td>uint16</td>
+    <td><dfn for="Format 2 Patch Map">uriTemplateLength</dfn></td>
+    <td>
+      Length of the uriTemplate string.
+    </td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Format 2 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
+    <td>
+      A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URIs associated with each entry.
+    </td>
+  </tr>
+</table>
+
+<dfn>Mapping Entries</dfn> encoding:
+
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>[=Mapping Entry=]</td>
+    <td><dfn for="Mapping Entries">entries</dfn>&lsqb;[=Format 2 Patch Map/entryCount=]&rsqb;</td>
+    <td>List of entries. Each entry has a variable length.</td>
+  </tr>
+</table>
+
+<dfn>Mapping Entry</dfn> encoding:
+
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entry">format</dfn></td>
+    <td>
+      A bit field. Bit 0 (least significant bit) through bit 5 indicate presence of optional fields. If bit 6 is set this entry is ignored.
+      Bit 7 is reserved for future use and set to 0.
+    </td>
+  </tr>
+
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entry">featureCount</dfn></td>
+    <td>
+      Number of feature tags in the featureTags list. Only present if [=Mapping Entry/format=] bit 0 is set.
+    </td>
+  </tr>
+  <tr>
+    <td>Tag</td>
+    <td><dfn for="Mapping Entry">featureTags</dfn>[featureCount]</td>
+    <td>
+      Array of [[open-type/featuretags|feature tags]]. Only present if [=Mapping Entry/format=] bit 0 is set.
+    </td>
+  </tr>
+
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entry">designSpaceCount</dfn></td>
+    <td>
+      Number of elements in the design space list. Only present if [=Mapping Entry/format=] bit 0 is set.
+    </td>
+  </tr>
+  <tr>
+    <td>[=Design Space Segment=]</td>
+    <td><dfn for="Mapping Entry">designSpaceSegments</dfn>[designSpaceCount]</td>
+    <td>
+      Array of [=Design Space Segment=]'s. Only present if [=Mapping Entry/format=] bit 0 is set.
+    </td>
+  </tr>
+
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entry">copyCount</dfn></td>
+    <td>
+      Number of entries in the copyIndices list. Only present if [=Mapping Entry/format=] bit 1 is set.
+    </td>
+  </tr>
+  <tr>
+    <td>uint16</td>
+    <td><dfn for="Mapping Entry">copyIndices</dfn>[copyCount]</td>
+    <td>
+      Array of indices from the [=Mapping Entries/entries=] array which should be copied into this mapping. All values must be less than
+      the index of this [=Mapping Entry=]. Only present if [=Mapping Entry/format=] bit 1 is set.
+    </td>
+  </tr>
+
+  <tr>
+    <td>int16</td>
+    <td><dfn for="Mapping Entry">entryIndexDelta</dfn></td>
+    <td>
+      Delta which is added to the entry index of the previous [=Mapping Entry=] to produce the entry index for this entry.
+      Only present if [=Mapping Entry/format=] bit 2 is set.
+    </td>
+  </tr>
+
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entry">patchEncoding</dfn></td>
+    <td>
+      Specifies the format of the patch linked to by this entry. Using the ID number from the [[#font-patch-formats-summary]] table.
+      Overrides [=Format 2 Patch Map/defaultPatchEncoding=].
+      Only present if [=Mapping Entry/format=] bit 3 is set.
+    </td>
+  </tr>
+
+
+  <tr>
+    <td>uint16/uint24</td>
+    <td><dfn for="Mapping Entry">bias</dfn></td>
+    <td>
+      Bias value which is added to all codepoint values encoded in the codepoints set.
+      If format bit 4 is 0 and bit 5 is 1, then this is present and a uint16.
+      If format bit 4 is 1 and bit 5 is 1, then this is present and a uint24.
+      Otherwise it is not present.
+    </td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entry">codepoints</dfn>[variable]</td>
+    <td>
+      Set of codepoints for this mapping. Encoded as a [[#sparse-bit-set-decoding]]. 
+      Only present if [=Mapping Entry/format=] bit 4 and/or 5 is set.
+    </td>
+  </tr>
+</table>
+
+<dfn>Design Space Segment</dfn> encoding:
+
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>Tag</td>
+    <td><dfn for="Design Space Segment">tag</dfn></td>
+    <td>
+      Axis tag value.
+    </td>
+  </tr>
+
+  <tr>
+    <td>Fixed</td>
+    <td><dfn for="Design Space Segment">start</dfn></td>
+    <td>
+      Start (inclusive) of the segment.
+    </td>
+  </tr>
+
+  <tr>
+    <td>Fixed</td>
+    <td><dfn for="Design Space Segment">end</dfn></td>
+    <td>
+      End (inclusive) of the segment. Must be greater than or equal to start.
+    </td>
+  </tr>
+</table>
 
 <h5 algorithm id="sparse-bit-set-decoding">Sparse Bit Set</h5>
 
