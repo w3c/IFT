@@ -760,9 +760,9 @@ The algorithm:
 
   <tr>
     <td>int16</td>
-    <td><dfn for="Mapping Entry">entryIndexDelta</dfn></td>
+    <td><dfn for="Mapping Entry">entryIdDelta</dfn></td>
     <td>
-      Delta which is added to the entry index of the previous [=Mapping Entry=] to produce the entry index for this entry.
+      Delta which is added to the entry id of the previous [=Mapping Entry=] to produce the entry id for this entry.
       Only present if [=Mapping Entry/format=] bit 2 is set.
     </td>
   </tr>
@@ -828,6 +828,114 @@ The algorithm:
     </td>
   </tr>
 </table>
+
+<h5 algorithm id="interpreting-patch-map-format-2">Interpreting Format 2</h5>
+
+This algorithm is used to convert a format 2 patch map into a list of [=patch map entries=].
+
+
+<dfn abstract-op>Interpret Format 2 Patch Map</dfn>
+
+The inputs to this algorithm are:
+
+* <var>patch map</var>: a [[#patch-map-format-2]] encoded patch map.
+
+The algorithm outputs:
+
+* <var>entry list</var>: a list of [=patch map entries=].
+
+The algorithm:
+
+1.  Check that the <var>patch map</var> is valid according to the requirements in [[#patch-map-format-2]]. If it is not return an error.
+
+2.  Initialize <var>last entry id</var> to 0, and <var>current byte</var> to 0.
+
+3.  Invoke [$Interpret Format 2 Patch Map Entry$], [=Format 2 Patch Map/entryCount=] times. For each invocation:
+
+     *  pass in the bytes from <var>patch map</var> starting from index ([=Format 2 Patch Map/entries=] + <var>current byte</var>) to
+         the end of <var>patch map</var>,
+         <var>last entry id</var>,
+         [=Format 2 Patch Map/defaultPatchEncoding=], and
+         [=Format 2 Patch Map/uriTemplate=].
+
+     *  Add the returned entry to <var>entry list</var>.
+
+     *  Set <var>last entry id</var> to the returned entry id.
+
+     *  Add the returned consumed byte count to <var>current byte</var>.
+     <!-- TODO handle the ignore bit -->
+
+4.  Return <var>entry list</var>.
+
+<dfn abstract-op>Interpret Format 2 Patch Map Entry</dfn>
+
+The inputs to this algorithm are:
+
+* <var>entry bytes</var>: a byte array that contains an encoded [=Mapping Entry=].
+
+* <var>last entry id</var>: the entry id of the entry preceding this one.
+
+* <var>default patch encoding</var>: the default patch encoding if one isn't specified.
+
+* <var>uri template</var>: the URI template used to locate patches.
+
+The algorithm outputs:
+
+* <var>entry id</var>: the numeric id of this entry.
+
+* <var>entry</var>: a single [=patch map entries|entry=].
+
+* <var>consumed bytes</var>: the number of bytes used to encode the entry.
+
+The algorithm:
+
+1.  For the all steps whenever data is loaded from <var>entry bytes</var> increment <var>consumed bytes</var> with the
+     number of bytes read.
+
+2.  Set <var>entry id</var> = <var>last entry id</var> + 1.
+
+3.  Set the patch encoding of <var>entry</var> to <var>default patch encoding</var>.
+
+4.  Read [=Mapping Entry/format=] from <var>entry bytes</var>.
+
+5.  If [=Mapping Entry/format=] bit 0 is set, then the feature tag and design space lists are present:
+
+    *  Read the feature tag list specified by [=Mapping Entry/featureCount=] and [=Mapping Entry/featureTags=] from <var>entry bytes</var>
+        and add the loaded tags to <var>entry</var>.
+
+    *  Read the design space segment list specified by [=Mapping Entry/designSpaceCount=] and [=Mapping Entry/designSpaceSegments=]
+        from <var>entry bytes</var> and add the design space segments to <var>entry</var>.
+
+6.  If [=Mapping Entry/format=] bit 1 is set, then the copy indices list is present:
+
+    *  Read the copy indices list specified by [=Mapping Entry/copyCount=] and [=Mapping Entry/copyIndices=] from <var>entry bytes</var>.
+
+    *  The copy indices refer to previously loaded entries. 0 is the first [=Mapping Entry=] in [=Mapping Entries/entries=], 1 the second
+         and so on. For each index in [=Mapping Entry/copyIndices=] locate the previously loaded entry with a matching index and
+         add all code points, feature tags, and design space segments from it to <var>entry</var>.
+
+7.  If [=Mapping Entry/format=] bit 2 is set, then an id delta is present. Read the id delta specified by [=Mapping Entry/entryIdDelta=]
+     from <var>entry bytes</var> and add the delta to <var>entry id</var>.
+
+8.  If [=Mapping Entry/format=] bit 3 is set, then a patch encoding is present. Read the encoding specified by
+     [=Mapping Entry/patchEncoding=] from <var>entry bytes</var> and set the patch encoding of <var>entry</var> to the read value.
+
+9.  If one or both of [=Mapping Entry/format=] bit 4 and bit 5 are set, then a codepoint list is present:
+
+    *  If [=Mapping Entry/format=] bit 4 is 0 and bit 5 is 1, then read the 2 byte (uint16) [=Mapping Entry/bias=] value
+        from <var>entry bytes</var>.
+
+    *  If [=Mapping Entry/format=] bit 4 is 1 and bit 5 is 1, then read the 3 byte (uint24) [=Mapping Entry/bias=] value
+        from <var>entry bytes</var>.
+
+    *  Otherwise the bias is 0.
+
+    *  Read the sparse bit set [=Mapping Entry/codepoints=] from <var>entry bytes</var> following [[#sparse-bit-set-decoding]]. For each
+        codepoint add the bias value to it and then add the result to the codepoint set in <var>entry</var>.
+
+10. TODO apply URI template.
+
+11. Return <var>entry id</var>, <var>entry</var>, and <var>consumed bytes</var>.
 
 <h5 algorithm id="sparse-bit-set-decoding">Sparse Bit Set</h5>
 
