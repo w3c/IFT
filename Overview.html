@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="761cdb0b3f1a196e3e45baf0058e47c9e341f2e0" name="document-revision">
+  <meta content="0e69829c29eada0bf85089b1b6aa16f6f49d4f43" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1072,7 +1072,7 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-defaultpatchencoding">defaultPatchEncoding</dfn>
-      <td> Specifies the format of the patches linked to by uriTemplate. Using the ID number from the <a href="#font-patch-formats-summary">§ 5.2 Formats Summary</a> table. 
+      <td> Specifies the format of the patches linked to by uriTemplate (unless overridden by an entry). Uses the ID numbers from the <a href="#font-patch-formats-summary">§ 5.2 Formats Summary</a> table. 
      <tr>
       <td>uint16
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-entrycount">entryCount</dfn>
@@ -1100,7 +1100,7 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
      <tr>
       <td><a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry">Mapping Entry</a>
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entries" data-dfn-type="dfn" data-noexport id="mapping-entries-entries">entries</dfn>[<a data-link-type="dfn" href="#format-2-patch-map-entrycount" id="ref-for-format-2-patch-map-entrycount">entryCount</a>]
-      <td>List of entries. Each entry has a variable length.
+      <td>List of entries. Each entry has a variable length, which is determined following <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map-entry" id="ref-for-abstract-opdef-interpret-format-2-patch-map-entry">Interpret Format 2 Patch Map Entry</a>.
    </table>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="mapping-entry">Mapping Entry</dfn> encoding:</p>
    <table>
@@ -1112,8 +1112,8 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-format">format</dfn>
-      <td> A bit field. Bit 0 (least significant bit) through bit 5 indicate presence of optional fields. If bit 6 is set this entry is ignored.
-      Bit 7 is reserved for future use and set to 0. 
+      <td> A bit field. Bit 0 (least significant bit) through bit 5 indicate the presence of optional fields. If bit 6 is set this entry is
+      ignored. Bit 7 is reserved for future use and set to 0. 
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-featurecount">featureCount</dfn>
@@ -1121,7 +1121,7 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
      <tr>
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-featuretags">featureTags</dfn>[featureCount]
-      <td> Array of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tags</a>. Only present if <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format①">format</a> bit 0 is set. 
+      <td> List of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tags</a> in the entry’s <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition③">font subset definition</a>. Only present if <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format①">format</a> bit 0 is set. 
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-designspacecount">designSpaceCount</dfn>
@@ -1129,7 +1129,7 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
      <tr>
       <td><a data-link-type="dfn" href="#design-space-segment" id="ref-for-design-space-segment">Design Space Segment</a>
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-designspacesegments">designSpaceSegments</dfn>[designSpaceCount]
-      <td> Array of <a data-link-type="dfn" href="#design-space-segment" id="ref-for-design-space-segment①">Design Space Segment</a>'s. Only present if <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format③">format</a> bit 0 is set. 
+      <td> List of design space segments in the entry’s <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition④">font subset definition</a>. Only present if <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format③">format</a> bit 0 is set. 
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-copycount">copyCount</dfn>
@@ -1137,23 +1137,23 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
      <tr>
       <td>uint16
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-copyindices">copyIndices</dfn>[copyCount]
-      <td> Array of indices from the <a data-link-type="dfn" href="#mapping-entries-entries" id="ref-for-mapping-entries-entries">entries</a> array which should be copied into this mapping. All values must be less than
-      the index of this <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry①">Mapping Entry</a>. Only present if <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format⑤">format</a> bit 1 is set. 
+      <td> List of indices from the <a data-link-type="dfn" href="#mapping-entries-entries" id="ref-for-mapping-entries-entries">entries</a> array whose <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑤">font subset definition</a> should be copied into this entry. All
+      values must be less than the index of this <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry①">Mapping Entry</a> in <a data-link-type="dfn" href="#mapping-entries-entries" id="ref-for-mapping-entries-entries①">entries</a>. Only present if <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format⑤">format</a> bit 1 is set. 
      <tr>
       <td>int16
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-entryiddelta">entryIdDelta</dfn>
-      <td> Delta which is added to the entry id of the previous <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry②">Mapping Entry</a> to produce the entry id for this entry.
+      <td> Signed delta which is added to the entry id of the previous <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry②">Mapping Entry</a> to produce the id for this entry.
       Only present if <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format⑥">format</a> bit 2 is set. 
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-patchencoding">patchEncoding</dfn>
-      <td> Specifies the format of the patch linked to by this entry. Using the ID number from the <a href="#font-patch-formats-summary">§ 5.2 Formats Summary</a> table.
+      <td> Specifies the format of the patch linked to by this entry. Uses the ID numbers from the <a href="#font-patch-formats-summary">§ 5.2 Formats Summary</a> table.
       Overrides <a data-link-type="dfn" href="#format-2-patch-map-defaultpatchencoding" id="ref-for-format-2-patch-map-defaultpatchencoding">defaultPatchEncoding</a>.
       Only present if <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format⑦">format</a> bit 3 is set. 
      <tr>
       <td>uint16/uint24
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-bias">bias</dfn>
-      <td> Bias value which is added to all codepoint values encoded in the codepoints set.
+      <td> Bias value which is added to all codepoint values in the codepoints set.
       If format bit 4 is 0 and bit 5 is 1, then this is present and a uint16.
       If format bit 4 is 1 and bit 5 is 1, then this is present and a uint24.
       Otherwise it is not present. 
@@ -1161,7 +1161,8 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-codepoints">codepoints</dfn>[variable]
       <td> Set of codepoints for this mapping. Encoded as a <a href="#sparse-bit-set-decoding">§ 4.1.2.2 Sparse Bit Set</a>. 
-      Only present if <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format⑧">format</a> bit 4 and/or 5 is set. 
+      Only present if <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format⑧">format</a> bit 4 and/or 5 is set. The length is
+      determined by following the decoding procedures in <a href="#sparse-bit-set-decoding">§ 4.1.2.2 Sparse Bit Set</a>. 
    </table>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="design-space-segment">Design Space Segment</dfn> encoding:</p>
    <table>
@@ -1203,17 +1204,17 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
     <li data-md>
      <p>Initialize <var>last entry id</var> to 0, and <var>current byte</var> to 0.</p>
     <li data-md>
-     <p>Invoke <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map-entry" id="ref-for-abstract-opdef-interpret-format-2-patch-map-entry">Interpret Format 2 Patch Map Entry</a>, <a data-link-type="dfn" href="#format-2-patch-map-entrycount" id="ref-for-format-2-patch-map-entrycount①">entryCount</a> times. For each invocation:</p>
+     <p>Invoke <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map-entry" id="ref-for-abstract-opdef-interpret-format-2-patch-map-entry①">Interpret Format 2 Patch Map Entry</a>, <a data-link-type="dfn" href="#format-2-patch-map-entrycount" id="ref-for-format-2-patch-map-entrycount①">entryCount</a> times. For each invocation:</p>
      <ul>
       <li data-md>
        <p>pass in the bytes from <var>patch map</var> starting from index (<a data-link-type="dfn" href="#format-2-patch-map-entries" id="ref-for-format-2-patch-map-entries">entries</a> + <var>current byte</var>) to
  the end of <var>patch map</var>, <var>last entry id</var>, <a data-link-type="dfn" href="#format-2-patch-map-defaultpatchencoding" id="ref-for-format-2-patch-map-defaultpatchencoding①">defaultPatchEncoding</a>, and <a data-link-type="dfn" href="#format-2-patch-map-uritemplate" id="ref-for-format-2-patch-map-uritemplate">uriTemplate</a>.</p>
       <li data-md>
-       <p>Add the returned entry to <var>entry list</var>.</p>
-      <li data-md>
        <p>Set <var>last entry id</var> to the returned entry id.</p>
       <li data-md>
        <p>Add the returned consumed byte count to <var>current byte</var>.</p>
+      <li data-md>
+       <p>If the returned value of ignored is false, then add the returned entry to <var>entry list</var>.</p>
      </ul>
     <li data-md>
      <p>Return <var>entry list</var>.</p>
@@ -1238,6 +1239,8 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
      <p><var>entry</var>: a single <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑥">entry</a>.</p>
     <li data-md>
      <p><var>consumed bytes</var>: the number of bytes used to encode the entry.</p>
+    <li data-md>
+     <p><var>ignored</var>: if true, then this entry should be ignored.</p>
    </ul>
    <p>The algorithm:</p>
    <ol>
@@ -1264,12 +1267,13 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
       <li data-md>
        <p>Read the copy indices list specified by <a data-link-type="dfn" href="#mapping-entry-copycount" id="ref-for-mapping-entry-copycount">copyCount</a> and <a data-link-type="dfn" href="#mapping-entry-copyindices" id="ref-for-mapping-entry-copyindices">copyIndices</a> from <var>entry bytes</var>.</p>
       <li data-md>
-       <p>The copy indices refer to previously loaded entries. 0 is the first <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry④">Mapping Entry</a> in <a data-link-type="dfn" href="#mapping-entries-entries" id="ref-for-mapping-entries-entries①">entries</a>, 1 the second
+       <p>The copy indices refer to previously loaded entries. 0 is the first <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry④">Mapping Entry</a> in <a data-link-type="dfn" href="#mapping-entries-entries" id="ref-for-mapping-entries-entries②">entries</a>, 1 the second
  and so on. For each index in <a data-link-type="dfn" href="#mapping-entry-copyindices" id="ref-for-mapping-entry-copyindices①">copyIndices</a> locate the previously loaded entry with a matching index and
  add all code points, feature tags, and design space segments from it to <var>entry</var>.</p>
      </ul>
     <li data-md>
-     <p>If <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format①②">format</a> bit 2 is set, then an id delta is present. Read the id delta specified by <a data-link-type="dfn" href="#mapping-entry-entryiddelta" id="ref-for-mapping-entry-entryiddelta">entryIdDelta</a> from <var>entry bytes</var> and add the delta to <var>entry id</var>.</p>
+     <p>If <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format①②">format</a> bit 2 is set, then an id delta is present. Read the id delta specified by <a data-link-type="dfn" href="#mapping-entry-entryiddelta" id="ref-for-mapping-entry-entryiddelta">entryIdDelta</a> from <var>entry bytes</var> and add the delta to <var>entry id</var>. If <var>entry id</var> is negative this is an error
+ and the mapping is malformed.</p>
     <li data-md>
      <p>If <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format①③">format</a> bit 3 is set, then a patch encoding is present. Read the encoding specified by <a data-link-type="dfn" href="#mapping-entry-patchencoding" id="ref-for-mapping-entry-patchencoding">patchEncoding</a> from <var>entry bytes</var> and set the patch encoding of <var>entry</var> to the read value.</p>
     <li data-md>
@@ -1288,9 +1292,11 @@ from <var>entry bytes</var>.</p>
 codepoint add the bias value to it and then add the result to the codepoint set in <var>entry</var>.</p>
      </ul>
     <li data-md>
-     <p>TODO apply URI template.</p>
+     <p>If <a data-link-type="dfn" href="#mapping-entry-format" id="ref-for-mapping-entry-format①⑦">format</a> bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.</p>
     <li data-md>
-     <p>Return <var>entry id</var>, <var>entry</var>, and <var>consumed bytes</var>.</p>
+     <p>Convert <var>entry id</var> into a URI by applying <var>uri template</var> following <a href="#uri-templates">§ 3.3 URI Templates</a>. Set the patch uri of <var>entry</var> to the generated URI.</p>
+    <li data-md>
+     <p>Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, and <var>ignored</var>.</p>
    </ol>
    <h5 class="heading settled algorithm" data-algorithm="Sparse Bit Set" data-level="4.1.2.2" id="sparse-bit-set-decoding"><span class="secno">4.1.2.2. </span><span class="content">Sparse Bit Set</span><a class="self-link" href="#sparse-bit-set-decoding"></a></h5>
    <p>A sparse bit set is a data structure which compactly stores a set of distinct unsigned integers. The set is represented as a tree where
@@ -1763,7 +1769,7 @@ codepoints, layout features and/or design space.</p>
     <li data-md>
      <p><var>font subset</var>: an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①">incremental</a> <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⑧">font subset</a>.</p>
     <li data-md>
-     <p><var>target subset definition</var>: the <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition③">font subset definition</a> that the client wants to extend <var>font subset</var> to cover.</p>
+     <p><var>target subset definition</var>: the <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑥">font subset definition</a> that the client wants to extend <var>font subset</var> to cover.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -1803,7 +1809,7 @@ the implementation.</p>
     <li data-md>
      <p><var>mapping entry</var>: a <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑧">patch map entry</a>.</p>
     <li data-md>
-     <p><var>subset definition</var>: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition④">font subset definition</a>.</p>
+     <p><var>subset definition</var>: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑦">font subset definition</a>.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -1880,7 +1886,7 @@ The <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-fon
     <li data-md>
      <p>Must meet all of the requirements in <a href="#font-format-extensions">§ 4 Extensions to the Font Format</a> and <a href="#font-patch-formats">§ 5 Font Patch Formats</a>.</p>
     <li data-md>
-     <p>Must be consistent, that is: for any possible <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑤">font subset definition</a> the result of invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset①">Extend a Font Subset</a> with that subset definition and the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑦">incremental font</a> must always be the same regardless of the particular order
+     <p>Must be consistent, that is: for any possible <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑧">font subset definition</a> the result of invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset①">Extend a Font Subset</a> with that subset definition and the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑦">incremental font</a> must always be the same regardless of the particular order
 of dependent patch selection chosen in step 6 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset②">Extend a Font Subset</a>.</p>
     <li data-md>
      <p>Should preserve the functionality of the fully expanded font, that is:
@@ -2336,7 +2342,7 @@ required too many patches.</p>
 <script>/* Boilerplate: script-dfn-panel-json */
 window.dfnpanelData = {};
 window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3.1. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "4.1.1.1. Interpreting Format 1"}, {"refs": [{"id": "ref-for-font-subset\u2461"}], "title": "5. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}, {"id": "ref-for-font-subset\u2460\u2460"}], "title": "5.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2461"}, {"id": "ref-for-font-subset\u2460\u2462"}], "title": "5.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}], "title": "5.3. Shared Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}, {"id": "ref-for-font-subset\u2460\u2466"}], "title": "5.3.1. Applying Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2467"}, {"id": "ref-for-font-subset\u2460\u2468"}], "title": "5.4. Per Table Shared Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}, {"id": "ref-for-font-subset\u2461\u2461"}], "title": "5.4.1. Applying Per Table Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2462"}], "title": "5.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2463"}, {"id": "ref-for-font-subset\u2461\u2464"}, {"id": "ref-for-font-subset\u2461\u2465"}], "title": "5.5.1. Applying Glyph Keyed Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2466"}, {"id": "ref-for-font-subset\u2461\u2467"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2468"}], "title": "6.1. Fully Expanding a Font"}, {"refs": [{"id": "ref-for-font-subset\u2462\u24ea"}], "title": "7. Encoder"}], "external": false};
-window.dfnpanelData['font-subset-definition'] = {"dfnID": "font-subset-definition", "url": "#font-subset-definition", "dfnText": "font subset definition", "refSections": [{"refs": [{"id": "ref-for-font-subset-definition"}], "title": "4. Extensions to the Font Format"}, {"refs": [{"id": "ref-for-font-subset-definition\u2460"}, {"id": "ref-for-font-subset-definition\u2461"}], "title": "4.1. Patch Map Table"}, {"refs": [{"id": "ref-for-font-subset-definition\u2462"}, {"id": "ref-for-font-subset-definition\u2463"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-font-subset-definition\u2464"}], "title": "7. Encoder"}], "external": false};
+window.dfnpanelData['font-subset-definition'] = {"dfnID": "font-subset-definition", "url": "#font-subset-definition", "dfnText": "font subset definition", "refSections": [{"refs": [{"id": "ref-for-font-subset-definition"}], "title": "4. Extensions to the Font Format"}, {"refs": [{"id": "ref-for-font-subset-definition\u2460"}, {"id": "ref-for-font-subset-definition\u2461"}], "title": "4.1. Patch Map Table"}, {"refs": [{"id": "ref-for-font-subset-definition\u2462"}, {"id": "ref-for-font-subset-definition\u2463"}, {"id": "ref-for-font-subset-definition\u2464"}], "title": "4.1.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-font-subset-definition\u2465"}, {"id": "ref-for-font-subset-definition\u2466"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-font-subset-definition\u2467"}], "title": "7. Encoder"}], "external": false};
 window.dfnpanelData['incremental-font'] = {"dfnID": "incremental-font", "url": "#incremental-font", "dfnText": "incremental font", "refSections": [{"refs": [{"id": "ref-for-incremental-font"}, {"id": "ref-for-incremental-font\u2460"}, {"id": "ref-for-incremental-font\u2461"}, {"id": "ref-for-incremental-font\u2462"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-incremental-font\u2463"}], "title": "6.1. Fully Expanding a Font"}, {"refs": [{"id": "ref-for-incremental-font\u2464"}, {"id": "ref-for-incremental-font\u2465"}, {"id": "ref-for-incremental-font\u2466"}, {"id": "ref-for-incremental-font\u2467"}, {"id": "ref-for-incremental-font\u2468"}, {"id": "ref-for-incremental-font\u2460\u24ea"}, {"id": "ref-for-incremental-font\u2460\u2460"}], "title": "7. Encoder"}], "external": false};
 window.dfnpanelData['patch-map-entries'] = {"dfnID": "patch-map-entries", "url": "#patch-map-entries", "dfnText": "patch map entries", "refSections": [{"refs": [{"id": "ref-for-patch-map-entries"}, {"id": "ref-for-patch-map-entries\u2460"}, {"id": "ref-for-patch-map-entries\u2461"}, {"id": "ref-for-patch-map-entries\u2462"}], "title": "4.1.1.1. Interpreting Format 1"}, {"refs": [{"id": "ref-for-patch-map-entries\u2463"}, {"id": "ref-for-patch-map-entries\u2464"}, {"id": "ref-for-patch-map-entries\u2465"}], "title": "4.1.2.1. Interpreting Format 2"}, {"refs": [{"id": "ref-for-patch-map-entries\u2466"}, {"id": "ref-for-patch-map-entries\u2467"}], "title": "6. Extending a Font Subset"}], "external": false};
 window.dfnpanelData['format-1-patch-map-entrycount'] = {"dfnID": "format-1-patch-map-entrycount", "url": "#format-1-patch-map-entrycount", "dfnText": "entryCount", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-entrycount"}, {"id": "ref-for-format-1-patch-map-entrycount\u2460"}, {"id": "ref-for-format-1-patch-map-entrycount\u2461"}, {"id": "ref-for-format-1-patch-map-entrycount\u2462"}, {"id": "ref-for-format-1-patch-map-entrycount\u2463"}], "title": "4.1.1. Patch Map Table: Format 1"}], "external": false};
@@ -2360,9 +2366,9 @@ window.dfnpanelData['format-2-patch-map-entrycount'] = {"dfnID": "format-2-patch
 window.dfnpanelData['format-2-patch-map-entries'] = {"dfnID": "format-2-patch-map-entries", "url": "#format-2-patch-map-entries", "dfnText": "entries", "refSections": [{"refs": [{"id": "ref-for-format-2-patch-map-entries"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['format-2-patch-map-uritemplate'] = {"dfnID": "format-2-patch-map-uritemplate", "url": "#format-2-patch-map-uritemplate", "dfnText": "uriTemplate", "refSections": [{"refs": [{"id": "ref-for-format-2-patch-map-uritemplate"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['mapping-entries'] = {"dfnID": "mapping-entries", "url": "#mapping-entries", "dfnText": "Mapping Entries", "refSections": [{"refs": [{"id": "ref-for-mapping-entries"}], "title": "4.1.2. Patch Map Table: Format 2"}], "external": false};
-window.dfnpanelData['mapping-entries-entries'] = {"dfnID": "mapping-entries-entries", "url": "#mapping-entries-entries", "dfnText": "entries", "refSections": [{"refs": [{"id": "ref-for-mapping-entries-entries"}], "title": "4.1.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-mapping-entries-entries\u2460"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
+window.dfnpanelData['mapping-entries-entries'] = {"dfnID": "mapping-entries-entries", "url": "#mapping-entries-entries", "dfnText": "entries", "refSections": [{"refs": [{"id": "ref-for-mapping-entries-entries"}, {"id": "ref-for-mapping-entries-entries\u2460"}], "title": "4.1.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-mapping-entries-entries\u2461"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['mapping-entry'] = {"dfnID": "mapping-entry", "url": "#mapping-entry", "dfnText": "Mapping Entry", "refSections": [{"refs": [{"id": "ref-for-mapping-entry"}, {"id": "ref-for-mapping-entry\u2460"}, {"id": "ref-for-mapping-entry\u2461"}], "title": "4.1.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-mapping-entry\u2462"}, {"id": "ref-for-mapping-entry\u2463"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-format'] = {"dfnID": "mapping-entry-format", "url": "#mapping-entry-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-format"}, {"id": "ref-for-mapping-entry-format\u2460"}, {"id": "ref-for-mapping-entry-format\u2461"}, {"id": "ref-for-mapping-entry-format\u2462"}, {"id": "ref-for-mapping-entry-format\u2463"}, {"id": "ref-for-mapping-entry-format\u2464"}, {"id": "ref-for-mapping-entry-format\u2465"}, {"id": "ref-for-mapping-entry-format\u2466"}, {"id": "ref-for-mapping-entry-format\u2467"}], "title": "4.1.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-mapping-entry-format\u2468"}, {"id": "ref-for-mapping-entry-format\u2460\u24ea"}, {"id": "ref-for-mapping-entry-format\u2460\u2460"}, {"id": "ref-for-mapping-entry-format\u2460\u2461"}, {"id": "ref-for-mapping-entry-format\u2460\u2462"}, {"id": "ref-for-mapping-entry-format\u2460\u2463"}, {"id": "ref-for-mapping-entry-format\u2460\u2464"}, {"id": "ref-for-mapping-entry-format\u2460\u2465"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
+window.dfnpanelData['mapping-entry-format'] = {"dfnID": "mapping-entry-format", "url": "#mapping-entry-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-format"}, {"id": "ref-for-mapping-entry-format\u2460"}, {"id": "ref-for-mapping-entry-format\u2461"}, {"id": "ref-for-mapping-entry-format\u2462"}, {"id": "ref-for-mapping-entry-format\u2463"}, {"id": "ref-for-mapping-entry-format\u2464"}, {"id": "ref-for-mapping-entry-format\u2465"}, {"id": "ref-for-mapping-entry-format\u2466"}, {"id": "ref-for-mapping-entry-format\u2467"}], "title": "4.1.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-mapping-entry-format\u2468"}, {"id": "ref-for-mapping-entry-format\u2460\u24ea"}, {"id": "ref-for-mapping-entry-format\u2460\u2460"}, {"id": "ref-for-mapping-entry-format\u2460\u2461"}, {"id": "ref-for-mapping-entry-format\u2460\u2462"}, {"id": "ref-for-mapping-entry-format\u2460\u2463"}, {"id": "ref-for-mapping-entry-format\u2460\u2464"}, {"id": "ref-for-mapping-entry-format\u2460\u2465"}, {"id": "ref-for-mapping-entry-format\u2460\u2466"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['mapping-entry-featurecount'] = {"dfnID": "mapping-entry-featurecount", "url": "#mapping-entry-featurecount", "dfnText": "featureCount", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-featurecount"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['mapping-entry-featuretags'] = {"dfnID": "mapping-entry-featuretags", "url": "#mapping-entry-featuretags", "dfnText": "featureTags", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-featuretags"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['mapping-entry-designspacecount'] = {"dfnID": "mapping-entry-designspacecount", "url": "#mapping-entry-designspacecount", "dfnText": "designSpaceCount", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-designspacecount"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
@@ -2373,8 +2379,8 @@ window.dfnpanelData['mapping-entry-entryiddelta'] = {"dfnID": "mapping-entry-ent
 window.dfnpanelData['mapping-entry-patchencoding'] = {"dfnID": "mapping-entry-patchencoding", "url": "#mapping-entry-patchencoding", "dfnText": "patchEncoding", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-patchencoding"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['mapping-entry-bias'] = {"dfnID": "mapping-entry-bias", "url": "#mapping-entry-bias", "dfnText": "bias", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-bias"}, {"id": "ref-for-mapping-entry-bias\u2460"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['mapping-entry-codepoints'] = {"dfnID": "mapping-entry-codepoints", "url": "#mapping-entry-codepoints", "dfnText": "codepoints", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-codepoints"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['design-space-segment'] = {"dfnID": "design-space-segment", "url": "#design-space-segment", "dfnText": "Design Space Segment", "refSections": [{"refs": [{"id": "ref-for-design-space-segment"}, {"id": "ref-for-design-space-segment\u2460"}], "title": "4.1.2. Patch Map Table: Format 2"}], "external": false};
-window.dfnpanelData['abstract-opdef-interpret-format-2-patch-map-entry'] = {"dfnID": "abstract-opdef-interpret-format-2-patch-map-entry", "url": "#abstract-opdef-interpret-format-2-patch-map-entry", "dfnText": "Interpret Format 2 Patch Map Entry", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-interpret-format-2-patch-map-entry"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
+window.dfnpanelData['design-space-segment'] = {"dfnID": "design-space-segment", "url": "#design-space-segment", "dfnText": "Design Space Segment", "refSections": [{"refs": [{"id": "ref-for-design-space-segment"}], "title": "4.1.2. Patch Map Table: Format 2"}], "external": false};
+window.dfnpanelData['abstract-opdef-interpret-format-2-patch-map-entry'] = {"dfnID": "abstract-opdef-interpret-format-2-patch-map-entry", "url": "#abstract-opdef-interpret-format-2-patch-map-entry", "dfnText": "Interpret Format 2 Patch Map Entry", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-interpret-format-2-patch-map-entry"}], "title": "4.1.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-abstract-opdef-interpret-format-2-patch-map-entry\u2460"}], "title": "4.1.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['font-patch'] = {"dfnID": "font-patch", "url": "#font-patch", "dfnText": "font patch", "refSections": [{"refs": [{"id": "ref-for-font-patch"}, {"id": "ref-for-font-patch\u2460"}, {"id": "ref-for-font-patch\u2461"}], "title": "5.1. Definitions"}, {"refs": [{"id": "ref-for-font-patch\u2462"}], "title": "7. Encoder"}], "external": false};
 window.dfnpanelData['patch-format'] = {"dfnID": "patch-format", "url": "#patch-format", "dfnText": "patch format", "refSections": [{"refs": [{"id": "ref-for-patch-format"}, {"id": "ref-for-patch-format\u2460"}], "title": "5.1. Definitions"}], "external": false};
 window.dfnpanelData['patch-application-algorithm'] = {"dfnID": "patch-application-algorithm", "url": "#patch-application-algorithm", "dfnText": "patch application algorithm", "refSections": [{"refs": [{"id": "ref-for-patch-application-algorithm"}], "title": "5.1. Definitions"}], "external": false};
