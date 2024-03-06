@@ -655,7 +655,8 @@ The algorithm:
     <td>uint8</td> <!-- TODO: uint32 to match format 1? -->
     <td><dfn for="Format 2 Patch Map">defaultPatchEncoding</dfn></td>
     <td>
-      Specifies the format of the patches linked to by uriTemplate. Using the ID number from the [[#font-patch-formats-summary]] table.
+      Specifies the format of the patches linked to by uriTemplate (unless overridden by an entry). Uses the ID numbers from the
+      [[#font-patch-formats-summary]] table.
     </td>
   </tr>
   <tr>
@@ -693,7 +694,7 @@ The algorithm:
   <tr>
     <td>[=Mapping Entry=]</td>
     <td><dfn for="Mapping Entries">entries</dfn>&lsqb;[=Format 2 Patch Map/entryCount=]&rsqb;</td>
-    <td>List of entries. Each entry has a variable length.</td>
+    <td>List of entries. Each entry has a variable length, which is determined following [$Interpret Format 2 Patch Map Entry$].</td>
   </tr>
 </table>
 
@@ -707,8 +708,8 @@ The algorithm:
     <td>uint8</td>
     <td><dfn for="Mapping Entry">format</dfn></td>
     <td>
-      A bit field. Bit 0 (least significant bit) through bit 5 indicate presence of optional fields. If bit 6 is set this entry is ignored.
-      Bit 7 is reserved for future use and set to 0.
+      A bit field. Bit 0 (least significant bit) through bit 5 indicate the presence of optional fields. If bit 6 is set this entry is
+      ignored. Bit 7 is reserved for future use and set to 0.
     </td>
   </tr>
 
@@ -723,7 +724,8 @@ The algorithm:
     <td>Tag</td>
     <td><dfn for="Mapping Entry">featureTags</dfn>[featureCount]</td>
     <td>
-      Array of [[open-type/featuretags|feature tags]]. Only present if [=Mapping Entry/format=] bit 0 is set.
+      List of [[open-type/featuretags|feature tags]] in the entry's [=font subset definition=]. Only present if
+      [=Mapping Entry/format=] bit 0 is set.
     </td>
   </tr>
 
@@ -738,7 +740,7 @@ The algorithm:
     <td>[=Design Space Segment=]</td>
     <td><dfn for="Mapping Entry">designSpaceSegments</dfn>[designSpaceCount]</td>
     <td>
-      Array of [=Design Space Segment=]'s. Only present if [=Mapping Entry/format=] bit 0 is set.
+      List of design space segments in the entry's [=font subset definition=]. Only present if [=Mapping Entry/format=] bit 0 is set.
     </td>
   </tr>
 
@@ -753,8 +755,9 @@ The algorithm:
     <td>uint16</td>
     <td><dfn for="Mapping Entry">copyIndices</dfn>[copyCount]</td>
     <td>
-      Array of indices from the [=Mapping Entries/entries=] array which should be copied into this mapping. All values must be less than
-      the index of this [=Mapping Entry=]. Only present if [=Mapping Entry/format=] bit 1 is set.
+      List of indices from the [=Mapping Entries/entries=] array whose [=font subset definition=] should be copied into this entry. All
+      values must be less than the index of this [=Mapping Entry=] in [=Mapping Entries/entries=]. Only present if
+      [=Mapping Entry/format=] bit 1 is set.
     </td>
   </tr>
 
@@ -762,7 +765,7 @@ The algorithm:
     <td>int16</td>
     <td><dfn for="Mapping Entry">entryIdDelta</dfn></td>
     <td>
-      Delta which is added to the entry id of the previous [=Mapping Entry=] to produce the entry id for this entry.
+      Signed delta which is added to the entry id of the previous [=Mapping Entry=] to produce the id for this entry.
       Only present if [=Mapping Entry/format=] bit 2 is set.
     </td>
   </tr>
@@ -771,7 +774,7 @@ The algorithm:
     <td>uint8</td>
     <td><dfn for="Mapping Entry">patchEncoding</dfn></td>
     <td>
-      Specifies the format of the patch linked to by this entry. Using the ID number from the [[#font-patch-formats-summary]] table.
+      Specifies the format of the patch linked to by this entry. Uses the ID numbers from the [[#font-patch-formats-summary]] table.
       Overrides [=Format 2 Patch Map/defaultPatchEncoding=].
       Only present if [=Mapping Entry/format=] bit 3 is set.
     </td>
@@ -782,7 +785,7 @@ The algorithm:
     <td>uint16/uint24</td>
     <td><dfn for="Mapping Entry">bias</dfn></td>
     <td>
-      Bias value which is added to all codepoint values encoded in the codepoints set.
+      Bias value which is added to all codepoint values in the codepoints set.
       If format bit 4 is 0 and bit 5 is 1, then this is present and a uint16.
       If format bit 4 is 1 and bit 5 is 1, then this is present and a uint24.
       Otherwise it is not present.
@@ -793,7 +796,8 @@ The algorithm:
     <td><dfn for="Mapping Entry">codepoints</dfn>[variable]</td>
     <td>
       Set of codepoints for this mapping. Encoded as a [[#sparse-bit-set-decoding]]. 
-      Only present if [=Mapping Entry/format=] bit 4 and/or 5 is set.
+      Only present if [=Mapping Entry/format=] bit 4 and/or 5 is set. The length is
+      determined by following the decoding procedures in [[#sparse-bit-set-decoding]].
     </td>
   </tr>
 </table>
@@ -858,12 +862,11 @@ The algorithm:
          [=Format 2 Patch Map/defaultPatchEncoding=], and
          [=Format 2 Patch Map/uriTemplate=].
 
-     *  Add the returned entry to <var>entry list</var>.
-
      *  Set <var>last entry id</var> to the returned entry id.
 
      *  Add the returned consumed byte count to <var>current byte</var>.
-     <!-- TODO handle the ignore bit -->
+
+     *  If the returned value of ignored is false, then add the returned entry to <var>entry list</var>.
 
 4.  Return <var>entry list</var>.
 
@@ -886,6 +889,8 @@ The algorithm outputs:
 * <var>entry</var>: a single [=patch map entries|entry=].
 
 * <var>consumed bytes</var>: the number of bytes used to encode the entry.
+
+* <var>ignored</var>: if true, then this entry should be ignored.
 
 The algorithm:
 
@@ -915,7 +920,8 @@ The algorithm:
          add all code points, feature tags, and design space segments from it to <var>entry</var>.
 
 7.  If [=Mapping Entry/format=] bit 2 is set, then an id delta is present. Read the id delta specified by [=Mapping Entry/entryIdDelta=]
-     from <var>entry bytes</var> and add the delta to <var>entry id</var>.
+     from <var>entry bytes</var> and add the delta to <var>entry id</var>. If <var>entry id</var> is negative this is an error
+     and the mapping is malformed.
 
 8.  If [=Mapping Entry/format=] bit 3 is set, then a patch encoding is present. Read the encoding specified by
      [=Mapping Entry/patchEncoding=] from <var>entry bytes</var> and set the patch encoding of <var>entry</var> to the read value.
@@ -933,9 +939,12 @@ The algorithm:
     *  Read the sparse bit set [=Mapping Entry/codepoints=] from <var>entry bytes</var> following [[#sparse-bit-set-decoding]]. For each
         codepoint add the bias value to it and then add the result to the codepoint set in <var>entry</var>.
 
-10. TODO apply URI template.
+10. If [=Mapping Entry/format=] bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.
 
-11. Return <var>entry id</var>, <var>entry</var>, and <var>consumed bytes</var>.
+11. Convert <var>entry id</var> into a URI by applying <var>uri template</var> following [[#uri-templates]]. Set the patch uri of
+     <var>entry</var> to the generated URI.
+
+12. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, and <var>ignored</var>.
 
 <h5 algorithm id="sparse-bit-set-decoding">Sparse Bit Set</h5>
 
