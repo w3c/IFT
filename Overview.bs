@@ -139,11 +139,11 @@ The IFT technology has four main pieces:
 At a high level an IFT font is used like this:
 
 1. The client downloads an initial font file, which contains some initial subset of data from the full version of the font along with
-   [[#font-format-extensions|embedded data]] describing the set of [[#font-patch-formats|patches]] which can be used to extend 
-   the font.
+    [[#font-format-extensions|embedded data]] describing the set of [[#font-patch-formats|patches]] which can be used to extend 
+    the font.
 
 2. Based on the content to be rendered, the client [[#extending-font-subset|selects, downloads, and applies]] patches to extend 
-   the font to cover additional characters. This step is repeated each time there is new content.
+    the font to cover additional characters. This step is repeated each time there is new content.
 
 Creating an Incremental Font {#making-incremental-fonts}
 --------------------------------------------------------
@@ -276,7 +276,8 @@ needed to render a subset of:
 supported by the original font. When a subsetted font is used to render text using any combination of the subset
 codepoints, [[open-type/featuretags|layout features]], or [[open-type/otvaroverview#terminology|design-variation space]]
 it should render identically to the original font. This includes rendering with the use of any optional typographic
-features that a renderer may choose to use from the original font, such as hinting instructions.
+features that a renderer may choose to use from the original font, such as hinting instructions. Design variation spaces
+are specified using the user-axis scales ([[open-type/otvaroverview#coordinate-scales-and-normalization]]).
 
 A <dfn dfn>font subset definition</dfn> describes the minimum data (codepoints, layout features,
 variation axis space) that a [=font subset=] should support.
@@ -361,6 +362,9 @@ Note: allowing the mapping to be split between two distinct tables allows an inc
 patch types. For example all patches of one type can be specified in the 'IFT ' table, and all patches of a second type in the
 'IFTX' table. Those patches can make updates only to one of the mapping tables and avoid making conflicting updates.
 
+<!-- TODO add algorithm explaining how to union the two tables -->
+<!-- TODO: how does this interact with woff2 -->
+
 
 Patch Map Table {#patch-map}
 ----------------------------
@@ -442,7 +446,7 @@ encoded in one of two formats:
     <td>uint8</td>
     <td><dfn for="Format 1 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
     <td>
-      A [[!UTF-8]] encoded string. Contains a template (TODO) which is used to produce URIs associated with each entry.
+      A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URIs associated with each entry.
     </td>
   </tr>
   <tr>
@@ -623,13 +627,483 @@ The algorithm:
 
 ### Patch Map Table: Format 2 ### {#patch-map-format-2}
 
-<!-- TODO add algorithm explaining how to union the two tables -->
-Coming soon.
+<!-- TODO: clean up unreferenced definitions -->
 
-<!-- 
-TODO:
-- how does this interact with woff2
--->
+<dfn>Format 2 Patch Map</dfn> encoding:
+
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Format 2 Patch Map">format</dfn></td>
+    <td>Set to 2, identifies this as format 2.</td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Format 2 Patch Map">reserved</dfn></td>
+    <td>Not used, set to 0.</td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Format 2 Patch Map">id</dfn>[4]</td>
+    <td>Unique ID used to identify patches that are compatible with this font.</td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Format 2 Patch Map">defaultPatchEncoding</dfn></td>
+    <td>
+      Specifies the format of the patches linked to by uriTemplate (unless overridden by an entry). Uses the ID numbers from the
+      [[#font-patch-formats-summary]] table.
+    </td>
+  </tr>
+  <tr>
+    <td>uint16</td> <!-- TODO: uint32 to match format 1? -->
+    <td><dfn for="Format 2 Patch Map">entryCount</dfn></td>
+    <td>Number of entries encoded in this table.</td>
+  </tr>
+  <tr>
+    <td>Offset32</td>
+    <td><dfn for="Format 2 Patch Map">entries</dfn></td>
+    <td>Offset to a [=Mapping Entries=] sub table. Offset is from the start of this table.</td>
+  </tr>
+  <tr>
+    <td>uint16</td>
+    <td><dfn for="Format 2 Patch Map">uriTemplateLength</dfn></td>
+    <td>
+      Length of the uriTemplate string.
+    </td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Format 2 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
+    <td>
+      A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URIs associated with each entry.
+    </td>
+  </tr>
+</table>
+
+<dfn>Mapping Entries</dfn> encoding:
+
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entries">entries</dfn>[variable]</td>
+    <td>Byte array containing the encoded bytes of [=Format 2 Patch Map/entryCount=] [=Mapping Entry=]'s. Each entry has a variable
+        length, which is determined following [$Interpret Format 2 Patch Map Entry$].</td>
+  </tr>
+</table>
+
+<dfn>Mapping Entry</dfn> encoding:
+
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entry">formatFlags</dfn></td>
+    <td>
+      A bit field. Bit 0 (least significant bit) through bit 5 indicate the presence of optional fields. If bit 6 is set this entry is
+      ignored. Bit 7 is reserved for future use and set to 0.
+    </td>
+  </tr>
+
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entry">featureCount</dfn></td>
+    <td>
+      Number of feature tags in the featureTags list. Only present if [=Mapping Entry/formatFlags=] bit 0 is set.
+    </td>
+  </tr>
+  <tr>
+    <td>Tag</td>
+    <td><dfn for="Mapping Entry">featureTags</dfn>[featureCount]</td>
+    <td>
+      List of [[open-type/featuretags|feature tags]] in the entry's [=font subset definition=]. Only present if
+      [=Mapping Entry/formatFlags=] bit 0 is set.
+    </td>
+  </tr>
+
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entry">designSpaceCount</dfn></td>
+    <td>
+      Number of elements in the design space list. Only present if [=Mapping Entry/formatFlags=] bit 0 is set.
+    </td>
+  </tr>
+  <tr>
+    <td>[=Design Space Segment=]</td>
+    <td><dfn for="Mapping Entry">designSpaceSegments</dfn>[designSpaceCount]</td>
+    <td>
+      List of design space segments in the entry's [=font subset definition=]. Only present if [=Mapping Entry/formatFlags=] bit 0 is set.
+    </td>
+  </tr>
+
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entry">copyCount</dfn></td>
+    <td>
+      Number of entries in the copyIndices list. Only present if [=Mapping Entry/formatFlags=] bit 1 is set.
+    </td>
+  </tr>
+  <tr>
+    <td>uint16</td>
+    <td><dfn for="Mapping Entry">copyIndices</dfn>[copyCount]</td>
+    <td>
+      List of indices from the [=Mapping Entries/entries=] array whose [=font subset definition=] should be copied into this entry. All
+      values must be less than the index of this [=Mapping Entry=] in [=Mapping Entries/entries=]. Only present if
+      [=Mapping Entry/formatFlags=] bit 1 is set.
+    </td>
+  </tr>
+
+  <tr>
+    <td>int16</td>
+    <td><dfn for="Mapping Entry">entryIdDelta</dfn></td>
+    <td>
+      Signed delta which is used to calculate the id for this entry. The id for this entry is the entry id of the previous
+      [=Mapping Entry=] + 1 + entryIdDelta. Only present if [=Mapping Entry/formatFlags=] bit 2 is set. If not present delta is assumed
+      to be 0.
+    </td>
+  </tr>
+
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entry">patchEncoding</dfn></td>
+    <td>
+      Specifies the format of the patch linked to by this entry. Uses the ID numbers from the [[#font-patch-formats-summary]] table.
+      Overrides [=Format 2 Patch Map/defaultPatchEncoding=].
+      Only present if [=Mapping Entry/formatFlags=] bit 3 is set.
+    </td>
+  </tr>
+
+
+  <tr>
+    <td>uint16/uint24</td>
+    <td><dfn for="Mapping Entry">bias</dfn></td>
+    <td>
+      Bias value which is added to all codepoint values in the codepoints set.
+      If format bit 4 is 0 and bit 5 is 1, then this is present and a uint16.
+      If format bit 4 is 1 and bit 5 is 1, then this is present and a uint24.
+      Otherwise it is not present.
+    </td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Mapping Entry">codepoints</dfn>[variable]</td>
+    <td>
+      Set of codepoints for this mapping. Encoded as a [[#sparse-bit-set-decoding]]. 
+      Only present if [=Mapping Entry/formatFlags=] bit 4 and/or 5 is set. The length is
+      determined by following the decoding procedures in [[#sparse-bit-set-decoding]].
+    </td>
+  </tr>
+</table>
+
+<dfn>Design Space Segment</dfn> encoding:
+
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>Tag</td>
+    <td><dfn for="Design Space Segment">tag</dfn></td>
+    <td>
+      Axis tag value.
+    </td>
+  </tr>
+
+  <tr>
+    <td>Fixed</td>
+    <td><dfn for="Design Space Segment">start</dfn></td>
+    <td>
+      Start (inclusive) of the segment. This value uses the user axis scale:
+      [[open-type/otvaroverview#coordinate-scales-and-normalization]].
+    </td>
+  </tr>
+
+  <tr>
+    <td>Fixed</td>
+    <td><dfn for="Design Space Segment">end</dfn></td>
+    <td>
+      End (inclusive) of the segment. Must be greater than or equal to start. This value uses the user axis scale:
+      [[open-type/otvaroverview#coordinate-scales-and-normalization]].
+    </td>
+  </tr>
+</table>
+
+<h5 algorithm id="interpreting-patch-map-format-2">Interpreting Format 2</h5>
+
+This algorithm is used to convert a format 2 patch map into a list of [=patch map entries=].
+
+
+<dfn abstract-op>Interpret Format 2 Patch Map</dfn>
+
+The inputs to this algorithm are:
+
+* <var>patch map</var>: a [[#patch-map-format-2]] encoded patch map.
+
+The algorithm outputs:
+
+* <var>entry list</var>: a list of [=patch map entries=].
+
+The algorithm:
+
+1.  Check that the <var>patch map</var> is valid according to the requirements in [[#patch-map-format-2]]. If it is not return an error.
+
+2.  Initialize <var>last entry id</var> to 0, and <var>current byte</var> to 0.
+
+3.  Invoke [$Interpret Format 2 Patch Map Entry$], [=Format 2 Patch Map/entryCount=] times. For each invocation:
+
+     *  pass in the bytes from <var>patch map</var> starting from [=Format 2 Patch Map/entries=][<var>current byte</var>] to
+         the end of <var>patch map</var>,
+         <var>last entry id</var>,
+         [=Format 2 Patch Map/defaultPatchEncoding=], and
+         [=Format 2 Patch Map/uriTemplate=].
+
+     *  Set <var>last entry id</var> to the returned entry id.
+
+     *  Add the returned consumed byte count to <var>current byte</var>.
+
+     *  If the returned value of ignored is false, then add the returned entry to <var>entry list</var>.
+
+4.  Return <var>entry list</var>.
+
+<dfn abstract-op>Interpret Format 2 Patch Map Entry</dfn>
+
+The inputs to this algorithm are:
+
+* <var>entry bytes</var>: a byte array that contains an encoded [=Mapping Entry=].
+
+* <var>last entry id</var>: the entry id of the entry preceding this one.
+
+* <var>default patch encoding</var>: the default patch encoding if one isn't specified.
+
+* <var>uri template</var>: the URI template used to locate patches.
+
+The algorithm outputs:
+
+* <var>entry id</var>: the numeric id of this entry.
+
+* <var>entry</var>: a single [=patch map entries|entry=].
+
+* <var>consumed bytes</var>: the number of bytes used to encode the entry.
+
+* <var>ignored</var>: if true, then this entry should be ignored.
+
+The algorithm:
+
+1.  For the all steps whenever data is loaded from <var>entry bytes</var> increment <var>consumed bytes</var> with the
+     number of bytes read.
+
+2.  Set <var>entry id</var> = <var>last entry id</var> + 1.
+
+3.  Set the patch encoding of <var>entry</var> to <var>default patch encoding</var>.
+
+4.  Read [=Mapping Entry/formatFlags=] from <var>entry bytes</var>.
+
+5.  If [=Mapping Entry/formatFlags=] bit 0 is set, then the feature tag and design space lists are present:
+
+    *  Read the feature tag list specified by [=Mapping Entry/featureCount=] and [=Mapping Entry/featureTags=] from <var>entry bytes</var>
+        and add the loaded tags to <var>entry</var>.
+
+    *  Read the design space segment list specified by [=Mapping Entry/designSpaceCount=] and [=Mapping Entry/designSpaceSegments=]
+        from <var>entry bytes</var> and add the design space segments to <var>entry</var>.
+
+6.  If [=Mapping Entry/formatFlags=] bit 1 is set, then the copy indices list is present:
+
+    *  Read the copy indices list specified by [=Mapping Entry/copyCount=] and [=Mapping Entry/copyIndices=] from <var>entry bytes</var>.
+
+    *  The copy indices refer to previously loaded entries. 0 is the first [=Mapping Entry=] in [=Mapping Entries/entries=], 1 the second
+         and so on. For each index in [=Mapping Entry/copyIndices=] locate the previously loaded entry with a matching index and
+         add all code points, feature tags, and design space segments from it to <var>entry</var>.
+
+7.  If [=Mapping Entry/formatFlags=] bit 2 is set, then an id delta is present. Read the id delta specified by [=Mapping Entry/entryIdDelta=]
+     from <var>entry bytes</var> and add the delta to <var>entry id</var>. If <var>entry id</var> is negative this is an error
+     and the mapping is malformed.
+
+8.  If [=Mapping Entry/formatFlags=] bit 3 is set, then a patch encoding is present. Read the encoding specified by
+     [=Mapping Entry/patchEncoding=] from <var>entry bytes</var> and set the patch encoding of <var>entry</var> to the read value.
+
+9.  If one or both of [=Mapping Entry/formatFlags=] bit 4 and bit 5 are set, then a codepoint list is present:
+
+    *  If [=Mapping Entry/formatFlags=] bit 4 is 0 and bit 5 is 1, then read the 2 byte (uint16) [=Mapping Entry/bias=] value
+        from <var>entry bytes</var>.
+
+    *  If [=Mapping Entry/formatFlags=] bit 4 is 1 and bit 5 is 1, then read the 3 byte (uint24) [=Mapping Entry/bias=] value
+        from <var>entry bytes</var>.
+
+    *  Otherwise the bias is 0.
+
+    *  Read the sparse bit set [=Mapping Entry/codepoints=] from <var>entry bytes</var> following [[#sparse-bit-set-decoding]]. For each
+        codepoint add the bias value to it and then add the result to the codepoint set in <var>entry</var>.
+
+10. If [=Mapping Entry/formatFlags=] bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.
+
+11. Convert <var>entry id</var> into a URI by applying <var>uri template</var> following [[#uri-templates]]. Set the patch uri of
+     <var>entry</var> to the generated URI.
+
+12. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, and <var>ignored</var>.
+
+<h5 algorithm id="sparse-bit-set-decoding">Sparse Bit Set</h5>
+
+A sparse bit set is a data structure which compactly stores a set of distinct unsigned integers. The set is represented as a tree where
+each node has a fixed number of children that recursively sub-divides an interval into equal partitions. A tree of height <i>H</i> with
+branching factor <i>B</i> can store set membership for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree
+is encoded into an array of bytes for transport.
+
+<dfn>Sparse Bit Set</dfn> encoding:
+<table>
+  <tr>
+    <th>Type</th><th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td>header</td>
+    <td>Bits 0 (least significant) and 1 encode the trees branch factor <i>B</i>. Bits 2 through 6 are a 5-bit unsigned integer which
+        encodes the value of <i>H</i>. Bit 7 is set to 0 and reserved for future use.
+    </td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td>treeData[variable]</td>
+    <td>Binary encoding of the tree.</td>
+  </tr>
+</table>
+
+The exact length of <var>treeData</var> is initially unknown, it's length is determined by executing the decoding algorithm. When using
+branch factors of 2 or 4 the last node may only partially consume the bits in a byte. In that case all remaining bits are unused and
+ignored.
+
+<dfn>Branch Factor Encoding</dfn>:
+<table>
+  <tr>
+    <th>Bit 1</th><th>Bit 0</th><th>Branch Factor (B)</th>
+  </tr>
+  <tr>
+    <td>0</td><td>0</td><td>2</td>
+  </tr>
+  <tr>
+    <td>0</td><td>1</td><td>4</td>
+  </tr>
+  <tr>
+    <td>1</td><td>0</td><td>8</td>
+  </tr>
+  <tr>
+    <td>1</td><td>1</td><td>32</td>
+  </tr>
+</table>
+
+<dfn abstract-op>Decoding sparse bit set treeData</dfn>
+
+The inputs to this algorithm are:
+
+* <var>H</var>: the tree height, <var>H</var>, from the header byte.
+
+* <var>B</var>: the branch factor, <var>B</var>, from the header byte.
+
+* <var>treeData</var>: array of bytes to be decoded.
+
+The algorithm outputs:
+
+* <var>S</var>: a set of unsigned integers.
+
+The algorithm, using a FIFO (first in first out) queue <var>Q</var>:
+
+1.  If <var>H</var> is equal to 0, then this is an empty set and no bytes of <var>treeData</var> are consumed. Return an empty set.
+
+2.  Insert the tuple (0, 1) into <var>Q</var>.
+
+3.  Initialize <var>S</var> to an empty set.
+
+4.  <var>treeData</var> is interpreted as a string of bits where the least significant bit of <var>treeData</var>[0] is the first bit in
+     the string, the most significant bit of <var>treeData</var>[0] is the 8th bit, and so on.
+
+5.  If <var>Q</var> is empty return <var>S</var>.
+
+6.  Extract the next tuple <var>t</var> from <var>Q</var>. The first value of
+     in <var>t</var> is <var>start</var> and the second value is <var>depth</var>.
+
+7.  Remove the next <var>B</var> bits from the <var>treeData</var> bit string. The first removed bit is <i>v<sub>1</sub></i>,
+     the second is <i>v<sub>2</sub></i>, and so on until the last removed bit which is <i>v<sub>B</sub></i>. If prior to removal there
+     were less than <var>B</var> bits left in <var>treeData</var>, then <var>treeData</var> is malformed, return an error.
+
+8.  If all bits <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i> are 0, then insert all integers in the interval
+    [<var>start</var>, <var>start</var> + <var>B</var><sup><var>H</var> - <var>depth</var> + 1</sup>)
+    into <var>S</var>. Go to step 5.
+
+9.  For each <i>v<sub>i</sub></i> which is equal to 1 in <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i>:
+     If <var>depth</var> is equal to <var>H</var> add
+     integer <var>start</var> + <i>i</i> - 1 to <var>S</var>. Otherwise, insert the tuple
+     (<var>start</var> + (i - 1) * <var>B</var><sup><var>H</var> - <var>depth</var></sup>, <var>depth</var> + 1)
+     into <var>Q</var>.
+
+10.  Go to step 5.
+
+Note: when encoding sparse bit sets the encoder can use any of the possible branching factors, but it is recommended to
+use 4 as that has <a href="https://github.com/w3c/PFE-analysis/blob/main/results/set_encoding_branch_factor.md">been shown</a>
+to give the smallest encodings for most unicode codepoint sets typically encountered.
+
+
+<div class=example>
+  The set {2, 33, 323} in a tree with a branching factor of 8 can be encoded as the bit string:
+
+  ```
+  bit string:
+  |-- header --|- lvl 0 |---- level 1 ----|------- level 2 -----------|
+  | B=8 H=3    |   n0   |   n1       n2   |   n3       n4       n5    |
+  [ 01  11000 0 10000100 10001000 10000000 00100000 01000000 00010000 ]
+
+  Which then becomes the byte string:
+  [
+    0b00001110,
+    0b00100001,
+    0b00010001,
+    0b00000001,
+    0b00000100,
+    0b00000010,
+    0b00001000
+  ]
+  ```
+</div>
+
+<div class=example>
+  The empty set in a tree with a branching factor of 2 is encoded as the bit string:
+
+  ```
+  bit string:
+  |-- header -- |
+  | B=2 H=0     |
+  [ 00  00000 0 ]
+
+  Which then becomes the byte string:
+  [
+    0b00000000,
+  ]
+  ```
+</div>
+
+<div class=example>
+  The set {0, 1, 2, ..., 17} can be encoded with a branching factor of 4 as:
+
+  ```
+  bit string:
+  |-- header --| l0 |- lvl 1 -| l2  |
+  | B=4 H=3    | n0 | n1 | n2 | n3  |
+  [ 10  11000 0 1100 0000 1000 1100 ]
+
+  byte string:
+  [
+    0b00001101,
+    0b00000011,
+    0b00110001
+  ]
+  ```
+</div>
 
 Font Patch Formats {#font-patch-formats}
 ========================================
