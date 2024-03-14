@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="48ab68d74d660e40e74c6cfbae7c6393676b0342" name="document-revision">
+  <meta content="545a4a162e383a75b849eb172560f0d9ccfbe236" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -503,7 +503,7 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-09">9 April 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-12">12 April 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -600,14 +600,14 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
       <li><a href="#font-patch-definitions"><span class="secno">5.1</span> <span class="content">Definitions</span></a>
       <li><a href="#font-patch-formats-summary"><span class="secno">5.2</span> <span class="content">Formats Summary</span></a>
       <li>
-       <a href="#shared-brotli"><span class="secno">5.3</span> <span class="content">Shared Brotli Patch</span></a>
+       <a href="#shared-brotli"><span class="secno">5.3</span> <span class="content">Brotli Patch</span></a>
        <ol class="toc">
-        <li><a href="#apply-shared-brotli"><span class="secno">5.3.1</span> <span class="content">Applying Shared Brotli Patches</span></a>
+        <li><a href="#apply-shared-brotli"><span class="secno">5.3.1</span> <span class="content">Applying Brotli Patches</span></a>
        </ol>
       <li>
-       <a href="#per-table-shared-brotli"><span class="secno">5.4</span> <span class="content">Per Table Shared Brotli</span></a>
+       <a href="#per-table-shared-brotli"><span class="secno">5.4</span> <span class="content">Per Table Brotli</span></a>
        <ol class="toc">
-        <li><a href="#apply-per-table-shared-brotli"><span class="secno">5.4.1</span> <span class="content">Applying Per Table Shared Brotli Patches</span></a>
+        <li><a href="#apply-per-table-shared-brotli"><span class="secno">5.4.1</span> <span class="content">Applying Per Table Brotli Patches</span></a>
        </ol>
       <li>
        <a href="#glyph-keyed"><span class="secno">5.5</span> <span class="content">Glyph Keyed</span></a>
@@ -841,7 +841,7 @@ several variables are defined which are used to produce the expansion of the tem
     </table>
    </div>
    <h2 class="heading settled" data-level="4" id="font-format-extensions"><span class="secno">4. </span><span class="content">Extensions to the Font Format</span><a class="self-link" href="#font-format-extensions"></a></h2>
-   <p>An <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="incremental-font">incremental font</dfn> follows the existing <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> format, but include two new <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both <a href="#patch-map">patch maps</a>, which encode a collection of mappings from <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">font subset definitions</a> to URIs which
+   <p>An <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="incremental-font">incremental font</dfn> follows the existing <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> format, but includes two new <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both <a href="#patch-map">patch maps</a>, which encode a collection of mappings from <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">font subset definitions</a> to URIs which
 host <a href="#font-patch-formats">patches</a> that extend the incremental font. All incremental fonts must contain the 'IFT ' table.
 The 'IFTX' table is optional. When both tables are present, the mapping of the font as a whole is the union of the mappings of
 the two tables.</p>
@@ -1473,15 +1473,15 @@ from F by the application of one or more independent patches from <code>P</code>
       <th>ID
       <th>Description
      <tr>
-      <td><a href="#shared-brotli">§ 5.3 Shared Brotli Patch</a>
+      <td><a href="#shared-brotli">§ 5.3 Brotli Patch</a>
       <td><a data-link-type="dfn" href="#dependent" id="ref-for-dependent">dependent</a>
       <td>1
-      <td>A shared brotli encoded binary diff that uses the entire <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①②">font subset</a> as a base.
+      <td>A brotli encoded binary diff that uses the entire <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①②">font subset</a> as a base.
      <tr>
-      <td><a href="#per-table-shared-brotli">§ 5.4 Per Table Shared Brotli</a>
+      <td><a href="#per-table-shared-brotli">§ 5.4 Per Table Brotli</a>
       <td><a data-link-type="dfn" href="#dependent" id="ref-for-dependent①">dependent</a>
       <td>2
-      <td>A collection of shared brotli encoded binary diffs that use tables from the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a> as bases.
+      <td>A collection of brotli encoded binary diffs that use tables from the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a> as bases.
      <tr>
       <td><a href="#glyph-keyed">§ 5.5 Glyph Keyed</a>
       <td><a data-link-type="dfn" href="#independent" id="ref-for-independent">independent</a>
@@ -1489,11 +1489,11 @@ from F by the application of one or more independent patches from <code>P</code>
       <td>Contains a collection of opaque binary blobs, each associated with a glyph id and table.
    </table>
    <p>More detailed descriptions of each algorithm can be found in the following sections.</p>
-   <h3 class="heading settled" data-level="5.3" id="shared-brotli"><span class="secno">5.3. </span><span class="content">Shared Brotli Patch</span><a class="self-link" href="#shared-brotli"></a></h3>
-   <p>In a shared brotli patch the target file is encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the
-source file as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. A shared brotli encoded patch consists
+   <h3 class="heading settled" data-level="5.3" id="shared-brotli"><span class="secno">5.3. </span><span class="content">Brotli Patch</span><a class="self-link" href="#shared-brotli"></a></h3>
+   <p>In a brotli patch the target file is encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the
+source file as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. A brotli encoded patch consists
 of a short header followed by brotli encoded data.</p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="shared-brotli-patch">Shared brotli patch</dfn> encoding:</p>
+   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="brotli-patch">Brotli patch</dfn> encoding:</p>
    <table>
     <tbody>
      <tr>
@@ -1502,27 +1502,27 @@ of a short header followed by brotli encoded data.</p>
       <th>Description
      <tr>
       <td>Tag
-      <td><dfn class="dfn-paneled" data-dfn-for="Shared brotli patch" data-dfn-type="dfn" data-noexport id="shared-brotli-patch-format">format</dfn>
-      <td>Identifies the encoding as shared brotli, set to 'ifbr'
+      <td><dfn class="dfn-paneled" data-dfn-for="Brotli patch" data-dfn-type="dfn" data-noexport id="brotli-patch-format">format</dfn>
+      <td>Identifies the encoding as brotli, set to 'ifbr'
      <tr>
       <td>uint32
-      <td><dfn class="dfn-paneled" data-dfn-for="Shared brotli patch" data-dfn-type="dfn" data-noexport id="shared-brotli-patch-id">id</dfn>[4]
+      <td><dfn class="dfn-paneled" data-dfn-for="Brotli patch" data-dfn-type="dfn" data-noexport id="brotli-patch-id">id</dfn>[4]
       <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a> which this patch can be applied too.
      <tr>
       <td>uint8
-      <td><dfn class="dfn-paneled" data-dfn-for="Shared brotli patch" data-dfn-type="dfn" data-noexport id="shared-brotli-patch-brotlistream">brotliStream</dfn>[variable]
+      <td><dfn class="dfn-paneled" data-dfn-for="Brotli patch" data-dfn-type="dfn" data-noexport id="brotli-patch-brotlistream">brotliStream</dfn>[variable]
       <td>Brotli encoded byte stream.
    </table>
-   <h4 class="heading settled algorithm" data-algorithm="Applying Shared Brotli Patches" data-level="5.3.1" id="apply-shared-brotli"><span class="secno">5.3.1. </span><span class="content">Applying Shared Brotli Patches</span><a class="self-link" href="#apply-shared-brotli"></a></h4>
-   <p>This algorithm is used to apply a shared brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a> to cover additional codepoints,
+   <h4 class="heading settled algorithm" data-algorithm="Applying Brotli Patches" data-level="5.3.1" id="apply-shared-brotli"><span class="secno">5.3.1. </span><span class="content">Applying Brotli Patches</span><a class="self-link" href="#apply-shared-brotli"></a></h4>
+   <p>This algorithm is used to apply a brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a> to cover additional codepoints,
 features, and/or design-variation space.</p>
-   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-shared-brotli-patch">Apply shared brotli patch<a class="self-link" href="#abstract-opdef-apply-shared-brotli-patch"></a></dfn></p>
+   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-brotli-patch">Apply brotli patch<a class="self-link" href="#abstract-opdef-apply-brotli-patch"></a></dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
     <li data-md>
      <p><var>base font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑥">font subset</a> which is to be extended.</p>
     <li data-md>
-     <p><var>patch</var>: a <a data-link-type="dfn" href="#shared-brotli-patch" id="ref-for-shared-brotli-patch">shared brotli patch</a> to be applied to <var>base font subset</var>.</p>
+     <p><var>patch</var>: a <a data-link-type="dfn" href="#brotli-patch" id="ref-for-brotli-patch">brotli patch</a> to be applied to <var>base font subset</var>.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -1532,23 +1532,23 @@ features, and/or design-variation space.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#shared-brotli-patch-format" id="ref-for-shared-brotli-patch-format">format</a> field in <var>patch</var> is equal to 'ifbr', if it is
+     <p>Check that the <a data-link-type="dfn" href="#brotli-patch-format" id="ref-for-brotli-patch-format">format</a> field in <var>patch</var> is equal to 'ifbr', if it is
 not equal, then <var>patch</var> is not correctly formatted. Patch application has failed, return
 an error.</p>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#shared-brotli-patch-id" id="ref-for-shared-brotli-patch-id">id</a> field in <var>patch</var> is equal to the at least one of the ids
+     <p>Check that the <a data-link-type="dfn" href="#brotli-patch-id" id="ref-for-brotli-patch-id">id</a> field in <var>patch</var> is equal to the at least one of the ids
 found in the 'IFT ' or 'IFTX' table of <var>base font subset</var>. If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application has failed,
 return an error.</p>
     <li data-md>
-     <p>Decode the brotli encoded data in <a data-link-type="dfn" href="#shared-brotli-patch-brotlistream" id="ref-for-shared-brotli-patch-brotlistream">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a> and
+     <p>Decode the brotli encoded data in <a data-link-type="dfn" href="#brotli-patch-brotlistream" id="ref-for-brotli-patch-brotlistream">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a> and
 using the <var>base font subset</var> as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. Return the decoded
 result as the <var>extended font subset</var></p>
    </ol>
-   <h3 class="heading settled" data-level="5.4" id="per-table-shared-brotli"><span class="secno">5.4. </span><span class="content">Per Table Shared Brotli</span><a class="self-link" href="#per-table-shared-brotli"></a></h3>
-   <p>A per table shared brotli patch contains a collection of patches which are applied to the individual <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font tables</a> in the input font file. Each table patch is encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the corresponding table from the input font file as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. A per table shared brotli encoded patch consists of a short header followed
+   <h3 class="heading settled" data-level="5.4" id="per-table-shared-brotli"><span class="secno">5.4. </span><span class="content">Per Table Brotli</span><a class="self-link" href="#per-table-shared-brotli"></a></h3>
+   <p>A per table brotli patch contains a collection of patches which are applied to the individual <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font tables</a> in the input font file. Each table patch is encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the corresponding table from the input font file as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. A per table brotli encoded patch consists of a short header followed
 by one or more brotli encoded patches. In addition to patching tables, patches may also replace (existing table data is not used)
 or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑧">font subset</a>.</p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="per-table-shared-brotli-patch">Per table shared brotli patch</dfn> encoding:</p>
+   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="per-table-brotli-patch">Per table brotli patch</dfn> encoding:</p>
    <table>
     <tbody>
      <tr>
@@ -1557,22 +1557,22 @@ or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-fo
       <th>Description
      <tr>
       <td>Tag
-      <td><dfn class="dfn-paneled" data-dfn-for="Per table shared brotli patch" data-dfn-type="dfn" data-noexport id="per-table-shared-brotli-patch-format">format</dfn>
-      <td>Identifies the encoding as shared brotli, set to 'ifbt'
+      <td><dfn class="dfn-paneled" data-dfn-for="Per table brotli patch" data-dfn-type="dfn" data-noexport id="per-table-brotli-patch-format">format</dfn>
+      <td>Identifies the encoding as per table brotli, set to 'ifbt'
      <tr>
       <td>uint32
-      <td><dfn class="dfn-paneled" data-dfn-for="Per table shared brotli patch" data-dfn-type="dfn" data-noexport id="per-table-shared-brotli-patch-id">id</dfn>[4]
+      <td><dfn class="dfn-paneled" data-dfn-for="Per table brotli patch" data-dfn-type="dfn" data-noexport id="per-table-brotli-patch-id">id</dfn>[4]
       <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑨">font subset</a> which this patch can be applied too.
      <tr>
       <td>uint16
-      <td><dfn data-dfn-for="Per table shared brotli patch" data-dfn-type="dfn" data-noexport id="per-table-shared-brotli-patch-patchescount">patchesCount<a class="self-link" href="#per-table-shared-brotli-patch-patchescount"></a></dfn>
+      <td><dfn data-dfn-for="Per table brotli patch" data-dfn-type="dfn" data-noexport id="per-table-brotli-patch-patchescount">patchesCount<a class="self-link" href="#per-table-brotli-patch-patchescount"></a></dfn>
       <td>The number of entries in the patches array.
      <tr>
       <td>Offset32
-      <td><dfn class="dfn-paneled" data-dfn-for="Per table shared brotli patch" data-dfn-type="dfn" data-noexport id="per-table-shared-brotli-patch-patches">patches</dfn>[patchesCount+1]
+      <td><dfn class="dfn-paneled" data-dfn-for="Per table brotli patch" data-dfn-type="dfn" data-noexport id="per-table-brotli-patch-patches">patches</dfn>[patchesCount+1]
       <td>Each entry is an offset from the start of this table to a <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch">TablePatch</a>. Offsets must be sorted in ascending order.
    </table>
-   <p>The difference between two consecutive offsets in the <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches">patches</a> array gives the size
+   <p>The difference between two consecutive offsets in the <a data-link-type="dfn" href="#per-table-brotli-patch-patches" id="ref-for-per-table-brotli-patch-patches">patches</a> array gives the size
 of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">TablePatch</a>.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="tablepatch">TablePatch</dfn> encoding:</p>
    <table>
@@ -1594,16 +1594,16 @@ of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">Ta
       <td><dfn class="dfn-paneled" data-dfn-for="TablePatch" data-dfn-type="dfn" data-noexport id="tablepatch-brotlistream">brotliStream</dfn>[variable]
       <td>Brotli encoded byte stream.
    </table>
-   <h4 class="heading settled algorithm" data-algorithm="Applying Per Table Shared Brotli Patches" data-level="5.4.1" id="apply-per-table-shared-brotli"><span class="secno">5.4.1. </span><span class="content">Applying Per Table Shared Brotli Patches</span><a class="self-link" href="#apply-per-table-shared-brotli"></a></h4>
-   <p>This algorithm is used to apply a per table shared brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⓪">font subset</a> to cover additional codepoints,
+   <h4 class="heading settled algorithm" data-algorithm="Applying Per Table Brotli Patches" data-level="5.4.1" id="apply-per-table-shared-brotli"><span class="secno">5.4.1. </span><span class="content">Applying Per Table Brotli Patches</span><a class="self-link" href="#apply-per-table-shared-brotli"></a></h4>
+   <p>This algorithm is used to apply a per table brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⓪">font subset</a> to cover additional codepoints,
 features, and/or design-variation space.</p>
-   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-per-table-shared-brotli-patch">Apply per table shared brotli patch<a class="self-link" href="#abstract-opdef-apply-per-table-shared-brotli-patch"></a></dfn></p>
+   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-per-table-brotli-patch">Apply per table brotli patch<a class="self-link" href="#abstract-opdef-apply-per-table-brotli-patch"></a></dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
     <li data-md>
      <p><var>base font subset</var>: a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②①">font subset</a> which is to be extended.</p>
     <li data-md>
-     <p><var>patch</var>: a <a data-link-type="dfn" href="#per-table-shared-brotli-patch" id="ref-for-per-table-shared-brotli-patch">per table shared brotli patch</a> to be applied to <var>base font subset</var>.</p>
+     <p><var>patch</var>: a <a data-link-type="dfn" href="#per-table-brotli-patch" id="ref-for-per-table-brotli-patch">per table brotli patch</a> to be applied to <var>base font subset</var>.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -1613,23 +1613,23 @@ features, and/or design-variation space.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#per-table-shared-brotli-patch-format" id="ref-for-per-table-shared-brotli-patch-format">format</a> field in <var>patch</var> is equal to 'ifbt', if it is
+     <p>Check that the <a data-link-type="dfn" href="#per-table-brotli-patch-format" id="ref-for-per-table-brotli-patch-format">format</a> field in <var>patch</var> is equal to 'ifbt', if it is
 not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
 an error.</p>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#per-table-shared-brotli-patch-id" id="ref-for-per-table-shared-brotli-patch-id">id</a> field in <var>patch</var> is equal to the at least one of the ids
+     <p>Check that the <a data-link-type="dfn" href="#per-table-brotli-patch-id" id="ref-for-per-table-brotli-patch-id">id</a> field in <var>patch</var> is equal to the at least one of the ids
 found in the 'IFT ' or 'IFTX' table of <var>base font subset</var>. If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application has failed,
 return an error.</p>
     <li data-md>
-     <p>For each entry in <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches①">patches</a>, with index <var>i</var>:</p>
+     <p>For each entry in <a data-link-type="dfn" href="#per-table-brotli-patch-patches" id="ref-for-per-table-brotli-patch-patches①">patches</a>, with index <var>i</var>:</p>
      <ul>
       <li data-md>
-       <p>Find the <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch②">TablePatch</a> associated with index <var>i</var>. The object starts at the offset <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches②">patches[i]</a> (inclusive) and ends at the offset <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches③">patches[i+1]</a> (exclusive). Both offsets are relative to the start of
+       <p>Find the <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch②">TablePatch</a> associated with index <var>i</var>. The object starts at the offset <a data-link-type="dfn" href="#per-table-brotli-patch-patches" id="ref-for-per-table-brotli-patch-patches②">patches[i]</a> (inclusive) and ends at the offset <a data-link-type="dfn" href="#per-table-brotli-patch-patches" id="ref-for-per-table-brotli-patch-patches③">patches[i+1]</a> (exclusive). Both offsets are relative to the start of
 the <var>patch</var>.</p>
       <li data-md>
-       <p>If an entry in <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches④">patches</a> was previously applied that has the same <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag">tag</a> as
+       <p>If an entry in <a data-link-type="dfn" href="#per-table-brotli-patch-patches" id="ref-for-per-table-brotli-patch-patches④">patches</a> was previously applied that has the same <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag">tag</a> as
 this entry, then ignore this entry and continue the iteration to the next one. Entries are processed in same order as they
-are listed in the <a data-link-type="dfn" href="#per-table-shared-brotli-patch-patches" id="ref-for-per-table-shared-brotli-patch-patches⑤">patches</a> array.</p>
+are listed in the <a data-link-type="dfn" href="#per-table-brotli-patch-patches" id="ref-for-per-table-brotli-patch-patches⑤">patches</a> array.</p>
       <li data-md>
        <p>If bit 0 (least significant bit) of <a data-link-type="dfn" href="#tablepatch-flags" id="ref-for-tablepatch-flags">flags</a> is set, then decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a>. No shared dictionary is used. Add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag①">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream①">brotliStream</a>.</p>
       <li data-md>
@@ -1950,7 +1950,7 @@ incremental font. This can be accomplished by:</p>
     <li data-md>
      <p>Keep all dependent patch entries in one mapping table and all independent entries in the other mapping table.</p>
     <li data-md>
-     <p>Use per-table shared brotli patches to update all tables except for the tables touched by the independent patches (outline,
+     <p>Use per-table brotli patches to update all tables except for the tables touched by the independent patches (outline,
 variation deltas, and the independent patch mapping table). These patches should use a small number of large segments to keep
 the patch count reasonable.</p>
     <li data-md>
@@ -2018,16 +2018,17 @@ required too many patches.</p>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
    <li><a href="#format-1-patch-map-appliedentriesbitmap">appliedEntriesBitMap</a><span>, in § 4.1.1</span>
+   <li><a href="#abstract-opdef-apply-brotli-patch">Apply brotli patch</a><span>, in § 5.3.1</span>
    <li><a href="#abstract-opdef-apply-glyph-keyed-patch">Apply glyph keyed patch</a><span>, in § 5.5.1</span>
-   <li><a href="#abstract-opdef-apply-per-table-shared-brotli-patch">Apply per table shared brotli patch</a><span>, in § 5.4.1</span>
-   <li><a href="#abstract-opdef-apply-shared-brotli-patch">Apply shared brotli patch</a><span>, in § 5.3.1</span>
+   <li><a href="#abstract-opdef-apply-per-table-brotli-patch">Apply per table brotli patch</a><span>, in § 5.4.1</span>
    <li><a href="#mapping-entry-bias">bias</a><span>, in § 4.1.2</span>
    <li><a href="#branch-factor-encoding">Branch Factor Encoding</a><span>, in § 4.1.2.2</span>
+   <li><a href="#brotli-patch">Brotli patch</a><span>, in § 5.3</span>
    <li>
     brotliStream
     <ul>
+     <li><a href="#brotli-patch-brotlistream">dfn for Brotli patch</a><span>, in § 5.3</span>
      <li><a href="#glyph-keyed-patch-brotlistream">dfn for Glyph keyed patch</a><span>, in § 5.5</span>
-     <li><a href="#shared-brotli-patch-brotlistream">dfn for Shared brotli patch</a><span>, in § 5.3</span>
      <li><a href="#tablepatch-brotlistream">dfn for TablePatch</a><span>, in § 5.4</span>
     </ul>
    <li><a href="#abstract-opdef-check-entry-intersection">Check entry intersection</a><span>, in § 6</span>
@@ -2085,11 +2086,11 @@ required too many patches.</p>
    <li>
     format
     <ul>
+     <li><a href="#brotli-patch-format">dfn for Brotli patch</a><span>, in § 5.3</span>
      <li><a href="#format-1-patch-map-format">dfn for Format 1 Patch Map</a><span>, in § 4.1.1</span>
      <li><a href="#format-2-patch-map-format">dfn for Format 2 Patch Map</a><span>, in § 4.1.2</span>
      <li><a href="#glyph-keyed-patch-format">dfn for Glyph keyed patch</a><span>, in § 5.5</span>
-     <li><a href="#per-table-shared-brotli-patch-format">dfn for Per table shared brotli patch</a><span>, in § 5.4</span>
-     <li><a href="#shared-brotli-patch-format">dfn for Shared brotli patch</a><span>, in § 5.3</span>
+     <li><a href="#per-table-brotli-patch-format">dfn for Per table brotli patch</a><span>, in § 5.4</span>
     </ul>
    <li><a href="#format-1-patch-map">Format 1 Patch Map</a><span>, in § 4.1.1</span>
    <li><a href="#format-2-patch-map">Format 2 Patch Map</a><span>, in § 4.1.2</span>
@@ -2112,11 +2113,11 @@ required too many patches.</p>
    <li>
     id
     <ul>
+     <li><a href="#brotli-patch-id">dfn for Brotli patch</a><span>, in § 5.3</span>
      <li><a href="#format-1-patch-map-id">dfn for Format 1 Patch Map</a><span>, in § 4.1.1</span>
      <li><a href="#format-2-patch-map-id">dfn for Format 2 Patch Map</a><span>, in § 4.1.2</span>
      <li><a href="#glyph-keyed-patch-id">dfn for Glyph keyed patch</a><span>, in § 5.5</span>
-     <li><a href="#per-table-shared-brotli-patch-id">dfn for Per table shared brotli patch</a><span>, in § 5.4</span>
-     <li><a href="#shared-brotli-patch-id">dfn for Shared brotli patch</a><span>, in § 5.3</span>
+     <li><a href="#per-table-brotli-patch-id">dfn for Per table brotli patch</a><span>, in § 5.4</span>
     </ul>
    <li><a href="#incremental-font">incremental font</a><span>, in § 4</span>
    <li><a href="#independent">independent</a><span>, in § 5.1</span>
@@ -2135,18 +2136,17 @@ required too many patches.</p>
      <li><a href="#format-1-patch-map-patchencoding">dfn for Format 1 Patch Map</a><span>, in § 4.1.1</span>
      <li><a href="#mapping-entry-patchencoding">dfn for Mapping Entry</a><span>, in § 4.1.2</span>
     </ul>
-   <li><a href="#per-table-shared-brotli-patch-patches">patches</a><span>, in § 5.4</span>
-   <li><a href="#per-table-shared-brotli-patch-patchescount">patchesCount</a><span>, in § 5.4</span>
+   <li><a href="#per-table-brotli-patch-patches">patches</a><span>, in § 5.4</span>
+   <li><a href="#per-table-brotli-patch-patchescount">patchesCount</a><span>, in § 5.4</span>
    <li><a href="#patch-format">patch format</a><span>, in § 5.1</span>
    <li><a href="#patch-map-entries">patch map entries</a><span>, in § 4.1</span>
-   <li><a href="#per-table-shared-brotli-patch">Per table shared brotli patch</a><span>, in § 5.4</span>
+   <li><a href="#per-table-brotli-patch">Per table brotli patch</a><span>, in § 5.4</span>
    <li>
     reserved
     <ul>
      <li><a href="#format-1-patch-map-reserved">dfn for Format 1 Patch Map</a><span>, in § 4.1.1</span>
      <li><a href="#format-2-patch-map-reserved">dfn for Format 2 Patch Map</a><span>, in § 4.1.2</span>
     </ul>
-   <li><a href="#shared-brotli-patch">Shared brotli patch</a><span>, in § 5.3</span>
    <li><a href="#sparse-bit-set">Sparse Bit Set</a><span>, in § 4.1.2.2</span>
    <li><a href="#design-space-segment-start">start</a><span>, in § 4.1.2</span>
    <li><a href="#glyphpatches-tablecount">tableCount</a><span>, in § 5.5</span>
@@ -2357,7 +2357,7 @@ required too many patches.</p>
 </script>
 <script>/* Boilerplate: script-dfn-panel-json */
 window.dfnpanelData = {};
-window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3.1. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "4.1.1.1. Interpreting Format 1"}, {"refs": [{"id": "ref-for-font-subset\u2461"}], "title": "5. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}, {"id": "ref-for-font-subset\u2460\u2460"}], "title": "5.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2461"}, {"id": "ref-for-font-subset\u2460\u2462"}], "title": "5.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}], "title": "5.3. Shared Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}, {"id": "ref-for-font-subset\u2460\u2466"}], "title": "5.3.1. Applying Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2467"}, {"id": "ref-for-font-subset\u2460\u2468"}], "title": "5.4. Per Table Shared Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}, {"id": "ref-for-font-subset\u2461\u2461"}], "title": "5.4.1. Applying Per Table Shared Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2462"}], "title": "5.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2463"}, {"id": "ref-for-font-subset\u2461\u2464"}, {"id": "ref-for-font-subset\u2461\u2465"}], "title": "5.5.1. Applying Glyph Keyed Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2466"}, {"id": "ref-for-font-subset\u2461\u2467"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2468"}], "title": "6.1. Fully Expanding a Font"}, {"refs": [{"id": "ref-for-font-subset\u2462\u24ea"}], "title": "7. Encoder"}], "external": false};
+window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3.1. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "4.1.1.1. Interpreting Format 1"}, {"refs": [{"id": "ref-for-font-subset\u2461"}], "title": "5. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}, {"id": "ref-for-font-subset\u2460\u2460"}], "title": "5.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2461"}, {"id": "ref-for-font-subset\u2460\u2462"}], "title": "5.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}], "title": "5.3. Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}, {"id": "ref-for-font-subset\u2460\u2466"}], "title": "5.3.1. Applying Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2467"}, {"id": "ref-for-font-subset\u2460\u2468"}], "title": "5.4. Per Table Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}, {"id": "ref-for-font-subset\u2461\u2461"}], "title": "5.4.1. Applying Per Table Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2462"}], "title": "5.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2463"}, {"id": "ref-for-font-subset\u2461\u2464"}, {"id": "ref-for-font-subset\u2461\u2465"}], "title": "5.5.1. Applying Glyph Keyed Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2466"}, {"id": "ref-for-font-subset\u2461\u2467"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2468"}], "title": "6.1. Fully Expanding a Font"}, {"refs": [{"id": "ref-for-font-subset\u2462\u24ea"}], "title": "7. Encoder"}], "external": false};
 window.dfnpanelData['font-subset-definition'] = {"dfnID": "font-subset-definition", "url": "#font-subset-definition", "dfnText": "font subset definition", "refSections": [{"refs": [{"id": "ref-for-font-subset-definition"}], "title": "4. Extensions to the Font Format"}, {"refs": [{"id": "ref-for-font-subset-definition\u2460"}, {"id": "ref-for-font-subset-definition\u2461"}], "title": "4.1. Patch Map Table"}, {"refs": [{"id": "ref-for-font-subset-definition\u2462"}, {"id": "ref-for-font-subset-definition\u2463"}, {"id": "ref-for-font-subset-definition\u2464"}], "title": "4.1.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-font-subset-definition\u2465"}, {"id": "ref-for-font-subset-definition\u2466"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-font-subset-definition\u2467"}], "title": "7. Encoder"}], "external": false};
 window.dfnpanelData['incremental-font'] = {"dfnID": "incremental-font", "url": "#incremental-font", "dfnText": "incremental font", "refSections": [{"refs": [{"id": "ref-for-incremental-font"}, {"id": "ref-for-incremental-font\u2460"}, {"id": "ref-for-incremental-font\u2461"}, {"id": "ref-for-incremental-font\u2462"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-incremental-font\u2463"}], "title": "6.1. Fully Expanding a Font"}, {"refs": [{"id": "ref-for-incremental-font\u2464"}, {"id": "ref-for-incremental-font\u2465"}, {"id": "ref-for-incremental-font\u2466"}, {"id": "ref-for-incremental-font\u2467"}, {"id": "ref-for-incremental-font\u2468"}, {"id": "ref-for-incremental-font\u2460\u24ea"}, {"id": "ref-for-incremental-font\u2460\u2460"}], "title": "7. Encoder"}], "external": false};
 window.dfnpanelData['patch-map-entries'] = {"dfnID": "patch-map-entries", "url": "#patch-map-entries", "dfnText": "patch map entries", "refSections": [{"refs": [{"id": "ref-for-patch-map-entries"}, {"id": "ref-for-patch-map-entries\u2460"}, {"id": "ref-for-patch-map-entries\u2461"}, {"id": "ref-for-patch-map-entries\u2462"}], "title": "4.1.1.1. Interpreting Format 1"}, {"refs": [{"id": "ref-for-patch-map-entries\u2463"}, {"id": "ref-for-patch-map-entries\u2464"}, {"id": "ref-for-patch-map-entries\u2465"}], "title": "4.1.2.1. Interpreting Format 2"}, {"refs": [{"id": "ref-for-patch-map-entries\u2466"}, {"id": "ref-for-patch-map-entries\u2467"}], "title": "6. Extending a Font Subset"}], "external": false};
@@ -2402,18 +2402,18 @@ window.dfnpanelData['patch-format'] = {"dfnID": "patch-format", "url": "#patch-f
 window.dfnpanelData['patch-application-algorithm'] = {"dfnID": "patch-application-algorithm", "url": "#patch-application-algorithm", "dfnText": "patch application algorithm", "refSections": [{"refs": [{"id": "ref-for-patch-application-algorithm"}], "title": "5.1. Definitions"}], "external": false};
 window.dfnpanelData['dependent'] = {"dfnID": "dependent", "url": "#dependent", "dfnText": "dependent", "refSections": [{"refs": [{"id": "ref-for-dependent"}, {"id": "ref-for-dependent\u2460"}], "title": "5.2. Formats Summary"}, {"refs": [{"id": "ref-for-dependent\u2461"}, {"id": "ref-for-dependent\u2462"}, {"id": "ref-for-dependent\u2463"}], "title": "6. Extending a Font Subset"}], "external": false};
 window.dfnpanelData['independent'] = {"dfnID": "independent", "url": "#independent", "dfnText": "independent", "refSections": [{"refs": [{"id": "ref-for-independent"}], "title": "5.2. Formats Summary"}], "external": false};
-window.dfnpanelData['shared-brotli-patch'] = {"dfnID": "shared-brotli-patch", "url": "#shared-brotli-patch", "dfnText": "Shared brotli patch", "refSections": [{"refs": [{"id": "ref-for-shared-brotli-patch"}], "title": "5.3.1. Applying Shared Brotli Patches"}], "external": false};
-window.dfnpanelData['shared-brotli-patch-format'] = {"dfnID": "shared-brotli-patch-format", "url": "#shared-brotli-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-shared-brotli-patch-format"}], "title": "5.3.1. Applying Shared Brotli Patches"}], "external": false};
-window.dfnpanelData['shared-brotli-patch-id'] = {"dfnID": "shared-brotli-patch-id", "url": "#shared-brotli-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-shared-brotli-patch-id"}], "title": "5.3.1. Applying Shared Brotli Patches"}], "external": false};
-window.dfnpanelData['shared-brotli-patch-brotlistream'] = {"dfnID": "shared-brotli-patch-brotlistream", "url": "#shared-brotli-patch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-shared-brotli-patch-brotlistream"}], "title": "5.3.1. Applying Shared Brotli Patches"}], "external": false};
-window.dfnpanelData['per-table-shared-brotli-patch'] = {"dfnID": "per-table-shared-brotli-patch", "url": "#per-table-shared-brotli-patch", "dfnText": "Per table shared brotli patch", "refSections": [{"refs": [{"id": "ref-for-per-table-shared-brotli-patch"}], "title": "5.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
-window.dfnpanelData['per-table-shared-brotli-patch-format'] = {"dfnID": "per-table-shared-brotli-patch-format", "url": "#per-table-shared-brotli-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-per-table-shared-brotli-patch-format"}], "title": "5.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
-window.dfnpanelData['per-table-shared-brotli-patch-id'] = {"dfnID": "per-table-shared-brotli-patch-id", "url": "#per-table-shared-brotli-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-per-table-shared-brotli-patch-id"}], "title": "5.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
-window.dfnpanelData['per-table-shared-brotli-patch-patches'] = {"dfnID": "per-table-shared-brotli-patch-patches", "url": "#per-table-shared-brotli-patch-patches", "dfnText": "patches", "refSections": [{"refs": [{"id": "ref-for-per-table-shared-brotli-patch-patches"}], "title": "5.4. Per Table Shared Brotli"}, {"refs": [{"id": "ref-for-per-table-shared-brotli-patch-patches\u2460"}, {"id": "ref-for-per-table-shared-brotli-patch-patches\u2461"}, {"id": "ref-for-per-table-shared-brotli-patch-patches\u2462"}, {"id": "ref-for-per-table-shared-brotli-patch-patches\u2463"}, {"id": "ref-for-per-table-shared-brotli-patch-patches\u2464"}], "title": "5.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
-window.dfnpanelData['tablepatch'] = {"dfnID": "tablepatch", "url": "#tablepatch", "dfnText": "TablePatch", "refSections": [{"refs": [{"id": "ref-for-tablepatch"}, {"id": "ref-for-tablepatch\u2460"}], "title": "5.4. Per Table Shared Brotli"}, {"refs": [{"id": "ref-for-tablepatch\u2461"}], "title": "5.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
-window.dfnpanelData['tablepatch-tag'] = {"dfnID": "tablepatch-tag", "url": "#tablepatch-tag", "dfnText": "tag", "refSections": [{"refs": [{"id": "ref-for-tablepatch-tag"}, {"id": "ref-for-tablepatch-tag\u2460"}, {"id": "ref-for-tablepatch-tag\u2461"}, {"id": "ref-for-tablepatch-tag\u2462"}, {"id": "ref-for-tablepatch-tag\u2463"}], "title": "5.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
-window.dfnpanelData['tablepatch-flags'] = {"dfnID": "tablepatch-flags", "url": "#tablepatch-flags", "dfnText": "flags", "refSections": [{"refs": [{"id": "ref-for-tablepatch-flags"}, {"id": "ref-for-tablepatch-flags\u2460"}], "title": "5.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
-window.dfnpanelData['tablepatch-brotlistream'] = {"dfnID": "tablepatch-brotlistream", "url": "#tablepatch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-tablepatch-brotlistream"}, {"id": "ref-for-tablepatch-brotlistream\u2460"}, {"id": "ref-for-tablepatch-brotlistream\u2461"}, {"id": "ref-for-tablepatch-brotlistream\u2462"}], "title": "5.4.1. Applying Per Table Shared Brotli Patches"}], "external": false};
+window.dfnpanelData['brotli-patch'] = {"dfnID": "brotli-patch", "url": "#brotli-patch", "dfnText": "Brotli patch", "refSections": [{"refs": [{"id": "ref-for-brotli-patch"}], "title": "5.3.1. Applying Brotli Patches"}], "external": false};
+window.dfnpanelData['brotli-patch-format'] = {"dfnID": "brotli-patch-format", "url": "#brotli-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-brotli-patch-format"}], "title": "5.3.1. Applying Brotli Patches"}], "external": false};
+window.dfnpanelData['brotli-patch-id'] = {"dfnID": "brotli-patch-id", "url": "#brotli-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-brotli-patch-id"}], "title": "5.3.1. Applying Brotli Patches"}], "external": false};
+window.dfnpanelData['brotli-patch-brotlistream'] = {"dfnID": "brotli-patch-brotlistream", "url": "#brotli-patch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-brotli-patch-brotlistream"}], "title": "5.3.1. Applying Brotli Patches"}], "external": false};
+window.dfnpanelData['per-table-brotli-patch'] = {"dfnID": "per-table-brotli-patch", "url": "#per-table-brotli-patch", "dfnText": "Per table brotli patch", "refSections": [{"refs": [{"id": "ref-for-per-table-brotli-patch"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
+window.dfnpanelData['per-table-brotli-patch-format'] = {"dfnID": "per-table-brotli-patch-format", "url": "#per-table-brotli-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-per-table-brotli-patch-format"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
+window.dfnpanelData['per-table-brotli-patch-id'] = {"dfnID": "per-table-brotli-patch-id", "url": "#per-table-brotli-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-per-table-brotli-patch-id"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
+window.dfnpanelData['per-table-brotli-patch-patches'] = {"dfnID": "per-table-brotli-patch-patches", "url": "#per-table-brotli-patch-patches", "dfnText": "patches", "refSections": [{"refs": [{"id": "ref-for-per-table-brotli-patch-patches"}], "title": "5.4. Per Table Brotli"}, {"refs": [{"id": "ref-for-per-table-brotli-patch-patches\u2460"}, {"id": "ref-for-per-table-brotli-patch-patches\u2461"}, {"id": "ref-for-per-table-brotli-patch-patches\u2462"}, {"id": "ref-for-per-table-brotli-patch-patches\u2463"}, {"id": "ref-for-per-table-brotli-patch-patches\u2464"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
+window.dfnpanelData['tablepatch'] = {"dfnID": "tablepatch", "url": "#tablepatch", "dfnText": "TablePatch", "refSections": [{"refs": [{"id": "ref-for-tablepatch"}, {"id": "ref-for-tablepatch\u2460"}], "title": "5.4. Per Table Brotli"}, {"refs": [{"id": "ref-for-tablepatch\u2461"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
+window.dfnpanelData['tablepatch-tag'] = {"dfnID": "tablepatch-tag", "url": "#tablepatch-tag", "dfnText": "tag", "refSections": [{"refs": [{"id": "ref-for-tablepatch-tag"}, {"id": "ref-for-tablepatch-tag\u2460"}, {"id": "ref-for-tablepatch-tag\u2461"}, {"id": "ref-for-tablepatch-tag\u2462"}, {"id": "ref-for-tablepatch-tag\u2463"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
+window.dfnpanelData['tablepatch-flags'] = {"dfnID": "tablepatch-flags", "url": "#tablepatch-flags", "dfnText": "flags", "refSections": [{"refs": [{"id": "ref-for-tablepatch-flags"}, {"id": "ref-for-tablepatch-flags\u2460"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
+window.dfnpanelData['tablepatch-brotlistream'] = {"dfnID": "tablepatch-brotlistream", "url": "#tablepatch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-tablepatch-brotlistream"}, {"id": "ref-for-tablepatch-brotlistream\u2460"}, {"id": "ref-for-tablepatch-brotlistream\u2461"}, {"id": "ref-for-tablepatch-brotlistream\u2462"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
 window.dfnpanelData['glyph-keyed-patch'] = {"dfnID": "glyph-keyed-patch", "url": "#glyph-keyed-patch", "dfnText": "Glyph keyed patch", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch"}], "title": "5.5.1. Applying Glyph Keyed Patches"}], "external": false};
 window.dfnpanelData['glyph-keyed-patch-format'] = {"dfnID": "glyph-keyed-patch-format", "url": "#glyph-keyed-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch-format"}], "title": "5.5.1. Applying Glyph Keyed Patches"}], "external": false};
 window.dfnpanelData['glyph-keyed-patch-id'] = {"dfnID": "glyph-keyed-patch-id", "url": "#glyph-keyed-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch-id"}], "title": "5.5.1. Applying Glyph Keyed Patches"}], "external": false};
