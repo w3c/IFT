@@ -1148,13 +1148,13 @@ The following patch formats are defined by this specification:
     <th>Description</th>
   </tr>
   <tr>
-    <td>[[#shared-brotli]]</td>
+    <td>[[#brotli]]</td>
     <td>[=dependent=]</td>
     <td>1</td>
     <td>A brotli encoded binary diff that uses the entire [=font subset=] as a base.</td>
   </tr>
   <tr>
-    <td>[[#per-table-shared-brotli]]</td>
+    <td>[[#per-table-brotli]]</td>
     <td>[=dependent=]</td>
     <td>2</td>
     <td>A collection of brotli encoded binary diffs that use tables from the [=font subset=] as bases.</td>
@@ -1169,7 +1169,7 @@ The following patch formats are defined by this specification:
 
 More detailed descriptions of each algorithm can be found in the following sections.
 
-Brotli Patch {#shared-brotli}
+Brotli Patch {#brotli}
 ------------------------------------
 
 In a brotli patch the target file is encoded with [[!RFC7932|brotli compression]] using the
@@ -1202,7 +1202,7 @@ of a short header followed by brotli encoded data.
   </tr>
 </table>
 
-<h4 algorithm id="apply-shared-brotli">Applying Brotli Patches</h4>
+<h4 algorithm id="apply-brotli">Applying Brotli Patches</h4>
 
 This algorithm is used to apply a brotli patch to extend a [=font subset=] to cover additional codepoints,
 features, and/or design-variation space.
@@ -1235,7 +1235,7 @@ The algorithm:
     using the <var>base font subset</var> as a [[Shared-Brotli#section-3.2|shared LZ77 dictionary]]. Return the decoded
     result as the <var>extended font subset</var>
 
-Per Table Brotli {#per-table-shared-brotli}
+Per Table Brotli {#per-table-brotli}
 --------------------------------------------------
 
 A per table brotli patch contains a collection of patches which are applied to the individual
@@ -1301,7 +1301,7 @@ of that [=TablePatch=].
 </table>
 
 
-<h4 algorithm id="apply-per-table-shared-brotli">Applying Per Table Brotli Patches</h4>
+<h4 algorithm id="apply-per-table-brotli">Applying Per Table Brotli Patches</h4>
 
 This algorithm is used to apply a per table brotli patch to extend a [=font subset=] to cover additional codepoints,
 features, and/or design-variation space.
@@ -1668,7 +1668,10 @@ The [=incremental font=] and associated patches produced by a compliant encoder:
      render identically to the fully expanded font for that content.
 
 4.  When an encoder is used to transform an existing font into an [=incremental font=] the associated
-     [$Fully Expand a Font Subset|fully expanded font$] should be equal to the existing font.
+     [$Fully Expand a Font Subset|fully expanded font$] should be equivalent to the existing font. An equivalent fully expanded font
+     should have all of the same [[open-type/otff#table-directory|tables]] as the existing font (excluding the incremental IFT/IFTX
+     tables) and each of those tables should be functionally equivalent to the corresponding table in the existing font. Note: the fully
+     expanded may not always be an exact binary match with the existing font.
 
 When an encoder is used to transform an existing font file into and [=incremental font=] and a client is implemented according to the
 other sections of this document, the intent of the IFT specification is that appearance and behavior of the font in the client will be the
@@ -1698,11 +1701,58 @@ guidance that encoder implementations may want to consider.
 
 <b>Utilize an existing font subsetter implementation</b>
 
-<!-- TODO: A high quality encoder should preserve functionality as discussed above. Existing font subsetters can be used to assist
-     constructing encodings that meet this requirement. They provide all of the logic needed to preserve functionality. High quality
-     open source subsetters exist -->
+<!-- TODO(garretrieger): subsetter implementations are not trivial they consider many interactions within the font to determine what
+     data is reachable -->
 
-<!-- TODO: describe a simple encoder which utilizes only a subsetter -->
+As discussed in [[#encoder]] a high quality encoder should preserve the functionality of the original font. One way to
+achieve this is to leverage an existing font subsetter implementation to produce font subsets that retain the functionality
+of the original font. The IFT patches can then be derived from these subsets.
+
+A font subsetter produces a [=font subset=] from an input font based on a desired [=font subset definition=]. The practice of reliably
+subsetting a font is well understood and has multiple open-source implementations (a full formal description is
+beyond the scope of this document). It typically involves a reachability analysis, where the data in tables is examined
+relative to the font subset definition to see which portions can be reached by any possible content covered by the subset definition.
+Any reachable data is retained in the generated font subset, while any unreachable data may be removed.
+
+Example pseudo code for a very basic encoder implementation using a font subsetter:
+
+```
+# Encodes a font (full_font) into an incremental font that starts at base_subset_def
+# and can incrementally add any of subset_definitions. Returns the IFT encoded font
+# and set of associated patches.
+encode_as_ift(full_font, base_subset_def, subset_definitions):
+  base_font = subset(full_font, base_subset_def)
+  patches = encode_node(full_font, base_font, base_subset_def, subset_definitions)
+  return base_font, patches
+
+# Update base_font to add all of the ift patch mappings to reach any of
+# subset_definitions and produces the associated patches.
+encode_node(full_font, base_font, cur_def, subset_definitions):
+  patches = []
+  next_fonts = []
+  
+  for each subset_def in subset_definitions not fully covered by cur_def:
+    next_def = subset_def union cur_def
+    next_font = subset(full_font, next_def)
+    let patch_url be a new unique url
+    
+    add patch map entry into base_font from (subset_def - cur_def) to patch_url
+    patches += encode(full_font, next_font, next_def, subset_definitions)
+
+    next_fonts += (next_font, next_def, patch_url)
+
+  for each (next_font, next_def, patch_url):
+    patch = dependent_patch_diff(base_font, next_font)
+    patches += (patch, patch_url)
+  
+  return patches
+```
+
+In this example implementation if the union of the input base subset definition and the list of subset definitions fully covers the input
+full font, and the subsetter implementation used correctly retains all functionality then the above implementation should meet the
+requirements in [[#encoder]] to be a neutral encoding. This basic encoder implementation is for demonstration purposes and not meant
+to be representative of all possible encoder implementations. Most encoders will likely be more complex and need to consider additional
+factors some of which are discussed in the remaining sections.
 
 <b>Choosing segmentations</b>
 
@@ -1717,14 +1767,11 @@ During segmentation an encoder should also consider how codepoints interact with
 in the same segment can avoid having to duplicate data between patches, which may be necessary to preserve the functionality of the
 original font when interacting codepoints reside in different segments.
 
-<b>Dependent patches can form patch graphs</b>
+<b>Dependent patches can form graphs</b>
 
-<!-- TODO:
-     a dependent patch can modify the mapping table to point to new patches which are valid against the updated font subset.
-     This forms a graph, and it can be helpful to reason about the encoding in terms of the graph.
-     Since only one dependent patch can be applied and loaded at a time the graph can encode edges that patch in multiple segments
-     in a single patch, alongside patches that patch in single segments. -->
-
+[=dependent|Dependent=] patches can modify the mapping table in the current font subset, which allows a patch to update the mapping table
+to point to a different set of patches which are valid against the result of the patch application. This allows a graph to be formed
+where a font subset is the node and each patch is an edge.
 
 <b>Choosing patch formats</b>
 

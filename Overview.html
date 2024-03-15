@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="545a4a162e383a75b849eb172560f0d9ccfbe236" name="document-revision">
+  <meta content="32e5b91c30707f9be12ca1473e06f3f9fd96d4df" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -600,14 +600,14 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
       <li><a href="#font-patch-definitions"><span class="secno">5.1</span> <span class="content">Definitions</span></a>
       <li><a href="#font-patch-formats-summary"><span class="secno">5.2</span> <span class="content">Formats Summary</span></a>
       <li>
-       <a href="#shared-brotli"><span class="secno">5.3</span> <span class="content">Brotli Patch</span></a>
+       <a href="#brotli"><span class="secno">5.3</span> <span class="content">Brotli Patch</span></a>
        <ol class="toc">
-        <li><a href="#apply-shared-brotli"><span class="secno">5.3.1</span> <span class="content">Applying Brotli Patches</span></a>
+        <li><a href="#apply-brotli"><span class="secno">5.3.1</span> <span class="content">Applying Brotli Patches</span></a>
        </ol>
       <li>
-       <a href="#per-table-shared-brotli"><span class="secno">5.4</span> <span class="content">Per Table Brotli</span></a>
+       <a href="#per-table-brotli"><span class="secno">5.4</span> <span class="content">Per Table Brotli</span></a>
        <ol class="toc">
-        <li><a href="#apply-per-table-shared-brotli"><span class="secno">5.4.1</span> <span class="content">Applying Per Table Brotli Patches</span></a>
+        <li><a href="#apply-per-table-brotli"><span class="secno">5.4.1</span> <span class="content">Applying Per Table Brotli Patches</span></a>
        </ol>
       <li>
        <a href="#glyph-keyed"><span class="secno">5.5</span> <span class="content">Glyph Keyed</span></a>
@@ -1473,12 +1473,12 @@ from F by the application of one or more independent patches from <code>P</code>
       <th>ID
       <th>Description
      <tr>
-      <td><a href="#shared-brotli">§ 5.3 Brotli Patch</a>
+      <td><a href="#brotli">§ 5.3 Brotli Patch</a>
       <td><a data-link-type="dfn" href="#dependent" id="ref-for-dependent">dependent</a>
       <td>1
       <td>A brotli encoded binary diff that uses the entire <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①②">font subset</a> as a base.
      <tr>
-      <td><a href="#per-table-shared-brotli">§ 5.4 Per Table Brotli</a>
+      <td><a href="#per-table-brotli">§ 5.4 Per Table Brotli</a>
       <td><a data-link-type="dfn" href="#dependent" id="ref-for-dependent①">dependent</a>
       <td>2
       <td>A collection of brotli encoded binary diffs that use tables from the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a> as bases.
@@ -1489,7 +1489,7 @@ from F by the application of one or more independent patches from <code>P</code>
       <td>Contains a collection of opaque binary blobs, each associated with a glyph id and table.
    </table>
    <p>More detailed descriptions of each algorithm can be found in the following sections.</p>
-   <h3 class="heading settled" data-level="5.3" id="shared-brotli"><span class="secno">5.3. </span><span class="content">Brotli Patch</span><a class="self-link" href="#shared-brotli"></a></h3>
+   <h3 class="heading settled" data-level="5.3" id="brotli"><span class="secno">5.3. </span><span class="content">Brotli Patch</span><a class="self-link" href="#brotli"></a></h3>
    <p>In a brotli patch the target file is encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the
 source file as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. A brotli encoded patch consists
 of a short header followed by brotli encoded data.</p>
@@ -1513,7 +1513,7 @@ of a short header followed by brotli encoded data.</p>
       <td><dfn class="dfn-paneled" data-dfn-for="Brotli patch" data-dfn-type="dfn" data-noexport id="brotli-patch-brotlistream">brotliStream</dfn>[variable]
       <td>Brotli encoded byte stream.
    </table>
-   <h4 class="heading settled algorithm" data-algorithm="Applying Brotli Patches" data-level="5.3.1" id="apply-shared-brotli"><span class="secno">5.3.1. </span><span class="content">Applying Brotli Patches</span><a class="self-link" href="#apply-shared-brotli"></a></h4>
+   <h4 class="heading settled algorithm" data-algorithm="Applying Brotli Patches" data-level="5.3.1" id="apply-brotli"><span class="secno">5.3.1. </span><span class="content">Applying Brotli Patches</span><a class="self-link" href="#apply-brotli"></a></h4>
    <p>This algorithm is used to apply a brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a> to cover additional codepoints,
 features, and/or design-variation space.</p>
    <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-brotli-patch">Apply brotli patch<a class="self-link" href="#abstract-opdef-apply-brotli-patch"></a></dfn></p>
@@ -1544,7 +1544,7 @@ return an error.</p>
 using the <var>base font subset</var> as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. Return the decoded
 result as the <var>extended font subset</var></p>
    </ol>
-   <h3 class="heading settled" data-level="5.4" id="per-table-shared-brotli"><span class="secno">5.4. </span><span class="content">Per Table Brotli</span><a class="self-link" href="#per-table-shared-brotli"></a></h3>
+   <h3 class="heading settled" data-level="5.4" id="per-table-brotli"><span class="secno">5.4. </span><span class="content">Per Table Brotli</span><a class="self-link" href="#per-table-brotli"></a></h3>
    <p>A per table brotli patch contains a collection of patches which are applied to the individual <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font tables</a> in the input font file. Each table patch is encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the corresponding table from the input font file as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. A per table brotli encoded patch consists of a short header followed
 by one or more brotli encoded patches. In addition to patching tables, patches may also replace (existing table data is not used)
 or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑧">font subset</a>.</p>
@@ -1594,7 +1594,7 @@ of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">Ta
       <td><dfn class="dfn-paneled" data-dfn-for="TablePatch" data-dfn-type="dfn" data-noexport id="tablepatch-brotlistream">brotliStream</dfn>[variable]
       <td>Brotli encoded byte stream.
    </table>
-   <h4 class="heading settled algorithm" data-algorithm="Applying Per Table Brotli Patches" data-level="5.4.1" id="apply-per-table-shared-brotli"><span class="secno">5.4.1. </span><span class="content">Applying Per Table Brotli Patches</span><a class="self-link" href="#apply-per-table-shared-brotli"></a></h4>
+   <h4 class="heading settled algorithm" data-algorithm="Applying Per Table Brotli Patches" data-level="5.4.1" id="apply-per-table-brotli"><span class="secno">5.4.1. </span><span class="content">Applying Per Table Brotli Patches</span><a class="self-link" href="#apply-per-table-brotli"></a></h4>
    <p>This algorithm is used to apply a per table brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⓪">font subset</a> to cover additional codepoints,
 features, and/or design-variation space.</p>
    <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-per-table-brotli-patch">Apply per table brotli patch<a class="self-link" href="#abstract-opdef-apply-per-table-brotli-patch"></a></dfn></p>
@@ -1905,7 +1905,10 @@ of dependent patch selection chosen in step 6 of <a data-link-type="abstract-op"
  given the <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset①">fully expanded font</a> derived from the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑧">incremental font</a> and any content, then the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③⓪">font subset</a> produced by invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset③">Extend a Font Subset</a> with the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑨">incremental font</a> and the minimal subset definition covering that content should
  render identically to the fully expanded font for that content.</p>
     <li data-md>
-     <p>When an encoder is used to transform an existing font into an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⓪">incremental font</a> the associated <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset②">fully expanded font</a> should be equal to the existing font.</p>
+     <p>When an encoder is used to transform an existing font into an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⓪">incremental font</a> the associated <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset②">fully expanded font</a> should be equivalent to the existing font. An equivalent fully expanded font
+ should have all of the same <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> as the existing font (excluding the incremental IFT/IFTX
+ tables) and each of those tables should be functionally equivalent to the corresponding table in the existing font. Note: the fully
+ expanded may not always be an exact binary match with the existing font.</p>
    </ol>
    <p>When an encoder is used to transform an existing font file into and <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①①">incremental font</a> and a client is implemented according to the
 other sections of this document, the intent of the IFT specification is that appearance and behavior of the font in the client will be the
@@ -1926,6 +1929,50 @@ directly encoded into the IFT format from font authoring source files.</p>
    <p>The details of the encoding process may differ by encoder and are beyond the scope of this document. However, this section provides
 guidance that encoder implementations may want to consider.</p>
    <p><b>Utilize an existing font subsetter implementation</b></p>
+   <p>As discussed in <a href="#encoder">§ 7 Encoder</a> a high quality encoder should preserve the functionality of the original font. One way to
+achieve this is to leverage an existing font subsetter implementation to produce font subsets that retain the functionality
+of the original font. The IFT patches can then be derived from these subsets.</p>
+   <p>A font subsetter produces a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③①">font subset</a> from an input font based on a desired <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑨">font subset definition</a>. The practice of reliably
+subsetting a font is well understood and has multiple open-source implementations (a full formal description is
+beyond the scope of this document). It typically involves a reachability analysis, where the data in tables is examined
+relative to the font subset definition to see which portions can be reached by any possible content covered by the subset definition.
+Any reachable data is retained in the generated font subset, while any unreachable data may be removed.</p>
+   <p>Example pseudo code for a very basic encoder implementation using a font subsetter:</p>
+<pre># Encodes a font (full_font) into an incremental font that starts at base_subset_def
+# and can incrementally add any of subset_definitions. Returns the IFT encoded font
+# and set of associated patches.
+encode_as_ift(full_font, base_subset_def, subset_definitions):
+  base_font = subset(full_font, base_subset_def)
+  patches = encode_node(full_font, base_font, base_subset_def, subset_definitions)
+  return base_font, patches
+
+# Update base_font to add all of the ift patch mappings to reach any of
+# subset_definitions and produces the associated patches.
+encode_node(full_font, base_font, cur_def, subset_definitions):
+  patches = []
+  next_fonts = []
+  
+  for each subset_def in subset_definitions not fully covered by cur_def:
+    next_def = subset_def union cur_def
+    next_font = subset(full_font, next_def)
+    let patch_url be a new unique url
+    
+    add patch map entry into base_font from (subset_def - cur_def) to patch_url
+    patches += encode(full_font, next_font, next_def, subset_definitions)
+
+    next_fonts += (next_font, next_def, patch_url)
+
+  for each (next_font, next_def, patch_url):
+    patch = dependent_patch_diff(base_font, next_font)
+    patches += (patch, patch_url)
+  
+  return patches
+</pre>
+   <p>In this example implementation if the union of the input base subset definition and the list of subset definitions fully covers the input
+full font, and the subsetter implementation used correctly retains all functionality then the above implementation should meet the
+requirements in <a href="#encoder">§ 7 Encoder</a> to be a neutral encoding. This basic encoder implementation is for demonstration purposes and not meant
+to be representative of all possible encoder implementations. Most encoders will likely be more complex and need to consider additional
+factors some of which are discussed in the remaining sections.</p>
    <p><b>Choosing segmentations</b></p>
    <p>One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. To maximize
 efficiency the encoder should try and group data (eg. codepoints) that are commonly used together into the same segments. This will
@@ -1936,7 +1983,10 @@ to guide segmentation.</p>
    <p>During segmentation an encoder should also consider how codepoints interact with each other in the font. Keeping interacting codepoints
 in the same segment can avoid having to duplicate data between patches, which may be necessary to preserve the functionality of the
 original font when interacting codepoints reside in different segments.</p>
-   <p><b>Dependent patches can form patch graphs</b></p>
+   <p><b>Dependent patches can form graphs</b></p>
+   <p><a data-link-type="dfn" href="#dependent" id="ref-for-dependent⑤">Dependent</a> patches can modify the mapping table in the current font subset, which allows a patch to update the mapping table
+to point to a different set of patches which are valid against the result of the patch application. This allows a graph to be formed
+where a font subset is the node and each patch is an edge.</p>
    <p><b>Choosing patch formats</b></p>
    <p>An encoder must choose the appropriate patch type to use. Dependent patches allow all types of data in the font to be patched, while
 independent patches are limited to updating outline and variation delta data. However, using dependent patches can cause the number of
@@ -2357,8 +2407,8 @@ required too many patches.</p>
 </script>
 <script>/* Boilerplate: script-dfn-panel-json */
 window.dfnpanelData = {};
-window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3.1. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "4.1.1.1. Interpreting Format 1"}, {"refs": [{"id": "ref-for-font-subset\u2461"}], "title": "5. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}, {"id": "ref-for-font-subset\u2460\u2460"}], "title": "5.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2461"}, {"id": "ref-for-font-subset\u2460\u2462"}], "title": "5.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}], "title": "5.3. Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}, {"id": "ref-for-font-subset\u2460\u2466"}], "title": "5.3.1. Applying Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2467"}, {"id": "ref-for-font-subset\u2460\u2468"}], "title": "5.4. Per Table Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}, {"id": "ref-for-font-subset\u2461\u2461"}], "title": "5.4.1. Applying Per Table Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2462"}], "title": "5.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2463"}, {"id": "ref-for-font-subset\u2461\u2464"}, {"id": "ref-for-font-subset\u2461\u2465"}], "title": "5.5.1. Applying Glyph Keyed Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2466"}, {"id": "ref-for-font-subset\u2461\u2467"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2468"}], "title": "6.1. Fully Expanding a Font"}, {"refs": [{"id": "ref-for-font-subset\u2462\u24ea"}], "title": "7. Encoder"}], "external": false};
-window.dfnpanelData['font-subset-definition'] = {"dfnID": "font-subset-definition", "url": "#font-subset-definition", "dfnText": "font subset definition", "refSections": [{"refs": [{"id": "ref-for-font-subset-definition"}], "title": "4. Extensions to the Font Format"}, {"refs": [{"id": "ref-for-font-subset-definition\u2460"}, {"id": "ref-for-font-subset-definition\u2461"}], "title": "4.1. Patch Map Table"}, {"refs": [{"id": "ref-for-font-subset-definition\u2462"}, {"id": "ref-for-font-subset-definition\u2463"}, {"id": "ref-for-font-subset-definition\u2464"}], "title": "4.1.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-font-subset-definition\u2465"}, {"id": "ref-for-font-subset-definition\u2466"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-font-subset-definition\u2467"}], "title": "7. Encoder"}], "external": false};
+window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3.1. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "4.1.1.1. Interpreting Format 1"}, {"refs": [{"id": "ref-for-font-subset\u2461"}], "title": "5. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}, {"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}, {"id": "ref-for-font-subset\u2460\u24ea"}, {"id": "ref-for-font-subset\u2460\u2460"}], "title": "5.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2461"}, {"id": "ref-for-font-subset\u2460\u2462"}], "title": "5.2. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}], "title": "5.3. Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}, {"id": "ref-for-font-subset\u2460\u2466"}], "title": "5.3.1. Applying Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2467"}, {"id": "ref-for-font-subset\u2460\u2468"}], "title": "5.4. Per Table Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}, {"id": "ref-for-font-subset\u2461\u2461"}], "title": "5.4.1. Applying Per Table Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2462"}], "title": "5.5. Glyph Keyed"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2463"}, {"id": "ref-for-font-subset\u2461\u2464"}, {"id": "ref-for-font-subset\u2461\u2465"}], "title": "5.5.1. Applying Glyph Keyed Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2466"}, {"id": "ref-for-font-subset\u2461\u2467"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2468"}], "title": "6.1. Fully Expanding a Font"}, {"refs": [{"id": "ref-for-font-subset\u2462\u24ea"}], "title": "7. Encoder"}, {"refs": [{"id": "ref-for-font-subset\u2462\u2460"}], "title": "7.1. Encoder Considerations"}], "external": false};
+window.dfnpanelData['font-subset-definition'] = {"dfnID": "font-subset-definition", "url": "#font-subset-definition", "dfnText": "font subset definition", "refSections": [{"refs": [{"id": "ref-for-font-subset-definition"}], "title": "4. Extensions to the Font Format"}, {"refs": [{"id": "ref-for-font-subset-definition\u2460"}, {"id": "ref-for-font-subset-definition\u2461"}], "title": "4.1. Patch Map Table"}, {"refs": [{"id": "ref-for-font-subset-definition\u2462"}, {"id": "ref-for-font-subset-definition\u2463"}, {"id": "ref-for-font-subset-definition\u2464"}], "title": "4.1.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-font-subset-definition\u2465"}, {"id": "ref-for-font-subset-definition\u2466"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-font-subset-definition\u2467"}], "title": "7. Encoder"}, {"refs": [{"id": "ref-for-font-subset-definition\u2468"}], "title": "7.1. Encoder Considerations"}], "external": false};
 window.dfnpanelData['incremental-font'] = {"dfnID": "incremental-font", "url": "#incremental-font", "dfnText": "incremental font", "refSections": [{"refs": [{"id": "ref-for-incremental-font"}, {"id": "ref-for-incremental-font\u2460"}, {"id": "ref-for-incremental-font\u2461"}, {"id": "ref-for-incremental-font\u2462"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-incremental-font\u2463"}], "title": "6.1. Fully Expanding a Font"}, {"refs": [{"id": "ref-for-incremental-font\u2464"}, {"id": "ref-for-incremental-font\u2465"}, {"id": "ref-for-incremental-font\u2466"}, {"id": "ref-for-incremental-font\u2467"}, {"id": "ref-for-incremental-font\u2468"}, {"id": "ref-for-incremental-font\u2460\u24ea"}, {"id": "ref-for-incremental-font\u2460\u2460"}], "title": "7. Encoder"}], "external": false};
 window.dfnpanelData['patch-map-entries'] = {"dfnID": "patch-map-entries", "url": "#patch-map-entries", "dfnText": "patch map entries", "refSections": [{"refs": [{"id": "ref-for-patch-map-entries"}, {"id": "ref-for-patch-map-entries\u2460"}, {"id": "ref-for-patch-map-entries\u2461"}, {"id": "ref-for-patch-map-entries\u2462"}], "title": "4.1.1.1. Interpreting Format 1"}, {"refs": [{"id": "ref-for-patch-map-entries\u2463"}, {"id": "ref-for-patch-map-entries\u2464"}, {"id": "ref-for-patch-map-entries\u2465"}], "title": "4.1.2.1. Interpreting Format 2"}, {"refs": [{"id": "ref-for-patch-map-entries\u2466"}, {"id": "ref-for-patch-map-entries\u2467"}], "title": "6. Extending a Font Subset"}], "external": false};
 window.dfnpanelData['format-1-patch-map-entrycount'] = {"dfnID": "format-1-patch-map-entrycount", "url": "#format-1-patch-map-entrycount", "dfnText": "entryCount", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-entrycount"}, {"id": "ref-for-format-1-patch-map-entrycount\u2460"}, {"id": "ref-for-format-1-patch-map-entrycount\u2461"}, {"id": "ref-for-format-1-patch-map-entrycount\u2462"}, {"id": "ref-for-format-1-patch-map-entrycount\u2463"}], "title": "4.1.1. Patch Map Table: Format 1"}], "external": false};
@@ -2400,7 +2450,7 @@ window.dfnpanelData['abstract-opdef-interpret-format-2-patch-map-entry'] = {"dfn
 window.dfnpanelData['font-patch'] = {"dfnID": "font-patch", "url": "#font-patch", "dfnText": "font patch", "refSections": [{"refs": [{"id": "ref-for-font-patch"}, {"id": "ref-for-font-patch\u2460"}, {"id": "ref-for-font-patch\u2461"}], "title": "5.1. Definitions"}, {"refs": [{"id": "ref-for-font-patch\u2462"}], "title": "7. Encoder"}], "external": false};
 window.dfnpanelData['patch-format'] = {"dfnID": "patch-format", "url": "#patch-format", "dfnText": "patch format", "refSections": [{"refs": [{"id": "ref-for-patch-format"}, {"id": "ref-for-patch-format\u2460"}], "title": "5.1. Definitions"}], "external": false};
 window.dfnpanelData['patch-application-algorithm'] = {"dfnID": "patch-application-algorithm", "url": "#patch-application-algorithm", "dfnText": "patch application algorithm", "refSections": [{"refs": [{"id": "ref-for-patch-application-algorithm"}], "title": "5.1. Definitions"}], "external": false};
-window.dfnpanelData['dependent'] = {"dfnID": "dependent", "url": "#dependent", "dfnText": "dependent", "refSections": [{"refs": [{"id": "ref-for-dependent"}, {"id": "ref-for-dependent\u2460"}], "title": "5.2. Formats Summary"}, {"refs": [{"id": "ref-for-dependent\u2461"}, {"id": "ref-for-dependent\u2462"}, {"id": "ref-for-dependent\u2463"}], "title": "6. Extending a Font Subset"}], "external": false};
+window.dfnpanelData['dependent'] = {"dfnID": "dependent", "url": "#dependent", "dfnText": "dependent", "refSections": [{"refs": [{"id": "ref-for-dependent"}, {"id": "ref-for-dependent\u2460"}], "title": "5.2. Formats Summary"}, {"refs": [{"id": "ref-for-dependent\u2461"}, {"id": "ref-for-dependent\u2462"}, {"id": "ref-for-dependent\u2463"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-dependent\u2464"}], "title": "7.1. Encoder Considerations"}], "external": false};
 window.dfnpanelData['independent'] = {"dfnID": "independent", "url": "#independent", "dfnText": "independent", "refSections": [{"refs": [{"id": "ref-for-independent"}], "title": "5.2. Formats Summary"}], "external": false};
 window.dfnpanelData['brotli-patch'] = {"dfnID": "brotli-patch", "url": "#brotli-patch", "dfnText": "Brotli patch", "refSections": [{"refs": [{"id": "ref-for-brotli-patch"}], "title": "5.3.1. Applying Brotli Patches"}], "external": false};
 window.dfnpanelData['brotli-patch-format'] = {"dfnID": "brotli-patch-format", "url": "#brotli-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-brotli-patch-format"}], "title": "5.3.1. Applying Brotli Patches"}], "external": false};
