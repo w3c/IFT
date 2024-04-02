@@ -93,20 +93,14 @@ th, td {
 Introduction {#intro}
 =====================
 
-<!-- TODO: from feedback:
-     1. Move the "does not break layout" up to the end of the introduction.
-     2. Add variable fonts where only a subset of axes are needed to 1.2 -->
-
-<!-- TODO: consider recommended hosting by at least HTTP2 capable server for performance of making multiple patch requests in parallel. -->
-
-
 <em>This section is not normative.</em>
 
 Incremental Font Transfer (IFT) is a technology to improve the latency of remote fonts (or "web fonts") on
 the web. Without this technology, a browser needs to download every last byte of a font before it can render
 any characters using that font. IFT allows the browser to download only some of the bytes in the file, thereby
 decreasing the perceived latency between the time when a browser realizes it needs a font and when the
-necessary text can be rendered with that font.
+necessary text can be rendered with that font. Unlike traditional font subsetting approaches Incremental Font Transfer
+retains the encoding of layout rules between segments ([[PFE-report#fail-subset]]).
 
 The success of WebFonts is unevenly distributed. This specification allows WebFonts to be used where
 slow networks, very large fonts, or complex subsetting requirements currently preclude their use. For
@@ -143,7 +137,8 @@ At a high level an IFT font is used like this:
     the font.
 
 2. Based on the content to be rendered, the client [[#extending-font-subset|selects, downloads, and applies]] patches to extend 
-    the font to cover additional characters. This step is repeated each time there is new content.
+    the font to cover additional characters, layout features, and/or variation space. This step is repeated each time there is new
+    content.
 
 Creating an Incremental Font {#making-incremental-fonts}
 --------------------------------------------------------
@@ -172,6 +167,10 @@ Performance Considerations and the use of Incremental Font Transfer {#performanc
 Using incremental transfer may not always be beneficial, depending on the characteristics of the font,
 the network, and the content being rendered. This section provides non-normative guidance to help decide
 when incremental transfer should be utilized.
+
+It is common for an incremental font to trigger the loading of multiple patches in parallel. So to maximize performance, when
+serving an incremental font it is recommended that an HTTP server which is capable of multiplexing (such as [[rfc9113]] or [[rfc9114]])
+is used.
 
 Incrementally loading a font has a fundamental performance trade off versus loading the whole font.
 Simplistically, under incremental transfer less bytes may be transferred at the potential cost of
@@ -1700,9 +1699,6 @@ The details of the encoding process may differ by encoder and are beyond the sco
 guidance that encoder implementations may want to consider.
 
 <b>Utilize an existing font subsetter implementation</b>
-
-<!-- TODO(garretrieger): subsetter implementations are not trivial they consider many interactions within the font to determine what
-     data is reachable -->
 
 As discussed in [[#encoder]] a high quality encoder should preserve the functionality of the original font. One way to
 achieve this is to leverage an existing font subsetter implementation to produce font subsets that retain the functionality
