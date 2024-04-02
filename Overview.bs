@@ -340,22 +340,23 @@ Some example inputs and the corresponding expansions:
 Extensions to the Font Format {#font-format-extensions}
 =======================================================
 
-<!-- TODO: Note that these new tables are extensions specific to this specification and not part of the broader open type specifications. -->
-
 An <dfn dfn>incremental font</dfn> follows the existing [[open-type|OpenType]] format, but includes two new
 [[open-type/otff#table-directory|tables]] identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both
 [[#patch-map|patch maps]], which encode a collection of mappings from [=font subset definition|font subset definitions=] to URIs which
 host [[#font-patch-formats|patches]] that extend the incremental font. All incremental fonts must contain the 'IFT ' table.
 The 'IFTX' table is optional. When both tables are present, the mapping of the font as a whole is the union of the mappings of
-the two tables.
+the two tables. The two new tables are used only in this specification and are not being added to the [[open-type|Open-Type]]
+specification.
 
 Note: allowing the mapping to be split between two distinct tables allows an incremental font to more easily make use of multiple
 patch types. For example all patches of one type can be specified in the 'IFT ' table, and all patches of a second type in the
 'IFTX' table. Those patches can make updates only to one of the mapping tables and avoid making conflicting updates.
 
+Note: [=incremental font|incremental fonts=] can be converted to [[WOFF2]] and still be utilized as an incremental fonts. In this
+case the user agent would first decode the woff2, and patches are relative to the decoded bytes.
+
 <!-- TODO: instead of IFT/IFTX consider having a one table be specific to dependent patches and the other to independent patches -->
 <!-- TODO add algorithm explaining how to union the two tables -->
-<!-- TODO: how does this interact with woff2 -->
 
 
 Patch Map Table {#patch-map}
@@ -373,7 +374,6 @@ encoded in one of two formats:
 
 ### Patch Map Table: Format 1 ### {#patch-map-format-1}
 
-<!-- TODO: summary of this format -->
 <!-- TODO: provide normative validation requirements for each encoding -->
 <!-- TODO: clean up unreferenced definitions -->
 
