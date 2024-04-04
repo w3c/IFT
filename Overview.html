@@ -7,7 +7,11 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
+<<<<<<< HEAD
   <meta content="27d662b865c94d64b35015c955f6abe490cbe810" name="document-revision">
+=======
+  <meta content="db12e20a3b706a51eb62e3cc7d62920a504c85cc" name="document-revision">
+>>>>>>> b1da24c (Cleanup unused definitions in the format 1 patch map section.)
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -503,7 +507,11 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
+<<<<<<< HEAD
    <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-12">12 April 2024</time></p>
+=======
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-04">4 April 2024</time></p>
+>>>>>>> b1da24c (Cleanup unused definitions in the format 1 patch map section.)
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -893,11 +901,11 @@ is typically less compact than format 1.</p>
       <td>Number of glyphs that mappings are provided for. Must match the numGlyphs field from <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a>.
      <tr>
       <td>Offset32
-      <td><dfn data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-glyphmapoffset">glyphMapOffset<a class="self-link" href="#format-1-patch-map-glyphmapoffset"></a></dfn>
+      <td>glyphMapOffset
       <td>Offset to a <a data-link-type="dfn" href="#glyph-map" id="ref-for-glyph-map">Glyph Map</a> sub table. Offset is from the start of this table.
      <tr>
       <td>Offset32
-      <td><dfn data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-featuremapoffset">featureMapOffset<a class="self-link" href="#format-1-patch-map-featuremapoffset"></a></dfn>
+      <td>featureMapOffset
       <td>Offset to a <a data-link-type="dfn" href="#feature-map" id="ref-for-feature-map">Feature Map</a> sub table. Offset is from the start of this table.
      <tr>
       <td>uint8
@@ -906,7 +914,7 @@ is typically less compact than format 1.</p>
       the most significant bit. Bit 8 is the least significant bit of appliedEntriesBitMap[1] and so on. 
      <tr>
       <td>uint16
-      <td><dfn data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-uritemplatelength">uriTemplateLength<a class="self-link" href="#format-1-patch-map-uritemplatelength"></a></dfn>
+      <td>uriTemplateLength
       <td> Length of the uriTemplate string. 
      <tr>
       <td>uint8
@@ -927,12 +935,12 @@ is typically less compact than format 1.</p>
       <th>Description
      <tr>
       <td>uint16
-      <td><dfn data-dfn-for="Glyph Map" data-dfn-type="dfn" data-noexport id="glyph-map-firstmappedglyph">firstMappedGlyph<a class="self-link" href="#glyph-map-firstmappedglyph"></a></dfn>
+      <td><dfn class="dfn-paneled" data-dfn-for="Glyph Map" data-dfn-type="dfn" data-noexport id="glyph-map-firstmappedglyph">firstMappedGlyph</dfn>
       <td>All glyph indices less than firstMappedGlyph are implicitly mapped to entry index 0.
      <tr>
       <td>uint8/uint16
-      <td><dfn data-dfn-for="Glyph Map" data-dfn-type="dfn" data-noexport id="glyph-map-entryindex">entryIndex<a class="self-link" href="#glyph-map-entryindex"></a></dfn>[<a data-link-type="dfn" href="#format-1-patch-map-glyphcount" id="ref-for-format-1-patch-map-glyphcount">glyphCount</a> - firstMappedGlyph]
-      <td> The entry index for glyph <code>i</code> is stored in entryIndex[<code>i</code> - firstMappedGlyph]. Array members
+      <td><dfn class="dfn-paneled" data-dfn-for="Glyph Map" data-dfn-type="dfn" data-noexport id="glyph-map-entryindex">entryIndex</dfn>[<a data-link-type="dfn" href="#format-1-patch-map-glyphcount" id="ref-for-format-1-patch-map-glyphcount">glyphCount</a> - firstMappedGlyph]
+      <td> The entry index for glyph <code>i</code> is stored in entryIndex[<code>i</code> - <a data-link-type="dfn" href="#glyph-map-firstmappedglyph" id="ref-for-glyph-map-firstmappedglyph">firstMappedGlyph</a>]. Array members
       are uint8 if <a data-link-type="dfn" href="#format-1-patch-map-entrycount" id="ref-for-format-1-patch-map-entrycount">entryCount</a> is less than 256, otherwise they are uint16. 
    </table>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="feature-map">Feature Map</dfn> encoding:</p>
@@ -945,7 +953,7 @@ is typically less compact than format 1.</p>
       <th>Description
      <tr>
       <td>uint16
-      <td><dfn data-dfn-for="Feature Map" data-dfn-type="dfn" data-noexport id="feature-map-featurecount">featureCount<a class="self-link" href="#feature-map-featurecount"></a></dfn>
+      <td>featureCount
       <td>Number of featureRecords.
      <tr>
       <td><a data-link-type="dfn" href="#featurerecord" id="ref-for-featurerecord">FeatureRecord</a>
@@ -953,7 +961,7 @@ is typically less compact than format 1.</p>
       <td> Provides mappings for a specific <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tag</a>. Must be sorted by <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag">featureTag</a> with any feature tag occurring at most once. 
      <tr>
       <td><a data-link-type="dfn" href="#entrymaprecord" id="ref-for-entrymaprecord">EntryMapRecord</a>
-      <td><dfn data-dfn-for="Feature Map" data-dfn-type="dfn" data-noexport id="feature-map-entrymaprecords">entryMapRecords<a class="self-link" href="#feature-map-entrymaprecords"></a></dfn>[variable]
+      <td><dfn class="dfn-paneled" data-dfn-for="Feature Map" data-dfn-type="dfn" data-noexport id="feature-map-entrymaprecords">entryMapRecords</dfn>[variable]
       <td> Provides the key (entry index) for each feature mapping. The entryMapRecords array contains as many entries as the sum of
       the <a data-link-type="dfn" href="#featurerecord-entrymapcount" id="ref-for-featurerecord-entrymapcount">entryMapCount</a> fields in the <a data-link-type="dfn" href="#feature-map-featurerecords" id="ref-for-feature-map-featurerecords">featureRecords</a> array, with entryMapRecords[0] corresponding
       to the first entry of featureRecords[0], entryMapRecords[featureRecord[0].entryMapCount] corresponding to the first entry of
@@ -1022,7 +1030,7 @@ is typically less compact than format 1.</p>
     <li data-md>
      <p>Check that the <var>patch map</var> has <a data-link-type="dfn" href="#format-1-patch-map-format" id="ref-for-format-1-patch-map-format">format</a> equal to 1 and is valid according to the requirements in <a href="#patch-map-format-1">§ 4.1.1 Patch Map Table: Format 1</a>. If it is not return an error.</p>
     <li data-md>
-     <p>For each unique <var>entry index</var> in <a data-link-type="dfn" href="#glyph-map" id="ref-for-glyph-map①">Glyph Map</a>:</p>
+     <p>For each unique <var>entry index</var> in <a data-link-type="dfn" href="#glyph-map-entryindex" id="ref-for-glyph-map-entryindex">entryIndex</a>:</p>
      <ul>
       <li data-md>
        <p>a. If the bit for <var>entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap">appliedEntriesBitMap</a> is set to 1, skip this <var>entry index</var>.</p>
@@ -1037,7 +1045,7 @@ is typically less compact than format 1.</p>
 maps to the generated URI and the patch encoding specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id="ref-for-format-1-patch-map-patchencoding">patchEncoding</a>.</p>
      </ul>
     <li data-md>
-     <p>For each <a data-link-type="dfn" href="#featurerecord" id="ref-for-featurerecord①">FeatureRecord</a> and associated <a data-link-type="dfn" href="#entrymaprecord" id="ref-for-entrymaprecord②">EntryMapRecord</a> in <a data-link-type="dfn" href="#feature-map-featurerecords" id="ref-for-feature-map-featurerecords①">featureRecords</a>:</p>
+     <p>For each <a data-link-type="dfn" href="#featurerecord" id="ref-for-featurerecord①">FeatureRecord</a> and associated <a data-link-type="dfn" href="#entrymaprecord" id="ref-for-entrymaprecord②">EntryMapRecord</a> in <a data-link-type="dfn" href="#feature-map-featurerecords" id="ref-for-feature-map-featurerecords①">featureRecords</a> and <a data-link-type="dfn" href="#feature-map-entrymaprecords" id="ref-for-feature-map-entrymaprecords">entryMapRecords</a>:</p>
      <ul>
       <li data-md>
        <p>For each <var>entry index</var> between <a data-link-type="dfn" href="#entrymaprecord-firstentryindex" id="ref-for-entrymaprecord-firstentryindex">firstEntryIndex</a> (inclusive) and <a data-link-type="dfn" href="#entrymaprecord-lastentryindex" id="ref-for-entrymaprecord-lastentryindex">lastEntryIndex</a> (inclusive), find the set of unicode codepoints associated with that entry index using the same process as in step 2b through
@@ -2125,14 +2133,8 @@ required too many patches.</p>
    <li><a href="#entrymaprecord">EntryMapRecord</a><span>, in § 4.1.1</span>
    <li><a href="#feature-map-entrymaprecords">entryMapRecords</a><span>, in § 4.1.1</span>
    <li><a href="#abstract-opdef-extend-a-font-subset">Extend a Font Subset</a><span>, in § 6</span>
-   <li>
-    featureCount
-    <ul>
-     <li><a href="#feature-map-featurecount">dfn for Feature Map</a><span>, in § 4.1.1</span>
-     <li><a href="#mapping-entry-featurecount">dfn for Mapping Entry</a><span>, in § 4.1.2</span>
-    </ul>
+   <li><a href="#mapping-entry-featurecount">featureCount</a><span>, in § 4.1.2</span>
    <li><a href="#feature-map">Feature Map</a><span>, in § 4.1.1</span>
-   <li><a href="#format-1-patch-map-featuremapoffset">featureMapOffset</a><span>, in § 4.1.1</span>
    <li><a href="#featurerecord">FeatureRecord</a><span>, in § 4.1.1</span>
    <li><a href="#feature-map-featurerecords">featureRecords</a><span>, in § 4.1.1</span>
    <li><a href="#featurerecord-featuretag">featureTag</a><span>, in § 4.1.1</span>
@@ -2172,7 +2174,6 @@ required too many patches.</p>
    <li><a href="#glyphpatches-glyphids">glyphIds</a><span>, in § 5.5</span>
    <li><a href="#glyph-keyed-patch">Glyph keyed patch</a><span>, in § 5.5</span>
    <li><a href="#glyph-map">Glyph Map</a><span>, in § 4.1.1</span>
-   <li><a href="#format-1-patch-map-glyphmapoffset">glyphMapOffset</a><span>, in § 4.1.1</span>
    <li><a href="#glyphpatches">GlyphPatches</a><span>, in § 5.5</span>
    <li><a href="#abstract-opdef-handle-errors">Handle errors</a><span>, in § 6</span>
    <li>
@@ -2224,12 +2225,7 @@ required too many patches.</p>
      <li><a href="#format-1-patch-map-uritemplate">dfn for Format 1 Patch Map</a><span>, in § 4.1.1</span>
      <li><a href="#format-2-patch-map-uritemplate">dfn for Format 2 Patch Map</a><span>, in § 4.1.2</span>
     </ul>
-   <li>
-    uriTemplateLength
-    <ul>
-     <li><a href="#format-1-patch-map-uritemplatelength">dfn for Format 1 Patch Map</a><span>, in § 4.1.1</span>
-     <li><a href="#format-2-patch-map-uritemplatelength">dfn for Format 2 Patch Map</a><span>, in § 4.1.2</span>
-    </ul>
+   <li><a href="#format-2-patch-map-uritemplatelength">uriTemplateLength</a><span>, in § 4.1.2</span>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
@@ -2433,9 +2429,12 @@ window.dfnpanelData['format-1-patch-map-glyphcount'] = {"dfnID": "format-1-patch
 window.dfnpanelData['format-1-patch-map-appliedentriesbitmap'] = {"dfnID": "format-1-patch-map-appliedentriesbitmap", "url": "#format-1-patch-map-appliedentriesbitmap", "dfnText": "appliedEntriesBitMap", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-appliedentriesbitmap"}, {"id": "ref-for-format-1-patch-map-appliedentriesbitmap\u2460"}], "title": "4.1.1.1. Interpreting Format 1"}], "external": false};
 window.dfnpanelData['format-1-patch-map-uritemplate'] = {"dfnID": "format-1-patch-map-uritemplate", "url": "#format-1-patch-map-uritemplate", "dfnText": "uriTemplate", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-uritemplate"}, {"id": "ref-for-format-1-patch-map-uritemplate\u2460"}], "title": "4.1.1.1. Interpreting Format 1"}], "external": false};
 window.dfnpanelData['format-1-patch-map-patchencoding'] = {"dfnID": "format-1-patch-map-patchencoding", "url": "#format-1-patch-map-patchencoding", "dfnText": "patchEncoding", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-patchencoding"}, {"id": "ref-for-format-1-patch-map-patchencoding\u2460"}], "title": "4.1.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['glyph-map'] = {"dfnID": "glyph-map", "url": "#glyph-map", "dfnText": "Glyph Map", "refSections": [{"refs": [{"id": "ref-for-glyph-map"}], "title": "4.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-glyph-map\u2460"}], "title": "4.1.1.1. Interpreting Format 1"}], "external": false};
+window.dfnpanelData['glyph-map'] = {"dfnID": "glyph-map", "url": "#glyph-map", "dfnText": "Glyph Map", "refSections": [{"refs": [{"id": "ref-for-glyph-map"}], "title": "4.1.1. Patch Map Table: Format 1"}], "external": false};
+window.dfnpanelData['glyph-map-firstmappedglyph'] = {"dfnID": "glyph-map-firstmappedglyph", "url": "#glyph-map-firstmappedglyph", "dfnText": "firstMappedGlyph", "refSections": [{"refs": [{"id": "ref-for-glyph-map-firstmappedglyph"}], "title": "4.1.1. Patch Map Table: Format 1"}], "external": false};
+window.dfnpanelData['glyph-map-entryindex'] = {"dfnID": "glyph-map-entryindex", "url": "#glyph-map-entryindex", "dfnText": "entryIndex", "refSections": [{"refs": [{"id": "ref-for-glyph-map-entryindex"}], "title": "4.1.1.1. Interpreting Format 1"}], "external": false};
 window.dfnpanelData['feature-map'] = {"dfnID": "feature-map", "url": "#feature-map", "dfnText": "Feature Map", "refSections": [{"refs": [{"id": "ref-for-feature-map"}], "title": "4.1.1. Patch Map Table: Format 1"}], "external": false};
 window.dfnpanelData['feature-map-featurerecords'] = {"dfnID": "feature-map-featurerecords", "url": "#feature-map-featurerecords", "dfnText": "featureRecords", "refSections": [{"refs": [{"id": "ref-for-feature-map-featurerecords"}], "title": "4.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-feature-map-featurerecords\u2460"}], "title": "4.1.1.1. Interpreting Format 1"}], "external": false};
+window.dfnpanelData['feature-map-entrymaprecords'] = {"dfnID": "feature-map-entrymaprecords", "url": "#feature-map-entrymaprecords", "dfnText": "entryMapRecords", "refSections": [{"refs": [{"id": "ref-for-feature-map-entrymaprecords"}], "title": "4.1.1.1. Interpreting Format 1"}], "external": false};
 window.dfnpanelData['featurerecord'] = {"dfnID": "featurerecord", "url": "#featurerecord", "dfnText": "FeatureRecord", "refSections": [{"refs": [{"id": "ref-for-featurerecord"}], "title": "4.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-featurerecord\u2460"}], "title": "4.1.1.1. Interpreting Format 1"}], "external": false};
 window.dfnpanelData['featurerecord-featuretag'] = {"dfnID": "featurerecord-featuretag", "url": "#featurerecord-featuretag", "dfnText": "featureTag", "refSections": [{"refs": [{"id": "ref-for-featurerecord-featuretag"}], "title": "4.1.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-featurerecord-featuretag\u2460"}], "title": "4.1.1.1. Interpreting Format 1"}], "external": false};
 window.dfnpanelData['featurerecord-firstentryindex'] = {"dfnID": "featurerecord-firstentryindex", "url": "#featurerecord-firstentryindex", "dfnText": "firstEntryIndex", "refSections": [{"refs": [{"id": "ref-for-featurerecord-firstentryindex"}], "title": "4.1.1.1. Interpreting Format 1"}], "external": false};
