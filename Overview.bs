@@ -409,13 +409,12 @@ encoded in one of two formats:
   </tr>
   <tr>
     <td>Offset32</td>
-    <td><dfn for="Format 1 Patch Map">glyphMapOffset</dfn></td>
-    <!-- TODO link -->
+    <td>glyphMapOffset</td>
     <td>Offset to a [=Glyph Map=] sub table. Offset is from the start of this table.</td>
   </tr>
   <tr>
     <td>Offset32</td>
-    <td><dfn for="Format 1 Patch Map">featureMapOffset</dfn></td>
+    <td>featureMapOffset</td>
     <td>Offset to a [=Feature Map=] sub table. Offset is from the start of this table.</td>
   </tr>
   <tr>
@@ -429,7 +428,7 @@ encoded in one of two formats:
   </tr>
   <tr>
     <td>uint16</td>
-    <td><dfn for="Format 1 Patch Map">uriTemplateLength</dfn></td>
+    <td>uriTemplateLength</td>
     <td>
       Length of the uriTemplate string.
     </td>
@@ -467,7 +466,7 @@ A glyph map table associates each glyph index in the font with an entry index.
     <td>uint8/uint16</td>
     <td><dfn for="Glyph Map">entryIndex</dfn>[[=Format 1 Patch Map/glyphCount=] - firstMappedGlyph]</td>
     <td>
-      The entry index for glyph <code>i</code> is stored in entryIndex[<code>i</code> - firstMappedGlyph]. Array members
+      The entry index for glyph <code>i</code> is stored in entryIndex[<code>i</code> - [=Glyph Map/firstMappedGlyph=]]. Array members
       are uint8 if [=Format 1 Patch Map/entryCount=] is less than 256, otherwise they are uint16.
     </td>
   </tr>
@@ -484,7 +483,7 @@ A feature map table associates combinations of [[open-type/featuretags|feature t
   </tr>
   <tr>
     <td>uint16</td>
-    <td><dfn for="Feature Map">featureCount</dfn></td>
+    <td>featureCount</td>
     <td>Number of featureRecords.</td>
   </tr>
   <tr>
@@ -585,7 +584,7 @@ The algorithm:
 1.  Check that the <var>patch map</var> has [=Format 1 Patch Map/format=] equal to 1 and is valid according to the requirements in
      [[#patch-map-format-1]]. If it is not return an error.
 
-2.  For each unique <var>entry index</var> in [=Glyph Map=]:
+2.  For each unique <var>entry index</var> in [=Glyph Map/entryIndex=]:
 
     <!-- TODO: use ol and style which characters instead of numbers -->
     *  a. If the bit for <var>entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
@@ -601,7 +600,7 @@ The algorithm:
     *  e. Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains only the unicode code point set and
         maps to the generated URI and the patch encoding specified by [=Format 1 Patch Map/patchEncoding=].
 
-3.  For each [=FeatureRecord=] and associated [=EntryMapRecord=] in [=Feature Map/featureRecords=]:
+3.  For each [=FeatureRecord=] and associated [=EntryMapRecord=] in [=Feature Map/featureRecords=] and [=Feature Map/entryMapRecords=]:
 
     *  For each <var>entry index</var> between [=EntryMapRecord/firstEntryIndex=] (inclusive) and [=EntryMapRecord/lastEntryIndex=]
         (inclusive), find the set of unicode codepoints associated with that entry index using the same process as in step 2b through
