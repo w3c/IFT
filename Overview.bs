@@ -375,7 +375,6 @@ encoded in one of two formats:
 ### Patch Map Table: Format 1 ### {#patch-map-format-1}
 
 <!-- TODO: provide normative validation requirements for each encoding -->
-<!-- TODO: clean up unreferenced definitions -->
 
 <dfn>Format 1 Patch Map</dfn> encoding:
 <table>
@@ -623,8 +622,6 @@ The algorithm:
 
 ### Patch Map Table: Format 2 ### {#patch-map-format-2}
 
-<!-- TODO: clean up unreferenced definitions -->
-
 <dfn>Format 2 Patch Map</dfn> encoding:
 
 <table>
@@ -638,7 +635,7 @@ The algorithm:
   </tr>
   <tr>
     <td>uint32</td>
-    <td><dfn for="Format 2 Patch Map">reserved</dfn></td>
+    <td>reserved</td>
     <td>Not used, set to 0.</td>
   </tr>
   <tr>
@@ -666,7 +663,7 @@ The algorithm:
   </tr>
   <tr>
     <td>uint16</td>
-    <td><dfn for="Format 2 Patch Map">uriTemplateLength</dfn></td>
+    <td>uriTemplateLength</td>
     <td>
       Length of the uriTemplate string.
     </td>
@@ -841,7 +838,7 @@ This algorithm is used to convert a format 2 patch map into a list of [=patch ma
 
 The inputs to this algorithm are:
 
-* <var>patch map</var>: a [[#patch-map-format-2]] encoded patch map.
+* <var>patch map</var>: a [=Format 2 Patch Map=] encoded patch map.
 
 The algorithm outputs:
 
@@ -851,7 +848,8 @@ The algorithm outputs:
 
 The algorithm:
 
-1.  Check that the <var>patch map</var> is valid according to the requirements in [[#patch-map-format-2]]. If it is not return an error.
+1.  Check that the <var>patch map</var> has [=Format 2 Patch Map/format=] equal to 2 and is valid according to the requirements in
+     [[#patch-map-format-2]]. If it is not return an error.
 
 2.  Initialize <var>last entry id</var> to 0, and <var>current byte</var> to 0.
 
@@ -910,7 +908,8 @@ The algorithm:
         and add the loaded tags to <var>entry</var>.
 
     *  Read the design space segment list specified by [=Mapping Entry/designSpaceCount=] and [=Mapping Entry/designSpaceSegments=]
-        from <var>entry bytes</var> and add the design space segments to <var>entry</var>.
+        from <var>entry bytes</var> and add the design space segments to <var>entry</var>. Each segment defines an interval from
+        [=Design Space Segment/start=] to [=Design Space Segment/end=] inclusive for the axis identified by [=Design Space Segment/tag=].
 
 6.  If [=Mapping Entry/formatFlags=] bit 1 is set, then the copy indices list is present:
 
