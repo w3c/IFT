@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="6809a70f82fd03910c3f636dc040a0ca8082c76f" name="document-revision">
+  <meta content="5b984306400d9447e8181d6afafcd391dff21569" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1952,13 +1952,13 @@ subsetting a font is well understood and has multiple open-source implementation
 beyond the scope of this document). It typically involves a reachability analysis, where the data in tables is examined
 relative to the font subset definition to see which portions can be reached by any possible content covered by the subset definition.
 Any reachable data is retained in the generated font subset, while any unreachable data may be removed.</p>
-   <p>Example pseudo code for a very basic encoder implementation using a font subsetter:</p>
+   <p>In the following example psuedo code a font subsetter is used to generate an IFT encoded font that utilizes only dependent patches:</p>
 <pre># Encodes a font (full_font) into an incremental font that starts at base_subset_def
 # and can incrementally add any of subset_definitions. Returns the IFT encoded font
 # and set of associated patches.
 encode_as_ift(full_font, base_subset_def, subset_definitions):
   base_font = subset(full_font, base_subset_def)
-  patches = encode_node(full_font, base_font, base_subset_def, subset_definitions)
+  base_font, patches  = encode_node(full_font, base_font, base_subset_def, subset_definitions)
   return base_font, patches
 
 # Update base_font to add all of the ift patch mappings to reach any of
@@ -1971,23 +1971,24 @@ encode_node(full_font, base_font, cur_def, subset_definitions):
     next_def = subset_def union cur_def
     next_font = subset(full_font, next_def)
     let patch_url be a new unique url
-    
-    add patch map entry into base_font from (subset_def - cur_def) to patch_url
-    patches += encode(full_font, next_font, next_def, subset_definitions)
+
+    add a mapping from, (subset_def - cur_def) to patch_url, into base_font
+    next_font, patches += encode(full_font, next_font, next_def, subset_definitions)
 
     next_fonts += (next_font, next_def, patch_url)
 
-  for each (next_font, next_def, patch_url):
+  for each (next_font, next_def, patch_url) in next_fonts:
     patch = dependent_patch_diff(base_font, next_font)
     patches += (patch, patch_url)
   
-  return patches
+  return base_font, patches
 </pre>
    <p>In this example implementation if the union of the input base subset definition and the list of subset definitions fully covers the input
-full font, and the subsetter implementation used correctly retains all functionality then the above implementation should meet the
+full font, and the subsetter implementation used correctly retains all functionality then, the above implementation should meet the
 requirements in <a href="#encoder">§ 7 Encoder</a> to be a neutral encoding. This basic encoder implementation is for demonstration purposes and not meant
-to be representative of all possible encoder implementations. Most encoders will likely be more complex and need to consider additional
-factors some of which are discussed in the remaining sections.</p>
+to be representative of all possible encoder implementations. Notably it does not make use of nor demonstrate utilizing independent
+patches. Most encoders will likely be more complex and need to consider additional factors some of which are discussed in the remaining
+sections.</p>
    <p><b>Choosing segmentations</b></p>
    <p>One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. To maximize
 efficiency the encoder should try and group data (eg. codepoints) that are commonly used together into the same segments. This will
