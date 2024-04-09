@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="0793b5645769ed5afc324993e7c3a641cabe0fcb" name="document-revision">
+  <meta content="25b4515039af382dc06787ed8657942ee3305791" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -503,7 +503,7 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-03-07">7 March 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-09">9 April 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1845,17 +1845,24 @@ the implementation.</p>
    <p>The inputs to this algorithm are:</p>
    <ul>
     <li data-md>
-     <p><var>URI</var>: a URI identifying the patch file to load.</p>
+     <p><var>Patch URI</var>: A <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.1">URI Reference</a> identifying the patch file to load. As a URI reference this may be a
+ relative path.</p>
+    <li data-md>
+     <p><var>Incremental Font URI</var>: A <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.3">Abslolute URI</a> which identifies the incremental font which contains
+ the reference to <var>Patch URI</var>.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p><var>patch file</var>: the patch file identified by <var>URI</var>.</p>
+     <p><var>patch file</var>: the content (bytes) identified by <var>Patch URI</var>.</p>
    </ul>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>TODO Coming soon.</p>
+     <p>Perform <a href="https://www.rfc-editor.org/rfc/rfc3986#section-5">reference resolution</a> on <var>Patch URI</var> using <var>Incremental Font URI</var> as the base URI to
+ produce the <var>target URI</var>.</p>
+    <li data-md>
+     <p>Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers, <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> should be used. Return the retrieved contents, or an error if the fetch resulted in an error.</p>
    </ol>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-handle-errors">Handle errors</dfn></p>
    <p>Coming soon.</p>
@@ -2174,6 +2181,8 @@ required too many patches.</p>
    <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/"><cite>Progressive Font Enrichment: Evaluation Report</cite></a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+   <dt id="biblio-rfc3986">[RFC3986]
+   <dd>T. Berners-Lee; R. Fielding; L. Masinter. <a href="https://www.rfc-editor.org/rfc/rfc3986"><cite>Uniform Resource Identifier (URI): Generic Syntax</cite></a>. January 2005. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3986">https://www.rfc-editor.org/rfc/rfc3986</a>
    <dt id="biblio-rfc6570">[RFC6570]
    <dd>J. Gregorio; et al. <a href="https://www.rfc-editor.org/rfc/rfc6570"><cite>URI Template</cite></a>. March 2012. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc6570">https://www.rfc-editor.org/rfc/rfc6570</a>
    <dt id="biblio-rfc7932">[RFC7932]
@@ -2185,6 +2194,8 @@ required too many patches.</p>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
+   <dt id="biblio-fetch">[FETCH]
+   <dd><a href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. 22 May 2023. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
    <dt id="biblio-woff2">[WOFF2]
    <dd>Vladimir Levantovsky; Raph Levien. <a href="https://w3c.github.io/woff/woff2/"><cite>WOFF File Format 2.0</cite></a>. URL: <a href="https://w3c.github.io/woff/woff2/">https://w3c.github.io/woff/woff2/</a>
   </dl>
