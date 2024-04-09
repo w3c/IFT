@@ -352,12 +352,28 @@ Note: allowing the mapping to be split between two distinct tables allows an inc
 patch types. For example all patches of one type can be specified in the 'IFT ' table, and all patches of a second type in the
 'IFTX' table. Those patches can make updates only to one of the mapping tables and avoid making conflicting updates.
 
-Note: [=incremental font|incremental fonts=] can be converted to [[WOFF2]] and still be utilized as an incremental fonts. In this
-case the user agent would first decode the woff2, and patches are relative to the decoded bytes.
-
 <!-- TODO: instead of IFT/IFTX consider having a one table be specific to dependent patches and the other to independent patches -->
 <!-- TODO add algorithm explaining how to union the two tables -->
 
+Incremental Font Transfer and WOFF2 {#ift-and-woff2}
+----------------------------------------------------
+
+[[WOFF2]] is a commonly used to encode fonts for transfer on the web. Incremental fonts can encoded with WOFF2 as long as special care is
+taken. If an incremental font will be encoded by WOFF2 for transfer:
+
+1.  The incremental font should not make use of [[#brotli]] patches. The WOFF2 format does not guarantee the ordering of tables in
+     the decoded font. [[#brotli]] patches are relative to a specific fixed set of bytes and thus cannot be used if the decoded font
+     has unpredictable decoded bytes. [[#per-table-brotli]] patches do not depend on a specific table ordering and may be used.
+
+2.  If the WOFF2 encoding will include a transformed glyf and loca table ([[WOFF2#glyf_table_format]]) then, the incremental
+     font should not contain [[#per-table-brotli]] patches which modify either the glyf or loca table. The WOFF2 format does not
+     guarantee the specific bytes that result from decoding a transformed glyf and loca table, so as with #1 brotli patches cannot
+     be used. [[#glyph-keyed]] patches may be used in conjunction with a transformed glyf and loca table.
+
+3.  When utilizing a WOFF2 encoded IFT font, the client must first fully decode the WOFF2 font before [[#extending-font-subset]].
+
+The 'IFT ' and 'IFTX' tables can be processed and brotli encoded by a WOFF2 encoder following the standard process defined in
+[[WOFF2#table_format]].
 
 Patch Map Table {#patch-map}
 ----------------------------
