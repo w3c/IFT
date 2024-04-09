@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="25b4515039af382dc06787ed8657942ee3305791" name="document-revision">
+  <meta content="48ab68d74d660e40e74c6cfbae7c6393676b0342" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1771,6 +1771,8 @@ codepoints, layout features and/or design space.</p>
     <li data-md>
      <p><var>font subset</var>: an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①">incremental</a> <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⑧">font subset</a>.</p>
     <li data-md>
+     <p><var>font subset URI</var>: an <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.3">abslolute URI</a> which identifies the location of <var>font subset</var>.</p>
+    <li data-md>
      <p><var>target subset definition</var>: the <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑥">font subset definition</a> that the client wants to extend <var>font subset</var> to cover.</p>
    </ul>
    <p>The algorithm outputs:</p>
@@ -1797,7 +1799,8 @@ invoking <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-
      <p>If <var>entry list</var> contains one or more <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑦">patch map entries</a> which have a patch format that is <a data-link-type="dfn" href="#dependent" id="ref-for-dependent②">dependent</a>, then select
 exactly one of the <a data-link-type="dfn" href="#dependent" id="ref-for-dependent③">dependent</a> entries in <var>entry list</var> and remove all others. The criteria for selecting the single <a data-link-type="dfn" href="#dependent" id="ref-for-dependent④">dependent</a> entry is left up to the implementation to decide.</p>
     <li data-md>
-     <p>For each <var>entry</var> in <var>entry list</var> invoke <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the entries URI. Collect the returned patch
+     <p>For each <var>entry</var> in <var>entry list</var> invoke <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the <var>font subset URI</var> as the
+incremental font URI and the entries URI as the patch URI. Collect the returned patch
 files into <var>patch list</var>.</p>
     <li data-md>
      <p>For each <var>patch</var> in <var>patch list</var> use the appropriate application algorithm (matching the patches format) from <a href="#font-patch-formats">§ 5 Font Patch Formats</a> to apply the <var>patch</var> to <var>extended font subset</var>. The order of patch application is left up to
@@ -1848,7 +1851,7 @@ the implementation.</p>
      <p><var>Patch URI</var>: A <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.1">URI Reference</a> identifying the patch file to load. As a URI reference this may be a
  relative path.</p>
     <li data-md>
-     <p><var>Incremental Font URI</var>: A <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.3">Abslolute URI</a> which identifies the incremental font which contains
+     <p><var>Incremental Font URI</var>: An <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.3">abslolute URI</a> which identifies the incremental font which contains
  the reference to <var>Patch URI</var>.</p>
    </ul>
    <p>The algorithm outputs:</p>
