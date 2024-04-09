@@ -1592,21 +1592,27 @@ The algorithm:
 
 <dfn abstract-op>Load patch file</dfn>
 
-<!-- TODO: when discussing how to load patches via URI's we need to define what they are relative too -->
-<!-- TODO: ref fetch spec like we did in the patch subset spec. -->
 <!-- TODO: consider requiring HTTPS (or disallowing HTTP specifically if we want to allow file:// and other url types) -->
 
 The inputs to this algorithm are:
 
-*   <var>URI</var>: a URI identifying the patch file to load.
+*   <var>Patch URI</var>: A [[rfc3986#section-4.1|URI Reference]] identifying the patch file to load. As a URI reference this may be a
+     relative path.
+
+*   <var>Incremental Font URI</var>: A [[rfc3986#section-4.3|Abslolute URI]] which identifies the incremental font which contains
+     the reference to <var>Patch URI</var>.
 
 The algorithm outputs:
 
-*   <var>patch file</var>: the patch file identified by <var>URI</var>.
+*   <var>patch file</var>: the content (bytes) identified by <var>Patch URI</var>.
 
 The algorithm:
 
-1.  TODO Coming soon.
+1.  Perform [[rfc3986#section-5|reference resolution]] on <var>Patch URI</var> using <var>Incremental Font URI</var> as the base URI to
+     produce the <var>target URI</var>.
+
+2.  Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers,
+     [[fetch]] should be used. Return the retrieved contents, or an error if the fetch resulted in an error.
 
 <dfn abstract-op>Handle errors</dfn>
 
