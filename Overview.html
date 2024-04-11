@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="54dfdbb6ca7846d4e084d6b2e98bcbe5378e5e1a" name="revision">
+  <meta content="7ce635e353cb0b27eaff1d88c57abeb7d55455df" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -607,7 +607,7 @@ var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBC
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-05-12">12 May 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-05-13">13 May 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -734,7 +734,12 @@ be loaded over multiple requests where each request incrementally adds additiona
      <ol class="toc">
       <li><a href="#encoder-considerations"><span class="secno">7.1</span> <span class="content">Encoder Considerations</span></a>
      </ol>
-    <li><a href="#priv"><span class="secno"></span> <span class="content">Privacy Considerations</span></a>
+    <li>
+     <a href="#priv"><span class="secno"></span> <span class="content">Privacy Considerations</span></a>
+     <ol class="toc">
+      <li><a href="#content-inference-from-character-set"><span class="secno"></span> <span class="content">Content inference from character set</span></a>
+      <li><a href="#per-origin"><span class="secno"></span> <span class="content">Per-origin restriction avoids fingerprinting</span></a>
+     </ol>
     <li><a href="#sec"><span class="secno"></span> <span class="content">Security Considerations</span></a>
     <li><a href="#changes"><span class="secno"></span> <span class="content">Changes</span></a>
     <li>
@@ -2367,9 +2372,41 @@ when using integer ids, but may be unevenly distributed or even constant for str
 d1 through d4 should take care to make the ends of the id strings vary.  It is valid to mix d1 through d4 with a base64url-encoded
 id.</p>
    <h2 class="no-num heading settled" id="priv"><span class="content">Privacy Considerations</span><a class="self-link" href="#priv"></a></h2>
-   <p>Coming soon.</p>
+   <h3 class="heading settled" id="content-inference-from-character-set"><span class="content">Content inference from character set</span><a class="self-link" href="#content-inference-from-character-set"></a></h3>
+   <p>IFT exposes, to the server hosting a Web font, information on the set of characters that the browser wants to render with the font (for
+details, see <a href="#extending-font-subset">§ 4 Extending a Font Subset</a>).</p>
+   <p>For some languages, which use a very large character set (Chinese and Japanese are examples) the vast reduction in total
+bytes transferred means that Web fonts become usable, including on mobile networks, for the first time. However, for those languages, it
+is <em>possible</em> that individual requests might be analyzed by a rogue font server to obtain intelligence about the type of content
+which is being read. It is unclear how feasible this attack is, or the computational complexity required to exploit it, unless the
+characters being requested are very unusual.</p>
+   <p>More specifically, a IFT font includes a collection of unicode codepoint groups and requests will be made for groups that intersect
+content being rendered. This provides information to the hosting server that at least one codepoint in a group was needed, but does not
+contain information on which specific codepoints within a group were needed. This is functionally quite similar to the existing <a href="https://drafts.csswg.org/css-fonts-4/#unicode-range-desc"><cite>CSS Fonts 4</cite> § 4.5 Character range: the unicode-range descriptor</a> and has the same privacy implications. Discussion of the privacy implication of unicode-range can be
+found in the CSS Fonts 4 specification:</p>
+   <ul>
+    <li data-md>
+     <p><a href="https://drafts.csswg.org/css-fonts-4/#sp201"><cite>CSS Fonts 4</cite> § 15.1 What information might this feature expose to Web sites or other parties, and for what purposes is that exposure necessary?</a>. For especially privacy-sensitive-contexts this recommends the user agent download all web fonts in a document.
+For IFT fonts, utilizing <a href="#fully-expanding-a-font">§ 4.3 Fully Expanding a Font</a> will fetch the entire available IFT font without providing any information about
+the specific content present. Alternatively, in a privacy sensitive contexts a user agent could randomly select additional patches
+that are not required by the current content to provide obfuscation of what patches are actually needed.</p>
+    <li data-md>
+     <p><a href="https://drafts.csswg.org/css-fonts-4/#sp208"><cite>CSS Fonts 4</cite> § 15.8 What data does this specification expose to an origin? Please also document what data is identical to data exposed by other features, in the same or different contexts.</a></p>
+   </ul>
+   <h3 class="heading settled" id="per-origin"><span class="content">Per-origin restriction avoids fingerprinting</span><a class="self-link" href="#per-origin"></a></h3>
+   <p>As required by <a data-link-type="biblio" href="#biblio-css-fonts-4" title="CSS Fonts Module Level 4">[css-fonts-4]</a>,
+  Web Fonts <a href="https://drafts.csswg.org/css-fonts-4/#web-fonts">must not be accessible
+  in any other Document from the one which either is associated with the @font-face rule
+  or owns the FontFaceSet</a>.
+  Other applications on the device must not be able to access Web Fonts.
+  This avoids information leaking across origins.</p>
+   <p>Similarly, font palette values <a href="https://drafts.csswg.org/css-fonts-4/#font-palette-values">must only be available to the documents that
+  reference it</a>. Using an author-defined color palette outside of the documents that reference it
+  would constitute a security leak since the contents of one page
+  would be able to affect other pages,
+  something an attacker could use as an attack vector.</p>
    <h2 class="no-num heading settled" id="sec"><span class="content">Security Considerations</span><a class="self-link" href="#sec"></a></h2>
-   <p>Coming soon.</p>
+   <p>No Security issues have been raised against this document</p>
    <h2 class="no-num heading settled" id="changes"><span class="content">Changes</span><a class="self-link" href="#changes"></a></h2>
    <p>Since the <a href="https://www.w3.org/TR/2023/WD-IFT-20230530/">Working
   Draft of 30 May 2023</a> (see <a href="https://github.com/w3c/IFT/commits/main/Overview.bs">commit history</a>):</p>
