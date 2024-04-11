@@ -2081,15 +2081,52 @@ id.
 
 <h2 class=no-num id=priv>Privacy Considerations</h2>
 
-Coming soon.
 
-<!-- TODO: content from the previous spec should be a good starting point, but will need changes. -->
+<h3  id="content-inference-from-character-set">Content inference from character set</h3>
+
+IFT exposes, to the server hosting a Web font, information on the set of characters that the browser wants to render with the font (for
+details, see [[#extending-font-subset]]).
+
+For some languages, which use a very large character set (Chinese and Japanese are examples) the vast reduction in total
+bytes transferred means that Web fonts become usable, including on mobile networks, for the first time. However, for those languages, it
+is <em>possible</em> that individual requests might be analyzed by a rogue font server to obtain intelligence about the type of content
+which is being read. It is unclear how feasible this attack is, or the computational complexity required to exploit it, unless the
+characters being requested are very unusual.
+
+More specifically, a IFT font includes a collection of unicode codepoint groups and requests will be made for groups that intersect
+content being rendered. This provides information to the hosting server that at least one codepoint in a group was needed, but does not
+contain information on which specific codepoints within a group were needed. This is functionally quite similar to the existing
+[[css-fonts-4#unicode-range-desc]] and has the same privacy implications. Discussion of the privacy implication of unicode-range can be
+found in the CSS Fonts 4 specification:
+
+*  [[css-fonts-4#sp201]]. For especially privacy-sensitive-contexts this recommends the user agent download all web fonts in a document.
+    For IFT fonts, utilizing [[#fully-expanding-a-font]] will fetch the entire available IFT font without providing any information about
+    the specific content present. Alternatively, in a privacy sensitive contexts a user agent could randomly select additional patches
+    that are not required by the current content to provide obfuscation of what patches are actually needed.
+
+*  [[css-fonts-4#sp208]]
+
+<h3 id="per-origin">Per-origin restriction avoids fingerprinting</h3>
+
+  As required by [[!css-fonts-4]],
+  Web Fonts [[css-fonts-4#web-fonts|must not be accessible
+  in any other Document from the one which either is associated with the @font-face rule
+  or owns the FontFaceSet]].
+  Other applications on the device must not be able to access Web Fonts.</a>
+  This avoids information leaking across origins.
+
+  Similarly, font palette values
+  [[css-fonts-4#font-palette-values|must only be available to the documents that
+  reference it]]. Using an author-defined color palette outside of the documents that reference it
+  would constitute a security leak since the contents of one page
+  would be able to affect other pages,
+  something an attacker could use as an attack vector.
+
+
 
 <h2 class=no-num id=sec>Security Considerations</h2>
 
-Coming soon.
-
-<!-- TODO: content from the previous spec should be a good starting point. -->
+No Security issues have been raised against this document
 
 <h2 class=no-num id=changes>Changes</h2>
 
