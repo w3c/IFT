@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="3769a95726e738c1c6c5baf1210438795bd25011" name="document-revision">
+  <meta content="6f5387f0d9d44e81dd829116a76ff54c5ea9a69a" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -503,7 +503,7 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-12">12 April 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-16">16 April 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1099,7 +1099,7 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-defaultpatchencoding">defaultPatchEncoding</dfn>
       <td> Specifies the format of the patches linked to by uriTemplate (unless overridden by an entry). Uses the ID numbers from the <a href="#font-patch-formats-summary">§ 5.2 Formats Summary</a> table. 
      <tr>
-      <td>uint16
+      <td>uint24
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-entrycount">entryCount</dfn>
       <td>Number of entries encoded in this table.
      <tr>
@@ -1149,7 +1149,7 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-featuretags">featureTags</dfn>[featureCount]
       <td> List of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tags</a> in the entry’s <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition③">font subset definition</a>. Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①">formatFlags</a> bit 0 is set. 
      <tr>
-      <td>uint8
+      <td>uint16
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-designspacecount">designSpaceCount</dfn>
       <td> Number of elements in the design space list. Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags②">formatFlags</a> bit 0 is set. 
      <tr>
@@ -1161,12 +1161,12 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-copycount">copyCount</dfn>
       <td> Number of entries in the copyIndices list. Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags④">formatFlags</a> bit 1 is set. 
      <tr>
-      <td>uint16
+      <td>uint24
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-copyindices">copyIndices</dfn>[copyCount]
       <td> List of indices from the <a data-link-type="dfn" href="#mapping-entries-entries" id="ref-for-mapping-entries-entries">entries</a> array whose <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑤">font subset definition</a> should be copied into this entry. All
       values must be less than the index of this <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry①">Mapping Entry</a> in <a data-link-type="dfn" href="#mapping-entries-entries" id="ref-for-mapping-entries-entries①">entries</a>. Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑤">formatFlags</a> bit 1 is set. 
      <tr>
-      <td>int16
+      <td>int24
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-entryiddelta">entryIdDelta</dfn>
       <td> Signed delta which is used to calculate the id for this entry. The id for this entry is the entry id of the previous <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry②">Mapping Entry</a> + 1 + entryIdDelta. Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑥">formatFlags</a> bit 2 is set. If not present delta is assumed
       to be 0. 
