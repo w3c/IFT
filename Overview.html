@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="d868067fb5c779321b4c240b08c9756087ab09fb" name="document-revision">
+  <meta content="3769a95726e738c1c6c5baf1210438795bd25011" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1532,8 +1532,16 @@ of a short header followed by brotli encoded data.</p>
       <td>Identifies the encoding as brotli, set to 'ifbr'
      <tr>
       <td>uint32
+      <td>reserved
+      <td>Reserved for future use, set to 0.
+     <tr>
+      <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Brotli patch" data-dfn-type="dfn" data-noexport id="brotli-patch-id">id</dfn>[4]
       <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a> which this patch can be applied too.
+     <tr>
+      <td>uint32
+      <td>length
+      <td>The uncompressed length of <a data-link-type="dfn" href="#brotli-patch-brotlistream" id="ref-for-brotli-patch-brotlistream">brotliStream</a>.
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Brotli patch" data-dfn-type="dfn" data-noexport id="brotli-patch-brotlistream">brotliStream</dfn>[variable]
@@ -1568,7 +1576,7 @@ an error.</p>
 If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
 has failed, return an error.</p>
     <li data-md>
-     <p>Decode the brotli encoded data in <a data-link-type="dfn" href="#brotli-patch-brotlistream" id="ref-for-brotli-patch-brotlistream">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a> and
+     <p>Decode the brotli encoded data in <a data-link-type="dfn" href="#brotli-patch-brotlistream" id="ref-for-brotli-patch-brotlistream①">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a> and
 using the <var>base font subset</var> as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. Return the decoded
 result as the <var>extended font subset</var></p>
    </ol>
@@ -1587,6 +1595,10 @@ or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-fo
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="Per table brotli patch" data-dfn-type="dfn" data-noexport id="per-table-brotli-patch-format">format</dfn>
       <td>Identifies the encoding as per table brotli, set to 'ifbt'
+     <tr>
+      <td>uint32
+      <td>reserved
+      <td>Reserved for future use, set to 0.
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Per table brotli patch" data-dfn-type="dfn" data-noexport id="per-table-brotli-patch-id">id</dfn>[4]
@@ -1617,6 +1629,10 @@ of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">Ta
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="TablePatch" data-dfn-type="dfn" data-noexport id="tablepatch-flags">flags</dfn>
       <td>Bit-field. If bit 0 (least significant bit) is set this patch replaces the existing table. If bit 1 is set this table is removed.
+     <tr>
+      <td>uint32
+      <td>length
+      <td>The uncompressed length of <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream">brotliStream</a>.
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="TablePatch" data-dfn-type="dfn" data-noexport id="tablepatch-brotlistream">brotliStream</dfn>[variable]
@@ -1661,11 +1677,11 @@ the <var>patch</var>.</p>
 this entry, then ignore this entry and continue the iteration to the next one. Entries are processed in same order as they
 are listed in the <a data-link-type="dfn" href="#per-table-brotli-patch-patches" id="ref-for-per-table-brotli-patch-patches⑤">patches</a> array.</p>
       <li data-md>
-       <p>If bit 0 (least significant bit) of <a data-link-type="dfn" href="#tablepatch-flags" id="ref-for-tablepatch-flags">flags</a> is set, then decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a>. No shared dictionary is used. Add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag①">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream①">brotliStream</a>.</p>
+       <p>If bit 0 (least significant bit) of <a data-link-type="dfn" href="#tablepatch-flags" id="ref-for-tablepatch-flags">flags</a> is set, then decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream①">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a>. No shared dictionary is used. Add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag①">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream②">brotliStream</a>.</p>
       <li data-md>
        <p>If bit 1 of <a data-link-type="dfn" href="#tablepatch-flags" id="ref-for-tablepatch-flags①">flags</a> is set, then do not copy or add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag②">tag</a>.</p>
       <li data-md>
-       <p>Otherwise, decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream②">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a> and using the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag③">tag</a> in <var>base font subset</var> as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. Add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag④">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream③">brotliStream</a>.</p>
+       <p>Otherwise, decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream③">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a> and using the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag③">tag</a> in <var>base font subset</var> as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. Add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag④">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream④">brotliStream</a>.</p>
      </ul>
     <li data-md>
      <p>For each <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> in <var>base font subset</var> which has a tag that was not found in any of
@@ -2484,7 +2500,7 @@ window.dfnpanelData['independent'] = {"dfnID": "independent", "url": "#independe
 window.dfnpanelData['brotli-patch'] = {"dfnID": "brotli-patch", "url": "#brotli-patch", "dfnText": "Brotli patch", "refSections": [{"refs": [{"id": "ref-for-brotli-patch"}], "title": "5.3.1. Applying Brotli Patches"}], "external": false};
 window.dfnpanelData['brotli-patch-format'] = {"dfnID": "brotli-patch-format", "url": "#brotli-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-brotli-patch-format"}], "title": "5.3.1. Applying Brotli Patches"}], "external": false};
 window.dfnpanelData['brotli-patch-id'] = {"dfnID": "brotli-patch-id", "url": "#brotli-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-brotli-patch-id"}], "title": "5.3.1. Applying Brotli Patches"}], "external": false};
-window.dfnpanelData['brotli-patch-brotlistream'] = {"dfnID": "brotli-patch-brotlistream", "url": "#brotli-patch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-brotli-patch-brotlistream"}], "title": "5.3.1. Applying Brotli Patches"}], "external": false};
+window.dfnpanelData['brotli-patch-brotlistream'] = {"dfnID": "brotli-patch-brotlistream", "url": "#brotli-patch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-brotli-patch-brotlistream"}], "title": "5.3. Brotli Patch"}, {"refs": [{"id": "ref-for-brotli-patch-brotlistream\u2460"}], "title": "5.3.1. Applying Brotli Patches"}], "external": false};
 window.dfnpanelData['per-table-brotli-patch'] = {"dfnID": "per-table-brotli-patch", "url": "#per-table-brotli-patch", "dfnText": "Per table brotli patch", "refSections": [{"refs": [{"id": "ref-for-per-table-brotli-patch"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
 window.dfnpanelData['per-table-brotli-patch-format'] = {"dfnID": "per-table-brotli-patch-format", "url": "#per-table-brotli-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-per-table-brotli-patch-format"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
 window.dfnpanelData['per-table-brotli-patch-id'] = {"dfnID": "per-table-brotli-patch-id", "url": "#per-table-brotli-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-per-table-brotli-patch-id"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
@@ -2492,7 +2508,7 @@ window.dfnpanelData['per-table-brotli-patch-patches'] = {"dfnID": "per-table-bro
 window.dfnpanelData['tablepatch'] = {"dfnID": "tablepatch", "url": "#tablepatch", "dfnText": "TablePatch", "refSections": [{"refs": [{"id": "ref-for-tablepatch"}, {"id": "ref-for-tablepatch\u2460"}], "title": "5.4. Per Table Brotli"}, {"refs": [{"id": "ref-for-tablepatch\u2461"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
 window.dfnpanelData['tablepatch-tag'] = {"dfnID": "tablepatch-tag", "url": "#tablepatch-tag", "dfnText": "tag", "refSections": [{"refs": [{"id": "ref-for-tablepatch-tag"}, {"id": "ref-for-tablepatch-tag\u2460"}, {"id": "ref-for-tablepatch-tag\u2461"}, {"id": "ref-for-tablepatch-tag\u2462"}, {"id": "ref-for-tablepatch-tag\u2463"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
 window.dfnpanelData['tablepatch-flags'] = {"dfnID": "tablepatch-flags", "url": "#tablepatch-flags", "dfnText": "flags", "refSections": [{"refs": [{"id": "ref-for-tablepatch-flags"}, {"id": "ref-for-tablepatch-flags\u2460"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
-window.dfnpanelData['tablepatch-brotlistream'] = {"dfnID": "tablepatch-brotlistream", "url": "#tablepatch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-tablepatch-brotlistream"}, {"id": "ref-for-tablepatch-brotlistream\u2460"}, {"id": "ref-for-tablepatch-brotlistream\u2461"}, {"id": "ref-for-tablepatch-brotlistream\u2462"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
+window.dfnpanelData['tablepatch-brotlistream'] = {"dfnID": "tablepatch-brotlistream", "url": "#tablepatch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-tablepatch-brotlistream"}], "title": "5.4. Per Table Brotli"}, {"refs": [{"id": "ref-for-tablepatch-brotlistream\u2460"}, {"id": "ref-for-tablepatch-brotlistream\u2461"}, {"id": "ref-for-tablepatch-brotlistream\u2462"}, {"id": "ref-for-tablepatch-brotlistream\u2463"}], "title": "5.4.1. Applying Per Table Brotli Patches"}], "external": false};
 window.dfnpanelData['glyph-keyed-patch'] = {"dfnID": "glyph-keyed-patch", "url": "#glyph-keyed-patch", "dfnText": "Glyph keyed patch", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch"}], "title": "5.5.1. Applying Glyph Keyed Patches"}], "external": false};
 window.dfnpanelData['glyph-keyed-patch-format'] = {"dfnID": "glyph-keyed-patch-format", "url": "#glyph-keyed-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch-format"}], "title": "5.5.1. Applying Glyph Keyed Patches"}], "external": false};
 window.dfnpanelData['glyph-keyed-patch-id'] = {"dfnID": "glyph-keyed-patch-id", "url": "#glyph-keyed-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch-id"}], "title": "5.5.1. Applying Glyph Keyed Patches"}], "external": false};

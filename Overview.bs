@@ -1193,19 +1193,26 @@ of a short header followed by brotli encoded data.
   <tr>
     <th>Type</th><th>Name</th><th>Description</th>
   </tr>
-  <!-- TODO: include a reserved field for future expansions? -->
-  <!-- TODO: include a version field? -->
-  <!-- TODO: field for the uncompressed length of brotliStream? -->
   <tr>
     <td>Tag</td>
     <td><dfn for="Brotli patch">format</dfn></td>
     <td>Identifies the encoding as brotli, set to 'ifbr'</td>
   </tr>
   <tr>
-    <!-- TODO link to the IFT table section on ID once added. -->
+    <td>uint32</td>
+    <td>reserved</td>
+    <td>Reserved for future use, set to 0.</td>
+  </tr>
+  <tr>
+    <!-- TODO link to the IFT table section on patch invalidation once added. -->
     <td>uint32</td>
     <td><dfn for="Brotli patch">id</dfn>[4]</td>
     <td>The id of the [=font subset=] which this patch can be applied too.</td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td>length</td>
+    <td>The uncompressed length of [=Brotli patch/brotliStream=].</td>
   </tr>
   <tr>
     <td>uint8</td>
@@ -1259,7 +1266,6 @@ or remove tables in a [=font subset=].
 
 <dfn>Per table brotli patch</dfn> encoding:
 <table>
-  <!-- TODO: reserved flags and/or version field? -->
   <tr>
     <th>Type</th><th>Name</th><th>Description</th>
   </tr>
@@ -1269,7 +1275,12 @@ or remove tables in a [=font subset=].
     <td>Identifies the encoding as per table brotli, set to 'ifbt'</td>
   </tr>
   <tr>
-    <!-- TODO link to the IFT table section on ID once added. -->
+    <td>uint32</td>
+    <td>reserved</td>
+    <td>Reserved for future use, set to 0.</td>
+  </tr>
+  <tr>
+    <!-- TODO link to the IFT table section on patch invalidation once added. -->
     <td>uint32</td>
     <td><dfn for="Per table brotli patch">id</dfn>[4]</td>
     <td>The id of the [=font subset=] which this patch can be applied too.</td>
@@ -1291,7 +1302,6 @@ of that [=TablePatch=].
 
 <dfn>TablePatch</dfn> encoding:
 <table>
-  <!-- TODO: field for the uncompressed length of brotliStream? -->
   <tr>
     <th>Type</th><th>Name</th><th>Description</th>
   </tr>
@@ -1306,12 +1316,16 @@ of that [=TablePatch=].
     <td>Bit-field. If bit 0 (least significant bit) is set this patch replaces the existing table. If bit 1 is set this table is removed.</td>
   </tr>
   <tr>
+    <td>uint32</td>
+    <td>length</td>
+    <td>The uncompressed length of [=TablePatch/brotliStream=].</td>
+  </tr>
+  <tr>
     <td>uint8</td>
     <td><dfn for="TablePatch">brotliStream</dfn>[variable]</td>
     <td>Brotli encoded byte stream.</td>
   </tr>
 </table>
-
 
 <h4 algorithm id="apply-per-table-brotli">Applying Per Table Brotli Patches</h4>
 
