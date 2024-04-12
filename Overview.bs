@@ -391,9 +391,6 @@ Note: allowing the mapping to be split between two distinct tables allows an inc
 patch types. For example all patches of one type can be specified in the 'IFT ' table, and all patches of a second type in the
 'IFTX' table. Those patches can make updates only to one of the mapping tables and avoid making conflicting updates.
 
-<!-- TODO: instead of IFT/IFTX consider having a one table be specific to dependent patches and the other to independent patches -->
-<!-- TODO add algorithm explaining how to union the two tables -->
-
 Incremental Font Transfer and WOFF2 {#ift-and-woff2}
 ----------------------------------------------------
 
@@ -1798,7 +1795,7 @@ The [=incremental font=] and associated patches produced by a compliant encoder:
 
 2.  Must be consistent, that is: for any possible [=font subset definition=] the result of invoking [$Extend a Font Subset$] 
     with that subset definition and the [=incremental font=] must always be the same regardless of the particular order
-    of dependent patch selection chosen in step 6 of [$Extend a Font Subset$].
+    of patch selection chosen in step 6 of [$Extend a Font Subset$].
 
 3.  Should preserve the functionality of the fully expanded font, that is:
      given the [$Fully Expand a Font Subset|fully expanded font$] derived from the [=incremental font=]
@@ -1850,7 +1847,7 @@ beyond the scope of this document). It typically involves a reachability analysi
 relative to the font subset definition to see which portions can be reached by any possible content covered by the subset definition.
 Any reachable data is retained in the generated font subset, while any unreachable data may be removed.
 
-In the following example psuedo code a font subsetter is used to generate an IFT encoded font that utilizes only dependent patches:
+In the following example psuedo code a font subsetter is used to generate an IFT encoded font that utilizes only brotli patches:
 
 ```
 # Encodes a font (full_font) into an incremental font that starts at base_subset_def
@@ -1878,7 +1875,7 @@ encode_node(full_font, base_font, cur_def, subset_definitions):
     next_fonts += (next_font, next_def, patch_url)
 
   for each (next_font, next_def, patch_url) in next_fonts:
-    patch = dependent_patch_diff(base_font, next_font)
+    patch = brotli_patch_diff(base_font, next_font)
     patches += (patch, patch_url)
   
   return base_font, patches
@@ -1887,7 +1884,7 @@ encode_node(full_font, base_font, cur_def, subset_definitions):
 In this example implementation if the union of the input base subset definition and the list of subset definitions fully covers the input
 full font, and the subsetter implementation used correctly retains all functionality then, the above implementation should meet the
 requirements in [[#encoder]] to be a neutral encoding. This basic encoder implementation is for demonstration purposes and not meant
-to be representative of all possible encoder implementations. Notably it does not make use of nor demonstrate utilizing independent
+to be representative of all possible encoder implementations. Notably it does not make use of nor demonstrate utilizing glyph keyed
 patches. Most encoders will likely be more complex and need to consider additional factors some of which are discussed in the remaining
 sections.
 
@@ -1904,32 +1901,31 @@ During segmentation an encoder should also consider how codepoints interact with
 in the same segment can avoid having to duplicate data between patches, which may be necessary to preserve the functionality of the
 original font when interacting codepoints reside in different segments.
 
-<b>Dependent patches can form graphs</b>
+<b>Patches can form graphs</b>
 
-[=dependent|Dependent=] patches can modify the mapping table in the current font subset, which allows a patch to update the mapping table
+Brotli based patches can modify the mapping table in the current font subset, which allows a patch to update the mapping table
 to point to a different set of patches which are valid against the result of the patch application. This allows a graph to be formed
 where a font subset is the node and each patch is an edge.
 
 <b>Choosing patch formats</b>
 
-An encoder must choose the appropriate patch type to use. Dependent patches allow all types of data in the font to be patched, while
-independent patches are limited to updating outline and variation delta data. However, using dependent patches can cause the number of
-patches to increase exponentially as the number of segments increases.  Independent patches on the other hand scale linearly with the
+An encoder must choose the appropriate patch type to use. Brotli patches allow all types of data in the font to be patched, while
+glyph keyed patches are limited to updating outline and variation delta data. However, using brotli patches can cause the number of
+patches to increase exponentially as the number of segments increases.  Glyph keyed patches on the other hand scale linearly with the
 number of segments.
 
-Dependent patches are most useful when a font has sizable non-outline data and requires only a small number of segments. Independent
+Brotli patches are most useful when a font has sizable non-outline data and requires only a small number of segments. Glyph keyed
 patches are most useful when a fonts data is primarily in the outline tables and the font would benefit from using a large segment count.
 
-Using per-table brotli patches and two mapping tables it becomes possible to mix both indepedent and dependent patching in the same
+Using per-table brotli patches and two mapping tables it becomes possible to mix both brotli and glyph keyed patching in the same
 incremental font. This can be accomplished by:
 
-1. Keep all dependent patch entries in one mapping table and all independent entries in the other mapping table.
-2. Use per-table brotli patches to update all tables except for the tables touched by the independent patches (outline,
-    variation deltas, and the independent patch mapping table). These patches should use a small number of large segments to keep
+1. Keep all brotli patch entries in one mapping table and all glyph keyed entries in the other mapping table.
+2. Use per-table brotli patches to update all tables except for the tables touched by the glyph keyed patches (outline,
+    variation deltas, and the glyph keyed patch mapping table). These patches should use a small number of large segments to keep
     the patch count reasonable.
-3. Lastly, use independent patches to update the remaining tables, here much smaller fine-grained segments can be utilized without
+3. Lastly, use glyph keyed patches to update the remaining tables, here much smaller fine-grained segments can be utilized without
     required too many patches.
-
 
 <b>Managing the number of patches</b>
 
