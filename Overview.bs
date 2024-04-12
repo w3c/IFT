@@ -1676,12 +1676,12 @@ The algorithm:
     [=dependent=] entry is left up to the implementation to decide.
 
 7.  For each <var>entry</var> in <var>entry list</var> invoke [$Load patch file$] with the <var>font subset URI</var> as the
-    incremental font URI and the entries URI as the patch URI. Collect the returned patch
-    files into <var>patch list</var>.
+    incremental font URI and the entries URI as the patch URI. Collect the returned patch files and the associated unique ID from
+    each <var>entry</var> into <var>patch list</var>.
 
-8.  For each <var>patch</var> in <var>patch list</var> use the appropriate application algorithm (matching the patches format) from
-    [[#font-patch-formats]] to apply the <var>patch</var> to <var>extended font subset</var>. Pass in
-    <var>entry list</var> and <var>ids</var>. The order of patch application is left up to the implementation.
+8.  For each <var>patch</var> and <var>id</var> in <var>patch list</var> use the appropriate application algorithm (matching the patches
+    format) from [[#font-patch-formats]] to apply the <var>patch</var> with <var>id</var> to <var>extended font subset</var>. The order
+    of patch application is left up to the implementation.
 
 9.  Go to step 2.
 
@@ -1743,7 +1743,7 @@ The algorithm:
      produce the <var>target URI</var>.
 
 2.  Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers,
-     [[fetch]] should be used. Return the retrieved contents, or an error if the fetch resulted in an error.
+     [[fetch]] should be used. Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.
 
 <dfn abstract-op>Handle errors</dfn>
 

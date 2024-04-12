@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="dbe18f60b26e287bbf338eec2f22d578edfc1ed9" name="document-revision">
+  <meta content="9db46f6f7c38f5859900f5eef05cc1a649b14c69" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1916,10 +1916,12 @@ invoking <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-
 exactly one of the <a data-link-type="dfn">dependent</a> entries in <var>entry list</var> and remove all others. The criteria for selecting the single <a data-link-type="dfn">dependent</a> entry is left up to the implementation to decide.</p>
     <li data-md>
      <p>For each <var>entry</var> in <var>entry list</var> invoke <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the <var>font subset URI</var> as the
-incremental font URI and the entries URI as the patch URI. Collect the returned patch
-files into <var>patch list</var>.</p>
+incremental font URI and the entries URI as the patch URI. Collect the returned patch files and the associated unique ID from
+each <var>entry</var> into <var>patch list</var>.</p>
     <li data-md>
-     <p>For each <var>patch</var> in <var>patch list</var> use the appropriate application algorithm (matching the patches format) from <a href="#font-patch-formats">§ 5 Font Patch Formats</a> to apply the <var>patch</var> to <var>extended font subset</var>. Pass in <var>entry list</var> and <var>ids</var>. The order of patch application is left up to the implementation.</p>
+     <p>For each <var>patch</var> and <var>id</var> in <var>patch list</var> use the appropriate application algorithm (matching the patches
+format) from <a href="#font-patch-formats">§ 5 Font Patch Formats</a> to apply the <var>patch</var> with <var>id</var> to <var>extended font subset</var>. The order
+of patch application is left up to the implementation.</p>
     <li data-md>
      <p>Go to step 2.</p>
    </ol>
@@ -1980,7 +1982,7 @@ files into <var>patch list</var>.</p>
      <p>Perform <a href="https://www.rfc-editor.org/rfc/rfc3986#section-5">reference resolution</a> on <var>Patch URI</var> using <var>Incremental Font URI</var> as the base URI to
  produce the <var>target URI</var>.</p>
     <li data-md>
-     <p>Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers, <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> should be used. Return the retrieved contents, or an error if the fetch resulted in an error.</p>
+     <p>Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers, <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> should be used. Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.</p>
    </ol>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-handle-errors">Handle errors</dfn></p>
    <p>Coming soon.</p>
