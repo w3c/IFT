@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="46944e2c1deeeffebda47c0f61bdb221fac244de" name="document-revision">
+  <meta content="dbe18f60b26e287bbf338eec2f22d578edfc1ed9" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -1626,7 +1626,7 @@ features, and/or design-variation space.</p>
     <li data-md>
      <p><var>patch</var>: a <a data-link-type="dfn" href="#brotli-patch" id="ref-for-brotli-patch">brotli patch</a> to be applied to <var>base font subset</var>.</p>
     <li data-md>
-     <p><var>ids</var>: The ID numbers from the 'IFT ' and 'IFTX' tables of <var>base font subset</var>.</p>
+     <p><var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -1640,7 +1640,7 @@ features, and/or design-variation space.</p>
 not equal, then <var>patch</var> is not correctly formatted. Patch application has failed, return
 an error.</p>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#brotli-patch-id" id="ref-for-brotli-patch-id">id</a> field in <var>patch</var> is equal to at least one of <var>ids</var>.
+     <p>Check that the <a data-link-type="dfn" href="#brotli-patch-id" id="ref-for-brotli-patch-id">id</a> field in <var>patch</var> is equal to <var>id</var>.
 If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
 has failed, return an error.</p>
     <li data-md>
@@ -1717,7 +1717,7 @@ features, and/or design-variation space.</p>
     <li data-md>
      <p><var>patch</var>: a <a data-link-type="dfn" href="#per-table-brotli-patch" id="ref-for-per-table-brotli-patch">per table brotli patch</a> to be applied to <var>base font subset</var>.</p>
     <li data-md>
-     <p><var>ids</var>: The ID numbers from the 'IFT ' and 'IFTX' tables of <var>base font subset</var>.</p>
+     <p><var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -1731,7 +1731,7 @@ features, and/or design-variation space.</p>
 not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
 an error.</p>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#per-table-brotli-patch-id" id="ref-for-per-table-brotli-patch-id">id</a> field in <var>patch</var> is equal to at least one of <var>ids</var>.
+     <p>Check that the <a data-link-type="dfn" href="#per-table-brotli-patch-id" id="ref-for-per-table-brotli-patch-id">id</a> field in <var>patch</var> is equal to <var>id</var>.
 If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
 has failed, return an error.</p>
     <li data-md>
@@ -1831,7 +1831,7 @@ features, and/or design-variation space.</p>
     <li data-md>
      <p><var>patch</var>: a <a data-link-type="dfn" href="#glyph-keyed-patch" id="ref-for-glyph-keyed-patch">glyph keyed patch</a> to be applied to <var>base font subset</var>.</p>
     <li data-md>
-     <p><var>ids</var>: The ID numbers from the 'IFT ' and 'IFTX' tables of <var>base font subset</var>.</p>
+     <p><var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -1845,7 +1845,7 @@ features, and/or design-variation space.</p>
 not equal, then <var>patch</var> is not correctly formatted and patch application has failed, return
 an error.</p>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#glyph-keyed-patch-id" id="ref-for-glyph-keyed-patch-id">id</a> field in <var>patch</var> is equal to at least one of <var>ids</var>.
+     <p>Check that the <a data-link-type="dfn" href="#glyph-keyed-patch-id" id="ref-for-glyph-keyed-patch-id">id</a> field in <var>patch</var> is equal to <var>id</var>.
 If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application has
 failed, return an error.</p>
     <li data-md>
@@ -1906,7 +1906,7 @@ tables are formatted as a <a href="#patch-map">§ 4.2 Patch Map Table</a>. Che
 is not valid, invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-errors" id="ref-for-abstract-opdef-handle-errors">Handle errors</a>. If <var>extended font subset</var> does not have an 'IFT ' table, then it is not an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font③">incremental font</a> and cannot be extended, return <var>extended font subset</var>.</p>
     <li data-md>
      <p>For each of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
-invoking <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-1-patch-map" id="ref-for-abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</a> or <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map">Interpret Format 2 Patch Map</a>. Concatenate the returned entry lists into a single list, <var>entry list</var>, and the returned IDs into a single list <var>ids</var>.</p>
+invoking <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-1-patch-map" id="ref-for-abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</a> or <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map">Interpret Format 2 Patch Map</a>. Concatenate the returned entry lists into a single list, <var>entry list</var>.</p>
     <li data-md>
      <p>For each <var>entry</var> in <var>entry list</var> invoke <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection">Check entry intersection</a> with <var>entry</var> and <var>target subset definition</var> as inputs, if it returns false remove <var>entry</var> from <var>entry list</var>.</p>
     <li data-md>
