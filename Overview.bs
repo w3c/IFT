@@ -1335,7 +1335,7 @@ The inputs to this algorithm are:
 
 * <var>patch</var>: a [=brotli patch=] to be applied to <var>base font subset</var>.
 
-* <var>ids</var>: The ID numbers from the 'IFT ' and 'IFTX' tables of <var>base font subset</var>.
+* <var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.
 
 The algorithm outputs:
 
@@ -1347,7 +1347,7 @@ The algorithm:
     not equal, then <var>patch</var> is not correctly formatted. Patch application has failed, return
     an error.
 
-2. Check that the [=Brotli patch/id=] field in <var>patch</var> is equal to at least one of <var>ids</var>.
+2. Check that the [=Brotli patch/id=] field in <var>patch</var> is equal to  <var>id</var>.
     If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
     has failed, return an error.
 
@@ -1441,7 +1441,7 @@ The inputs to this algorithm are:
 
 * <var>patch</var>: a [=per table brotli patch=] to be applied to <var>base font subset</var>.
 
-* <var>ids</var>: The ID numbers from the 'IFT ' and 'IFTX' tables of <var>base font subset</var>.
+* <var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.
 
 The algorithm outputs:
 
@@ -1453,7 +1453,7 @@ The algorithm:
     not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
     an error.
 
-2. Check that the [=Per table brotli patch/id=] field in <var>patch</var> is equal to at least one of <var>ids</var>.
+2. Check that the [=Per table brotli patch/id=] field in <var>patch</var> is equal to <var>id</var>.
     If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
     has failed, return an error.
 
@@ -1586,7 +1586,7 @@ The inputs to this algorithm are:
 
 * <var>patch</var>: a [=glyph keyed patch=] to be applied to <var>base font subset</var>.
 
-* <var>ids</var>: The ID numbers from the 'IFT ' and 'IFTX' tables of <var>base font subset</var>.
+* <var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.
 
 The algorithm outputs:
 
@@ -1598,7 +1598,7 @@ The algorithm:
     not equal, then <var>patch</var> is not correctly formatted and patch application has failed, return
     an error.
 
-2. Check that the [=Glyph keyed patch/id=] field in <var>patch</var> is equal to at least one of <var>ids</var>.
+2. Check that the [=Glyph keyed patch/id=] field in <var>patch</var> is equal to <var>id</var>.
     If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application has
     failed, return an error.
 
@@ -1663,7 +1663,7 @@ The algorithm:
 
 3.  For each of [[open-type/otff#table-directory|tables]] 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
     invoking [$Interpret Format 1 Patch Map$] or [$Interpret Format 2 Patch Map$]. Concatenate the returned entry lists into a single list,
-    <var>entry list</var>, and the returned IDs into a single list <var>ids</var>.
+    <var>entry list</var>.
 
 4.  For each <var>entry</var> in <var>entry list</var> invoke [$Check entry intersection$] with <var>entry</var> and
     <var>target subset definition</var> as inputs, if it returns false remove <var>entry</var>
