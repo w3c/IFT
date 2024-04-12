@@ -1215,17 +1215,26 @@ A <dfn dfn>patch format</dfn> is a specified encoding of changes to be applied r
 changes encoded according to the format is a [=font patch=]. Each [=patch format=] has an associated 
 <dfn dfn>patch application algorithm</dfn> which takes a
 [=font subset=] and a [=font patch=] encoded in the [=patch format=] as input and outputs an extended
-[=font subset=]. Each [=patch application algorithm=] can be categorized as either independent or dependent. Given a set of
-[=font patch|font patches=], <code>P</code>, that are all valid to be applied to a specific [=font subset=], <code>F</code>:
+[=font subset=].
 
-<!-- TODO this dependent definition is too strict, dependent patches can in some cases be applied to font subset even if it
-     has been modified by independent patches (specifically the per table patch type) -->
-* <dfn dfn>dependent</dfn> patches are only valid to be applied to [=font subset=] <code>F</code>. Applying any patches from
-    <code>P</code> to [=font subset=] <code>F</code> will change the subset and thus invalidate any remaining dependent patches
-    in <code>P</code>.
+Patch Invalidations {#font-patch-invalidations}
+-----------------------------------------------
 
-* <dfn dfn>independent</dfn> patches are only valid to be applied to [=font subset=] <code>F</code> and any [=font subset=] derived
-    from F by the application of one or more independent patches from <code>P</code>.
+Patches in an incremental [=font subset=] when applied may invalidate other available patches, making them invalid to be applied
+to the extended [=font subset=]. Patch validity is checked using the unique ID from the [[#patch-map]]. Every patch has a
+unique ID encoded within it which needs to match the unique ID from the [[#patch-map]] which lists that patch. Additionally to
+aid the client in determining what invalidations will occur, every patch is categorized into one of three categories:
+
+* <dfn dfn>Full Invalidation</dfn>: when this patch is applied all other patches currently listed in the [=font subset=] are invalidated.
+    The unique ID in both the 'IFT ' and 'IFTX' [[#patch-map]] will be changed.
+
+* <dfn dfn>Partial Invalidation</dfn>: when this patch is applied all other patches in the same [[#patch-map]] will be invalidated.
+    The unique ID of only the [[#patch-map]] which contains this patch will be changed.
+
+* <dfn dfn>No Invalidation</dfn>: no other patches will be invalidated by the application of this patch. The unique ID of the
+    'IFT ' and 'IFTX' [[#patch-map]] will not change.
+
+The invalidation behaviour of a specific patch is encoded in its format number which can be found in the following section.
 
 Formats Summary {#font-patch-formats-summary}
 ---------------------------------------------
@@ -1235,26 +1244,41 @@ The following patch formats are defined by this specification:
 <table>
   <tr>
     <th>Name</th>
-    <th>Type</th>
     <th>ID</th>
+    <th>Invalidation</th>
     <th>Description</th>
   </tr>
   <tr>
     <td>[[#brotli]]</td>
-    <td>[=dependent=]</td>
     <td>1</td>
+    <td>[=Full Invalidation=]</td>
     <td>A brotli encoded binary diff that uses the entire [=font subset=] as a base.</td>
   </tr>
   <tr>
-    <td>[[#per-table-brotli]]</td>
-    <td>[=dependent=]</td>
+    <td>[[#brotli]]</td>
     <td>2</td>
+    <td>[=Partial Invalidation=]</td>
+    <td>A brotli encoded binary diff that uses the entire [=font subset=] as a base.</td>
+  </tr>
+
+
+  <tr>
+    <td>[[#per-table-brotli]]</td>
+    <td>3</td>
+    <td>[=Full Invalidation=]</td>
     <td>A collection of brotli encoded binary diffs that use tables from the [=font subset=] as bases.</td>
   </tr>
   <tr>
+    <td>[[#per-table-brotli]]</td>
+    <td>4</td>
+    <td>[=Partial Invalidation=]</td>
+    <td>A collection of brotli encoded binary diffs that use tables from the [=font subset=] as bases.</td>
+  </tr>
+
+  <tr>
     <td>[[#glyph-keyed]]</td>
-    <td>[=independent=]</td>
-    <td>3</td>
+    <td>5</td>
+    <td>[=No Invalidation=]</td>
     <td>Contains a collection of opaque binary blobs, each associated with a glyph id and table.</td>
   </tr>
 </table>
@@ -1303,7 +1327,7 @@ of a short header followed by brotli encoded data.
 
 <h4 algorithm id="apply-brotli">Applying Brotli Patches</h4>
 
-This algorithm is used to apply a brotli patch to extend a [=font subset=] to cover additional codepoints,
+This [=patch application algorithm=] is used to apply a brotli patch to extend a [=font subset=] to cover additional codepoints,
 features, and/or design-variation space.
 
 <dfn abstract-op>Apply brotli patch</dfn>
@@ -1409,7 +1433,7 @@ of that [=TablePatch=].
 
 <h4 algorithm id="apply-per-table-brotli">Applying Per Table Brotli Patches</h4>
 
-This algorithm is used to apply a per table brotli patch to extend a [=font subset=] to cover additional codepoints,
+This [=patch application algorithm=] is used to apply a per table brotli patch to extend a [=font subset=] to cover additional codepoints,
 features, and/or design-variation space.
 
 <dfn abstract-op>Apply per table brotli patch</dfn>
@@ -1554,7 +1578,7 @@ of that glyph data.
 
 <h4 algorithm id="apply-glyph-keyed">Applying Glyph Keyed Patches</h4>
 
-This algorithm is used to apply a glyph keyed patch to extend a [=font subset=] to cover additional codepoints,
+This [=patch application algorithm=] is used to apply a glyph keyed patch to extend a [=font subset=] to cover additional codepoints,
 features, and/or design-variation space.
 
 <dfn abstract-op>Apply glyph keyed patch</dfn>
