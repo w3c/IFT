@@ -1671,19 +1671,31 @@ The algorithm:
 
 5.  If <var>entry list</var> is empty, then the extension operation is finished, return <var>extended font subset</var>.
 
-6.  If <var>entry list</var> contains one or more [=patch map entries=] which have a patch format that is [=dependent=], then select
-    exactly one of the [=dependent=] entries in <var>entry list</var> and remove all others. The criteria for selecting the single
-    [=dependent=] entry is left up to the implementation to decide.
+6.  Pick one <var>entry</var> from <var>entry list</var> with the following procedure:
 
-7.  For each <var>entry</var> in <var>entry list</var> invoke [$Load patch file$] with the <var>font subset URI</var> as the
-    incremental font URI and the entries URI as the patch URI. Collect the returned patch files and the associated unique ID from
-    each <var>entry</var> into <var>patch list</var>.
+    *  If <var>entry list</var> contains one or more [=patch map entries=] which have a patch format that is [=Full Invalidation=]
+        then, select exactly one of the [=Full Invalidation=] entries in <var>entry list</var>. The criteria for selecting the single
+        entry is left up to the implementation to decide.
 
-8.  For each <var>patch</var> and <var>id</var> in <var>patch list</var> use the appropriate application algorithm (matching the patches
-    format) from [[#font-patch-formats]] to apply the <var>patch</var> with <var>id</var> to <var>extended font subset</var>. The order
-    of patch application is left up to the implementation.
+    *  Otherwise if <var>entry list</var> contains one or more [=patch map entries=] which have a patch format that is
+        [=Partial Invalidation=] then, select exactly one of the [=Partial Invalidation=] entries in <var>entry list</var>.
+        The criteria for selecting the single entry is left up to the implementation to decide.
+
+    *  Otherwise select exactly one of the [=No Invalidation=] entries in <var>entry list</var>.
+        The criteria for selecting the single entry is left up to the implementation to decide.
+
+7.  Load <var>patch file</var> by invoking [$Load patch file$] with the <var>font subset URI</var> as the incremental font URI and the
+    <var>entry</var> patch URI as the patch URI.
+
+8.  Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from
+    [[#font-patch-formats]] to apply the <var>patch file</var> using the id from <var>entry</var> to <var>extended font subset</var>.
 
 9.  Go to step 2.
+
+Note: the algorithm here presents patch loads as being done one at a time; however, to improve performance client implementations are
+encouraged to pre-fetch patch files that will be applied in later iterations by the algorithm. The
+[[#font-patch-invalidations|invalidation categories]] can be used to predict which intersecting patches from step 4 will remain be valid
+to be applied.
 
 <!-- TODO: provide criteria to exit if stuck in an infinite loop. Could require that no specific URL is loaded more than once?
            Could require that each patch application result in an extended coverage in some way? Also allow the client to define
