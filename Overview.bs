@@ -418,8 +418,8 @@ Patch Map Table {#patch-map}
 ----------------------------
 
 A patch map table encodes a list of <dfn dfn>patch map entries</dfn>, where each entry has a key and value. The key is a
-[=font subset definition=] and the value is a URI and the [[#font-patch-formats]] used by the data at the URI. A map is
-encoded in one of two formats:
+[=font subset definition=] and the value is a URI, the [[#font-patch-formats]] used by the data at the URI, and the unique ID
+of the patch map table. A map is encoded in one of two formats:
 
 *  Format 1: a limited, but more compact encoding. It encodes a one-to-one mapping from glyph id to patch URIs. It does
     not support [=font subset definitions=] with design space or entries with overlapping subset definitions.
@@ -631,8 +631,6 @@ The algorithm outputs:
 
 * <var>entry list</var>: a list of [=patch map entries=].
 
-* <var>id</var>: the ID associated with this table.
-
 The algorithm:
 
 1.  Check that the <var>patch map</var> has [=Format 1 Patch Map/format=] equal to 1 and is valid according to the requirements in
@@ -652,7 +650,7 @@ The algorithm:
     *  d. Convert <var>entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
 
     *  e. Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains only the unicode code point set and
-        maps to the generated URI and the patch encoding specified by [=Format 1 Patch Map/patchEncoding=].
+        maps to the generated URI, the patch encoding specified by [=Format 1 Patch Map/patchEncoding=], and [=Format 1 Patch Map/id=].
 
 3.  For each [=FeatureRecord=] and associated [=EntryMapRecord=] in [=Feature Map/featureRecords=] and [=Feature Map/entryMapRecords=]:
 
@@ -670,10 +668,10 @@ The algorithm:
             <var>entry index</var>.
 
         *  Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains the unicode code point set and
-            a feature tag set containing only [=FeatureRecord/featureTag=]. The entry  maps to the generated URI and the patch encoding
-            specified by [=Format 1 Patch Map/patchEncoding=].
+            a feature tag set containing only [=FeatureRecord/featureTag=]. The entry  maps to the generated URI, the patch encoding
+            specified by [=Format 1 Patch Map/patchEncoding=], and [=Format 1 Patch Map/id=].
 
-4.  Return <var>entry list</var> and [=Format 1 Patch Map/id=] as <var>id</var>.
+4.  Return <var>entry list</var>.
 
 ### Patch Map Table: Format 2 ### {#patch-map-format-2}
 
@@ -926,8 +924,6 @@ The algorithm outputs:
 
 * <var>entry list</var>: a list of [=patch map entries=].
 
-* <var>id</var>: the ID associated with this table.
-
 The algorithm:
 
 1.  Check that the <var>patch map</var> has [=Format 2 Patch Map/format=] equal to 2 and is valid according to the requirements in
@@ -951,9 +947,10 @@ The algorithm:
 
      *  Add the returned consumed id string byte count to <var>current id string byte</var>.
 
-     *  If the returned value of ignored is false, then add the returned entry to <var>entry list</var>.
+     *  If the returned value of ignored is false, then set the unique ID of the returned entry to [=Format 2 Patch Map/id=] and add
+         the  entry to <var>entry list</var>.
 
-4.  Return <var>entry list</var> and [=Format 2 Patch Map/id=] as <var>id</var>.
+4.  Return <var>entry list</var>.
 
 <dfn abstract-op>Interpret Format 2 Patch Map Entry</dfn>
 
