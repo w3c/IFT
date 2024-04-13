@@ -285,29 +285,29 @@ in [[open-type/otff#data-types]]. As with the rest of OpenType, all fields use "
 URI Templates {#uri-templates}
 ------------------------------
 
-URI templates [[!rfc6570]] are used to convert numeric indices into URIs where patch files are located. Given a numeric index value,
-several variables are defined which are used to produce the expansion of the template:
+URI templates [[!rfc6570]] are used to convert numeric or string ids into URIs where patch files are located. Several variables are
+defined which are used to produce the expansion of the template:
 
 <table>
   <tr><th>Variable</th><th>Value</th></tr>
   <tr>
     <td>id</td>
     <td>
-      The numeric index value converted to a string in hexadecimal representation (using the digits 0-9, A-F). No padding with 0's is
-      used.
+      If the input id is numeric then this is the  numeric value converted to a string in hexadecimal representation
+      (using the digits 0-9, A-F). No padding with 0's is used. Otherwise, this is the string id value.
     </td>
   </tr>
   <tr>
-    <td>d1</td><td>The first digit (least significant digit) of the numeric index in hexadecimal.</td>
+    <td>d1</td><td>The last character of the string in the id variable.</td>
   </tr>
   <tr>
-    <td>d2</td><td>The second digit of the numeric index in hexadecimal, or 0 if the index does not have a second digit</td>
+    <td>d2</td><td>The second last character of the string in the id variable.</td>
   </tr>
   <tr>
-    <td>d3</td><td>The third digit of the numeric index in hexadecimal, or 0 if the index does not have a third digit</td>
+    <td>d3</td><td>The third last character of the string in the id variable.</td>
   </tr>
   <tr>
-    <td>d4</td><td>The fourth digit of the numeric index in hexadecimal, or 0 if the index does not have a fourth digit</td>
+    <td>d4</td><td>The fourth last character of the string in the id variable.</td>
   </tr>
 </table>
 
@@ -316,7 +316,7 @@ several variables are defined which are used to produce the expansion of the tem
 Some example inputs and the corresponding expansions:
 
 <table>
-  <tr><th>Template</th><th>Input Index</th><th>Expansion</th></tr>
+  <tr><th>Template</th><th>Input ID</th><th>Expansion</th></tr>
   <tr>
     <td>//foo.bar/{id}</td>
     <td>123</td>
@@ -331,6 +331,11 @@ Some example inputs and the corresponding expansions:
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>123</td>
     <td>//foo.bar/B/7/0/7B</td>
+  </tr>
+    <tr>
+    <td>//foo.bar{/d1,d2,d3,id}</td>
+    <td>baz</td>
+    <td>//foo.bar/z/a/b/baz</td>
   </tr>
 </table>
 
@@ -678,6 +683,14 @@ The algorithm:
     <td>Offset to a [=Mapping Entries=] sub table. Offset is from the start of this table.</td>
   </tr>
   <tr>
+    <td>Offset32</td>
+    <td><dfn for="Format 2 Patch Map">entryIdStringData</dfn></td>
+    <td>
+      Offset to a block of data containing the concatentation of all of the entry ID strings.
+      May be null (0). Offset is from the start of this table.
+    </td>
+  </tr>
+  <tr>
     <td>uint16</td>
     <td>uriTemplateLength</td>
     <td>
@@ -775,8 +788,17 @@ The algorithm:
     <td><dfn for="Mapping Entry">entryIdDelta</dfn></td>
     <td>
       Signed delta which is used to calculate the id for this entry. The id for this entry is the entry id of the previous
-      [=Mapping Entry=] + 1 + entryIdDelta. Only present if [=Mapping Entry/formatFlags=] bit 2 is set. If not present delta is assumed
-      to be 0.
+      [=Mapping Entry=] + 1 + entryIdDelta. Only present if [=Mapping Entry/formatFlags=] bit 2 is set and
+      [=Format 2 Patch Map/entryIdStringData=] is null (0). If not present delta is assumed to be 0.
+    </td>
+  </tr>
+  <tr>
+    <td>uint16</td>
+    <td><dfn for="Mapping Entry">entryIdStringLength</dfn></td>
+    <td>
+      The number of bytes that the id string for this entry occupies in the [=Format 2 Patch Map/entryIdStringData=] data block.
+      Strings are encoded in [[UTF-8]]. Only present if [=Mapping Entry/formatFlags=] bit 2 is set and
+      [=Format 2 Patch Map/entryIdStringData=] is not null (0). If not present the length is assumed to be 0.
     </td>
   </tr>
 
@@ -789,7 +811,6 @@ The algorithm:
       Only present if [=Mapping Entry/formatFlags=] bit 3 is set.
     </td>
   </tr>
-
 
   <tr>
     <td>uint16/uint24</td>
@@ -867,12 +888,14 @@ The algorithm:
 1.  Check that the <var>patch map</var> has [=Format 2 Patch Map/format=] equal to 2 and is valid according to the requirements in
      [[#patch-map-format-2]]. If it is not return an error.
 
-2.  Initialize <var>last entry id</var> to 0, and <var>current byte</var> to 0.
+2.  Initialize <var>last entry id</var> to 0, <var>current byte</var> to 0, and <var>current id string byte</var> to 0.
 
 3.  Invoke [$Interpret Format 2 Patch Map Entry$], [=Format 2 Patch Map/entryCount=] times. For each invocation:
 
      *  pass in the bytes from <var>patch map</var> starting from [=Format 2 Patch Map/entries=][<var>current byte</var>] to
          the end of <var>patch map</var>,
+         the bytes from <var>patch map</var> starting from [=Format 2 Patch Map/entryIdStringData=][<var>current id string byte</var>]
+         to the end of <var>patch map</var> if [=Format 2 Patch Map/entryIdStringData=] is non zero,
          <var>last entry id</var>,
          [=Format 2 Patch Map/defaultPatchEncoding=], and
          [=Format 2 Patch Map/uriTemplate=].
@@ -880,6 +903,8 @@ The algorithm:
      *  Set <var>last entry id</var> to the returned entry id.
 
      *  Add the returned consumed byte count to <var>current byte</var>.
+
+     *  Add the returned consumed id string byte count to <var>current id string byte</var>.
 
      *  If the returned value of ignored is false, then add the returned entry to <var>entry list</var>.
 
@@ -891,6 +916,8 @@ The inputs to this algorithm are:
 
 * <var>entry bytes</var>: a byte array that contains an encoded [=Mapping Entry=].
 
+* <var>id string bytes</var> (optional): a byte array the contains entry ID strings.
+
 * <var>last entry id</var>: the entry id of the entry preceding this one.
 
 * <var>default patch encoding</var>: the default patch encoding if one isn't specified.
@@ -899,11 +926,13 @@ The inputs to this algorithm are:
 
 The algorithm outputs:
 
-* <var>entry id</var>: the numeric id of this entry.
+* <var>entry id</var>: the numeric or string id of this entry.
 
 * <var>entry</var>: a single [=patch map entries|entry=].
 
 * <var>consumed bytes</var>: the number of bytes used to encode the entry.
+
+* <var>consumed id string bytes</var>: the number of bytes used to encode the entry id string.
 
 * <var>ignored</var>: if true, then this entry should be ignored.
 
@@ -912,7 +941,7 @@ The algorithm:
 1.  For the all steps whenever data is loaded from <var>entry bytes</var> increment <var>consumed bytes</var> with the
      number of bytes read.
 
-2.  Set <var>entry id</var> = <var>last entry id</var> + 1.
+2.  If <var>id string bytes</var> is not present then, set <var>entry id</var> = <var>last entry id</var> + 1.
 
 3.  Set the patch encoding of <var>entry</var> to <var>default patch encoding</var>.
 
@@ -935,9 +964,14 @@ The algorithm:
          and so on. For each index in [=Mapping Entry/copyIndices=] locate the previously loaded entry with a matching index and
          add all code points, feature tags, and design space segments from it to <var>entry</var>.
 
-7.  If [=Mapping Entry/formatFlags=] bit 2 is set, then an id delta is present. Read the id delta specified by [=Mapping Entry/entryIdDelta=]
-     from <var>entry bytes</var> and add the delta to <var>entry id</var>. If <var>entry id</var> is negative this is an error
-     and the mapping is malformed.
+7.  If [=Mapping Entry/formatFlags=] bit 2 is set, then an id delta or id string length is present:
+
+    *  If <var>id string bytes</var> is not present then, read the id delta specified by [=Mapping Entry/entryIdDelta=]
+        from <var>entry bytes</var> and add the delta to <var>entry id</var>. If <var>entry id</var> is negative this is an error
+        and the mapping is malformed.
+
+    *  Otherwise if <var>id string bytes</var> is present then, read [=Mapping Entry/entryIdStringLength=] bytes from
+        <var>id string bytes</var> and interpret the bytes as a [[UTF-8]] string. Set <var>entry id</var> to the result.
 
 8.  If [=Mapping Entry/formatFlags=] bit 3 is set, then a patch encoding is present. Read the encoding specified by
      [=Mapping Entry/patchEncoding=] from <var>entry bytes</var> and set the patch encoding of <var>entry</var> to the read value.
@@ -960,7 +994,8 @@ The algorithm:
 11. Convert <var>entry id</var> into a URI by applying <var>uri template</var> following [[#uri-templates]]. Set the patch uri of
      <var>entry</var> to the generated URI.
 
-12. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, and <var>ignored</var>.
+12. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, [=Mapping Entry/entryIdStringLength=] as
+     <var>consumed id string bytes</var>, and <var>ignored</var>.
 
 <h5 algorithm id="sparse-bit-set-decoding">Sparse Bit Set</h5>
 
