@@ -285,8 +285,10 @@ in [[open-type/otff#data-types]]. As with the rest of OpenType, all fields use "
 URI Templates {#uri-templates}
 ------------------------------
 
-URI templates [[!rfc6570]] are used to convert numeric or string ids into URIs where patch files are located. Several variables are
-defined which are used to produce the expansion of the template:
+URI templates [[!rfc6570]] are used to convert numeric or string IDs into URIs where patch files are located.
+A string ID is a sequence of [[!unicode|Unicode]] code point values obtained from decoding a
+[[UTF-8]] string (see [[rfc6570#section-1.6]]). Several variables are defined which are used to produce the
+expansion of the template:
 
 <table>
   <tr><th>Variable</th><th>Value</th></tr>
@@ -310,6 +312,10 @@ defined which are used to produce the expansion of the template:
     <td>d4</td><td>The fourth last character of the string in the id variable.</td>
   </tr>
 </table>
+
+The variables d1 through d4 select a specific character of the id variable. In this context a character is a [[!unicode]] code point.
+If the code point is not an ASCII code point then during expansion it will need to be converted to
+[[UTF-8]] and percent encoded as required by [[rfc6570#section-1.6]].
 
 <div class="example">
 
@@ -336,6 +342,12 @@ Some example inputs and the corresponding expansions:
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>baz</td>
     <td>//foo.bar/z/a/b/baz</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>//foo.bar{/d1,d2,d3,id}</td>
+    <td>àbc</td>
+    <td>//foo.bar/c/b/%C3%A0/%C3%A0bc</td>
   </tr>
 </table>
 
@@ -832,6 +844,10 @@ The algorithm:
     </td>
   </tr>
 </table>
+
+If an encoder is using string IDs via [=Format 2 Patch Map/entryIdStringData=] and  [=Mapping Entry/entryIdStringLength=] then, the
+encoder should only use [[rfc3986#section-2.3|unreserved uri characters]] in the ID strings to prevent the need for percent encoding of
+the ID values when expanding the URI templates.
 
 <dfn>Design Space Segment</dfn> encoding:
 
