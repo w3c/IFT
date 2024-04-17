@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="e7442421fd81ce94e416f70764295eba71cc1dcb" name="document-revision">
+  <meta content="72a27ee056df2d9e18ce0cb66e6066872b0abb18" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -503,7 +503,7 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-16">16 April 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-17">17 April 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1210,9 +1210,15 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
       Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑨">formatFlags</a> bit 4 and/or 5 is set. The length is
       determined by following the decoding procedures in <a href="#sparse-bit-set-decoding">§ 4.2.2.2 Sparse Bit Set</a>. 
    </table>
+   <p>If an encoder is producing patches that will be stored on a file system and then served it’s recommended that only numeric entry IDs be
+used (via <a data-link-type="dfn" href="#mapping-entry-entryiddelta" id="ref-for-mapping-entry-entryiddelta">entryIdDelta</a>) as these will generally produce the smallest encoding of the format 2 patch map. String IDs
+are useful in cases where patches are not being stored in advance and the ID strings can be then used to encode information about the patch
+being requested.</p>
    <p>If an encoder is using string IDs via <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata③">entryIdStringData</a> and <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength">entryIdStringLength</a> then, the
-encoder should only use <a href="https://www.rfc-editor.org/rfc/rfc3986#section-2.3">unreserved uri characters</a> in the ID strings to prevent the need for percent encoding of
-the ID values when expanding the URI templates.</p>
+encoder should only use <a href="https://www.rfc-editor.org/rfc/rfc3986#section-2.3">unreserved uri characters</a> in the ID strings. This will prevent the need for percent
+encoding of the ID values when expanding the URI templates and maximize compatibility of the URLs and associated file names. Particularly,
+if patch files are to be stored on a file system which does not support unicode encoded file names or is case insensitive then special care
+needs to be taken when choosing the set of characters to use in the file names.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="design-space-segment">Design Space Segment</dfn> encoding:</p>
    <table>
     <tbody>
@@ -1334,7 +1340,7 @@ the ID values when expanding the URI templates.</p>
      <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①③">formatFlags</a> bit 2 is set, then an id delta or id string length is present:</p>
      <ul>
       <li data-md>
-       <p>If <var>id string bytes</var> is not present then, read the id delta specified by <a data-link-type="dfn" href="#mapping-entry-entryiddelta" id="ref-for-mapping-entry-entryiddelta">entryIdDelta</a> from <var>entry bytes</var> and add the delta to <var>entry id</var>. If <var>entry id</var> is negative this is an error
+       <p>If <var>id string bytes</var> is not present then, read the id delta specified by <a data-link-type="dfn" href="#mapping-entry-entryiddelta" id="ref-for-mapping-entry-entryiddelta①">entryIdDelta</a> from <var>entry bytes</var> and add the delta to <var>entry id</var>. If <var>entry id</var> is negative this is an error
 and the mapping is malformed.</p>
       <li data-md>
        <p>Otherwise if <var>id string bytes</var> is present then, read <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength①">entryIdStringLength</a> bytes from <var>id string bytes</var> and interpret the bytes as a <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> string. Set <var>entry id</var> to the result.</p>
@@ -2522,7 +2528,7 @@ window.dfnpanelData['mapping-entry-designspacecount'] = {"dfnID": "mapping-entry
 window.dfnpanelData['mapping-entry-designspacesegments'] = {"dfnID": "mapping-entry-designspacesegments", "url": "#mapping-entry-designspacesegments", "dfnText": "designSpaceSegments", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-designspacesegments"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['mapping-entry-copycount'] = {"dfnID": "mapping-entry-copycount", "url": "#mapping-entry-copycount", "dfnText": "copyCount", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-copycount"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['mapping-entry-copyindices'] = {"dfnID": "mapping-entry-copyindices", "url": "#mapping-entry-copyindices", "dfnText": "copyIndices", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-copyindices"}, {"id": "ref-for-mapping-entry-copyindices\u2460"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-entryiddelta'] = {"dfnID": "mapping-entry-entryiddelta", "url": "#mapping-entry-entryiddelta", "dfnText": "entryIdDelta", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-entryiddelta"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
+window.dfnpanelData['mapping-entry-entryiddelta'] = {"dfnID": "mapping-entry-entryiddelta", "url": "#mapping-entry-entryiddelta", "dfnText": "entryIdDelta", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-entryiddelta"}], "title": "4.2.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-mapping-entry-entryiddelta\u2460"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['mapping-entry-entryidstringlength'] = {"dfnID": "mapping-entry-entryidstringlength", "url": "#mapping-entry-entryidstringlength", "dfnText": "entryIdStringLength", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-entryidstringlength"}], "title": "4.2.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-mapping-entry-entryidstringlength\u2460"}, {"id": "ref-for-mapping-entry-entryidstringlength\u2461"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['mapping-entry-patchencoding'] = {"dfnID": "mapping-entry-patchencoding", "url": "#mapping-entry-patchencoding", "dfnText": "patchEncoding", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-patchencoding"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
 window.dfnpanelData['mapping-entry-bias'] = {"dfnID": "mapping-entry-bias", "url": "#mapping-entry-bias", "dfnText": "bias", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-bias"}, {"id": "ref-for-mapping-entry-bias\u2460"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};

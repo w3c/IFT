@@ -845,9 +845,16 @@ The algorithm:
   </tr>
 </table>
 
+If an encoder is producing patches that will be stored on a file system and then served it's recommended that only numeric entry IDs be
+used (via [=Mapping Entry/entryIdDelta=]) as these will generally produce the smallest encoding of the format 2 patch map. String IDs
+are useful in cases where patches are not being stored in advance and the ID strings can be then used to encode information about the patch
+being requested.
+
 If an encoder is using string IDs via [=Format 2 Patch Map/entryIdStringData=] and  [=Mapping Entry/entryIdStringLength=] then, the
-encoder should only use [[rfc3986#section-2.3|unreserved uri characters]] in the ID strings to prevent the need for percent encoding of
-the ID values when expanding the URI templates.
+encoder should only use [[rfc3986#section-2.3|unreserved uri characters]] in the ID strings. This will prevent the need for percent
+encoding of the ID values when expanding the URI templates and maximize compatibility of the URLs and associated file names. Particularly,
+if patch files are to be stored on a file system which does not support unicode encoded file names or is case insensitive then special care
+needs to be taken when choosing the set of characters to use in the file names.
 
 <dfn>Design Space Segment</dfn> encoding:
 
