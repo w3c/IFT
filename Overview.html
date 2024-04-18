@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="72a27ee056df2d9e18ce0cb66e6066872b0abb18" name="document-revision">
+  <meta content="6bb60b15f577efe88546283c8993edd4e070654e" name="document-revision">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -503,7 +503,7 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-17">17 April 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-18">18 April 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -810,16 +810,20 @@ expansion of the template:</p>
       (using the digits 0-9, A-F). No padding with 0’s is used. Otherwise, this is the string id value. 
      <tr>
       <td>d1
-      <td>The last character of the string in the id variable.
+      <td> The last character of the string in the id variable.
+      If id variable is empty then, the value is the character 0 (U+0030). 
      <tr>
       <td>d2
-      <td>The second last character of the string in the id variable.
+      <td> The second last character of the string in the id variable.
+      If the id variable has less than 2 characters then, the value is the character 0 (U+0030). 
      <tr>
       <td>d3
-      <td>The third last character of the string in the id variable.
+      <td> The third last character of the string in the id variable.
+      If the id variable has less than 3 characters then, the value is the character 0 (U+0030). 
      <tr>
       <td>d4
-      <td>The fourth last character of the string in the id variable.
+      <td> The fourth last character of the string in the id variable.
+      If the id variable has less than 4 characters then, the value is the character 0 (U+0030). 
    </table>
    <p>The variables d1 through d4 select a specific character of the id variable. In this context a character is a <a data-link-type="biblio" href="#biblio-unicode" title="The Unicode Standard">[unicode]</a> code point.
 If the code point is not an ASCII code point then during expansion it will need to be converted to <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> and percent encoded as required by <a href="https://www.rfc-editor.org/rfc/rfc6570#section-1.6">URI Template § section-1.6</a>.</p>
