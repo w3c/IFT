@@ -1302,10 +1302,9 @@ of a short header followed by brotli encoded data.
     <td>Reserved for future use, set to 0.</td>
   </tr>
   <tr>
-    <!-- TODO link to the IFT table section on patch invalidation once added. -->
     <td>uint32</td>
     <td><dfn for="Brotli patch">id</dfn>[4]</td>
-    <td>The id of the [=font subset=] which this patch can be applied too.</td>
+    <td>The id of the [=font subset=] which this patch can be applied too. See [[#font-patch-invalidations]].</td>
   </tr>
   <tr>
     <td>uint32</td>
@@ -1378,10 +1377,9 @@ or remove tables in a [=font subset=].
     <td>Reserved for future use, set to 0.</td>
   </tr>
   <tr>
-    <!-- TODO link to the IFT table section on patch invalidation once added. -->
     <td>uint32</td>
     <td><dfn for="Per table brotli patch">id</dfn>[4]</td>
-    <td>The id of the [=font subset=] which this patch can be applied too.</td>
+    <td>The id of the [=font subset=] which this patch can be applied too. See [[#font-patch-invalidations]].</td>
   </tr>
   <tr>
     <td>uint16</td>
@@ -1446,15 +1444,23 @@ The algorithm outputs:
 
 The algorithm:
 
-1. Check that the [=Per table brotli patch/format=] field in <var>patch</var> is equal to 'ifbt', if it is
+1. Initialize <var>extended font subset</var> to be an empty font with no tables.
+
+2. Check that the [=Per table brotli patch/format=] field in <var>patch</var> is equal to 'ifbt', if it is
     not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
     an error.
 
-2. Check that the [=Per table brotli patch/id=] field in <var>patch</var> is equal to <var>id</var>.
+3. Check that the [=Per table brotli patch/id=] field in <var>patch</var> is equal to <var>id</var>.
     If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
     has failed, return an error.
 
-3. For each entry in [=Per table brotli patch/patches=], with index <var>i</var>:
+
+4. In the following steps when a table is added to <var>extended font subset</var> then, table data is added to the font and a
+    new entry is inserted into the [[open-type/otff#table-directory|table directory]] according to the requirements of the open
+    type specification. This will include computing a checksum for the table data. In the case where an existing table is copied
+    unmodified then, the client can re-use the existing checksum value.
+
+5. For each entry in [=Per table brotli patch/patches=], with index <var>i</var>:
 
     *  Find the [=TablePatch=] associated with index <var>i</var>. The object starts at the offset
         [=Per table brotli patch/patches|patches[i]=] (inclusive) and ends at the offset
@@ -1478,8 +1484,10 @@ The algorithm:
         as a [[Shared-Brotli#section-3.2|shared LZ77 dictionary]]. Add a [[open-type/otff#table-directory|table]] to
         <var>extended font subset</var> identified by [=TablePatch/tag=] with it's contents set to the decoded [=TablePatch/brotliStream=].
 
-4. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
-    the entries processed in step 3, add a copy of that table to <var>extended font subset</var>.
+6. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
+    the entries processed in step 5, add a copy of that table to <var>extended font subset</var>.
+
+
 
 Glyph Keyed {#glyph-keyed}
 --------------------------
@@ -1505,11 +1513,15 @@ A glyph keyed patch contains a collection of data chunks that are each associate
     <td>Reserved for future use, set to 0.</td>
   </tr>
   <tr>
+    <td>uint8</td>
+    <td><dfn for="Glyph keyed patch">flags</dfn></td>
+    <td>Bit-field. If bit 0 (least significant bit) is set then [=GlyphPatches/glyphIds=] uses uint24's, otherwise it uses uint16's.</td>
+  </tr>
+  <tr>
     <td>uint32</td>
     <td><dfn for="Glyph keyed patch">id</dfn>[4]</td>
-    <td>The id of the [=font subset=] which this patch can be applied too.</td>
+    <td>The id of the [=font subset=] which this patch can be applied too. See [[#font-patch-invalidations]].</td>
   </tr>
-  <!-- TODO: we probably need patch id to allow for removal in step 6. -->
   <tr>
     <td>uint32</td>
     <td>length</td>
@@ -1538,10 +1550,10 @@ A glyph keyed patch contains a collection of data chunks that are each associate
     <td>The number of [[open-type/otff#table-directory|tables]] the patch has data for.</td>
   </tr>
   <tr>
-    <!-- TODO: support larger than 16 bit glyphs. -->
-    <td>uint16</td>
+    <td>uint16/uint24</td>
     <td><dfn for="GlyphPatches">glyphIds</dfn>[glyphCount]</td>
-    <td>An array of glyph indices included in the patch.</td>
+    <td>An array of glyph indices included in the patch. Elements are uint24's if bit 0 (least significant bit) of
+        [=Glyph keyed patch/flags=] is set, otherwise elements are uint16's.</td>
   </tr>
   <tr>
     <td>Tag</td>
@@ -1627,8 +1639,15 @@ The algorithm:
 5. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
     the entries processed in step 4, add a copy of that table to <var>extended font subset</var>.
 
-6. Modify the mappings in the IFT and IFTX table(s) in <var>extended font subset</var> if present to remove any mapping entries
-    that map to this patch. <!-- TODO: this needs to be made more detailed once we have the mapping format sections -->
+6. Modify the mappings in the 'IFT ' or 'IFTX' table which has an [=Glyph keyed patch/id=] which matches <var>id</var> to remove any
+    entries that map to this patch. The entries to be removed can be determined by finding entries which have a URI that matches the
+    URI associated with this patch (see: [[#patch-map]]). For [[#patch-map-format-1]] entries are removed by setting the appropriate
+    bit in [=Format 1 Patch Map/appliedEntriesBitMap=]. For [[#patch-map-format-2]] entries are removed by setting the "ignored" bit
+    in the entry's [=Mapping Entry/formatFlags=].
+
+7. If the contents of any [[open-type/otff#table-directory|fonts table]] was modified during the previous steps then,
+    for each modified table: update the checksums in the [[open-type/otff#table-directory|fonts table directory]] to match the table's
+    new contents.
 
 <h2 algorithm id="extending-font-subset">Extending a Font Subset</h2>
 

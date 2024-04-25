@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="f3f6d9599c6053298ae0ded6f8976d9e125c2e30" name="revision">
+  <meta content="bbe85862d0c5ea8da03ce4206ff90f849f4cb328" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -1708,7 +1708,7 @@ of a short header followed by brotli encoded data.</p>
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Brotli patch" data-dfn-type="dfn" data-noexport id="brotli-patch-id">id</dfn>[4]
-      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a> which this patch can be applied too.
+      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a> which this patch can be applied too. See <a href="#font-patch-invalidations">§ 5.2 Patch Invalidations</a>.
      <tr>
       <td>uint32
       <td>length
@@ -1773,7 +1773,7 @@ or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-fo
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Per table brotli patch" data-dfn-type="dfn" data-noexport id="per-table-brotli-patch-id">id</dfn>[4]
-      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑨">font subset</a> which this patch can be applied too.
+      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑨">font subset</a> which this patch can be applied too. See <a href="#font-patch-invalidations">§ 5.2 Patch Invalidations</a>.
      <tr>
       <td>uint16
       <td>patchesCount
@@ -1830,6 +1830,8 @@ features, and/or design-variation space.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
+     <p>Initialize <var>extended font subset</var> to be an empty font with no tables.</p>
+    <li data-md>
      <p>Check that the <a data-link-type="dfn" href="#per-table-brotli-patch-format" id="ref-for-per-table-brotli-patch-format">format</a> field in <var>patch</var> is equal to 'ifbt', if it is
 not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
 an error.</p>
@@ -1837,6 +1839,11 @@ an error.</p>
      <p>Check that the <a data-link-type="dfn" href="#per-table-brotli-patch-id" id="ref-for-per-table-brotli-patch-id">id</a> field in <var>patch</var> is equal to <var>id</var>.
 If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
 has failed, return an error.</p>
+    <li data-md>
+     <p>In the following steps when a table is added to <var>extended font subset</var> then, table data is added to the font and a
+new entry is inserted into the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table directory</a> according to the requirements of the open
+type specification. This will include computing a checksum for the table data. In the case where an existing table is copied
+unmodified then, the client can re-use the existing checksum value.</p>
     <li data-md>
      <p>For each entry in <a data-link-type="dfn" href="#per-table-brotli-patch-patches" id="ref-for-per-table-brotli-patch-patches①">patches</a>, with index <var>i</var>:</p>
      <ul>
@@ -1856,7 +1863,7 @@ are listed in the <a data-link-type="dfn" href="#per-table-brotli-patch-patches"
      </ul>
     <li data-md>
      <p>For each <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> in <var>base font subset</var> which has a tag that was not found in any of
-the entries processed in step 3, add a copy of that table to <var>extended font subset</var>.</p>
+the entries processed in step 5, add a copy of that table to <var>extended font subset</var>.</p>
    </ol>
    <h3 class="heading settled" data-level="5.6" id="glyph-keyed"><span class="secno">5.6. </span><span class="content">Glyph Keyed</span><a class="self-link" href="#glyph-keyed"></a></h3>
    <p>A glyph keyed patch contains a collection of data chunks that are each associated with a glyph index and a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a>. The encoded data replaces any existing data for that glyph index in the referenced <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Glyph keyed patches can encode data for <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>/<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, and <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> tables.</p>
@@ -1876,9 +1883,13 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
       <td>reserved
       <td>Reserved for future use, set to 0.
      <tr>
+      <td>uint8
+      <td><dfn class="dfn-paneled" data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-flags">flags</dfn>
+      <td>Bit-field. If bit 0 (least significant bit) is set then <a data-link-type="dfn" href="#glyphpatches-glyphids" id="ref-for-glyphpatches-glyphids">glyphIds</a> uses uint24’s, otherwise it uses uint16’s.
+     <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-id">id</dfn>[4]
-      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②③">font subset</a> which this patch can be applied too.
+      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②③">font subset</a> which this patch can be applied too. See <a href="#font-patch-invalidations">§ 5.2 Patch Invalidations</a>.
      <tr>
       <td>uint32
       <td>length
@@ -1904,9 +1915,9 @@ the entries processed in step 3, add a copy of that table to <var>extended font 
       <td>tableCount
       <td>The number of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> the patch has data for.
      <tr>
-      <td>uint16
+      <td>uint16/uint24
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphids">glyphIds</dfn>[glyphCount]
-      <td>An array of glyph indices included in the patch.
+      <td>An array of glyph indices included in the patch. Elements are uint24’s if bit 0 (least significant bit) of <a data-link-type="dfn" href="#glyph-keyed-patch-flags" id="ref-for-glyph-keyed-patch-flags">flags</a> is set, otherwise elements are uint16’s.
      <tr>
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-tables">tables</dfn>[tableCount]
@@ -1963,7 +1974,7 @@ a new table where the data for each glyph is replaced with the data correspondin
 from <a data-link-type="dfn" href="#glyphpatches-glyphdata" id="ref-for-glyphpatches-glyphdata">glyphData</a> if present, otherwise copied from the corresponding table in <var>base font subset</var> for
 that glyph index.</p>
       <li data-md>
-       <p>The patch glyph data for a glyph index is located by finding <a data-link-type="dfn" href="#glyphpatches-glyphids" id="ref-for-glyphpatches-glyphids">glyphIds[j]</a> equal to the glyph index. The
+       <p>The patch glyph data for a glyph index is located by finding <a data-link-type="dfn" href="#glyphpatches-glyphids" id="ref-for-glyphpatches-glyphids①">glyphIds[j]</a> equal to the glyph index. The
 offset to the associated glyph data is <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets①">glyphDataOffsets[i * glyphCount + j]</a>. The length
 of the associated glyph data is <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets②">glyphDataOffsets[i * glyphCount + j + 1]</a> minus <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets③">glyphDataOffsets[i * glyphCount + j]</a>.</p>
       <li data-md>
@@ -1978,8 +1989,15 @@ of any other types must be ignored.</p>
      <p>For each <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> in <var>base font subset</var> which has a tag that was not found in any of
 the entries processed in step 4, add a copy of that table to <var>extended font subset</var>.</p>
     <li data-md>
-     <p>Modify the mappings in the IFT and IFTX table(s) in <var>extended font subset</var> if present to remove any mapping entries
-that map to this patch. </p>
+     <p>Modify the mappings in the 'IFT ' or 'IFTX' table which has an <a data-link-type="dfn" href="#glyph-keyed-patch-id" id="ref-for-glyph-keyed-patch-id①">id</a> which matches <var>id</var> to remove any
+entries that map to this patch. The entries to be removed can be determined by finding entries which have a URI that matches the
+URI associated with this patch (see: <a href="#patch-map">§ 4.2 Patch Map Table</a>). For <a href="#patch-map-format-1">§ 4.2.1 Patch Map Table: Format 1</a> entries are removed by setting the appropriate
+bit in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap②">appliedEntriesBitMap</a>. For <a href="#patch-map-format-2">§ 4.2.2 Patch Map Table: Format 2</a> entries are removed by setting the "ignored" bit
+in the entry’s <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑨">formatFlags</a>.</p>
+    <li data-md>
+     <p>If the contents of any <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">fonts table</a> was modified during the previous steps then,
+for each modified table: update the checksums in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">fonts table directory</a> to match the table’s
+new contents.</p>
    </ol>
    <h2 class="heading settled algorithm" data-algorithm="Extending a Font Subset" data-level="6" id="extending-font-subset"><span class="secno">6. </span><span class="content">Extending a Font Subset</span><a class="self-link" href="#extending-font-subset"></a></h2>
    <p>This sections defines the algorithm that a client uses to extend an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font">incremental</a> <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⑦">font subset</a> to cover additional
@@ -2354,7 +2372,12 @@ required too many patches.</p>
      <li><a href="#featurerecord-firstentryindex">dfn for FeatureRecord</a><span>, in § 4.2.1</span>
     </ul>
    <li><a href="#glyph-map-firstmappedglyph">firstMappedGlyph</a><span>, in § 4.2.1</span>
-   <li><a href="#tablepatch-flags">flags</a><span>, in § 5.5</span>
+   <li>
+    flags
+    <ul>
+     <li><a href="#glyph-keyed-patch-flags">dfn for Glyph keyed patch</a><span>, in § 5.6</span>
+     <li><a href="#tablepatch-flags">dfn for TablePatch</a><span>, in § 5.5</span>
+    </ul>
    <li><a href="#font-patch">font patch</a><span>, in § 5.1</span>
    <li><a href="#font-subset">font subset</a><span>, in § 3.1</span>
    <li><a href="#font-subset-definition">font subset definition</a><span>, in § 3.1</span>
@@ -2704,7 +2727,7 @@ let dfnPanelData = {
 "font-subset": {"dfnID":"font-subset","dfnText":"font subset","external":false,"refSections":[{"refs":[{"id":"ref-for-font-subset"}],"title":"3.1. Font Subset"},{"refs":[{"id":"ref-for-font-subset\u2460"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-font-subset\u2461"}],"title":"5. Font Patch Formats"},{"refs":[{"id":"ref-for-font-subset\u2462"},{"id":"ref-for-font-subset\u2463"},{"id":"ref-for-font-subset\u2464"},{"id":"ref-for-font-subset\u2465"}],"title":"5.1. Definitions"},{"refs":[{"id":"ref-for-font-subset\u2466"},{"id":"ref-for-font-subset\u2467"},{"id":"ref-for-font-subset\u2468"}],"title":"5.2. Patch Invalidations"},{"refs":[{"id":"ref-for-font-subset\u2460\u24ea"},{"id":"ref-for-font-subset\u2460\u2460"},{"id":"ref-for-font-subset\u2460\u2461"},{"id":"ref-for-font-subset\u2460\u2462"}],"title":"5.3. Formats Summary"},{"refs":[{"id":"ref-for-font-subset\u2460\u2463"}],"title":"5.4. Brotli Patch"},{"refs":[{"id":"ref-for-font-subset\u2460\u2464"},{"id":"ref-for-font-subset\u2460\u2465"},{"id":"ref-for-font-subset\u2460\u2466"}],"title":"5.4.1. Applying Brotli Patches"},{"refs":[{"id":"ref-for-font-subset\u2460\u2467"},{"id":"ref-for-font-subset\u2460\u2468"}],"title":"5.5. Per Table Brotli"},{"refs":[{"id":"ref-for-font-subset\u2461\u24ea"},{"id":"ref-for-font-subset\u2461\u2460"},{"id":"ref-for-font-subset\u2461\u2461"}],"title":"5.5.1. Applying Per Table Brotli Patches"},{"refs":[{"id":"ref-for-font-subset\u2461\u2462"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-font-subset\u2461\u2463"},{"id":"ref-for-font-subset\u2461\u2464"},{"id":"ref-for-font-subset\u2461\u2465"}],"title":"5.6.1. Applying Glyph Keyed Patches"},{"refs":[{"id":"ref-for-font-subset\u2461\u2466"},{"id":"ref-for-font-subset\u2461\u2467"}],"title":"6. Extending a Font Subset"},{"refs":[{"id":"ref-for-font-subset\u2461\u2468"}],"title":"6.1. Fully Expanding a Font"},{"refs":[{"id":"ref-for-font-subset\u2462\u24ea"}],"title":"7. Encoder"},{"refs":[{"id":"ref-for-font-subset\u2462\u2460"}],"title":"7.1. Encoder Considerations"}],"url":"#font-subset"},
 "font-subset-definition": {"dfnID":"font-subset-definition","dfnText":"font subset definition","external":false,"refSections":[{"refs":[{"id":"ref-for-font-subset-definition"}],"title":"4. Extensions to the Font Format"},{"refs":[{"id":"ref-for-font-subset-definition\u2460"},{"id":"ref-for-font-subset-definition\u2461"}],"title":"4.2. Patch Map Table"},{"refs":[{"id":"ref-for-font-subset-definition\u2462"},{"id":"ref-for-font-subset-definition\u2463"},{"id":"ref-for-font-subset-definition\u2464"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-font-subset-definition\u2465"},{"id":"ref-for-font-subset-definition\u2466"}],"title":"6. Extending a Font Subset"},{"refs":[{"id":"ref-for-font-subset-definition\u2467"}],"title":"7. Encoder"},{"refs":[{"id":"ref-for-font-subset-definition\u2468"}],"title":"7.1. Encoder Considerations"}],"url":"#font-subset-definition"},
 "format-1-patch-map": {"dfnID":"format-1-patch-map","dfnText":"Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map"},
-"format-1-patch-map-appliedentriesbitmap": {"dfnID":"format-1-patch-map-appliedentriesbitmap","dfnText":"appliedEntriesBitMap","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-appliedentriesbitmap"},
+"format-1-patch-map-appliedentriesbitmap": {"dfnID":"format-1-patch-map-appliedentriesbitmap","dfnText":"appliedEntriesBitMap","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2460"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2461"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#format-1-patch-map-appliedentriesbitmap"},
 "format-1-patch-map-entrycount": {"dfnID":"format-1-patch-map-entrycount","dfnText":"entryCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-entrycount"},{"id":"ref-for-format-1-patch-map-entrycount\u2460"},{"id":"ref-for-format-1-patch-map-entrycount\u2461"},{"id":"ref-for-format-1-patch-map-entrycount\u2462"},{"id":"ref-for-format-1-patch-map-entrycount\u2463"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-entrycount"},
 "format-1-patch-map-format": {"dfnID":"format-1-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-format"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-format"},
 "format-1-patch-map-glyphcount": {"dfnID":"format-1-patch-map-glyphcount","dfnText":"glyphCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-glyphcount"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-glyphcount"},
@@ -2722,8 +2745,9 @@ let dfnPanelData = {
 "full-invalidation": {"dfnID":"full-invalidation","dfnText":"Full Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-full-invalidation"},{"id":"ref-for-full-invalidation\u2460"}],"title":"5.3. Formats Summary"},{"refs":[{"id":"ref-for-full-invalidation\u2461"},{"id":"ref-for-full-invalidation\u2462"}],"title":"6. Extending a Font Subset"}],"url":"#full-invalidation"},
 "glyph-keyed-patch": {"dfnID":"glyph-keyed-patch","dfnText":"Glyph keyed patch","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch"},
 "glyph-keyed-patch-brotlistream": {"dfnID":"glyph-keyed-patch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-brotlistream"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-glyph-keyed-patch-brotlistream\u2460"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-brotlistream"},
+"glyph-keyed-patch-flags": {"dfnID":"glyph-keyed-patch-flags","dfnText":"flags","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-flags"}],"title":"5.6. Glyph Keyed"}],"url":"#glyph-keyed-patch-flags"},
 "glyph-keyed-patch-format": {"dfnID":"glyph-keyed-patch-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-format"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-format"},
-"glyph-keyed-patch-id": {"dfnID":"glyph-keyed-patch-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-id"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-id"},
+"glyph-keyed-patch-id": {"dfnID":"glyph-keyed-patch-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-id"},{"id":"ref-for-glyph-keyed-patch-id\u2460"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-id"},
 "glyph-map": {"dfnID":"glyph-map","dfnText":"Glyph Map","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#glyph-map"},
 "glyph-map-entryindex": {"dfnID":"glyph-map-entryindex","dfnText":"entryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map-entryindex"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#glyph-map-entryindex"},
 "glyph-map-firstmappedglyph": {"dfnID":"glyph-map-firstmappedglyph","dfnText":"firstMappedGlyph","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map-firstmappedglyph"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#glyph-map-firstmappedglyph"},
@@ -2731,7 +2755,7 @@ let dfnPanelData = {
 "glyphpatches-glyphcount": {"dfnID":"glyphpatches-glyphcount","dfnText":"glyphCount","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-glyphcount"},{"id":"ref-for-glyphpatches-glyphcount\u2460"}],"title":"5.6. Glyph Keyed"}],"url":"#glyphpatches-glyphcount"},
 "glyphpatches-glyphdata": {"dfnID":"glyphpatches-glyphdata","dfnText":"glyphData","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-glyphdata"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches-glyphdata"},
 "glyphpatches-glyphdataoffsets": {"dfnID":"glyphpatches-glyphdataoffsets","dfnText":"glyphDataOffsets","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-glyphdataoffsets"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-glyphpatches-glyphdataoffsets\u2460"},{"id":"ref-for-glyphpatches-glyphdataoffsets\u2461"},{"id":"ref-for-glyphpatches-glyphdataoffsets\u2462"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches-glyphdataoffsets"},
-"glyphpatches-glyphids": {"dfnID":"glyphpatches-glyphids","dfnText":"glyphIds","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-glyphids"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches-glyphids"},
+"glyphpatches-glyphids": {"dfnID":"glyphpatches-glyphids","dfnText":"glyphIds","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-glyphids"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-glyphpatches-glyphids\u2460"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches-glyphids"},
 "glyphpatches-tables": {"dfnID":"glyphpatches-tables","dfnText":"tables","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-tables"},{"id":"ref-for-glyphpatches-tables\u2460"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-glyphpatches-tables\u2461"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches-tables"},
 "incremental-font": {"dfnID":"incremental-font","dfnText":"incremental font","external":false,"refSections":[{"refs":[{"id":"ref-for-incremental-font"},{"id":"ref-for-incremental-font\u2460"},{"id":"ref-for-incremental-font\u2461"},{"id":"ref-for-incremental-font\u2462"}],"title":"6. Extending a Font Subset"},{"refs":[{"id":"ref-for-incremental-font\u2463"}],"title":"6.1. Fully Expanding a Font"},{"refs":[{"id":"ref-for-incremental-font\u2464"},{"id":"ref-for-incremental-font\u2465"},{"id":"ref-for-incremental-font\u2466"},{"id":"ref-for-incremental-font\u2467"},{"id":"ref-for-incremental-font\u2468"},{"id":"ref-for-incremental-font\u2460\u24ea"},{"id":"ref-for-incremental-font\u2460\u2460"}],"title":"7. Encoder"}],"url":"#incremental-font"},
 "mapping-entries": {"dfnID":"mapping-entries","dfnText":"Mapping Entries","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entries"}],"title":"4.2.2. Patch Map Table: Format 2"}],"url":"#mapping-entries"},
@@ -2747,7 +2771,7 @@ let dfnPanelData = {
 "mapping-entry-entryidstringlength": {"dfnID":"mapping-entry-entryidstringlength","dfnText":"entryIdStringLength","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-entryidstringlength"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-entryidstringlength\u2460"},{"id":"ref-for-mapping-entry-entryidstringlength\u2461"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-entryidstringlength"},
 "mapping-entry-featurecount": {"dfnID":"mapping-entry-featurecount","dfnText":"featureCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-featurecount"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-featurecount"},
 "mapping-entry-featuretags": {"dfnID":"mapping-entry-featuretags","dfnText":"featureTags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-featuretags"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-featuretags"},
-"mapping-entry-formatflags": {"dfnID":"mapping-entry-formatflags","dfnText":"formatFlags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-formatflags"},{"id":"ref-for-mapping-entry-formatflags\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2467"},{"id":"ref-for-mapping-entry-formatflags\u2468"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u24ea"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2467"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-formatflags"},
+"mapping-entry-formatflags": {"dfnID":"mapping-entry-formatflags","dfnText":"formatFlags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-formatflags"},{"id":"ref-for-mapping-entry-formatflags\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2467"},{"id":"ref-for-mapping-entry-formatflags\u2468"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u24ea"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2467"}],"title":"4.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u2468"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#mapping-entry-formatflags"},
 "mapping-entry-patchencoding": {"dfnID":"mapping-entry-patchencoding","dfnText":"patchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-patchencoding"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-patchencoding"},
 "no-invalidation": {"dfnID":"no-invalidation","dfnText":"No Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-no-invalidation"}],"title":"5.3. Formats Summary"},{"refs":[{"id":"ref-for-no-invalidation\u2460"}],"title":"6. Extending a Font Subset"}],"url":"#no-invalidation"},
 "partial-invalidation": {"dfnID":"partial-invalidation","dfnText":"Partial Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-partial-invalidation"},{"id":"ref-for-partial-invalidation\u2460"}],"title":"5.3. Formats Summary"},{"refs":[{"id":"ref-for-partial-invalidation\u2461"},{"id":"ref-for-partial-invalidation\u2462"}],"title":"6. Extending a Font Subset"}],"url":"#partial-invalidation"},
@@ -3200,6 +3224,7 @@ let refsData = {
 "#full-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"full invalidation","type":"dfn","url":"#full-invalidation"},
 "#glyph-keyed-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph keyed patch","type":"dfn","url":"#glyph-keyed-patch"},
 "#glyph-keyed-patch-brotlistream": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#glyph-keyed-patch-brotlistream"},
+"#glyph-keyed-patch-flags": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#glyph-keyed-patch-flags"},
 "#glyph-keyed-patch-format": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#glyph-keyed-patch-format"},
 "#glyph-keyed-patch-id": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"id","type":"dfn","url":"#glyph-keyed-patch-id"},
 "#glyph-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph map","type":"dfn","url":"#glyph-map"},
