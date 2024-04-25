@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="523614cfa0c29f8669c96577ceba32e113159b63" name="revision">
+  <meta content="7a47efd145dc7864962d5240e3fd05e3c41a976d" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -1945,6 +1945,8 @@ features, and/or design-variation space.</p>
     <li data-md>
      <p><var>patch</var>: a <a data-link-type="dfn" href="#glyph-keyed-patch" id="ref-for-glyph-keyed-patch">glyph keyed patch</a> to be applied to <var>base font subset</var>.</p>
     <li data-md>
+     <p><var>patch uri</var>: the URI where the patch data is located.</p>
+    <li data-md>
      <p><var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.</p>
    </ul>
    <p>The algorithm outputs:</p>
@@ -1989,11 +1991,10 @@ of any other types must be ignored.</p>
      <p>For each <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> in <var>base font subset</var> which has a tag that was not found in any of
 the entries processed in step 4, add a copy of that table to <var>extended font subset</var>.</p>
     <li data-md>
-     <p>Modify the mappings in the 'IFT ' or 'IFTX' table which has an <a data-link-type="dfn" href="#glyph-keyed-patch-id" id="ref-for-glyph-keyed-patch-id①">id</a> which matches <var>id</var> to remove any
-entries that map to this patch. The entries to be removed can be determined by finding entries which have a URI that matches the
-URI associated with this patch (see: <a href="#patch-map">§ 4.2 Patch Map Table</a>). For <a href="#patch-map-format-1">§ 4.2.1 Patch Map Table: Format 1</a> entries are removed by setting the appropriate
+     <p>Locate the <a href="#patch-map">§ 4.2 Patch Map Table</a> table which has the same <a data-link-type="dfn" href="#glyph-keyed-patch-id" id="ref-for-glyph-keyed-patch-id①">id</a> as <var>id</var>. Update the table to remove all entries
+which have a URI which matches <var>patch uri</var>. For <a href="#patch-map-format-1">§ 4.2.1 Patch Map Table: Format 1</a> entries are removed by setting the appropriate
 bit in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap②">appliedEntriesBitMap</a>. For <a href="#patch-map-format-2">§ 4.2.2 Patch Map Table: Format 2</a> entries are removed by setting the "ignored" bit
-in the entry’s <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑨">formatFlags</a>.</p>
+in that entry’s <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑨">formatFlags</a>.</p>
     <li data-md>
      <p>If the contents of any <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">fonts table</a> was modified during the previous steps then,
 for each modified table: update the checksums in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">fonts table directory</a> to match the table’s
@@ -2048,7 +2049,7 @@ The criteria for selecting the single entry is left up to the implementation to 
     <li data-md>
      <p>Load <var>patch file</var> by invoking <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the <var>font subset URI</var> as the incremental font URI and the <var>entry</var> patch URI as the patch URI.</p>
     <li data-md>
-     <p>Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from <a href="#font-patch-formats">§ 5 Font Patch Formats</a> to apply the <var>patch file</var> using the id from <var>entry</var> to <var>extended font subset</var>.</p>
+     <p>Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from <a href="#font-patch-formats">§ 5 Font Patch Formats</a> to apply the <var>patch file</var> using the patch URI and the id from <var>entry</var> to <var>extended font subset</var>.</p>
     <li data-md>
      <p>Go to step 2.</p>
    </ol>
