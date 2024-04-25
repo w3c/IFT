@@ -1594,6 +1594,8 @@ The inputs to this algorithm are:
 
 * <var>patch</var>: a [=glyph keyed patch=] to be applied to <var>base font subset</var>.
 
+* <var>patch uri</var>: the URI where the patch data is located.
+
 * <var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.
 
 The algorithm outputs:
@@ -1638,11 +1640,10 @@ The algorithm:
 5. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
     the entries processed in step 4, add a copy of that table to <var>extended font subset</var>.
 
-6. Modify the mappings in the 'IFT ' or 'IFTX' table which has an [=Glyph keyed patch/id=] which matches <var>id</var> to remove any
-    entries that map to this patch. The entries to be removed can be determined by finding entries which have a URI that matches the
-    URI associated with this patch (see: [[#patch-map]]). For [[#patch-map-format-1]] entries are removed by setting the appropriate
+6. Locate the [[#patch-map]] table which has the same [=Glyph keyed patch/id=] as <var>id</var>. Update the table to remove all entries
+    which have a URI which matches <var>patch uri</var>. For [[#patch-map-format-1]] entries are removed by setting the appropriate
     bit in [=Format 1 Patch Map/appliedEntriesBitMap=]. For [[#patch-map-format-2]] entries are removed by setting the "ignored" bit
-    in the entry's [=Mapping Entry/formatFlags=].
+    in that entry's [=Mapping Entry/formatFlags=].
 
 7. If the contents of any [[open-type/otff#table-directory|fonts table]] was modified during the previous steps then,
     for each modified table: update the checksums in the [[open-type/otff#table-directory|fonts table directory]] to match the table's
@@ -1703,7 +1704,8 @@ The algorithm:
     <var>entry</var> patch URI as the patch URI.
 
 8.  Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from
-    [[#font-patch-formats]] to apply the <var>patch file</var> using the id from <var>entry</var> to <var>extended font subset</var>.
+    [[#font-patch-formats]] to apply the <var>patch file</var> using the patch URI and the id from <var>entry</var> to
+    <var>extended font subset</var>.
 
 9.  Go to step 2.
 
