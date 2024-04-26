@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="247e5bd97462943c3aa685eed9277b474ddc4985" name="revision">
+  <meta content="00d0030c338b9f5268b8e66ecd3648df116b1a28" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -994,7 +994,7 @@ is taken. If an incremental font will be encoded by WOFF2 for transfer:</p>
    </ol>
    <p>The 'IFT ' and 'IFTX' tables can be processed and brotli encoded by a WOFF2 encoder following the standard process defined in <a href="https://w3c.github.io/woff/woff2/#table_format"><cite>WOFF 2.0</cite> § 5 Compressed data format</a>.</p>
    <h3 class="heading settled" data-level="4.2" id="patch-map"><span class="secno">4.2. </span><span class="content">Patch Map Table</span><a class="self-link" href="#patch-map"></a></h3>
-   <p>A patch map table encodes a list of <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map-entries">patch map entries</dfn>, where each entry has a key and value. The key is a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">font subset definition</a> and the value is a URI, the <a href="#font-patch-formats">§ 5 Font Patch Formats</a> used by the data at the URI, and the unique ID
+   <p>A patch map table encodes a list of <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map-entries">patch map entries</dfn>, where each entry has a key and value. The key is a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">font subset definition</a> and the value is a URI, the <a href="#font-patch-formats">§ 5 Font Patch Formats</a> used by the data at the URI, and the compatibility ID
 of the patch map table. A map is encoded in one of two formats:</p>
    <ul>
     <li data-md>
@@ -1022,7 +1022,7 @@ is typically less compact than format 1.</p>
       <td>Not used, set to 0.
      <tr>
       <td>uint32
-      <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-id">id</dfn>[4]
+      <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-compatibilityid">compatibilityId</dfn>[4]
       <td>Unique ID used to identify patches that are compatible with this font.
      <tr>
       <td>uint32
@@ -1173,7 +1173,7 @@ is typically less compact than format 1.</p>
        <p>d. Convert <var>entry index</var> into a URI by applying <a data-link-type="dfn" href="#format-1-patch-map-uritemplate" id="ref-for-format-1-patch-map-uritemplate">uriTemplate</a> following <a href="#uri-templates">§ 3.3 URI Templates</a>.</p>
       <li data-md>
        <p>e. Add an <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries②">entry</a> to <var>entry list</var> whose subset definition contains only the unicode code point set and
-maps to the generated URI, the patch encoding specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id="ref-for-format-1-patch-map-patchencoding">patchEncoding</a>, and <a data-link-type="dfn" href="#format-1-patch-map-id" id="ref-for-format-1-patch-map-id">id</a>.</p>
+maps to the generated URI, the patch encoding specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id="ref-for-format-1-patch-map-patchencoding">patchEncoding</a>, and <a data-link-type="dfn" href="#format-1-patch-map-compatibilityid" id="ref-for-format-1-patch-map-compatibilityid">compatibilityId</a>.</p>
      </ul>
     <li data-md>
      <p>For each <a data-link-type="dfn" href="#featurerecord" id="ref-for-featurerecord①">FeatureRecord</a> and associated <a data-link-type="dfn" href="#entrymaprecord" id="ref-for-entrymaprecord②">EntryMapRecord</a> in <a data-link-type="dfn" href="#feature-map-featurerecords" id="ref-for-feature-map-featurerecords①">featureRecords</a> and <a data-link-type="dfn" href="#feature-map-entrymaprecords" id="ref-for-feature-map-entrymaprecords">entryMapRecords</a>:</p>
@@ -1191,7 +1191,7 @@ maps to the generated URI, the patch encoding specified by <a data-link-type="df
         <li data-md>
          <p>Add an <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries③">entry</a> to <var>entry list</var> whose subset definition contains the unicode code point set and
 a feature tag set containing only <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag①">featureTag</a>. The entry  maps to the generated URI, the patch encoding
-specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id="ref-for-format-1-patch-map-patchencoding①">patchEncoding</a>, and <a data-link-type="dfn" href="#format-1-patch-map-id" id="ref-for-format-1-patch-map-id①">id</a>.</p>
+specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id="ref-for-format-1-patch-map-patchencoding①">patchEncoding</a>, and <a data-link-type="dfn" href="#format-1-patch-map-compatibilityid" id="ref-for-format-1-patch-map-compatibilityid①">compatibilityId</a>.</p>
        </ul>
      </ul>
     <li data-md>
@@ -1241,7 +1241,7 @@ change the number of bytes.</p>
       <td>Not used, set to 0.
      <tr>
       <td>uint32
-      <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-id">id</dfn>[4]
+      <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-compatibilityid">compatibilityId</dfn>[4]
       <td>Unique ID used to identify patches that are compatible with this font.
      <tr>
       <td>uint8
@@ -1411,8 +1411,7 @@ needs to be taken when choosing the set of characters to use in the file names.<
       <li data-md>
        <p>Add the returned consumed id string byte count to <var>current id string byte</var>.</p>
       <li data-md>
-       <p>If the returned value of ignored is false, then set the unique ID of the returned entry to <a data-link-type="dfn" href="#format-2-patch-map-id" id="ref-for-format-2-patch-map-id">id</a> and add
- the  entry to <var>entry list</var>.</p>
+       <p>If the returned value of ignored is false, then set the compatibility ID of the returned entry to <a data-link-type="dfn" href="#format-2-patch-map-compatibilityid" id="ref-for-format-2-patch-map-compatibilityid">compatibilityId</a> and add the  entry to <var>entry list</var>.</p>
      </ul>
     <li data-md>
      <p>Return <var>entry list</var>.</p>
@@ -1682,18 +1681,18 @@ an existing <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset�
 changes encoded according to the format is a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch">font patch</a>. Each <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format">patch format</a> has an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-application-algorithm">patch application algorithm</dfn> which takes a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> and a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch①">font patch</a> encoded in the <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format①">patch format</a> as input and outputs an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a>.</p>
    <h3 class="heading settled" data-level="5.2" id="font-patch-invalidations"><span class="secno">5.2. </span><span class="content">Patch Invalidations</span><a class="self-link" href="#font-patch-invalidations"></a></h3>
    <p>Patches in an incremental <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font subset</a> when applied may invalidate other available patches, making them invalid to be applied
-to the extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑧">font subset</a>. Patch validity is checked using the unique ID from the <a href="#patch-map">§ 4.2 Patch Map Table</a>. Every patch has a
-unique ID encoded within it which needs to match the unique ID from the <a href="#patch-map">§ 4.2 Patch Map Table</a> which lists that patch. Additionally to
-aid the client in determining what invalidations will occur, every patch is categorized into one of three categories:</p>
+to the extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑧">font subset</a>. Patch validity is checked using the compatibility ID from the <a href="#patch-map">§ 4.2 Patch Map Table</a>. Every patch has a
+compatibility ID encoded within it which needs to match the compatibility ID from the <a href="#patch-map">§ 4.2 Patch Map Table</a> which lists that patch. Additionally
+to aid the client in determining what invalidations will occur, every patch is categorized into one of three categories:</p>
    <ul>
     <li data-md>
      <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="full-invalidation">Full Invalidation</dfn>: when this patch is applied all other patches currently listed in the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑨">font subset</a> are invalidated.
-The unique ID in both the 'IFT ' and 'IFTX' <a href="#patch-map">§ 4.2 Patch Map Table</a> will be changed.</p>
+The compatibility ID in both the 'IFT ' and 'IFTX' <a href="#patch-map">§ 4.2 Patch Map Table</a> will be changed.</p>
     <li data-md>
      <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="partial-invalidation">Partial Invalidation</dfn>: when this patch is applied all other patches in the same <a href="#patch-map">§ 4.2 Patch Map Table</a> will be invalidated.
-The unique ID of only the <a href="#patch-map">§ 4.2 Patch Map Table</a> which contains this patch will be changed.</p>
+The compatibility ID of only the <a href="#patch-map">§ 4.2 Patch Map Table</a> which contains this patch will be changed.</p>
     <li data-md>
-     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="no-invalidation">No Invalidation</dfn>: no other patches will be invalidated by the application of this patch. The unique ID of the
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="no-invalidation">No Invalidation</dfn>: no other patches will be invalidated by the application of this patch. The compatibility ID of the
 'IFT ' and 'IFTX' <a href="#patch-map">§ 4.2 Patch Map Table</a> will not change.</p>
    </ul>
    <p>The invalidation behaviour of a specific patch is encoded in its format number which can be found in the following section.</p>
@@ -1754,8 +1753,8 @@ of a short header followed by brotli encoded data.</p>
       <td>Reserved for future use, set to 0.
      <tr>
       <td>uint32
-      <td><dfn class="dfn-paneled" data-dfn-for="Brotli patch" data-dfn-type="dfn" data-noexport id="brotli-patch-id">id</dfn>[4]
-      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a> which this patch can be applied too. See <a href="#font-patch-invalidations">§ 5.2 Patch Invalidations</a>.
+      <td><dfn class="dfn-paneled" data-dfn-for="Brotli patch" data-dfn-type="dfn" data-noexport id="brotli-patch-compatibilityid">compatibilityId</dfn>[4]
+      <td>The compatibility id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①④">font subset</a> which this patch can be applied too. See <a href="#font-patch-invalidations">§ 5.2 Patch Invalidations</a>.
      <tr>
       <td>uint32
       <td>length
@@ -1776,7 +1775,7 @@ features, and/or design-variation space.</p>
     <li data-md>
      <p><var>patch</var>: a <a data-link-type="dfn" href="#brotli-patch" id="ref-for-brotli-patch">brotli patch</a> to be applied to <var>base font subset</var>.</p>
     <li data-md>
-     <p><var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.</p>
+     <p><var>compatibility id</var>: The compatibility ID from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -1790,7 +1789,7 @@ features, and/or design-variation space.</p>
 not equal, then <var>patch</var> is not correctly formatted. Patch application has failed, return
 an error.</p>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#brotli-patch-id" id="ref-for-brotli-patch-id">id</a> field in <var>patch</var> is equal to <var>id</var>.
+     <p>Check that the <a data-link-type="dfn" href="#brotli-patch-compatibilityid" id="ref-for-brotli-patch-compatibilityid">compatibilityId</a> field in <var>patch</var> is equal to <var>compatibility id</var>.
 If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
 has failed, return an error.</p>
     <li data-md>
@@ -1819,7 +1818,7 @@ or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-fo
       <td>Reserved for future use, set to 0.
      <tr>
       <td>uint32
-      <td><dfn class="dfn-paneled" data-dfn-for="Per table brotli patch" data-dfn-type="dfn" data-noexport id="per-table-brotli-patch-id">id</dfn>[4]
+      <td><dfn class="dfn-paneled" data-dfn-for="Per table brotli patch" data-dfn-type="dfn" data-noexport id="per-table-brotli-patch-compatibilityid">compatibilityId</dfn>[4]
       <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑨">font subset</a> which this patch can be applied too. See <a href="#font-patch-invalidations">§ 5.2 Patch Invalidations</a>.
      <tr>
       <td>uint16
@@ -1867,7 +1866,7 @@ features, and/or design-variation space.</p>
     <li data-md>
      <p><var>patch</var>: a <a data-link-type="dfn" href="#per-table-brotli-patch" id="ref-for-per-table-brotli-patch">per table brotli patch</a> to be applied to <var>base font subset</var>.</p>
     <li data-md>
-     <p><var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.</p>
+     <p><var>compatibility id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -1883,7 +1882,7 @@ features, and/or design-variation space.</p>
 not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
 an error.</p>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#per-table-brotli-patch-id" id="ref-for-per-table-brotli-patch-id">id</a> field in <var>patch</var> is equal to <var>id</var>.
+     <p>Check that the <a data-link-type="dfn" href="#per-table-brotli-patch-compatibilityid" id="ref-for-per-table-brotli-patch-compatibilityid">compatibilityId</a> field in <var>patch</var> is equal to <var>compatibility id</var>.
 If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
 has failed, return an error.</p>
     <li data-md>
@@ -1935,8 +1934,8 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
       <td>Bit-field. If bit 0 (least significant bit) is set then <a data-link-type="dfn" href="#glyphpatches-glyphids" id="ref-for-glyphpatches-glyphids">glyphIds</a> uses uint24’s, otherwise it uses uint16’s.
      <tr>
       <td>uint32
-      <td><dfn class="dfn-paneled" data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-id">id</dfn>[4]
-      <td>The id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②③">font subset</a> which this patch can be applied too. See <a href="#font-patch-invalidations">§ 5.2 Patch Invalidations</a>.
+      <td><dfn class="dfn-paneled" data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-compatibilityid">compatibilityId</dfn>[4]
+      <td>The compatibility id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②③">font subset</a> which this patch can be applied too. See <a href="#font-patch-invalidations">§ 5.2 Patch Invalidations</a>.
      <tr>
       <td>uint32
       <td>length
@@ -1994,7 +1993,7 @@ features, and/or design-variation space.</p>
     <li data-md>
      <p><var>patch uri</var>: the URI where the patch data is located.</p>
     <li data-md>
-     <p><var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.</p>
+     <p><var>compatibility id</var>: The compatibility ID from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -2008,7 +2007,7 @@ features, and/or design-variation space.</p>
 not equal, then <var>patch</var> is not correctly formatted and patch application has failed, return
 an error.</p>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#glyph-keyed-patch-id" id="ref-for-glyph-keyed-patch-id">id</a> field in <var>patch</var> is equal to <var>id</var>.
+     <p>Check that the <a data-link-type="dfn" href="#glyph-keyed-patch-compatibilityid" id="ref-for-glyph-keyed-patch-compatibilityid">compatibilityId</a> field in <var>patch</var> is equal to <var>compatibility id</var>.
 If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application has
 failed, return an error.</p>
     <li data-md>
@@ -2035,10 +2034,9 @@ of any other types must be ignored.</p>
        <p>Insert the synthesized table into <var>extended font subset</var>.</p>
      </ul>
     <li data-md>
-     <p>Locate the <a href="#patch-map">§ 4.2 Patch Map Table</a> table which has the same <a data-link-type="dfn" href="#glyph-keyed-patch-id" id="ref-for-glyph-keyed-patch-id①">id</a> as <var>id</var>. If it is a format 1 patch map then,
-invoke <a data-link-type="abstract-op" href="#abstract-opdef-remove-entries-from-format-1-patch-map" id="ref-for-abstract-opdef-remove-entries-from-format-1-patch-map">Remove Entries from Format 1 Patch Map</a> with the patch map table and <var>patch uri</var> as an input. Otherwise if it is
-a format 2 patch map then, invoke <a data-link-type="abstract-op" href="#abstract-opdef-remove-entries-from-format-2-patch-map" id="ref-for-abstract-opdef-remove-entries-from-format-2-patch-map">Remove Entries from Format 2 Patch Map</a> with the patch map table and <var>patch uri</var> as an
-input. Copy the modified patch map table into <var>extended font subset</var>.</p>
+     <p>Locate the <a href="#patch-map">§ 4.2 Patch Map Table</a> table which has the same <a data-link-type="dfn" href="#glyph-keyed-patch-compatibilityid" id="ref-for-glyph-keyed-patch-compatibilityid①">compatibilityId</a> as <var>compatibility id</var>. If it is a
+format 1 patch map then, invoke <a data-link-type="abstract-op" href="#abstract-opdef-remove-entries-from-format-1-patch-map" id="ref-for-abstract-opdef-remove-entries-from-format-1-patch-map">Remove Entries from Format 1 Patch Map</a> with the patch map table and <var>patch uri</var> as an
+input. Otherwise if it is a format 2 patch map then, invoke <a data-link-type="abstract-op" href="#abstract-opdef-remove-entries-from-format-2-patch-map" id="ref-for-abstract-opdef-remove-entries-from-format-2-patch-map">Remove Entries from Format 2 Patch Map</a> with the patch map table and <var>patch uri</var> as an input. Copy the modified patch map table into <var>extended font subset</var>.</p>
     <li data-md>
      <p>For each <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> in <var>base font subset</var> which has a tag that was not found in any of
 the entries processed in step 4 or 5, add a copy of that table to <var>extended font subset</var>.</p>
@@ -2096,7 +2094,7 @@ The criteria for selecting the single entry is left up to the implementation to 
     <li data-md>
      <p>Load <var>patch file</var> by invoking <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the <var>font subset URI</var> as the incremental font URI and the <var>entry</var> patch URI as the patch URI.</p>
     <li data-md>
-     <p>Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from <a href="#font-patch-formats">§ 5 Font Patch Formats</a> to apply the <var>patch file</var> using the patch URI and the id from <var>entry</var> to <var>extended font subset</var>.</p>
+     <p>Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from <a href="#font-patch-formats">§ 5 Font Patch Formats</a> to apply the <var>patch file</var> using the patch URI and the compatibility id from <var>entry</var> to <var>extended font subset</var>.</p>
     <li data-md>
      <p>Go to step 2.</p>
    </ol>
@@ -2379,6 +2377,15 @@ required too many patches.</p>
     </ul>
    <li><a href="#abstract-opdef-check-entry-intersection">Check entry intersection</a><span>, in § 6</span>
    <li><a href="#mapping-entry-codepoints">codepoints</a><span>, in § 4.2.2</span>
+   <li>
+    compatibilityId
+    <ul>
+     <li><a href="#brotli-patch-compatibilityid">dfn for Brotli patch</a><span>, in § 5.4</span>
+     <li><a href="#format-1-patch-map-compatibilityid">dfn for Format 1 Patch Map</a><span>, in § 4.2.1</span>
+     <li><a href="#format-2-patch-map-compatibilityid">dfn for Format 2 Patch Map</a><span>, in § 4.2.2</span>
+     <li><a href="#glyph-keyed-patch-compatibilityid">dfn for Glyph keyed patch</a><span>, in § 5.6</span>
+     <li><a href="#per-table-brotli-patch-compatibilityid">dfn for Per table brotli patch</a><span>, in § 5.5</span>
+    </ul>
    <li><a href="#mapping-entry-copycount">copyCount</a><span>, in § 4.2.2</span>
    <li><a href="#mapping-entry-copyindices">copyIndices</a><span>, in § 4.2.2</span>
    <li><a href="#abstract-opdef-decoding-sparse-bit-set-treedata">Decoding sparse bit set treeData</a><span>, in § 4.2.2.3</span>
@@ -2456,15 +2463,6 @@ required too many patches.</p>
    <li><a href="#glyph-map">Glyph Map</a><span>, in § 4.2.1</span>
    <li><a href="#glyphpatches">GlyphPatches</a><span>, in § 5.6</span>
    <li><a href="#abstract-opdef-handle-errors">Handle errors</a><span>, in § 6</span>
-   <li>
-    id
-    <ul>
-     <li><a href="#brotli-patch-id">dfn for Brotli patch</a><span>, in § 5.4</span>
-     <li><a href="#format-1-patch-map-id">dfn for Format 1 Patch Map</a><span>, in § 4.2.1</span>
-     <li><a href="#format-2-patch-map-id">dfn for Format 2 Patch Map</a><span>, in § 4.2.2</span>
-     <li><a href="#glyph-keyed-patch-id">dfn for Glyph keyed patch</a><span>, in § 5.6</span>
-     <li><a href="#per-table-brotli-patch-id">dfn for Per table brotli patch</a><span>, in § 5.5</span>
-    </ul>
    <li><a href="#incremental-font">incremental font</a><span>, in § 4</span>
    <li><a href="#abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</a><span>, in § 4.2.1.1</span>
    <li><a href="#abstract-opdef-interpret-format-2-patch-map">Interpret Format 2 Patch Map</a><span>, in § 4.2.2.1</span>
@@ -2759,8 +2757,8 @@ let dfnPanelData = {
 "branch-factor-encoding": {"dfnID":"branch-factor-encoding","dfnText":"Branch Factor Encoding","external":false,"refSections":[{"refs":[{"id":"ref-for-branch-factor-encoding"}],"title":"4.2.2.3. Sparse Bit Set"}],"url":"#branch-factor-encoding"},
 "brotli-patch": {"dfnID":"brotli-patch","dfnText":"Brotli patch","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch"},
 "brotli-patch-brotlistream": {"dfnID":"brotli-patch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch-brotlistream"}],"title":"5.4. Brotli Patch"},{"refs":[{"id":"ref-for-brotli-patch-brotlistream\u2460"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch-brotlistream"},
+"brotli-patch-compatibilityid": {"dfnID":"brotli-patch-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch-compatibilityid"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch-compatibilityid"},
 "brotli-patch-format": {"dfnID":"brotli-patch-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch-format"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch-format"},
-"brotli-patch-id": {"dfnID":"brotli-patch-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch-id"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch-id"},
 "design-space-segment": {"dfnID":"design-space-segment","dfnText":"Design Space Segment","external":false,"refSections":[{"refs":[{"id":"ref-for-design-space-segment"}],"title":"4.2.2. Patch Map Table: Format 2"}],"url":"#design-space-segment"},
 "design-space-segment-end": {"dfnID":"design-space-segment-end","dfnText":"end","external":false,"refSections":[{"refs":[{"id":"ref-for-design-space-segment-end"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#design-space-segment-end"},
 "design-space-segment-start": {"dfnID":"design-space-segment-start","dfnText":"start","external":false,"refSections":[{"refs":[{"id":"ref-for-design-space-segment-start"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#design-space-segment-start"},
@@ -2780,26 +2778,26 @@ let dfnPanelData = {
 "font-subset-definition": {"dfnID":"font-subset-definition","dfnText":"font subset definition","external":false,"refSections":[{"refs":[{"id":"ref-for-font-subset-definition"}],"title":"4. Extensions to the Font Format"},{"refs":[{"id":"ref-for-font-subset-definition\u2460"},{"id":"ref-for-font-subset-definition\u2461"}],"title":"4.2. Patch Map Table"},{"refs":[{"id":"ref-for-font-subset-definition\u2462"},{"id":"ref-for-font-subset-definition\u2463"},{"id":"ref-for-font-subset-definition\u2464"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-font-subset-definition\u2465"},{"id":"ref-for-font-subset-definition\u2466"}],"title":"6. Extending a Font Subset"},{"refs":[{"id":"ref-for-font-subset-definition\u2467"}],"title":"7. Encoder"},{"refs":[{"id":"ref-for-font-subset-definition\u2468"}],"title":"7.1. Encoder Considerations"}],"url":"#font-subset-definition"},
 "format-1-patch-map": {"dfnID":"format-1-patch-map","dfnText":"Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map\u2460"}],"title":"4.2.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map"},
 "format-1-patch-map-appliedentriesbitmap": {"dfnID":"format-1-patch-map-appliedentriesbitmap","dfnText":"appliedEntriesBitMap","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2460"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2461"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2462"}],"title":"4.2.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-appliedentriesbitmap"},
+"format-1-patch-map-compatibilityid": {"dfnID":"format-1-patch-map-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-compatibilityid"},{"id":"ref-for-format-1-patch-map-compatibilityid\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-compatibilityid"},
 "format-1-patch-map-entrycount": {"dfnID":"format-1-patch-map-entrycount","dfnText":"entryCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-entrycount"},{"id":"ref-for-format-1-patch-map-entrycount\u2460"},{"id":"ref-for-format-1-patch-map-entrycount\u2461"},{"id":"ref-for-format-1-patch-map-entrycount\u2462"},{"id":"ref-for-format-1-patch-map-entrycount\u2463"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-entrycount"},
 "format-1-patch-map-format": {"dfnID":"format-1-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-format"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-format\u2460"}],"title":"4.2.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-format"},
 "format-1-patch-map-glyphcount": {"dfnID":"format-1-patch-map-glyphcount","dfnText":"glyphCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-glyphcount"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-glyphcount"},
-"format-1-patch-map-id": {"dfnID":"format-1-patch-map-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-id"},{"id":"ref-for-format-1-patch-map-id\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-id"},
 "format-1-patch-map-patchencoding": {"dfnID":"format-1-patch-map-patchencoding","dfnText":"patchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-patchencoding"},{"id":"ref-for-format-1-patch-map-patchencoding\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-patchencoding"},
 "format-1-patch-map-uritemplate": {"dfnID":"format-1-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate"},{"id":"ref-for-format-1-patch-map-uritemplate\u2460"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate\u2461"}],"title":"4.2.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-uritemplate"},
 "format-2-patch-map": {"dfnID":"format-2-patch-map","dfnText":"Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map"}],"title":"4.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map\u2460"}],"title":"4.2.2.2. Remove Entries from Format 2"}],"url":"#format-2-patch-map"},
+"format-2-patch-map-compatibilityid": {"dfnID":"format-2-patch-map-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-compatibilityid"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-compatibilityid"},
 "format-2-patch-map-defaultpatchencoding": {"dfnID":"format-2-patch-map-defaultpatchencoding","dfnText":"defaultPatchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-defaultpatchencoding"},
 "format-2-patch-map-entries": {"dfnID":"format-2-patch-map-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entries"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entries"},
 "format-2-patch-map-entrycount": {"dfnID":"format-2-patch-map-entrycount","dfnText":"entryCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entrycount"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entrycount\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entrycount"},
 "format-2-patch-map-entryidstringdata": {"dfnID":"format-2-patch-map-entryidstringdata","dfnText":"entryIdStringData","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2460"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2461"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2462"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata\u2463"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2464"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entryidstringdata"},
 "format-2-patch-map-format": {"dfnID":"format-2-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-format"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-format"},
-"format-2-patch-map-id": {"dfnID":"format-2-patch-map-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-id"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-id"},
 "format-2-patch-map-uritemplate": {"dfnID":"format-2-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-uritemplate"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-uritemplate"},
 "full-invalidation": {"dfnID":"full-invalidation","dfnText":"Full Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-full-invalidation"},{"id":"ref-for-full-invalidation\u2460"}],"title":"5.3. Formats Summary"},{"refs":[{"id":"ref-for-full-invalidation\u2461"},{"id":"ref-for-full-invalidation\u2462"}],"title":"6. Extending a Font Subset"}],"url":"#full-invalidation"},
 "glyph-keyed-patch": {"dfnID":"glyph-keyed-patch","dfnText":"Glyph keyed patch","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch"},
 "glyph-keyed-patch-brotlistream": {"dfnID":"glyph-keyed-patch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-brotlistream"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-glyph-keyed-patch-brotlistream\u2460"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-brotlistream"},
+"glyph-keyed-patch-compatibilityid": {"dfnID":"glyph-keyed-patch-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-compatibilityid"},{"id":"ref-for-glyph-keyed-patch-compatibilityid\u2460"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-compatibilityid"},
 "glyph-keyed-patch-flags": {"dfnID":"glyph-keyed-patch-flags","dfnText":"flags","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-flags"}],"title":"5.6. Glyph Keyed"}],"url":"#glyph-keyed-patch-flags"},
 "glyph-keyed-patch-format": {"dfnID":"glyph-keyed-patch-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-format"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-format"},
-"glyph-keyed-patch-id": {"dfnID":"glyph-keyed-patch-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-id"},{"id":"ref-for-glyph-keyed-patch-id\u2460"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-id"},
 "glyph-map": {"dfnID":"glyph-map","dfnText":"Glyph Map","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#glyph-map"},
 "glyph-map-entryindex": {"dfnID":"glyph-map-entryindex","dfnText":"entryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map-entryindex"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-glyph-map-entryindex\u2460"}],"title":"4.2.1.2. Remove Entries from Format 1"}],"url":"#glyph-map-entryindex"},
 "glyph-map-firstmappedglyph": {"dfnID":"glyph-map-firstmappedglyph","dfnText":"firstMappedGlyph","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map-firstmappedglyph"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#glyph-map-firstmappedglyph"},
@@ -2831,8 +2829,8 @@ let dfnPanelData = {
 "patch-format": {"dfnID":"patch-format","dfnText":"patch format","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-format"},{"id":"ref-for-patch-format\u2460"}],"title":"5.1. Definitions"}],"url":"#patch-format"},
 "patch-map-entries": {"dfnID":"patch-map-entries","dfnText":"patch map entries","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-map-entries"},{"id":"ref-for-patch-map-entries\u2460"},{"id":"ref-for-patch-map-entries\u2461"},{"id":"ref-for-patch-map-entries\u2462"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-patch-map-entries\u2463"},{"id":"ref-for-patch-map-entries\u2464"},{"id":"ref-for-patch-map-entries\u2465"}],"title":"4.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-patch-map-entries\u2466"},{"id":"ref-for-patch-map-entries\u2467"},{"id":"ref-for-patch-map-entries\u2468"}],"title":"6. Extending a Font Subset"}],"url":"#patch-map-entries"},
 "per-table-brotli-patch": {"dfnID":"per-table-brotli-patch","dfnText":"Per table brotli patch","external":false,"refSections":[{"refs":[{"id":"ref-for-per-table-brotli-patch"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#per-table-brotli-patch"},
+"per-table-brotli-patch-compatibilityid": {"dfnID":"per-table-brotli-patch-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-per-table-brotli-patch-compatibilityid"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#per-table-brotli-patch-compatibilityid"},
 "per-table-brotli-patch-format": {"dfnID":"per-table-brotli-patch-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-per-table-brotli-patch-format"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#per-table-brotli-patch-format"},
-"per-table-brotli-patch-id": {"dfnID":"per-table-brotli-patch-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-per-table-brotli-patch-id"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#per-table-brotli-patch-id"},
 "per-table-brotli-patch-patches": {"dfnID":"per-table-brotli-patch-patches","dfnText":"patches","external":false,"refSections":[{"refs":[{"id":"ref-for-per-table-brotli-patch-patches"}],"title":"5.5. Per Table Brotli"},{"refs":[{"id":"ref-for-per-table-brotli-patch-patches\u2460"},{"id":"ref-for-per-table-brotli-patch-patches\u2461"},{"id":"ref-for-per-table-brotli-patch-patches\u2462"},{"id":"ref-for-per-table-brotli-patch-patches\u2463"},{"id":"ref-for-per-table-brotli-patch-patches\u2464"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#per-table-brotli-patch-patches"},
 "sparse-bit-set": {"dfnID":"sparse-bit-set","dfnText":"Sparse Bit Set","external":false,"refSections":[{"refs":[{"id":"ref-for-sparse-bit-set"}],"title":"4.2.2. Patch Map Table: Format 2"}],"url":"#sparse-bit-set"},
 "tablepatch": {"dfnID":"tablepatch","dfnText":"TablePatch","external":false,"refSections":[{"refs":[{"id":"ref-for-tablepatch"},{"id":"ref-for-tablepatch\u2460"}],"title":"5.5. Per Table Brotli"},{"refs":[{"id":"ref-for-tablepatch\u2461"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#tablepatch"},
@@ -3240,8 +3238,8 @@ let refsData = {
 "#branch-factor-encoding": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"branch factor encoding","type":"dfn","url":"#branch-factor-encoding"},
 "#brotli-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotli patch","type":"dfn","url":"#brotli-patch"},
 "#brotli-patch-brotlistream": {"export":true,"for_":["Brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#brotli-patch-brotlistream"},
+"#brotli-patch-compatibilityid": {"export":true,"for_":["Brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#brotli-patch-compatibilityid"},
 "#brotli-patch-format": {"export":true,"for_":["Brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#brotli-patch-format"},
-"#brotli-patch-id": {"export":true,"for_":["Brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"id","type":"dfn","url":"#brotli-patch-id"},
 "#design-space-segment": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"design space segment","type":"dfn","url":"#design-space-segment"},
 "#design-space-segment-end": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"end","type":"dfn","url":"#design-space-segment-end"},
 "#design-space-segment-start": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"start","type":"dfn","url":"#design-space-segment-start"},
@@ -3261,26 +3259,26 @@ let refsData = {
 "#font-subset-definition": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset definition","type":"dfn","url":"#font-subset-definition"},
 "#format-1-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 1 patch map","type":"dfn","url":"#format-1-patch-map"},
 "#format-1-patch-map-appliedentriesbitmap": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"appliedentriesbitmap","type":"dfn","url":"#format-1-patch-map-appliedentriesbitmap"},
+"#format-1-patch-map-compatibilityid": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-1-patch-map-compatibilityid"},
 "#format-1-patch-map-entrycount": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrycount","type":"dfn","url":"#format-1-patch-map-entrycount"},
 "#format-1-patch-map-format": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-1-patch-map-format"},
 "#format-1-patch-map-glyphcount": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#format-1-patch-map-glyphcount"},
-"#format-1-patch-map-id": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"id","type":"dfn","url":"#format-1-patch-map-id"},
 "#format-1-patch-map-patchencoding": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchencoding","type":"dfn","url":"#format-1-patch-map-patchencoding"},
 "#format-1-patch-map-uritemplate": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-1-patch-map-uritemplate"},
 "#format-2-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 2 patch map","type":"dfn","url":"#format-2-patch-map"},
+"#format-2-patch-map-compatibilityid": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-2-patch-map-compatibilityid"},
 "#format-2-patch-map-defaultpatchencoding": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"defaultpatchencoding","type":"dfn","url":"#format-2-patch-map-defaultpatchencoding"},
 "#format-2-patch-map-entries": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#format-2-patch-map-entries"},
 "#format-2-patch-map-entrycount": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrycount","type":"dfn","url":"#format-2-patch-map-entrycount"},
 "#format-2-patch-map-entryidstringdata": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringdata","type":"dfn","url":"#format-2-patch-map-entryidstringdata"},
 "#format-2-patch-map-format": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-2-patch-map-format"},
-"#format-2-patch-map-id": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"id","type":"dfn","url":"#format-2-patch-map-id"},
 "#format-2-patch-map-uritemplate": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-2-patch-map-uritemplate"},
 "#full-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"full invalidation","type":"dfn","url":"#full-invalidation"},
 "#glyph-keyed-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph keyed patch","type":"dfn","url":"#glyph-keyed-patch"},
 "#glyph-keyed-patch-brotlistream": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#glyph-keyed-patch-brotlistream"},
+"#glyph-keyed-patch-compatibilityid": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#glyph-keyed-patch-compatibilityid"},
 "#glyph-keyed-patch-flags": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#glyph-keyed-patch-flags"},
 "#glyph-keyed-patch-format": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#glyph-keyed-patch-format"},
-"#glyph-keyed-patch-id": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"id","type":"dfn","url":"#glyph-keyed-patch-id"},
 "#glyph-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph map","type":"dfn","url":"#glyph-map"},
 "#glyph-map-entryindex": {"export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryindex","type":"dfn","url":"#glyph-map-entryindex"},
 "#glyph-map-firstmappedglyph": {"export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstmappedglyph","type":"dfn","url":"#glyph-map-firstmappedglyph"},
@@ -3312,8 +3310,8 @@ let refsData = {
 "#patch-format": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch format","type":"dfn","url":"#patch-format"},
 "#patch-map-entries": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map entries","type":"dfn","url":"#patch-map-entries"},
 "#per-table-brotli-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"per table brotli patch","type":"dfn","url":"#per-table-brotli-patch"},
+"#per-table-brotli-patch-compatibilityid": {"export":true,"for_":["Per table brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#per-table-brotli-patch-compatibilityid"},
 "#per-table-brotli-patch-format": {"export":true,"for_":["Per table brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#per-table-brotli-patch-format"},
-"#per-table-brotli-patch-id": {"export":true,"for_":["Per table brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"id","type":"dfn","url":"#per-table-brotli-patch-id"},
 "#per-table-brotli-patch-patches": {"export":true,"for_":["Per table brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patches","type":"dfn","url":"#per-table-brotli-patch-patches"},
 "#sparse-bit-set": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"sparse bit set","type":"dfn","url":"#sparse-bit-set"},
 "#tablepatch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tablepatch","type":"dfn","url":"#tablepatch"},
