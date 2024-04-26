@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="f9bb00654fa19d59be3143cc8b46c2649b8a4ee5" name="revision">
+  <meta content="bc678bfd800ba38ae2deab2e3a3bafd8c3f7a9a8" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -695,7 +695,8 @@ be loaded over multiple requests where each request incrementally adds additiona
          <a href="#patch-map-format-2"><span class="secno">4.2.2</span> <span class="content">Patch Map Table: Format 2</span></a>
          <ol class="toc">
           <li><a href="#interpreting-patch-map-format-2"><span class="secno">4.2.2.1</span> <span class="content">Interpreting Format 2</span></a>
-          <li><a href="#sparse-bit-set-decoding"><span class="secno">4.2.2.2</span> <span class="content">Sparse Bit Set</span></a>
+          <li><a href="#remove-entries-format-1①"><span class="secno">4.2.2.2</span> <span class="content">Remove Entries from Format 2</span></a>
+          <li><a href="#sparse-bit-set-decoding"><span class="secno">4.2.2.3</span> <span class="content">Sparse Bit Set</span></a>
          </ol>
        </ol>
      </ol>
@@ -1345,7 +1346,7 @@ change the number of bytes.</p>
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-codepoints">codepoints</dfn>[variable]
       <td> Set of codepoints for this mapping. Encoded as a <a data-link-type="dfn" href="#sparse-bit-set" id="ref-for-sparse-bit-set">Sparse Bit Set</a>.
       Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑨">formatFlags</a> bit 4 and/or 5 is set. The length is
-      determined by following the decoding procedures in <a href="#sparse-bit-set-decoding">§ 4.2.2.2 Sparse Bit Set</a>. 
+      determined by following the decoding procedures in <a href="#sparse-bit-set-decoding">§ 4.2.2.3 Sparse Bit Set</a>. 
    </table>
    <p>If an encoder is producing patches that will be stored on a file system and then served it’s recommended that only numeric entry IDs be
 used (via <a data-link-type="dfn" href="#mapping-entry-entryiddelta" id="ref-for-mapping-entry-entryiddelta">entryIdDelta</a>) as these will generally produce the smallest encoding of the format 2 patch map. String IDs
@@ -1495,7 +1496,7 @@ from <var>entry bytes</var>.</p>
       <li data-md>
        <p>Otherwise the bias is 0.</p>
       <li data-md>
-       <p>Read the sparse bit set <a data-link-type="dfn" href="#mapping-entry-codepoints" id="ref-for-mapping-entry-codepoints">codepoints</a> from <var>entry bytes</var> following <a href="#sparse-bit-set-decoding">§ 4.2.2.2 Sparse Bit Set</a>. For each
+       <p>Read the sparse bit set <a data-link-type="dfn" href="#mapping-entry-codepoints" id="ref-for-mapping-entry-codepoints">codepoints</a> from <var>entry bytes</var> following <a href="#sparse-bit-set-decoding">§ 4.2.2.3 Sparse Bit Set</a>. For each
 codepoint add the bias value to it and then add the result to the codepoint set in <var>entry</var>.</p>
      </ul>
     <li data-md>
@@ -1505,7 +1506,26 @@ codepoint add the bias value to it and then add the result to the codepoint set 
     <li data-md>
      <p>Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength②">entryIdStringLength</a> as <var>consumed id string bytes</var>, and <var>ignored</var>.</p>
    </ol>
-   <h5 class="heading settled algorithm" data-algorithm="Sparse Bit Set" data-level="4.2.2.2" id="sparse-bit-set-decoding"><span class="secno">4.2.2.2. </span><span class="content">Sparse Bit Set</span><a class="self-link" href="#sparse-bit-set-decoding"></a></h5>
+   <h5 class="heading settled algorithm" data-algorithm="Remove Entries from Format 2" data-level="4.2.2.2" id="remove-entries-format-1①"><span class="secno">4.2.2.2. </span><span class="content">Remove Entries from Format 2</span><a class="self-link" href="#remove-entries-format-1①"></a></h5>
+   <p>This algorithm is used to remove entries from a format 2 patch map. This removal modifies the bytes of the patch map but does not
+change the number of bytes.</p>
+   <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-remove-entries-from-format-2-patch-map">Remove Entries from Format 2 Patch Map</dfn></p>
+   <p>The inputs to this algorithm are:</p>
+   <ul>
+    <li data-md>
+     <p><var>patch map</var>: a <a data-link-type="dfn" href="#format-2-patch-map" id="ref-for-format-2-patch-map①">Format 2 Patch Map</a> encoded patch map. May be modified by this procedure.</p>
+    <li data-md>
+     <p><var>patch URI</var>: URI for a patch which identifies the entries to be removed.</p>
+   </ul>
+   <p>This algorithm is a modified version of <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map">Interpret Format 2 Patch Map</a>, invoke <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map①">Interpret Format 2 Patch Map</a> with <var>patch map</var> as an input but with the following changes:</p>
+   <ul>
+    <li data-md>
+     <p>After step 11 of <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map-entry" id="ref-for-abstract-opdef-interpret-format-2-patch-map-entry②">Interpret Format 2 Patch Map Entry</a>: compare the URI generated in step 11 to <var>patch URI</var> if they
+are equal then, set bit 6 of <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑨">formatFlags</a> to 1.</p>
+    <li data-md>
+     <p>The return value of <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map②">Interpret Format 2 Patch Map</a> is not used.</p>
+   </ul>
+   <h5 class="heading settled algorithm" data-algorithm="Sparse Bit Set" data-level="4.2.2.3" id="sparse-bit-set-decoding"><span class="secno">4.2.2.3. </span><span class="content">Sparse Bit Set</span><a class="self-link" href="#sparse-bit-set-decoding"></a></h5>
    <p>A sparse bit set is a data structure which compactly stores a set of distinct unsigned integers. The set is represented as a tree where
 each node has a fixed number of children that recursively sub-divides an interval into equal partitions. A tree of height <i>H</i> with
 branching factor <i>B</i> can store set membership for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree
@@ -2021,7 +2041,7 @@ the entries processed in step 4, add a copy of that table to <var>extended font 
      <p>Locate the <a href="#patch-map">§ 4.2 Patch Map Table</a> table which has the same <a data-link-type="dfn" href="#glyph-keyed-patch-id" id="ref-for-glyph-keyed-patch-id①">id</a> as <var>id</var>. Update the table to remove all entries
 which have a URI which matches <var>patch uri</var>. For <a href="#patch-map-format-1">§ 4.2.1 Patch Map Table: Format 1</a> entries are removed by setting the appropriate
 bit in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap④">appliedEntriesBitMap</a>. For <a href="#patch-map-format-2">§ 4.2.2 Patch Map Table: Format 2</a> entries are removed by setting the "ignored" bit
-in that entry’s <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑨">formatFlags</a>.</p>
+in that entry’s <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags②⓪">formatFlags</a>.</p>
     <li data-md>
      <p>If the contents of any <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">fonts table</a> was modified during the previous steps then,
 for each modified table: update the checksums in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">fonts table directory</a> to match the table’s
@@ -2055,7 +2075,7 @@ tables are formatted as a <a href="#patch-map">§ 4.2 Patch Map Table</a>. Che
 is not valid, invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-errors" id="ref-for-abstract-opdef-handle-errors">Handle errors</a>. If <var>extended font subset</var> does not have an 'IFT ' table, then it is not an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font③">incremental font</a> and cannot be extended, return <var>extended font subset</var>.</p>
     <li data-md>
      <p>For each of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
-invoking <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-1-patch-map" id="ref-for-abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</a> or <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map">Interpret Format 2 Patch Map</a>. Concatenate the returned entry lists into a single list, <var>entry list</var>.</p>
+invoking <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-1-patch-map" id="ref-for-abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</a> or <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map③">Interpret Format 2 Patch Map</a>. Concatenate the returned entry lists into a single list, <var>entry list</var>.</p>
     <li data-md>
      <p>For each <var>entry</var> in <var>entry list</var> invoke <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection">Check entry intersection</a> with <var>entry</var> and <var>target subset definition</var> as inputs, if it returns false remove <var>entry</var> from <var>entry list</var>.</p>
     <li data-md>
@@ -2348,7 +2368,7 @@ required too many patches.</p>
    <li><a href="#abstract-opdef-apply-glyph-keyed-patch">Apply glyph keyed patch</a><span>, in § 5.6.1</span>
    <li><a href="#abstract-opdef-apply-per-table-brotli-patch">Apply per table brotli patch</a><span>, in § 5.5.1</span>
    <li><a href="#mapping-entry-bias">bias</a><span>, in § 4.2.2</span>
-   <li><a href="#branch-factor-encoding">Branch Factor Encoding</a><span>, in § 4.2.2.2</span>
+   <li><a href="#branch-factor-encoding">Branch Factor Encoding</a><span>, in § 4.2.2.3</span>
    <li><a href="#brotli-patch">Brotli patch</a><span>, in § 5.4</span>
    <li>
     brotliStream
@@ -2361,7 +2381,7 @@ required too many patches.</p>
    <li><a href="#mapping-entry-codepoints">codepoints</a><span>, in § 4.2.2</span>
    <li><a href="#mapping-entry-copycount">copyCount</a><span>, in § 4.2.2</span>
    <li><a href="#mapping-entry-copyindices">copyIndices</a><span>, in § 4.2.2</span>
-   <li><a href="#abstract-opdef-decoding-sparse-bit-set-treedata">Decoding sparse bit set treeData</a><span>, in § 4.2.2.2</span>
+   <li><a href="#abstract-opdef-decoding-sparse-bit-set-treedata">Decoding sparse bit set treeData</a><span>, in § 4.2.2.3</span>
    <li><a href="#format-2-patch-map-defaultpatchencoding">defaultPatchEncoding</a><span>, in § 4.2.2</span>
    <li><a href="#mapping-entry-designspacecount">designSpaceCount</a><span>, in § 4.2.2</span>
    <li><a href="#design-space-segment">Design Space Segment</a><span>, in § 4.2.2</span>
@@ -2467,7 +2487,8 @@ required too many patches.</p>
    <li><a href="#patch-map-entries">patch map entries</a><span>, in § 4.2</span>
    <li><a href="#per-table-brotli-patch">Per table brotli patch</a><span>, in § 5.5</span>
    <li><a href="#abstract-opdef-remove-entries-from-format-1-patch-map">Remove Entries from Format 1 Patch Map</a><span>, in § 4.2.1.2</span>
-   <li><a href="#sparse-bit-set">Sparse Bit Set</a><span>, in § 4.2.2.2</span>
+   <li><a href="#abstract-opdef-remove-entries-from-format-2-patch-map">Remove Entries from Format 2 Patch Map</a><span>, in § 4.2.2.2</span>
+   <li><a href="#sparse-bit-set">Sparse Bit Set</a><span>, in § 4.2.2.3</span>
    <li><a href="#design-space-segment-start">start</a><span>, in § 4.2.2</span>
    <li><a href="#tablepatch">TablePatch</a><span>, in § 5.5</span>
    <li><a href="#glyphpatches-tables">tables</a><span>, in § 5.6</span>
@@ -2730,11 +2751,12 @@ let dfnPanelData = {
 "abstract-opdef-fully-expand-a-font-subset": {"dfnID":"abstract-opdef-fully-expand-a-font-subset","dfnText":"Fully Expand a Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset"}],"title":"2.1. Offline Usage"},{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2460"},{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2461"}],"title":"7. Encoder"}],"url":"#abstract-opdef-fully-expand-a-font-subset"},
 "abstract-opdef-handle-errors": {"dfnID":"abstract-opdef-handle-errors","dfnText":"Handle errors","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-handle-errors"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-handle-errors"},
 "abstract-opdef-interpret-format-1-patch-map": {"dfnID":"abstract-opdef-interpret-format-1-patch-map","dfnText":"Interpret Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-1-patch-map"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-interpret-format-1-patch-map"},
-"abstract-opdef-interpret-format-2-patch-map": {"dfnID":"abstract-opdef-interpret-format-2-patch-map","dfnText":"Interpret Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-interpret-format-2-patch-map"},
-"abstract-opdef-interpret-format-2-patch-map-entry": {"dfnID":"abstract-opdef-interpret-format-2-patch-map-entry","dfnText":"Interpret Format 2 Patch Map Entry","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#abstract-opdef-interpret-format-2-patch-map-entry"},
+"abstract-opdef-interpret-format-2-patch-map": {"dfnID":"abstract-opdef-interpret-format-2-patch-map","dfnText":"Interpret Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map"},{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map\u2460"},{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map\u2461"}],"title":"4.2.2.2. Remove Entries from Format 2"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map\u2462"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-interpret-format-2-patch-map"},
+"abstract-opdef-interpret-format-2-patch-map-entry": {"dfnID":"abstract-opdef-interpret-format-2-patch-map-entry","dfnText":"Interpret Format 2 Patch Map Entry","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry\u2460"}],"title":"4.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry\u2461"}],"title":"4.2.2.2. Remove Entries from Format 2"}],"url":"#abstract-opdef-interpret-format-2-patch-map-entry"},
 "abstract-opdef-load-patch-file": {"dfnID":"abstract-opdef-load-patch-file","dfnText":"Load patch file","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-load-patch-file"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-load-patch-file"},
 "abstract-opdef-remove-entries-from-format-1-patch-map": {"dfnID":"abstract-opdef-remove-entries-from-format-1-patch-map","dfnText":"Remove Entries from Format 1 Patch Map","external":false,"refSections":[],"url":"#abstract-opdef-remove-entries-from-format-1-patch-map"},
-"branch-factor-encoding": {"dfnID":"branch-factor-encoding","dfnText":"Branch Factor Encoding","external":false,"refSections":[{"refs":[{"id":"ref-for-branch-factor-encoding"}],"title":"4.2.2.2. Sparse Bit Set"}],"url":"#branch-factor-encoding"},
+"abstract-opdef-remove-entries-from-format-2-patch-map": {"dfnID":"abstract-opdef-remove-entries-from-format-2-patch-map","dfnText":"Remove Entries from Format 2 Patch Map","external":false,"refSections":[],"url":"#abstract-opdef-remove-entries-from-format-2-patch-map"},
+"branch-factor-encoding": {"dfnID":"branch-factor-encoding","dfnText":"Branch Factor Encoding","external":false,"refSections":[{"refs":[{"id":"ref-for-branch-factor-encoding"}],"title":"4.2.2.3. Sparse Bit Set"}],"url":"#branch-factor-encoding"},
 "brotli-patch": {"dfnID":"brotli-patch","dfnText":"Brotli patch","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch"},
 "brotli-patch-brotlistream": {"dfnID":"brotli-patch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch-brotlistream"}],"title":"5.4. Brotli Patch"},{"refs":[{"id":"ref-for-brotli-patch-brotlistream\u2460"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch-brotlistream"},
 "brotli-patch-format": {"dfnID":"brotli-patch-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch-format"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch-format"},
@@ -2764,7 +2786,7 @@ let dfnPanelData = {
 "format-1-patch-map-id": {"dfnID":"format-1-patch-map-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-id"},{"id":"ref-for-format-1-patch-map-id\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-id"},
 "format-1-patch-map-patchencoding": {"dfnID":"format-1-patch-map-patchencoding","dfnText":"patchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-patchencoding"},{"id":"ref-for-format-1-patch-map-patchencoding\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-patchencoding"},
 "format-1-patch-map-uritemplate": {"dfnID":"format-1-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate"},{"id":"ref-for-format-1-patch-map-uritemplate\u2460"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate\u2461"}],"title":"4.2.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-uritemplate"},
-"format-2-patch-map": {"dfnID":"format-2-patch-map","dfnText":"Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map"},
+"format-2-patch-map": {"dfnID":"format-2-patch-map","dfnText":"Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map"}],"title":"4.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map\u2460"}],"title":"4.2.2.2. Remove Entries from Format 2"}],"url":"#format-2-patch-map"},
 "format-2-patch-map-defaultpatchencoding": {"dfnID":"format-2-patch-map-defaultpatchencoding","dfnText":"defaultPatchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-defaultpatchencoding"},
 "format-2-patch-map-entries": {"dfnID":"format-2-patch-map-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entries"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entries"},
 "format-2-patch-map-entrycount": {"dfnID":"format-2-patch-map-entrycount","dfnText":"entryCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entrycount"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entrycount\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entrycount"},
@@ -2801,7 +2823,7 @@ let dfnPanelData = {
 "mapping-entry-entryidstringlength": {"dfnID":"mapping-entry-entryidstringlength","dfnText":"entryIdStringLength","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-entryidstringlength"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-entryidstringlength\u2460"},{"id":"ref-for-mapping-entry-entryidstringlength\u2461"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-entryidstringlength"},
 "mapping-entry-featurecount": {"dfnID":"mapping-entry-featurecount","dfnText":"featureCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-featurecount"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-featurecount"},
 "mapping-entry-featuretags": {"dfnID":"mapping-entry-featuretags","dfnText":"featureTags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-featuretags"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-featuretags"},
-"mapping-entry-formatflags": {"dfnID":"mapping-entry-formatflags","dfnText":"formatFlags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-formatflags"},{"id":"ref-for-mapping-entry-formatflags\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2467"},{"id":"ref-for-mapping-entry-formatflags\u2468"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u24ea"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2467"}],"title":"4.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u2468"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#mapping-entry-formatflags"},
+"mapping-entry-formatflags": {"dfnID":"mapping-entry-formatflags","dfnText":"formatFlags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-formatflags"},{"id":"ref-for-mapping-entry-formatflags\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2467"},{"id":"ref-for-mapping-entry-formatflags\u2468"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u24ea"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2467"}],"title":"4.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u2468"}],"title":"4.2.2.2. Remove Entries from Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2461\u24ea"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#mapping-entry-formatflags"},
 "mapping-entry-patchencoding": {"dfnID":"mapping-entry-patchencoding","dfnText":"patchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-patchencoding"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-patchencoding"},
 "no-invalidation": {"dfnID":"no-invalidation","dfnText":"No Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-no-invalidation"}],"title":"5.3. Formats Summary"},{"refs":[{"id":"ref-for-no-invalidation\u2460"}],"title":"6. Extending a Font Subset"}],"url":"#no-invalidation"},
 "partial-invalidation": {"dfnID":"partial-invalidation","dfnText":"Partial Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-partial-invalidation"},{"id":"ref-for-partial-invalidation\u2460"}],"title":"5.3. Formats Summary"},{"refs":[{"id":"ref-for-partial-invalidation\u2461"},{"id":"ref-for-partial-invalidation\u2462"}],"title":"6. Extending a Font Subset"}],"url":"#partial-invalidation"},
