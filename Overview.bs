@@ -424,6 +424,12 @@ of the patch map table. A map is encoded in one of two formats:
 *  Format 2: can encode arbitrary mappings including ones with design space or overlapping subset definitions. However, it
     is typically less compact than format 1.
 
+Each format defines an algorithm for interpreting bytes encoded with that format to produce the list of entries it represents. The
+[$Extend a Font Subset$] algorithm invokes the interpretation algorithms and operates on the resulting entry list. The encoded bytes
+are the source of truth at all times for the patch map. Patch application during subset extension will alter the encoded bytes of the
+patch map and as a result the entry list derived from the encoded bytes will change. The extension algorithm reinterprets the encoded
+bytes at the start of every iteration to pick up any changes made in the previous iteration.
+
 ### Patch Map Table: Format 1 ### {#patch-map-format-1}
 
 <!-- TODO: provide normative validation requirements for each encoding -->
