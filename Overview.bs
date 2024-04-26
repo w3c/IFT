@@ -1064,6 +1064,27 @@ The algorithm:
 12. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, [=Mapping Entry/entryIdStringLength=] as
      <var>consumed id string bytes</var>, and <var>ignored</var>.
 
+<h5 algorithm id="remove-entries-format-1">Remove Entries from Format 2</h5>
+
+This algorithm is used to remove entries from a format 2 patch map. This removal modifies the bytes of the patch map but does not
+change the number of bytes.
+
+<dfn abstract-op>Remove Entries from Format 2 Patch Map</dfn>
+
+The inputs to this algorithm are:
+
+* <var>patch map</var>: a [=Format 2 Patch Map=] encoded patch map. May be modified by this procedure.
+
+* <var>patch URI</var>: URI for a patch which identifies the entries to be removed.
+
+This algorithm is a modified version of [$Interpret Format 2 Patch Map$], invoke [$Interpret Format 2 Patch Map$] with <var>patch map</var>
+as an input but with the following changes:
+
+*  After step 11 of [$Interpret Format 2 Patch Map Entry$]: compare the URI generated in step 11 to <var>patch URI</var> if they
+    are equal then, set bit 6 of  [=Mapping Entry/formatFlags=] to 1.
+
+*  The return value of [$Interpret Format 2 Patch Map$] is not used.
+
 <h5 algorithm id="sparse-bit-set-decoding">Sparse Bit Set</h5>
 
 A sparse bit set is a data structure which compactly stores a set of distinct unsigned integers. The set is represented as a tree where
