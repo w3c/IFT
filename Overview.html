@@ -5,9 +5,11 @@
   <title>Incremental Font Transfer</title>
   <meta content="ED" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
-  <meta content="Bikeshed version 5fcd28d6d, updated Tue May 30 13:12:11 2023 -0700" name="generator">
+  <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="69cf458b8bffd7b7ce99387d751d1df954bcbcab" name="document-revision">
+  <meta content="f3f6d9599c6053298ae0ded6f8976d9e125c2e30" name="revision">
+  <meta content="dark light" name="color-scheme">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -96,7 +98,6 @@ pre .property::before, pre .property::after {
 }
 </style>
 <style>/* Boilerplate: style-colors */
-
 /* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
 :root {
     color-scheme: light dark;
@@ -350,11 +351,15 @@ figcaption:not(.no-marker)::before {
 :root {
     --dfnpanel-bg: #ddd;
     --dfnpanel-text: var(--text);
+    --dfnpanel-target-bg: #ffc;
+    --dfnpanel-target-outline: orange;
 }
 @media (prefers-color-scheme: dark) {
     :root {
         --dfnpanel-bg: #222;
         --dfnpanel-text: var(--text);
+        --dfnpanel-target-bg: #333;
+        --dfnpanel-target-outline: silver;
     }
 }
 .dfn-panel {
@@ -377,11 +382,13 @@ figcaption:not(.no-marker)::before {
 .dfn-panel > b { display: block; }
 .dfn-panel a { color: var(--dfnpanel-text); }
 .dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel a:focus {
+    outline: 5px auto Highlight;
+    outline: 5px auto -webkit-focus-ring-color;
+}
 .dfn-panel > b + b { margin-top: 0.25em; }
 .dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
 .dfn-panel li a {
-    white-space: pre;
-    display: inline-block;
     max-width: calc(300px - 1.5em - 1em);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -390,14 +397,79 @@ figcaption:not(.no-marker)::before {
 .dfn-panel.activated {
     display: inline-block;
     position: fixed;
-    left: .5em;
+    left: 8px;
     bottom: 2em;
     margin: 0 auto;
     max-width: calc(100vw - 1.5em - .4em - .5em);
     max-height: 30vh;
+    transition: left 1s ease-out, bottom 1s ease-out;
 }
 
-.dfn-paneled[role="button"] { cursor: pointer; }
+.dfn-panel .link-item:hover {
+    text-decoration: underline;
+}
+.dfn-panel .link-item .copy-icon {
+    opacity: 0;
+}
+.dfn-panel .link-item:hover .copy-icon,
+.dfn-panel .link-item .copy-icon:focus {
+    opacity: 1;
+}
+
+.dfn-panel .copy-icon {
+    display: inline-block;
+    margin-right: 0.5em;
+    width: 0.85em;
+    height: 1em;
+    border-radius: 3px;
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.dfn-panel .copy-icon .icon {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.dfn-panel .copy-icon .icon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    background-color: #ccc;
+    opacity: 0.25;
+    transform: translate(3px, -3px);
+}
+
+.dfn-panel .copy-icon:active .icon::before {
+    opacity: 1;
+}
+
+.dfn-paneled[role="button"] { cursor: help; }
+
+.highlighted {
+    animation: target-fade 3s;
+}
+
+@keyframes target-fade {
+    from {
+        background-color: var(--dfnpanel-target-bg);
+        outline: 5px solid var(--dfnpanel-target-outline);
+    }
+    to {
+        color: var(--a-normal-text);
+        background-color: transparent;
+        outline: transparent;
+    }
+}
 </style>
 <style>/* Boilerplate: style-issues */
 a[href].issue-return {
@@ -418,8 +490,40 @@ a[href].issue-return {
     margin-bottom: 0;
 }
 </style>
-<style>/* Boilerplate: style-selflinks */
+<style>/* Boilerplate: style-ref-hints */
+:root {
+    --ref-hint-bg: #ddd;
+    --ref-hint-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ref-hint-bg: #222;
+        --ref-hint-text: var(--text);
+    }
+}
 
+.ref-hint {
+    display: inline-block;
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.5em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--ref-hint-bg);
+    color: var(--ref-hint-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+
+.ref-hint * { margin: 0; padding: 0; text-indent: 0; }
+
+.ref-hint ul { padding: 0 0 0 1em; list-style: none; }
+</style>
+<style>/* Boilerplate: style-selflinks */
 :root {
     --selflink-text: white;
     --selflink-bg: gray;
@@ -478,7 +582,7 @@ a.self-link::before            { content: "¶"; }
 .heading > a.self-link::before { content: "§"; }
 dfn > a.self-link::before      { content: "#"; }
 </style>
-<style>/* Boilerplate: style-style-var-click-highlighting */
+<style>/* Boilerplate: style-var-click-highlighting */
 /*
 Colors were chosen in Lab using https://nixsensor.com/free-color-converter/
 D50 2deg illuminant, L in [0,100], a and b in [-128, 128]
@@ -490,20 +594,20 @@ D50 2deg illuminant, L in [0,100], a and b in [-128, 128]
 5 = lab(85,-10,-50)
 6 = lab(85,35,-15)
 */
-var { cursor: pointer; }
-var.selected0 { background-color: #F4D200; box-shadow: 0 0 0 2px #F4D200; }
-var.selected1 { background-color: #FF87A2; box-shadow: 0 0 0 2px #FF87A2; }
-var.selected2 { background-color: #96E885; box-shadow: 0 0 0 2px #96E885; }
-var.selected3 { background-color: #3EEED2; box-shadow: 0 0 0 2px #3EEED2; }
-var.selected4 { background-color: #EACFB6; box-shadow: 0 0 0 2px #EACFB6; }
-var.selected5 { background-color: #82DDFF; box-shadow: 0 0 0 2px #82DDFF; }
-var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
+[data-algorithm] var { cursor: pointer; }
+var[data-var-color="0"] { background-color: #F4D200; box-shadow: 0 0 0 2px #F4D200; }
+var[data-var-color="1"] { background-color: #FF87A2; box-shadow: 0 0 0 2px #FF87A2; }
+var[data-var-color="2"] { background-color: #96E885; box-shadow: 0 0 0 2px #96E885; }
+var[data-var-color="3"] { background-color: #3EEED2; box-shadow: 0 0 0 2px #3EEED2; }
+var[data-var-color="4"] { background-color: #EACFB6; box-shadow: 0 0 0 2px #EACFB6; }
+var[data-var-color="5"] { background-color: #82DDFF; box-shadow: 0 0 0 2px #82DDFF; }
+var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
 </style>
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-24">24 April 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-26">26 April 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -520,16 +624,15 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
     </dl>
    </div>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2024 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/copyright-software" rel="license" title="W3C Software and Document License">permissive document license</a> rules apply. </p>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/policies/#copyright">Copyright</a> © 2024 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/policies/#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/policies/#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/copyright/software-license/" rel="license" title="W3C Software and Document License">permissive document license</a> rules apply. </p>
    <hr title="Separator for header">
   </div>
   <div class="p-summary" data-fill-with="abstract">
    <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
    <p>This specification defines a method to incrementally transfer fonts from server to client.
-
-          Incremental transfer allows clients to load only the portions of the font they actually need
-          which speeds up font loads and reduces data transfer needed to load the fonts. A font can
-          be loaded over multiple requests where each request incrementally adds additional data.</p>
+Incremental transfer allows clients to load only the portions of the font they actually need
+which speeds up font loads and reduces data transfer needed to load the fonts. A font can
+be loaded over multiple requests where each request incrementally adds additional data.</p>
   </div>
   <h2 class="no-num no-toc no-ref heading settled" id="sotd"><span class="content">Status of this document</span></h2>
   <div data-fill-with="status">
@@ -544,7 +647,7 @@ var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
   W3C maintains a <a href="https://www.w3.org/groups/wg/webfonts/ipr" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group;
   that page also includes instructions for disclosing a patent.
   An individual who has actual knowledge of a patent which the individual believes contains <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>. </p>
-   <p> This document is governed by the <a href="https://www.w3.org/2021/Process-20211102/" id="w3c_process_revision">2 November 2021 W3C Process Document</a>. </p>
+   <p> This document is governed by the <a href="https://www.w3.org/2023/Process-20231103/" id="w3c_process_revision">03 November 2023 W3C Process Document</a>. </p>
    <p></p>
   </div>
   <div data-fill-with="at-risk"></div>
@@ -1424,7 +1527,7 @@ ignored.</p>
       <td>1
       <td>32
    </table>
-   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-decoding-sparse-bit-set-treedata">Decoding sparse bit set treeData<a class="self-link" href="#abstract-opdef-decoding-sparse-bit-set-treedata"></a></dfn></p>
+   <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-decoding-sparse-bit-set-treedata">Decoding sparse bit set treeData</dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
     <li data-md>
@@ -1618,7 +1721,7 @@ of a short header followed by brotli encoded data.</p>
    <h4 class="heading settled algorithm" data-algorithm="Applying Brotli Patches" data-level="5.4.1" id="apply-brotli"><span class="secno">5.4.1. </span><span class="content">Applying Brotli Patches</span><a class="self-link" href="#apply-brotli"></a></h4>
    <p>This <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm">patch application algorithm</a> is used to apply a brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a> to cover additional codepoints,
 features, and/or design-variation space.</p>
-   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-brotli-patch">Apply brotli patch<a class="self-link" href="#abstract-opdef-apply-brotli-patch"></a></dfn></p>
+   <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-brotli-patch">Apply brotli patch</dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
     <li data-md>
@@ -1709,7 +1812,7 @@ of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">Ta
    <h4 class="heading settled algorithm" data-algorithm="Applying Per Table Brotli Patches" data-level="5.5.1" id="apply-per-table-brotli"><span class="secno">5.5.1. </span><span class="content">Applying Per Table Brotli Patches</span><a class="self-link" href="#apply-per-table-brotli"></a></h4>
    <p>This <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm①">patch application algorithm</a> is used to apply a per table brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⓪">font subset</a> to cover additional codepoints,
 features, and/or design-variation space.</p>
-   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-per-table-brotli-patch">Apply per table brotli patch<a class="self-link" href="#abstract-opdef-apply-per-table-brotli-patch"></a></dfn></p>
+   <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-per-table-brotli-patch">Apply per table brotli patch</dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
     <li data-md>
@@ -1823,7 +1926,7 @@ of that glyph data.</p>
    <h4 class="heading settled algorithm" data-algorithm="Applying Glyph Keyed Patches" data-level="5.6.1" id="apply-glyph-keyed"><span class="secno">5.6.1. </span><span class="content">Applying Glyph Keyed Patches</span><a class="self-link" href="#apply-glyph-keyed"></a></h4>
    <p>This <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm②">patch application algorithm</a> is used to apply a glyph keyed patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②④">font subset</a> to cover additional codepoints,
 features, and/or design-variation space.</p>
-   <p><dfn data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-glyph-keyed-patch">Apply glyph keyed patch<a class="self-link" href="#abstract-opdef-apply-glyph-keyed-patch"></a></dfn></p>
+   <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-glyph-keyed-patch">Apply glyph keyed patch</dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
     <li data-md>
@@ -1876,7 +1979,7 @@ of any other types must be ignored.</p>
 the entries processed in step 4, add a copy of that table to <var>extended font subset</var>.</p>
     <li data-md>
      <p>Modify the mappings in the IFT and IFTX table(s) in <var>extended font subset</var> if present to remove any mapping entries
-that map to this patch.</p>
+that map to this patch. </p>
    </ol>
    <h2 class="heading settled algorithm" data-algorithm="Extending a Font Subset" data-level="6" id="extending-font-subset"><span class="secno">6. </span><span class="content">Extending a Font Subset</span><a class="self-link" href="#extending-font-subset"></a></h2>
    <p>This sections defines the algorithm that a client uses to extend an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font">incremental</a> <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⑦">font subset</a> to cover additional
@@ -2190,7 +2293,7 @@ required too many patches.</p>
     Implementers are encouraged to optimize. </p>
    </section>
   </div>
-<script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
+  <script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
@@ -2333,9 +2436,9 @@ required too many patches.</p>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
    <dt id="biblio-css-fonts-4">[CSS-FONTS-4]
-   <dd>John Daggett; Myles Maxfield; Chris Lilley. <a href="https://drafts.csswg.org/css-fonts-4/"><cite>CSS Fonts Module Level 4</cite></a>. URL: <a href="https://drafts.csswg.org/css-fonts-4/">https://drafts.csswg.org/css-fonts-4/</a>
+   <dd>Chris Lilley. <a href="https://drafts.csswg.org/css-fonts-4/"><cite>CSS Fonts Module Level 4</cite></a>. URL: <a href="https://drafts.csswg.org/css-fonts-4/">https://drafts.csswg.org/css-fonts-4/</a>
    <dt id="biblio-iso14496-22">[ISO14496-22]
-   <dd><a href="https://www.iso.org/standard/74461.html"><cite>Information technology — Coding of audio-visual objects — Part 22: Open Font Format</cite></a>. January 2019. Published. URL: <a href="https://www.iso.org/standard/74461.html">https://www.iso.org/standard/74461.html</a>
+   <dd><a href="https://www.iso.org/standard/87621.html"><cite>Information technology — Coding of audio-visual objects — Part 22: Open Font Format</cite></a>. Under development. URL: <a href="https://www.iso.org/standard/87621.html">https://www.iso.org/standard/87621.html</a>
    <dt id="biblio-open-type">[OPEN-TYPE]
    <dd><a href="https://docs.microsoft.com/en-us/typography/opentype/spec"><cite>OpenType Specification</cite></a>. December 2021. Note. URL: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec">https://docs.microsoft.com/en-us/typography/opentype/spec</a>
    <dt id="biblio-pfe-report">[PFE-report]
@@ -2362,257 +2465,12 @@ required too many patches.</p>
    <dt id="biblio-fetch">[FETCH]
    <dd><a href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. 22 May 2023. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
    <dt id="biblio-rfc9113">[RFC9113]
-   <dd>M. Thomson, Ed.; C. Benfield, Ed.. <a href="https://www.rfc-editor.org/rfc/rfc9113"><cite>HTTP/2</cite></a>. June 2022. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc9113">https://www.rfc-editor.org/rfc/rfc9113</a>
+   <dd>M. Thomson, Ed.; C. Benfield, Ed.. <a href="https://httpwg.org/specs/rfc9113.html"><cite>HTTP/2</cite></a>. June 2022. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc9113.html">https://httpwg.org/specs/rfc9113.html</a>
    <dt id="biblio-rfc9114">[RFC9114]
-   <dd>M. Bishop, Ed.. <a href="https://www.rfc-editor.org/rfc/rfc9114"><cite>HTTP/3</cite></a>. June 2022. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc9114">https://www.rfc-editor.org/rfc/rfc9114</a>
+   <dd>M. Bishop, Ed.. <a href="https://httpwg.org/specs/rfc9114.html"><cite>HTTP/3</cite></a>. June 2022. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc9114.html">https://httpwg.org/specs/rfc9114.html</a>
   </dl>
-<script>/* Boilerplate: script-dfn-panel */
-"use strict";
-{
-    const dfnsJson = window.dfnsJson || {};
-
-    function genDfnPanel({dfnID, url, dfnText, refSections, external}) {
-        return mk.aside({
-            class: "dfn-panel",
-            id: `infopanel-for-${dfnID}`,
-            "data-for": dfnID,
-            "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
-            },
-            mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
-                `Info about the '${dfnText}' ${external?"external":""} reference.`),
-            mk.a({href:url}, url),
-            mk.b({}, "Referenced in:"),
-            mk.ul({},
-                ...refSections.map(section=>
-                    mk.li({},
-                        ...section.refs.map((ref, refI)=>
-                            [
-                                mk.a({
-                                    href: `#${ref.id}`
-                                    },
-                                    (refI == 0) ? section.title : `(${refI + 1})`
-                                ),
-                                " ",
-                            ]
-                        ),
-                    ),
-                ),
-            ),
-        );
-    }
-
-    function genAllDfnPanels() {
-        for(const panelData of Object.values(window.dfnpanelData)) {
-            const dfnID = panelData.dfnID;
-            const dfn = document.getElementById(dfnID);
-            if(!dfn) {
-                console.log(`Can't find dfn#${dfnID}.`, panelData);
-            } else {
-                const panel = genDfnPanel(panelData);
-                append(document.body, panel);
-                insertDfnPopupAction(dfn, panel)
-            }
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", ()=>{
-        genAllDfnPanels();
-
-        // Add popup behavior to all dfns to show the corresponding dfn-panel.
-        var dfns = queryAll('.dfn-paneled');
-        for(let dfn of dfns) { ; }
-
-        document.body.addEventListener("click", (e) => {
-            // If not handled already, just hide all dfn panels.
-            hideAllDfnPanels();
-        });
-    })
-
-
-    function hideAllDfnPanels() {
-        // Turn off any currently "on" or "activated" panels.
-        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>hideDfnPanel(el));
-    }
-
-    function showDfnPanel(dfnPanel, dfn) {
-        hideAllDfnPanels(); // Only display one at this time.
-        dfn.setAttribute("aria-expanded", "true");
-        dfnPanel.classList.add("on");
-        dfnPanel.style.left = "5px";
-        dfnPanel.style.top = "0px";
-        const panelRect = dfnPanel.getBoundingClientRect();
-        const panelWidth = panelRect.right - panelRect.left;
-        if (panelRect.right > document.body.scrollWidth) {
-            // Panel's overflowing the screen.
-            // Just drop it below the dfn and flip it rightward instead.
-            // This still wont' fix things if the screen is *really* wide,
-            // but fixing that's a lot harder without 'anchor()'.
-            dfnPanel.style.top = "1.5em";
-            dfnPanel.style.left = "auto";
-            dfnPanel.style.right = "0px";
-        }
-    }
-
-    function pinDfnPanel(dfnPanel) {
-        // Switch it to "activated" state, which pins it.
-        dfnPanel.classList.add("activated");
-        dfnPanel.style.left = null;
-        dfnPanel.style.top = null;
-    }
-
-    function hideDfnPanel(dfnPanel, dfn) {
-        if(!dfn) {
-            dfn = document.getElementById(dfnPanel.getAttribute("data-for"));
-        }
-        dfn.setAttribute("aria-expanded", "false")
-        dfnPanel.classList.remove("on");
-        dfnPanel.classList.remove("activated");
-    }
-
-    function toggleDfnPanel(dfnPanel, dfn) {
-        if(dfnPanel.classList.contains("on")) {
-            hideDfnPanel(dfnPanel, dfn);
-        } else {
-            showDfnPanel(dfnPanel, dfn);
-        }
-    }
-
-    function insertDfnPopupAction(dfn, dfnPanel) {
-        // Find dfn panel
-        const panelWrapper = document.createElement('span');
-        panelWrapper.appendChild(dfnPanel);
-        panelWrapper.style.position = "relative";
-        panelWrapper.style.height = "0px";
-        dfn.insertAdjacentElement("afterend", panelWrapper);
-        dfn.setAttribute('role', 'button');
-        dfn.setAttribute('aria-expanded', 'false')
-        dfn.tabIndex = 0;
-        dfn.classList.add('has-dfn-panel');
-        dfn.addEventListener('click', (event) => {
-            showDfnPanel(dfnPanel, dfn);
-            event.stopPropagation();
-        });
-        dfn.addEventListener('keypress', (event) => {
-            const kc = event.keyCode;
-            // 32->Space, 13->Enter
-            if(kc == 32 || kc == 13) {
-                toggleDfnPanel(dfnPanel, dfn);
-                event.stopPropagation();
-                event.preventDefault();
-            }
-        });
-
-        dfnPanel.addEventListener('click', (event) => {
-            if (event.target.nodeName == 'A') {
-                pinDfnPanel(dfnPanel);
-            }
-            event.stopPropagation();
-        });
-
-        dfnPanel.addEventListener('keydown', (event) => {
-            if(event.keyCode == 27) { // Escape key
-                hideDfnPanel(dfnPanel, dfn);
-                event.stopPropagation();
-                event.preventDefault();
-            }
-        })
-    }
-}
-</script>
-<script>/* Boilerplate: script-dfn-panel-json */
-window.dfnpanelData = {};
-window.dfnpanelData['font-subset'] = {"dfnID": "font-subset", "url": "#font-subset", "dfnText": "font subset", "refSections": [{"refs": [{"id": "ref-for-font-subset"}], "title": "3.1. Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2460"}], "title": "4.2.1.1. Interpreting Format 1"}, {"refs": [{"id": "ref-for-font-subset\u2461"}], "title": "5. Font Patch Formats"}, {"refs": [{"id": "ref-for-font-subset\u2462"}, {"id": "ref-for-font-subset\u2463"}, {"id": "ref-for-font-subset\u2464"}, {"id": "ref-for-font-subset\u2465"}], "title": "5.1. Definitions"}, {"refs": [{"id": "ref-for-font-subset\u2466"}, {"id": "ref-for-font-subset\u2467"}, {"id": "ref-for-font-subset\u2468"}], "title": "5.2. Patch Invalidations"}, {"refs": [{"id": "ref-for-font-subset\u2460\u24ea"}, {"id": "ref-for-font-subset\u2460\u2460"}, {"id": "ref-for-font-subset\u2460\u2461"}, {"id": "ref-for-font-subset\u2460\u2462"}], "title": "5.3. Formats Summary"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2463"}], "title": "5.4. Brotli Patch"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2464"}, {"id": "ref-for-font-subset\u2460\u2465"}, {"id": "ref-for-font-subset\u2460\u2466"}], "title": "5.4.1. Applying Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2460\u2467"}, {"id": "ref-for-font-subset\u2460\u2468"}], "title": "5.5. Per Table Brotli"}, {"refs": [{"id": "ref-for-font-subset\u2461\u24ea"}, {"id": "ref-for-font-subset\u2461\u2460"}, {"id": "ref-for-font-subset\u2461\u2461"}], "title": "5.5.1. Applying Per Table Brotli Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2462"}], "title": "5.6. Glyph Keyed"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2463"}, {"id": "ref-for-font-subset\u2461\u2464"}, {"id": "ref-for-font-subset\u2461\u2465"}], "title": "5.6.1. Applying Glyph Keyed Patches"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2466"}, {"id": "ref-for-font-subset\u2461\u2467"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-font-subset\u2461\u2468"}], "title": "6.1. Fully Expanding a Font"}, {"refs": [{"id": "ref-for-font-subset\u2462\u24ea"}], "title": "7. Encoder"}, {"refs": [{"id": "ref-for-font-subset\u2462\u2460"}], "title": "7.1. Encoder Considerations"}], "external": false};
-window.dfnpanelData['font-subset-definition'] = {"dfnID": "font-subset-definition", "url": "#font-subset-definition", "dfnText": "font subset definition", "refSections": [{"refs": [{"id": "ref-for-font-subset-definition"}], "title": "4. Extensions to the Font Format"}, {"refs": [{"id": "ref-for-font-subset-definition\u2460"}, {"id": "ref-for-font-subset-definition\u2461"}], "title": "4.2. Patch Map Table"}, {"refs": [{"id": "ref-for-font-subset-definition\u2462"}, {"id": "ref-for-font-subset-definition\u2463"}, {"id": "ref-for-font-subset-definition\u2464"}], "title": "4.2.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-font-subset-definition\u2465"}, {"id": "ref-for-font-subset-definition\u2466"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-font-subset-definition\u2467"}], "title": "7. Encoder"}, {"refs": [{"id": "ref-for-font-subset-definition\u2468"}], "title": "7.1. Encoder Considerations"}], "external": false};
-window.dfnpanelData['incremental-font'] = {"dfnID": "incremental-font", "url": "#incremental-font", "dfnText": "incremental font", "refSections": [{"refs": [{"id": "ref-for-incremental-font"}, {"id": "ref-for-incremental-font\u2460"}, {"id": "ref-for-incremental-font\u2461"}, {"id": "ref-for-incremental-font\u2462"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-incremental-font\u2463"}], "title": "6.1. Fully Expanding a Font"}, {"refs": [{"id": "ref-for-incremental-font\u2464"}, {"id": "ref-for-incremental-font\u2465"}, {"id": "ref-for-incremental-font\u2466"}, {"id": "ref-for-incremental-font\u2467"}, {"id": "ref-for-incremental-font\u2468"}, {"id": "ref-for-incremental-font\u2460\u24ea"}, {"id": "ref-for-incremental-font\u2460\u2460"}], "title": "7. Encoder"}], "external": false};
-window.dfnpanelData['patch-map-entries'] = {"dfnID": "patch-map-entries", "url": "#patch-map-entries", "dfnText": "patch map entries", "refSections": [{"refs": [{"id": "ref-for-patch-map-entries"}, {"id": "ref-for-patch-map-entries\u2460"}, {"id": "ref-for-patch-map-entries\u2461"}, {"id": "ref-for-patch-map-entries\u2462"}], "title": "4.2.1.1. Interpreting Format 1"}, {"refs": [{"id": "ref-for-patch-map-entries\u2463"}, {"id": "ref-for-patch-map-entries\u2464"}, {"id": "ref-for-patch-map-entries\u2465"}], "title": "4.2.2.1. Interpreting Format 2"}, {"refs": [{"id": "ref-for-patch-map-entries\u2466"}, {"id": "ref-for-patch-map-entries\u2467"}, {"id": "ref-for-patch-map-entries\u2468"}], "title": "6. Extending a Font Subset"}], "external": false};
-window.dfnpanelData['format-1-patch-map'] = {"dfnID": "format-1-patch-map", "url": "#format-1-patch-map", "dfnText": "Format 1 Patch Map", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['format-1-patch-map-format'] = {"dfnID": "format-1-patch-map-format", "url": "#format-1-patch-map-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-format"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['format-1-patch-map-id'] = {"dfnID": "format-1-patch-map-id", "url": "#format-1-patch-map-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-id"}, {"id": "ref-for-format-1-patch-map-id\u2460"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['format-1-patch-map-entrycount'] = {"dfnID": "format-1-patch-map-entrycount", "url": "#format-1-patch-map-entrycount", "dfnText": "entryCount", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-entrycount"}, {"id": "ref-for-format-1-patch-map-entrycount\u2460"}, {"id": "ref-for-format-1-patch-map-entrycount\u2461"}, {"id": "ref-for-format-1-patch-map-entrycount\u2462"}, {"id": "ref-for-format-1-patch-map-entrycount\u2463"}], "title": "4.2.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['format-1-patch-map-glyphcount'] = {"dfnID": "format-1-patch-map-glyphcount", "url": "#format-1-patch-map-glyphcount", "dfnText": "glyphCount", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-glyphcount"}], "title": "4.2.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['format-1-patch-map-appliedentriesbitmap'] = {"dfnID": "format-1-patch-map-appliedentriesbitmap", "url": "#format-1-patch-map-appliedentriesbitmap", "dfnText": "appliedEntriesBitMap", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-appliedentriesbitmap"}, {"id": "ref-for-format-1-patch-map-appliedentriesbitmap\u2460"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['format-1-patch-map-uritemplate'] = {"dfnID": "format-1-patch-map-uritemplate", "url": "#format-1-patch-map-uritemplate", "dfnText": "uriTemplate", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-uritemplate"}, {"id": "ref-for-format-1-patch-map-uritemplate\u2460"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['format-1-patch-map-patchencoding'] = {"dfnID": "format-1-patch-map-patchencoding", "url": "#format-1-patch-map-patchencoding", "dfnText": "patchEncoding", "refSections": [{"refs": [{"id": "ref-for-format-1-patch-map-patchencoding"}, {"id": "ref-for-format-1-patch-map-patchencoding\u2460"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['glyph-map'] = {"dfnID": "glyph-map", "url": "#glyph-map", "dfnText": "Glyph Map", "refSections": [{"refs": [{"id": "ref-for-glyph-map"}], "title": "4.2.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['glyph-map-firstmappedglyph'] = {"dfnID": "glyph-map-firstmappedglyph", "url": "#glyph-map-firstmappedglyph", "dfnText": "firstMappedGlyph", "refSections": [{"refs": [{"id": "ref-for-glyph-map-firstmappedglyph"}], "title": "4.2.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['glyph-map-entryindex'] = {"dfnID": "glyph-map-entryindex", "url": "#glyph-map-entryindex", "dfnText": "entryIndex", "refSections": [{"refs": [{"id": "ref-for-glyph-map-entryindex"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['feature-map'] = {"dfnID": "feature-map", "url": "#feature-map", "dfnText": "Feature Map", "refSections": [{"refs": [{"id": "ref-for-feature-map"}], "title": "4.2.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['feature-map-featurerecords'] = {"dfnID": "feature-map-featurerecords", "url": "#feature-map-featurerecords", "dfnText": "featureRecords", "refSections": [{"refs": [{"id": "ref-for-feature-map-featurerecords"}], "title": "4.2.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-feature-map-featurerecords\u2460"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['feature-map-entrymaprecords'] = {"dfnID": "feature-map-entrymaprecords", "url": "#feature-map-entrymaprecords", "dfnText": "entryMapRecords", "refSections": [{"refs": [{"id": "ref-for-feature-map-entrymaprecords"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['featurerecord'] = {"dfnID": "featurerecord", "url": "#featurerecord", "dfnText": "FeatureRecord", "refSections": [{"refs": [{"id": "ref-for-featurerecord"}], "title": "4.2.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-featurerecord\u2460"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['featurerecord-featuretag'] = {"dfnID": "featurerecord-featuretag", "url": "#featurerecord-featuretag", "dfnText": "featureTag", "refSections": [{"refs": [{"id": "ref-for-featurerecord-featuretag"}], "title": "4.2.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-featurerecord-featuretag\u2460"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['featurerecord-firstentryindex'] = {"dfnID": "featurerecord-firstentryindex", "url": "#featurerecord-firstentryindex", "dfnText": "firstEntryIndex", "refSections": [{"refs": [{"id": "ref-for-featurerecord-firstentryindex"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['featurerecord-entrymapcount'] = {"dfnID": "featurerecord-entrymapcount", "url": "#featurerecord-entrymapcount", "dfnText": "entryMapCount", "refSections": [{"refs": [{"id": "ref-for-featurerecord-entrymapcount"}], "title": "4.2.1. Patch Map Table: Format 1"}], "external": false};
-window.dfnpanelData['entrymaprecord'] = {"dfnID": "entrymaprecord", "url": "#entrymaprecord", "dfnText": "EntryMapRecord", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord"}, {"id": "ref-for-entrymaprecord\u2460"}], "title": "4.2.1. Patch Map Table: Format 1"}, {"refs": [{"id": "ref-for-entrymaprecord\u2461"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['entrymaprecord-firstentryindex'] = {"dfnID": "entrymaprecord-firstentryindex", "url": "#entrymaprecord-firstentryindex", "dfnText": "firstEntryIndex", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord-firstentryindex"}, {"id": "ref-for-entrymaprecord-firstentryindex\u2460"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['entrymaprecord-lastentryindex'] = {"dfnID": "entrymaprecord-lastentryindex", "url": "#entrymaprecord-lastentryindex", "dfnText": "lastEntryIndex", "refSections": [{"refs": [{"id": "ref-for-entrymaprecord-lastentryindex"}], "title": "4.2.1.1. Interpreting Format 1"}], "external": false};
-window.dfnpanelData['abstract-opdef-interpret-format-1-patch-map'] = {"dfnID": "abstract-opdef-interpret-format-1-patch-map", "url": "#abstract-opdef-interpret-format-1-patch-map", "dfnText": "Interpret Format 1 Patch Map", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-interpret-format-1-patch-map"}], "title": "6. Extending a Font Subset"}], "external": false};
-window.dfnpanelData['format-2-patch-map'] = {"dfnID": "format-2-patch-map", "url": "#format-2-patch-map", "dfnText": "Format 2 Patch Map", "refSections": [{"refs": [{"id": "ref-for-format-2-patch-map"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['format-2-patch-map-format'] = {"dfnID": "format-2-patch-map-format", "url": "#format-2-patch-map-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-format-2-patch-map-format"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['format-2-patch-map-id'] = {"dfnID": "format-2-patch-map-id", "url": "#format-2-patch-map-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-format-2-patch-map-id"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['format-2-patch-map-defaultpatchencoding'] = {"dfnID": "format-2-patch-map-defaultpatchencoding", "url": "#format-2-patch-map-defaultpatchencoding", "dfnText": "defaultPatchEncoding", "refSections": [{"refs": [{"id": "ref-for-format-2-patch-map-defaultpatchencoding"}], "title": "4.2.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-format-2-patch-map-defaultpatchencoding\u2460"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['format-2-patch-map-entrycount'] = {"dfnID": "format-2-patch-map-entrycount", "url": "#format-2-patch-map-entrycount", "dfnText": "entryCount", "refSections": [{"refs": [{"id": "ref-for-format-2-patch-map-entrycount"}], "title": "4.2.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-format-2-patch-map-entrycount\u2460"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['format-2-patch-map-entries'] = {"dfnID": "format-2-patch-map-entries", "url": "#format-2-patch-map-entries", "dfnText": "entries", "refSections": [{"refs": [{"id": "ref-for-format-2-patch-map-entries"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['format-2-patch-map-entryidstringdata'] = {"dfnID": "format-2-patch-map-entryidstringdata", "url": "#format-2-patch-map-entryidstringdata", "dfnText": "entryIdStringData", "refSections": [{"refs": [{"id": "ref-for-format-2-patch-map-entryidstringdata"}, {"id": "ref-for-format-2-patch-map-entryidstringdata\u2460"}, {"id": "ref-for-format-2-patch-map-entryidstringdata\u2461"}, {"id": "ref-for-format-2-patch-map-entryidstringdata\u2462"}], "title": "4.2.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-format-2-patch-map-entryidstringdata\u2463"}, {"id": "ref-for-format-2-patch-map-entryidstringdata\u2464"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['format-2-patch-map-uritemplate'] = {"dfnID": "format-2-patch-map-uritemplate", "url": "#format-2-patch-map-uritemplate", "dfnText": "uriTemplate", "refSections": [{"refs": [{"id": "ref-for-format-2-patch-map-uritemplate"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entries'] = {"dfnID": "mapping-entries", "url": "#mapping-entries", "dfnText": "Mapping Entries", "refSections": [{"refs": [{"id": "ref-for-mapping-entries"}], "title": "4.2.2. Patch Map Table: Format 2"}], "external": false};
-window.dfnpanelData['mapping-entries-entries'] = {"dfnID": "mapping-entries-entries", "url": "#mapping-entries-entries", "dfnText": "entries", "refSections": [{"refs": [{"id": "ref-for-mapping-entries-entries"}, {"id": "ref-for-mapping-entries-entries\u2460"}], "title": "4.2.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-mapping-entries-entries\u2461"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry'] = {"dfnID": "mapping-entry", "url": "#mapping-entry", "dfnText": "Mapping Entry", "refSections": [{"refs": [{"id": "ref-for-mapping-entry"}, {"id": "ref-for-mapping-entry\u2460"}, {"id": "ref-for-mapping-entry\u2461"}], "title": "4.2.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-mapping-entry\u2462"}, {"id": "ref-for-mapping-entry\u2463"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-formatflags'] = {"dfnID": "mapping-entry-formatflags", "url": "#mapping-entry-formatflags", "dfnText": "formatFlags", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-formatflags"}, {"id": "ref-for-mapping-entry-formatflags\u2460"}, {"id": "ref-for-mapping-entry-formatflags\u2461"}, {"id": "ref-for-mapping-entry-formatflags\u2462"}, {"id": "ref-for-mapping-entry-formatflags\u2463"}, {"id": "ref-for-mapping-entry-formatflags\u2464"}, {"id": "ref-for-mapping-entry-formatflags\u2465"}, {"id": "ref-for-mapping-entry-formatflags\u2466"}, {"id": "ref-for-mapping-entry-formatflags\u2467"}, {"id": "ref-for-mapping-entry-formatflags\u2468"}], "title": "4.2.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-mapping-entry-formatflags\u2460\u24ea"}, {"id": "ref-for-mapping-entry-formatflags\u2460\u2460"}, {"id": "ref-for-mapping-entry-formatflags\u2460\u2461"}, {"id": "ref-for-mapping-entry-formatflags\u2460\u2462"}, {"id": "ref-for-mapping-entry-formatflags\u2460\u2463"}, {"id": "ref-for-mapping-entry-formatflags\u2460\u2464"}, {"id": "ref-for-mapping-entry-formatflags\u2460\u2465"}, {"id": "ref-for-mapping-entry-formatflags\u2460\u2466"}, {"id": "ref-for-mapping-entry-formatflags\u2460\u2467"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-featurecount'] = {"dfnID": "mapping-entry-featurecount", "url": "#mapping-entry-featurecount", "dfnText": "featureCount", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-featurecount"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-featuretags'] = {"dfnID": "mapping-entry-featuretags", "url": "#mapping-entry-featuretags", "dfnText": "featureTags", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-featuretags"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-designspacecount'] = {"dfnID": "mapping-entry-designspacecount", "url": "#mapping-entry-designspacecount", "dfnText": "designSpaceCount", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-designspacecount"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-designspacesegments'] = {"dfnID": "mapping-entry-designspacesegments", "url": "#mapping-entry-designspacesegments", "dfnText": "designSpaceSegments", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-designspacesegments"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-copycount'] = {"dfnID": "mapping-entry-copycount", "url": "#mapping-entry-copycount", "dfnText": "copyCount", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-copycount"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-copyindices'] = {"dfnID": "mapping-entry-copyindices", "url": "#mapping-entry-copyindices", "dfnText": "copyIndices", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-copyindices"}, {"id": "ref-for-mapping-entry-copyindices\u2460"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-entryiddelta'] = {"dfnID": "mapping-entry-entryiddelta", "url": "#mapping-entry-entryiddelta", "dfnText": "entryIdDelta", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-entryiddelta"}], "title": "4.2.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-mapping-entry-entryiddelta\u2460"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-entryidstringlength'] = {"dfnID": "mapping-entry-entryidstringlength", "url": "#mapping-entry-entryidstringlength", "dfnText": "entryIdStringLength", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-entryidstringlength"}], "title": "4.2.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-mapping-entry-entryidstringlength\u2460"}, {"id": "ref-for-mapping-entry-entryidstringlength\u2461"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-patchencoding'] = {"dfnID": "mapping-entry-patchencoding", "url": "#mapping-entry-patchencoding", "dfnText": "patchEncoding", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-patchencoding"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-bias'] = {"dfnID": "mapping-entry-bias", "url": "#mapping-entry-bias", "dfnText": "bias", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-bias"}, {"id": "ref-for-mapping-entry-bias\u2460"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['mapping-entry-codepoints'] = {"dfnID": "mapping-entry-codepoints", "url": "#mapping-entry-codepoints", "dfnText": "codepoints", "refSections": [{"refs": [{"id": "ref-for-mapping-entry-codepoints"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['design-space-segment'] = {"dfnID": "design-space-segment", "url": "#design-space-segment", "dfnText": "Design Space Segment", "refSections": [{"refs": [{"id": "ref-for-design-space-segment"}], "title": "4.2.2. Patch Map Table: Format 2"}], "external": false};
-window.dfnpanelData['design-space-segment-tag'] = {"dfnID": "design-space-segment-tag", "url": "#design-space-segment-tag", "dfnText": "tag", "refSections": [{"refs": [{"id": "ref-for-design-space-segment-tag"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['design-space-segment-start'] = {"dfnID": "design-space-segment-start", "url": "#design-space-segment-start", "dfnText": "start", "refSections": [{"refs": [{"id": "ref-for-design-space-segment-start"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['design-space-segment-end'] = {"dfnID": "design-space-segment-end", "url": "#design-space-segment-end", "dfnText": "end", "refSections": [{"refs": [{"id": "ref-for-design-space-segment-end"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['abstract-opdef-interpret-format-2-patch-map'] = {"dfnID": "abstract-opdef-interpret-format-2-patch-map", "url": "#abstract-opdef-interpret-format-2-patch-map", "dfnText": "Interpret Format 2 Patch Map", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-interpret-format-2-patch-map"}], "title": "6. Extending a Font Subset"}], "external": false};
-window.dfnpanelData['abstract-opdef-interpret-format-2-patch-map-entry'] = {"dfnID": "abstract-opdef-interpret-format-2-patch-map-entry", "url": "#abstract-opdef-interpret-format-2-patch-map-entry", "dfnText": "Interpret Format 2 Patch Map Entry", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-interpret-format-2-patch-map-entry"}], "title": "4.2.2. Patch Map Table: Format 2"}, {"refs": [{"id": "ref-for-abstract-opdef-interpret-format-2-patch-map-entry\u2460"}], "title": "4.2.2.1. Interpreting Format 2"}], "external": false};
-window.dfnpanelData['sparse-bit-set'] = {"dfnID": "sparse-bit-set", "url": "#sparse-bit-set", "dfnText": "Sparse Bit Set", "refSections": [{"refs": [{"id": "ref-for-sparse-bit-set"}], "title": "4.2.2. Patch Map Table: Format 2"}], "external": false};
-window.dfnpanelData['branch-factor-encoding'] = {"dfnID": "branch-factor-encoding", "url": "#branch-factor-encoding", "dfnText": "Branch Factor Encoding", "refSections": [{"refs": [{"id": "ref-for-branch-factor-encoding"}], "title": "4.2.2.2. Sparse Bit Set"}], "external": false};
-window.dfnpanelData['font-patch'] = {"dfnID": "font-patch", "url": "#font-patch", "dfnText": "font patch", "refSections": [{"refs": [{"id": "ref-for-font-patch"}, {"id": "ref-for-font-patch\u2460"}], "title": "5.1. Definitions"}, {"refs": [{"id": "ref-for-font-patch\u2461"}], "title": "7. Encoder"}], "external": false};
-window.dfnpanelData['patch-format'] = {"dfnID": "patch-format", "url": "#patch-format", "dfnText": "patch format", "refSections": [{"refs": [{"id": "ref-for-patch-format"}, {"id": "ref-for-patch-format\u2460"}], "title": "5.1. Definitions"}], "external": false};
-window.dfnpanelData['patch-application-algorithm'] = {"dfnID": "patch-application-algorithm", "url": "#patch-application-algorithm", "dfnText": "patch application algorithm", "refSections": [{"refs": [{"id": "ref-for-patch-application-algorithm"}], "title": "5.4.1. Applying Brotli Patches"}, {"refs": [{"id": "ref-for-patch-application-algorithm\u2460"}], "title": "5.5.1. Applying Per Table Brotli Patches"}, {"refs": [{"id": "ref-for-patch-application-algorithm\u2461"}], "title": "5.6.1. Applying Glyph Keyed Patches"}], "external": false};
-window.dfnpanelData['full-invalidation'] = {"dfnID": "full-invalidation", "url": "#full-invalidation", "dfnText": "Full Invalidation", "refSections": [{"refs": [{"id": "ref-for-full-invalidation"}, {"id": "ref-for-full-invalidation\u2460"}], "title": "5.3. Formats Summary"}, {"refs": [{"id": "ref-for-full-invalidation\u2461"}, {"id": "ref-for-full-invalidation\u2462"}], "title": "6. Extending a Font Subset"}], "external": false};
-window.dfnpanelData['partial-invalidation'] = {"dfnID": "partial-invalidation", "url": "#partial-invalidation", "dfnText": "Partial Invalidation", "refSections": [{"refs": [{"id": "ref-for-partial-invalidation"}, {"id": "ref-for-partial-invalidation\u2460"}], "title": "5.3. Formats Summary"}, {"refs": [{"id": "ref-for-partial-invalidation\u2461"}, {"id": "ref-for-partial-invalidation\u2462"}], "title": "6. Extending a Font Subset"}], "external": false};
-window.dfnpanelData['no-invalidation'] = {"dfnID": "no-invalidation", "url": "#no-invalidation", "dfnText": "No Invalidation", "refSections": [{"refs": [{"id": "ref-for-no-invalidation"}], "title": "5.3. Formats Summary"}, {"refs": [{"id": "ref-for-no-invalidation\u2460"}], "title": "6. Extending a Font Subset"}], "external": false};
-window.dfnpanelData['brotli-patch'] = {"dfnID": "brotli-patch", "url": "#brotli-patch", "dfnText": "Brotli patch", "refSections": [{"refs": [{"id": "ref-for-brotli-patch"}], "title": "5.4.1. Applying Brotli Patches"}], "external": false};
-window.dfnpanelData['brotli-patch-format'] = {"dfnID": "brotli-patch-format", "url": "#brotli-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-brotli-patch-format"}], "title": "5.4.1. Applying Brotli Patches"}], "external": false};
-window.dfnpanelData['brotli-patch-id'] = {"dfnID": "brotli-patch-id", "url": "#brotli-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-brotli-patch-id"}], "title": "5.4.1. Applying Brotli Patches"}], "external": false};
-window.dfnpanelData['brotli-patch-brotlistream'] = {"dfnID": "brotli-patch-brotlistream", "url": "#brotli-patch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-brotli-patch-brotlistream"}], "title": "5.4. Brotli Patch"}, {"refs": [{"id": "ref-for-brotli-patch-brotlistream\u2460"}], "title": "5.4.1. Applying Brotli Patches"}], "external": false};
-window.dfnpanelData['per-table-brotli-patch'] = {"dfnID": "per-table-brotli-patch", "url": "#per-table-brotli-patch", "dfnText": "Per table brotli patch", "refSections": [{"refs": [{"id": "ref-for-per-table-brotli-patch"}], "title": "5.5.1. Applying Per Table Brotli Patches"}], "external": false};
-window.dfnpanelData['per-table-brotli-patch-format'] = {"dfnID": "per-table-brotli-patch-format", "url": "#per-table-brotli-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-per-table-brotli-patch-format"}], "title": "5.5.1. Applying Per Table Brotli Patches"}], "external": false};
-window.dfnpanelData['per-table-brotli-patch-id'] = {"dfnID": "per-table-brotli-patch-id", "url": "#per-table-brotli-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-per-table-brotli-patch-id"}], "title": "5.5.1. Applying Per Table Brotli Patches"}], "external": false};
-window.dfnpanelData['per-table-brotli-patch-patches'] = {"dfnID": "per-table-brotli-patch-patches", "url": "#per-table-brotli-patch-patches", "dfnText": "patches", "refSections": [{"refs": [{"id": "ref-for-per-table-brotli-patch-patches"}], "title": "5.5. Per Table Brotli"}, {"refs": [{"id": "ref-for-per-table-brotli-patch-patches\u2460"}, {"id": "ref-for-per-table-brotli-patch-patches\u2461"}, {"id": "ref-for-per-table-brotli-patch-patches\u2462"}, {"id": "ref-for-per-table-brotli-patch-patches\u2463"}, {"id": "ref-for-per-table-brotli-patch-patches\u2464"}], "title": "5.5.1. Applying Per Table Brotli Patches"}], "external": false};
-window.dfnpanelData['tablepatch'] = {"dfnID": "tablepatch", "url": "#tablepatch", "dfnText": "TablePatch", "refSections": [{"refs": [{"id": "ref-for-tablepatch"}, {"id": "ref-for-tablepatch\u2460"}], "title": "5.5. Per Table Brotli"}, {"refs": [{"id": "ref-for-tablepatch\u2461"}], "title": "5.5.1. Applying Per Table Brotli Patches"}], "external": false};
-window.dfnpanelData['tablepatch-tag'] = {"dfnID": "tablepatch-tag", "url": "#tablepatch-tag", "dfnText": "tag", "refSections": [{"refs": [{"id": "ref-for-tablepatch-tag"}, {"id": "ref-for-tablepatch-tag\u2460"}, {"id": "ref-for-tablepatch-tag\u2461"}, {"id": "ref-for-tablepatch-tag\u2462"}, {"id": "ref-for-tablepatch-tag\u2463"}], "title": "5.5.1. Applying Per Table Brotli Patches"}], "external": false};
-window.dfnpanelData['tablepatch-flags'] = {"dfnID": "tablepatch-flags", "url": "#tablepatch-flags", "dfnText": "flags", "refSections": [{"refs": [{"id": "ref-for-tablepatch-flags"}, {"id": "ref-for-tablepatch-flags\u2460"}], "title": "5.5.1. Applying Per Table Brotli Patches"}], "external": false};
-window.dfnpanelData['tablepatch-brotlistream'] = {"dfnID": "tablepatch-brotlistream", "url": "#tablepatch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-tablepatch-brotlistream"}], "title": "5.5. Per Table Brotli"}, {"refs": [{"id": "ref-for-tablepatch-brotlistream\u2460"}, {"id": "ref-for-tablepatch-brotlistream\u2461"}, {"id": "ref-for-tablepatch-brotlistream\u2462"}, {"id": "ref-for-tablepatch-brotlistream\u2463"}], "title": "5.5.1. Applying Per Table Brotli Patches"}], "external": false};
-window.dfnpanelData['glyph-keyed-patch'] = {"dfnID": "glyph-keyed-patch", "url": "#glyph-keyed-patch", "dfnText": "Glyph keyed patch", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch"}], "title": "5.6.1. Applying Glyph Keyed Patches"}], "external": false};
-window.dfnpanelData['glyph-keyed-patch-format'] = {"dfnID": "glyph-keyed-patch-format", "url": "#glyph-keyed-patch-format", "dfnText": "format", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch-format"}], "title": "5.6.1. Applying Glyph Keyed Patches"}], "external": false};
-window.dfnpanelData['glyph-keyed-patch-id'] = {"dfnID": "glyph-keyed-patch-id", "url": "#glyph-keyed-patch-id", "dfnText": "id", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch-id"}], "title": "5.6.1. Applying Glyph Keyed Patches"}], "external": false};
-window.dfnpanelData['glyph-keyed-patch-brotlistream'] = {"dfnID": "glyph-keyed-patch-brotlistream", "url": "#glyph-keyed-patch-brotlistream", "dfnText": "brotliStream", "refSections": [{"refs": [{"id": "ref-for-glyph-keyed-patch-brotlistream"}], "title": "5.6. Glyph Keyed"}, {"refs": [{"id": "ref-for-glyph-keyed-patch-brotlistream\u2460"}], "title": "5.6.1. Applying Glyph Keyed Patches"}], "external": false};
-window.dfnpanelData['glyphpatches'] = {"dfnID": "glyphpatches", "url": "#glyphpatches", "dfnText": "GlyphPatches", "refSections": [{"refs": [{"id": "ref-for-glyphpatches"}, {"id": "ref-for-glyphpatches\u2460"}], "title": "5.6. Glyph Keyed"}, {"refs": [{"id": "ref-for-glyphpatches\u2461"}], "title": "5.6.1. Applying Glyph Keyed Patches"}], "external": false};
-window.dfnpanelData['glyphpatches-glyphcount'] = {"dfnID": "glyphpatches-glyphcount", "url": "#glyphpatches-glyphcount", "dfnText": "glyphCount", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-glyphcount"}, {"id": "ref-for-glyphpatches-glyphcount\u2460"}], "title": "5.6. Glyph Keyed"}], "external": false};
-window.dfnpanelData['glyphpatches-glyphids'] = {"dfnID": "glyphpatches-glyphids", "url": "#glyphpatches-glyphids", "dfnText": "glyphIds", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-glyphids"}], "title": "5.6.1. Applying Glyph Keyed Patches"}], "external": false};
-window.dfnpanelData['glyphpatches-tables'] = {"dfnID": "glyphpatches-tables", "url": "#glyphpatches-tables", "dfnText": "tables", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-tables"}, {"id": "ref-for-glyphpatches-tables\u2460"}], "title": "5.6. Glyph Keyed"}, {"refs": [{"id": "ref-for-glyphpatches-tables\u2461"}], "title": "5.6.1. Applying Glyph Keyed Patches"}], "external": false};
-window.dfnpanelData['glyphpatches-glyphdataoffsets'] = {"dfnID": "glyphpatches-glyphdataoffsets", "url": "#glyphpatches-glyphdataoffsets", "dfnText": "glyphDataOffsets", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-glyphdataoffsets"}], "title": "5.6. Glyph Keyed"}, {"refs": [{"id": "ref-for-glyphpatches-glyphdataoffsets\u2460"}, {"id": "ref-for-glyphpatches-glyphdataoffsets\u2461"}, {"id": "ref-for-glyphpatches-glyphdataoffsets\u2462"}], "title": "5.6.1. Applying Glyph Keyed Patches"}], "external": false};
-window.dfnpanelData['glyphpatches-glyphdata'] = {"dfnID": "glyphpatches-glyphdata", "url": "#glyphpatches-glyphdata", "dfnText": "glyphData", "refSections": [{"refs": [{"id": "ref-for-glyphpatches-glyphdata"}], "title": "5.6.1. Applying Glyph Keyed Patches"}], "external": false};
-window.dfnpanelData['abstract-opdef-extend-a-font-subset'] = {"dfnID": "abstract-opdef-extend-a-font-subset", "url": "#abstract-opdef-extend-a-font-subset", "dfnText": "Extend a Font Subset", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-extend-a-font-subset"}], "title": "6.1. Fully Expanding a Font"}, {"refs": [{"id": "ref-for-abstract-opdef-extend-a-font-subset\u2460"}, {"id": "ref-for-abstract-opdef-extend-a-font-subset\u2461"}, {"id": "ref-for-abstract-opdef-extend-a-font-subset\u2462"}], "title": "7. Encoder"}], "external": false};
-window.dfnpanelData['abstract-opdef-check-entry-intersection'] = {"dfnID": "abstract-opdef-check-entry-intersection", "url": "#abstract-opdef-check-entry-intersection", "dfnText": "Check entry intersection", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-check-entry-intersection"}], "title": "6. Extending a Font Subset"}, {"refs": [{"id": "ref-for-abstract-opdef-check-entry-intersection\u2460"}], "title": "6.1. Fully Expanding a Font"}], "external": false};
-window.dfnpanelData['abstract-opdef-load-patch-file'] = {"dfnID": "abstract-opdef-load-patch-file", "url": "#abstract-opdef-load-patch-file", "dfnText": "Load patch file", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-load-patch-file"}], "title": "6. Extending a Font Subset"}], "external": false};
-window.dfnpanelData['abstract-opdef-handle-errors'] = {"dfnID": "abstract-opdef-handle-errors", "url": "#abstract-opdef-handle-errors", "dfnText": "Handle errors", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-handle-errors"}], "title": "6. Extending a Font Subset"}], "external": false};
-window.dfnpanelData['abstract-opdef-fully-expand-a-font-subset'] = {"dfnID": "abstract-opdef-fully-expand-a-font-subset", "url": "#abstract-opdef-fully-expand-a-font-subset", "dfnText": "Fully Expand a Font Subset", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-fully-expand-a-font-subset"}], "title": "2.1. Offline Usage"}, {"refs": [{"id": "ref-for-abstract-opdef-fully-expand-a-font-subset\u2460"}, {"id": "ref-for-abstract-opdef-fully-expand-a-font-subset\u2461"}], "title": "7. Encoder"}], "external": false};
-</script>
 <script>/* Boilerplate: script-dom-helper */
+"use strict";
 function query(sel) { return document.querySelector(sel); }
 
 function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
@@ -2806,103 +2664,863 @@ function parseHTML(markup) {
 		el.innerHTML = markup;
 		return el.content;
 	}
+}</script>
+<script>/* Boilerplate: script-dfn-panel */
+"use strict";
+{
+let dfnPanelData = {
+"abstract-opdef-apply-brotli-patch": {"dfnID":"abstract-opdef-apply-brotli-patch","dfnText":"Apply brotli patch","external":false,"refSections":[],"url":"#abstract-opdef-apply-brotli-patch"},
+"abstract-opdef-apply-glyph-keyed-patch": {"dfnID":"abstract-opdef-apply-glyph-keyed-patch","dfnText":"Apply glyph keyed patch","external":false,"refSections":[],"url":"#abstract-opdef-apply-glyph-keyed-patch"},
+"abstract-opdef-apply-per-table-brotli-patch": {"dfnID":"abstract-opdef-apply-per-table-brotli-patch","dfnText":"Apply per table brotli patch","external":false,"refSections":[],"url":"#abstract-opdef-apply-per-table-brotli-patch"},
+"abstract-opdef-check-entry-intersection": {"dfnID":"abstract-opdef-check-entry-intersection","dfnText":"Check entry intersection","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection"}],"title":"6. Extending a Font Subset"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2460"}],"title":"6.1. Fully Expanding a Font"}],"url":"#abstract-opdef-check-entry-intersection"},
+"abstract-opdef-decoding-sparse-bit-set-treedata": {"dfnID":"abstract-opdef-decoding-sparse-bit-set-treedata","dfnText":"Decoding sparse bit set treeData","external":false,"refSections":[],"url":"#abstract-opdef-decoding-sparse-bit-set-treedata"},
+"abstract-opdef-extend-a-font-subset": {"dfnID":"abstract-opdef-extend-a-font-subset","dfnText":"Extend a Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-extend-a-font-subset"}],"title":"6.1. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-extend-a-font-subset\u2460"},{"id":"ref-for-abstract-opdef-extend-a-font-subset\u2461"},{"id":"ref-for-abstract-opdef-extend-a-font-subset\u2462"}],"title":"7. Encoder"}],"url":"#abstract-opdef-extend-a-font-subset"},
+"abstract-opdef-fully-expand-a-font-subset": {"dfnID":"abstract-opdef-fully-expand-a-font-subset","dfnText":"Fully Expand a Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset"}],"title":"2.1. Offline Usage"},{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2460"},{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2461"}],"title":"7. Encoder"}],"url":"#abstract-opdef-fully-expand-a-font-subset"},
+"abstract-opdef-handle-errors": {"dfnID":"abstract-opdef-handle-errors","dfnText":"Handle errors","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-handle-errors"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-handle-errors"},
+"abstract-opdef-interpret-format-1-patch-map": {"dfnID":"abstract-opdef-interpret-format-1-patch-map","dfnText":"Interpret Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-1-patch-map"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-interpret-format-1-patch-map"},
+"abstract-opdef-interpret-format-2-patch-map": {"dfnID":"abstract-opdef-interpret-format-2-patch-map","dfnText":"Interpret Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-interpret-format-2-patch-map"},
+"abstract-opdef-interpret-format-2-patch-map-entry": {"dfnID":"abstract-opdef-interpret-format-2-patch-map-entry","dfnText":"Interpret Format 2 Patch Map Entry","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#abstract-opdef-interpret-format-2-patch-map-entry"},
+"abstract-opdef-load-patch-file": {"dfnID":"abstract-opdef-load-patch-file","dfnText":"Load patch file","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-load-patch-file"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-load-patch-file"},
+"branch-factor-encoding": {"dfnID":"branch-factor-encoding","dfnText":"Branch Factor Encoding","external":false,"refSections":[{"refs":[{"id":"ref-for-branch-factor-encoding"}],"title":"4.2.2.2. Sparse Bit Set"}],"url":"#branch-factor-encoding"},
+"brotli-patch": {"dfnID":"brotli-patch","dfnText":"Brotli patch","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch"},
+"brotli-patch-brotlistream": {"dfnID":"brotli-patch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch-brotlistream"}],"title":"5.4. Brotli Patch"},{"refs":[{"id":"ref-for-brotli-patch-brotlistream\u2460"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch-brotlistream"},
+"brotli-patch-format": {"dfnID":"brotli-patch-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch-format"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch-format"},
+"brotli-patch-id": {"dfnID":"brotli-patch-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch-id"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch-id"},
+"design-space-segment": {"dfnID":"design-space-segment","dfnText":"Design Space Segment","external":false,"refSections":[{"refs":[{"id":"ref-for-design-space-segment"}],"title":"4.2.2. Patch Map Table: Format 2"}],"url":"#design-space-segment"},
+"design-space-segment-end": {"dfnID":"design-space-segment-end","dfnText":"end","external":false,"refSections":[{"refs":[{"id":"ref-for-design-space-segment-end"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#design-space-segment-end"},
+"design-space-segment-start": {"dfnID":"design-space-segment-start","dfnText":"start","external":false,"refSections":[{"refs":[{"id":"ref-for-design-space-segment-start"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#design-space-segment-start"},
+"design-space-segment-tag": {"dfnID":"design-space-segment-tag","dfnText":"tag","external":false,"refSections":[{"refs":[{"id":"ref-for-design-space-segment-tag"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#design-space-segment-tag"},
+"entrymaprecord": {"dfnID":"entrymaprecord","dfnText":"EntryMapRecord","external":false,"refSections":[{"refs":[{"id":"ref-for-entrymaprecord"},{"id":"ref-for-entrymaprecord\u2460"}],"title":"4.2.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-entrymaprecord\u2461"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#entrymaprecord"},
+"entrymaprecord-firstentryindex": {"dfnID":"entrymaprecord-firstentryindex","dfnText":"firstEntryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-entrymaprecord-firstentryindex"},{"id":"ref-for-entrymaprecord-firstentryindex\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#entrymaprecord-firstentryindex"},
+"entrymaprecord-lastentryindex": {"dfnID":"entrymaprecord-lastentryindex","dfnText":"lastEntryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-entrymaprecord-lastentryindex"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#entrymaprecord-lastentryindex"},
+"feature-map": {"dfnID":"feature-map","dfnText":"Feature Map","external":false,"refSections":[{"refs":[{"id":"ref-for-feature-map"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#feature-map"},
+"feature-map-entrymaprecords": {"dfnID":"feature-map-entrymaprecords","dfnText":"entryMapRecords","external":false,"refSections":[{"refs":[{"id":"ref-for-feature-map-entrymaprecords"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#feature-map-entrymaprecords"},
+"feature-map-featurerecords": {"dfnID":"feature-map-featurerecords","dfnText":"featureRecords","external":false,"refSections":[{"refs":[{"id":"ref-for-feature-map-featurerecords"}],"title":"4.2.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-feature-map-featurerecords\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#feature-map-featurerecords"},
+"featurerecord": {"dfnID":"featurerecord","dfnText":"FeatureRecord","external":false,"refSections":[{"refs":[{"id":"ref-for-featurerecord"}],"title":"4.2.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-featurerecord\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#featurerecord"},
+"featurerecord-entrymapcount": {"dfnID":"featurerecord-entrymapcount","dfnText":"entryMapCount","external":false,"refSections":[{"refs":[{"id":"ref-for-featurerecord-entrymapcount"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#featurerecord-entrymapcount"},
+"featurerecord-featuretag": {"dfnID":"featurerecord-featuretag","dfnText":"featureTag","external":false,"refSections":[{"refs":[{"id":"ref-for-featurerecord-featuretag"}],"title":"4.2.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-featurerecord-featuretag\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#featurerecord-featuretag"},
+"featurerecord-firstentryindex": {"dfnID":"featurerecord-firstentryindex","dfnText":"firstEntryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-featurerecord-firstentryindex"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#featurerecord-firstentryindex"},
+"font-patch": {"dfnID":"font-patch","dfnText":"font patch","external":false,"refSections":[{"refs":[{"id":"ref-for-font-patch"},{"id":"ref-for-font-patch\u2460"}],"title":"5.1. Definitions"},{"refs":[{"id":"ref-for-font-patch\u2461"}],"title":"7. Encoder"}],"url":"#font-patch"},
+"font-subset": {"dfnID":"font-subset","dfnText":"font subset","external":false,"refSections":[{"refs":[{"id":"ref-for-font-subset"}],"title":"3.1. Font Subset"},{"refs":[{"id":"ref-for-font-subset\u2460"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-font-subset\u2461"}],"title":"5. Font Patch Formats"},{"refs":[{"id":"ref-for-font-subset\u2462"},{"id":"ref-for-font-subset\u2463"},{"id":"ref-for-font-subset\u2464"},{"id":"ref-for-font-subset\u2465"}],"title":"5.1. Definitions"},{"refs":[{"id":"ref-for-font-subset\u2466"},{"id":"ref-for-font-subset\u2467"},{"id":"ref-for-font-subset\u2468"}],"title":"5.2. Patch Invalidations"},{"refs":[{"id":"ref-for-font-subset\u2460\u24ea"},{"id":"ref-for-font-subset\u2460\u2460"},{"id":"ref-for-font-subset\u2460\u2461"},{"id":"ref-for-font-subset\u2460\u2462"}],"title":"5.3. Formats Summary"},{"refs":[{"id":"ref-for-font-subset\u2460\u2463"}],"title":"5.4. Brotli Patch"},{"refs":[{"id":"ref-for-font-subset\u2460\u2464"},{"id":"ref-for-font-subset\u2460\u2465"},{"id":"ref-for-font-subset\u2460\u2466"}],"title":"5.4.1. Applying Brotli Patches"},{"refs":[{"id":"ref-for-font-subset\u2460\u2467"},{"id":"ref-for-font-subset\u2460\u2468"}],"title":"5.5. Per Table Brotli"},{"refs":[{"id":"ref-for-font-subset\u2461\u24ea"},{"id":"ref-for-font-subset\u2461\u2460"},{"id":"ref-for-font-subset\u2461\u2461"}],"title":"5.5.1. Applying Per Table Brotli Patches"},{"refs":[{"id":"ref-for-font-subset\u2461\u2462"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-font-subset\u2461\u2463"},{"id":"ref-for-font-subset\u2461\u2464"},{"id":"ref-for-font-subset\u2461\u2465"}],"title":"5.6.1. Applying Glyph Keyed Patches"},{"refs":[{"id":"ref-for-font-subset\u2461\u2466"},{"id":"ref-for-font-subset\u2461\u2467"}],"title":"6. Extending a Font Subset"},{"refs":[{"id":"ref-for-font-subset\u2461\u2468"}],"title":"6.1. Fully Expanding a Font"},{"refs":[{"id":"ref-for-font-subset\u2462\u24ea"}],"title":"7. Encoder"},{"refs":[{"id":"ref-for-font-subset\u2462\u2460"}],"title":"7.1. Encoder Considerations"}],"url":"#font-subset"},
+"font-subset-definition": {"dfnID":"font-subset-definition","dfnText":"font subset definition","external":false,"refSections":[{"refs":[{"id":"ref-for-font-subset-definition"}],"title":"4. Extensions to the Font Format"},{"refs":[{"id":"ref-for-font-subset-definition\u2460"},{"id":"ref-for-font-subset-definition\u2461"}],"title":"4.2. Patch Map Table"},{"refs":[{"id":"ref-for-font-subset-definition\u2462"},{"id":"ref-for-font-subset-definition\u2463"},{"id":"ref-for-font-subset-definition\u2464"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-font-subset-definition\u2465"},{"id":"ref-for-font-subset-definition\u2466"}],"title":"6. Extending a Font Subset"},{"refs":[{"id":"ref-for-font-subset-definition\u2467"}],"title":"7. Encoder"},{"refs":[{"id":"ref-for-font-subset-definition\u2468"}],"title":"7.1. Encoder Considerations"}],"url":"#font-subset-definition"},
+"format-1-patch-map": {"dfnID":"format-1-patch-map","dfnText":"Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map"},
+"format-1-patch-map-appliedentriesbitmap": {"dfnID":"format-1-patch-map-appliedentriesbitmap","dfnText":"appliedEntriesBitMap","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-appliedentriesbitmap"},
+"format-1-patch-map-entrycount": {"dfnID":"format-1-patch-map-entrycount","dfnText":"entryCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-entrycount"},{"id":"ref-for-format-1-patch-map-entrycount\u2460"},{"id":"ref-for-format-1-patch-map-entrycount\u2461"},{"id":"ref-for-format-1-patch-map-entrycount\u2462"},{"id":"ref-for-format-1-patch-map-entrycount\u2463"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-entrycount"},
+"format-1-patch-map-format": {"dfnID":"format-1-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-format"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-format"},
+"format-1-patch-map-glyphcount": {"dfnID":"format-1-patch-map-glyphcount","dfnText":"glyphCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-glyphcount"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-glyphcount"},
+"format-1-patch-map-id": {"dfnID":"format-1-patch-map-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-id"},{"id":"ref-for-format-1-patch-map-id\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-id"},
+"format-1-patch-map-patchencoding": {"dfnID":"format-1-patch-map-patchencoding","dfnText":"patchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-patchencoding"},{"id":"ref-for-format-1-patch-map-patchencoding\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-patchencoding"},
+"format-1-patch-map-uritemplate": {"dfnID":"format-1-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate"},{"id":"ref-for-format-1-patch-map-uritemplate\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-uritemplate"},
+"format-2-patch-map": {"dfnID":"format-2-patch-map","dfnText":"Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map"},
+"format-2-patch-map-defaultpatchencoding": {"dfnID":"format-2-patch-map-defaultpatchencoding","dfnText":"defaultPatchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-defaultpatchencoding"},
+"format-2-patch-map-entries": {"dfnID":"format-2-patch-map-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entries"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entries"},
+"format-2-patch-map-entrycount": {"dfnID":"format-2-patch-map-entrycount","dfnText":"entryCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entrycount"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entrycount\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entrycount"},
+"format-2-patch-map-entryidstringdata": {"dfnID":"format-2-patch-map-entryidstringdata","dfnText":"entryIdStringData","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2460"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2461"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2462"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata\u2463"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2464"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entryidstringdata"},
+"format-2-patch-map-format": {"dfnID":"format-2-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-format"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-format"},
+"format-2-patch-map-id": {"dfnID":"format-2-patch-map-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-id"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-id"},
+"format-2-patch-map-uritemplate": {"dfnID":"format-2-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-uritemplate"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-uritemplate"},
+"full-invalidation": {"dfnID":"full-invalidation","dfnText":"Full Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-full-invalidation"},{"id":"ref-for-full-invalidation\u2460"}],"title":"5.3. Formats Summary"},{"refs":[{"id":"ref-for-full-invalidation\u2461"},{"id":"ref-for-full-invalidation\u2462"}],"title":"6. Extending a Font Subset"}],"url":"#full-invalidation"},
+"glyph-keyed-patch": {"dfnID":"glyph-keyed-patch","dfnText":"Glyph keyed patch","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch"},
+"glyph-keyed-patch-brotlistream": {"dfnID":"glyph-keyed-patch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-brotlistream"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-glyph-keyed-patch-brotlistream\u2460"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-brotlistream"},
+"glyph-keyed-patch-format": {"dfnID":"glyph-keyed-patch-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-format"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-format"},
+"glyph-keyed-patch-id": {"dfnID":"glyph-keyed-patch-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-id"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-id"},
+"glyph-map": {"dfnID":"glyph-map","dfnText":"Glyph Map","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#glyph-map"},
+"glyph-map-entryindex": {"dfnID":"glyph-map-entryindex","dfnText":"entryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map-entryindex"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#glyph-map-entryindex"},
+"glyph-map-firstmappedglyph": {"dfnID":"glyph-map-firstmappedglyph","dfnText":"firstMappedGlyph","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map-firstmappedglyph"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#glyph-map-firstmappedglyph"},
+"glyphpatches": {"dfnID":"glyphpatches","dfnText":"GlyphPatches","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches"},{"id":"ref-for-glyphpatches\u2460"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-glyphpatches\u2461"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches"},
+"glyphpatches-glyphcount": {"dfnID":"glyphpatches-glyphcount","dfnText":"glyphCount","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-glyphcount"},{"id":"ref-for-glyphpatches-glyphcount\u2460"}],"title":"5.6. Glyph Keyed"}],"url":"#glyphpatches-glyphcount"},
+"glyphpatches-glyphdata": {"dfnID":"glyphpatches-glyphdata","dfnText":"glyphData","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-glyphdata"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches-glyphdata"},
+"glyphpatches-glyphdataoffsets": {"dfnID":"glyphpatches-glyphdataoffsets","dfnText":"glyphDataOffsets","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-glyphdataoffsets"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-glyphpatches-glyphdataoffsets\u2460"},{"id":"ref-for-glyphpatches-glyphdataoffsets\u2461"},{"id":"ref-for-glyphpatches-glyphdataoffsets\u2462"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches-glyphdataoffsets"},
+"glyphpatches-glyphids": {"dfnID":"glyphpatches-glyphids","dfnText":"glyphIds","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-glyphids"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches-glyphids"},
+"glyphpatches-tables": {"dfnID":"glyphpatches-tables","dfnText":"tables","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-tables"},{"id":"ref-for-glyphpatches-tables\u2460"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-glyphpatches-tables\u2461"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches-tables"},
+"incremental-font": {"dfnID":"incremental-font","dfnText":"incremental font","external":false,"refSections":[{"refs":[{"id":"ref-for-incremental-font"},{"id":"ref-for-incremental-font\u2460"},{"id":"ref-for-incremental-font\u2461"},{"id":"ref-for-incremental-font\u2462"}],"title":"6. Extending a Font Subset"},{"refs":[{"id":"ref-for-incremental-font\u2463"}],"title":"6.1. Fully Expanding a Font"},{"refs":[{"id":"ref-for-incremental-font\u2464"},{"id":"ref-for-incremental-font\u2465"},{"id":"ref-for-incremental-font\u2466"},{"id":"ref-for-incremental-font\u2467"},{"id":"ref-for-incremental-font\u2468"},{"id":"ref-for-incremental-font\u2460\u24ea"},{"id":"ref-for-incremental-font\u2460\u2460"}],"title":"7. Encoder"}],"url":"#incremental-font"},
+"mapping-entries": {"dfnID":"mapping-entries","dfnText":"Mapping Entries","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entries"}],"title":"4.2.2. Patch Map Table: Format 2"}],"url":"#mapping-entries"},
+"mapping-entries-entries": {"dfnID":"mapping-entries-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entries-entries"},{"id":"ref-for-mapping-entries-entries\u2460"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entries-entries\u2461"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entries-entries"},
+"mapping-entry": {"dfnID":"mapping-entry","dfnText":"Mapping Entry","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry"},{"id":"ref-for-mapping-entry\u2460"},{"id":"ref-for-mapping-entry\u2461"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry\u2462"},{"id":"ref-for-mapping-entry\u2463"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry"},
+"mapping-entry-bias": {"dfnID":"mapping-entry-bias","dfnText":"bias","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-bias"},{"id":"ref-for-mapping-entry-bias\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-bias"},
+"mapping-entry-codepoints": {"dfnID":"mapping-entry-codepoints","dfnText":"codepoints","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-codepoints"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-codepoints"},
+"mapping-entry-copycount": {"dfnID":"mapping-entry-copycount","dfnText":"copyCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-copycount"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-copycount"},
+"mapping-entry-copyindices": {"dfnID":"mapping-entry-copyindices","dfnText":"copyIndices","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-copyindices"},{"id":"ref-for-mapping-entry-copyindices\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-copyindices"},
+"mapping-entry-designspacecount": {"dfnID":"mapping-entry-designspacecount","dfnText":"designSpaceCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-designspacecount"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-designspacecount"},
+"mapping-entry-designspacesegments": {"dfnID":"mapping-entry-designspacesegments","dfnText":"designSpaceSegments","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-designspacesegments"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-designspacesegments"},
+"mapping-entry-entryiddelta": {"dfnID":"mapping-entry-entryiddelta","dfnText":"entryIdDelta","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-entryiddelta"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-entryiddelta\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-entryiddelta"},
+"mapping-entry-entryidstringlength": {"dfnID":"mapping-entry-entryidstringlength","dfnText":"entryIdStringLength","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-entryidstringlength"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-entryidstringlength\u2460"},{"id":"ref-for-mapping-entry-entryidstringlength\u2461"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-entryidstringlength"},
+"mapping-entry-featurecount": {"dfnID":"mapping-entry-featurecount","dfnText":"featureCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-featurecount"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-featurecount"},
+"mapping-entry-featuretags": {"dfnID":"mapping-entry-featuretags","dfnText":"featureTags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-featuretags"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-featuretags"},
+"mapping-entry-formatflags": {"dfnID":"mapping-entry-formatflags","dfnText":"formatFlags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-formatflags"},{"id":"ref-for-mapping-entry-formatflags\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2467"},{"id":"ref-for-mapping-entry-formatflags\u2468"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u24ea"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2467"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-formatflags"},
+"mapping-entry-patchencoding": {"dfnID":"mapping-entry-patchencoding","dfnText":"patchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-patchencoding"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-patchencoding"},
+"no-invalidation": {"dfnID":"no-invalidation","dfnText":"No Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-no-invalidation"}],"title":"5.3. Formats Summary"},{"refs":[{"id":"ref-for-no-invalidation\u2460"}],"title":"6. Extending a Font Subset"}],"url":"#no-invalidation"},
+"partial-invalidation": {"dfnID":"partial-invalidation","dfnText":"Partial Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-partial-invalidation"},{"id":"ref-for-partial-invalidation\u2460"}],"title":"5.3. Formats Summary"},{"refs":[{"id":"ref-for-partial-invalidation\u2461"},{"id":"ref-for-partial-invalidation\u2462"}],"title":"6. Extending a Font Subset"}],"url":"#partial-invalidation"},
+"patch-application-algorithm": {"dfnID":"patch-application-algorithm","dfnText":"patch application algorithm","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-application-algorithm"}],"title":"5.4.1. Applying Brotli Patches"},{"refs":[{"id":"ref-for-patch-application-algorithm\u2460"}],"title":"5.5.1. Applying Per Table Brotli Patches"},{"refs":[{"id":"ref-for-patch-application-algorithm\u2461"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#patch-application-algorithm"},
+"patch-format": {"dfnID":"patch-format","dfnText":"patch format","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-format"},{"id":"ref-for-patch-format\u2460"}],"title":"5.1. Definitions"}],"url":"#patch-format"},
+"patch-map-entries": {"dfnID":"patch-map-entries","dfnText":"patch map entries","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-map-entries"},{"id":"ref-for-patch-map-entries\u2460"},{"id":"ref-for-patch-map-entries\u2461"},{"id":"ref-for-patch-map-entries\u2462"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-patch-map-entries\u2463"},{"id":"ref-for-patch-map-entries\u2464"},{"id":"ref-for-patch-map-entries\u2465"}],"title":"4.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-patch-map-entries\u2466"},{"id":"ref-for-patch-map-entries\u2467"},{"id":"ref-for-patch-map-entries\u2468"}],"title":"6. Extending a Font Subset"}],"url":"#patch-map-entries"},
+"per-table-brotli-patch": {"dfnID":"per-table-brotli-patch","dfnText":"Per table brotli patch","external":false,"refSections":[{"refs":[{"id":"ref-for-per-table-brotli-patch"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#per-table-brotli-patch"},
+"per-table-brotli-patch-format": {"dfnID":"per-table-brotli-patch-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-per-table-brotli-patch-format"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#per-table-brotli-patch-format"},
+"per-table-brotli-patch-id": {"dfnID":"per-table-brotli-patch-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-per-table-brotli-patch-id"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#per-table-brotli-patch-id"},
+"per-table-brotli-patch-patches": {"dfnID":"per-table-brotli-patch-patches","dfnText":"patches","external":false,"refSections":[{"refs":[{"id":"ref-for-per-table-brotli-patch-patches"}],"title":"5.5. Per Table Brotli"},{"refs":[{"id":"ref-for-per-table-brotli-patch-patches\u2460"},{"id":"ref-for-per-table-brotli-patch-patches\u2461"},{"id":"ref-for-per-table-brotli-patch-patches\u2462"},{"id":"ref-for-per-table-brotli-patch-patches\u2463"},{"id":"ref-for-per-table-brotli-patch-patches\u2464"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#per-table-brotli-patch-patches"},
+"sparse-bit-set": {"dfnID":"sparse-bit-set","dfnText":"Sparse Bit Set","external":false,"refSections":[{"refs":[{"id":"ref-for-sparse-bit-set"}],"title":"4.2.2. Patch Map Table: Format 2"}],"url":"#sparse-bit-set"},
+"tablepatch": {"dfnID":"tablepatch","dfnText":"TablePatch","external":false,"refSections":[{"refs":[{"id":"ref-for-tablepatch"},{"id":"ref-for-tablepatch\u2460"}],"title":"5.5. Per Table Brotli"},{"refs":[{"id":"ref-for-tablepatch\u2461"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#tablepatch"},
+"tablepatch-brotlistream": {"dfnID":"tablepatch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-tablepatch-brotlistream"}],"title":"5.5. Per Table Brotli"},{"refs":[{"id":"ref-for-tablepatch-brotlistream\u2460"},{"id":"ref-for-tablepatch-brotlistream\u2461"},{"id":"ref-for-tablepatch-brotlistream\u2462"},{"id":"ref-for-tablepatch-brotlistream\u2463"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#tablepatch-brotlistream"},
+"tablepatch-flags": {"dfnID":"tablepatch-flags","dfnText":"flags","external":false,"refSections":[{"refs":[{"id":"ref-for-tablepatch-flags"},{"id":"ref-for-tablepatch-flags\u2460"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#tablepatch-flags"},
+"tablepatch-tag": {"dfnID":"tablepatch-tag","dfnText":"tag","external":false,"refSections":[{"refs":[{"id":"ref-for-tablepatch-tag"},{"id":"ref-for-tablepatch-tag\u2460"},{"id":"ref-for-tablepatch-tag\u2461"},{"id":"ref-for-tablepatch-tag\u2462"},{"id":"ref-for-tablepatch-tag\u2463"}],"title":"5.5.1. Applying Per Table Brotli Patches"}],"url":"#tablepatch-tag"},
+};
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    genAllDfnPanels();
+
+    document.body.addEventListener("click", (e) => {
+        // If not handled already, just hide all dfn panels.
+        hideAllDfnPanels();
+    });
+});
+
+window.addEventListener("resize", () => {
+    // Pin any visible dfn panel
+    queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>positionDfnPanel(el));
+});
+
+function genAllDfnPanels() {
+    for(const panelData of Object.values(dfnPanelData)) {
+        const dfnID = panelData.dfnID;
+        const dfn = document.getElementById(dfnID);
+        if(!dfn) {
+            console.log(`Can't find dfn#${dfnID}.`, panelData);
+            continue;
+        }
+        dfn.panelData = panelData;
+        insertDfnPopupAction(dfn);
+    }
+}
+
+function genDfnPanel(dfn, { dfnID, url, dfnText, refSections, external }) {
+    const dfnPanel = mk.aside({
+        class: "dfn-panel on",
+        id: `infopanel-for-${dfnID}`,
+        "data-for": dfnID,
+        "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+        },
+        mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+            `Info about the '${dfnText}' ${external?"external":""} reference.`),
+        mk.a({href:url, class:"dfn-link"}, url),
+        refSections.length == 0 ? [] :
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({ href: `#${ref.id}` },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        genLinkingSyntaxes(dfn),
+    );
+
+    dfnPanel.addEventListener('click', (event) => {
+        if (event.target.nodeName == 'A') {
+            scrollToTargetAndHighlight(event);
+            pinDfnPanel(dfnPanel);
+        }
+        event.stopPropagation();
+        refocusOnTarget(event);
+    });
+    dfnPanel.addEventListener('keydown', (event) => {
+        if(event.keyCode == 27) { // Escape key
+            hideDfnPanel({dfnPanel});
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+
+    dfnPanel.dfn = dfn;
+    dfn.dfnPanel = dfnPanel;
+    return dfnPanel;
+}
+
+
+
+function hideAllDfnPanels() {
+    // Delete the currently-active dfn panel.
+    queryAll(".dfn-panel").forEach(dfnPanel=>hideDfnPanel({dfnPanel}));
+}
+
+function showDfnPanel(dfn) {
+    hideAllDfnPanels(); // Only display one at a time.
+
+    dfn.setAttribute("aria-expanded", "true");
+
+    const dfnPanel = genDfnPanel(dfn, dfn.panelData);
+
+    // Give the dfn a unique tabindex, and then
+    // give all the tabbable panel bits successive indexes.
+    let tabIndex = 100;
+    dfn.tabIndex = tabIndex++;
+    const tabbable = dfnPanel.querySelectorAll(":is(a, button)");
+    for (const el of tabbable) {
+        el.tabIndex = tabIndex++;
+    }
+
+    append(document.body, dfnPanel);
+    positionDfnPanel(dfnPanel);
+}
+
+function positionDfnPanel(dfnPanel) {
+    const dfn = dfnPanel.dfn;
+    const dfnPos = getBounds(dfn);
+    dfnPanel.style.top = dfnPos.bottom + "px";
+    dfnPanel.style.left = dfnPos.left + "px";
+
+    const panelPos = dfnPanel.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, dfnPos.left - overflowAmount);
+        dfnPanel.style.left = newLeft + "px";
+    }
+}
+
+function pinDfnPanel(dfnPanel) {
+    // Switch it to "activated" state, which pins it.
+    dfnPanel.classList.add("activated");
+    dfnPanel.style.position = "fixed";
+    dfnPanel.style.left = null;
+    dfnPanel.style.top = null;
+}
+
+function hideDfnPanel({dfn, dfnPanel}) {
+    if(!dfnPanel) dfnPanel = dfn.dfnPanel;
+    if(!dfn) dfn = dfnPanel.dfn;
+    dfn.dfnPanel = undefined;
+    dfnPanel.dfn = undefined;
+    dfn.setAttribute("aria-expanded", "false");
+    dfn.tabIndex = undefined;
+    dfnPanel.remove()
+}
+
+function toggleDfnPanel(dfn) {
+    if(dfn.dfnPanel) {
+        hideDfnPanel(dfn);
+    } else {
+        showDfnPanel(dfn);
+    }
+}
+
+function insertDfnPopupAction(dfn) {
+    dfn.setAttribute('role', 'button');
+    dfn.setAttribute('aria-expanded', 'false')
+    dfn.tabIndex = 0;
+    dfn.classList.add('has-dfn-panel');
+    dfn.addEventListener('click', (event) => {
+        toggleDfnPanel(dfn);
+        event.stopPropagation();
+    });
+    dfn.addEventListener('keypress', (event) => {
+        const kc = event.keyCode;
+        // 32->Space, 13->Enter
+        if(kc == 32 || kc == 13) {
+            toggleDfnPanel(dfn);
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+}
+
+function refocusOnTarget(event) {
+    const target = event.target;
+    setTimeout(() => {
+        // Refocus on the event.target element.
+        // This is needed after browser scrolls to the destination.
+        target.focus();
+    });
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function scrollToTargetAndHighlight(event) {
+    let hash = event.target.hash;
+    if (hash) {
+        hash = decodeURIComponent(hash.substring(1));
+        const dest = document.getElementById(hash);
+        if (dest) {
+            dest.classList.add('highlighted');
+            setTimeout(() => dest.classList.remove('highlighted'), 1000);
+        }
+    }
+}
+
+// Functions, divided by link type, that wrap an autolink's
+// contents with the appropriate outer syntax.
+// Alternately, a string naming another type they format
+// the same as.
+function needsFor(type) {
+    switch(type) {
+        case "descriptor":
+        case "value":
+        case "element-attr":
+        case "attr-value":
+        case "element-state":
+        case "method":
+        case "constructor":
+        case "argument":
+        case "attribute":
+        case "const":
+        case "dict-member":
+        case "event":
+        case "enum-value":
+        case "stringifier":
+        case "serializer":
+        case "iterator":
+        case "maplike":
+        case "setlike":
+        case "state":
+        case "mode":
+        case "context":
+        case "facet": return true;
+
+        default: return false;
+    }
+}
+function refusesFor(type) {
+    switch(type) {
+        case "property":
+        case "element":
+        case "interface":
+        case "namespace":
+        case "callback":
+        case "dictionary":
+        case "enum":
+        case "exception":
+        case "typedef":
+        case "http-header":
+        case "permission": return true;
+
+        default: return false;
+    }
+}
+function linkFormatterFromType(type) {
+    switch(type) {
+        case 'scheme':
+        case 'permission':
+        case 'dfn': return (text) => `[=${text}=]`;
+
+        case 'abstract-op': return (text) => `[\$${text}\$]`;
+
+        case 'function':
+        case 'at-rule':
+        case 'selector':
+        case 'value': return (text) => `''${text}''`;
+
+        case 'http-header': return (text) => `[:${text}:]`;
+
+        case 'interface':
+        case 'constructor':
+        case 'method':
+        case 'argument':
+        case 'attribute':
+        case 'callback':
+        case 'dictionary':
+        case 'dict-member':
+        case 'enum':
+        case 'enum-value':
+        case 'exception':
+        case 'const':
+        case 'typedef':
+        case 'stringifier':
+        case 'serializer':
+        case 'iterator':
+        case 'maplike':
+        case 'setlike':
+        case 'extended-attribute':
+        case 'event':
+        case 'idl': return (text) => `{{${text}}}`;
+
+        case 'element-state':
+        case 'element-attr':
+        case 'attr-value':
+        case 'element': return (element) => `<{${element}}>`;
+
+        case 'grammar': return (text) => `${text} (within a <pre class=prod>)`;
+
+        case 'type': return (text)=> `<<${text}>>`;
+
+        case 'descriptor':
+        case 'property': return (text) => `'${text}'`;
+
+        default: return;
+    };
+};
+
+function genLinkingSyntaxes(dfn) {
+    if(dfn.tagName != "DFN") return;
+
+    const type = dfn.getAttribute('data-dfn-type');
+    if(!type) {
+        console.log(`<dfn> doesn't have a data-dfn-type:`, dfn);
+        return [];
+    }
+
+    // Return a function that wraps link text based on the type
+    const linkFormatter = linkFormatterFromType(type);
+    if(!linkFormatter) {
+        console.log(`<dfn> has an unknown data-dfn-type:`, dfn);
+        return [];
+    }
+
+    let ltAlts;
+    if(dfn.hasAttribute('data-lt')) {
+        ltAlts = dfn.getAttribute('data-lt')
+            .split("|")
+            .map(x=>x.trim());
+    } else {
+        ltAlts = [dfn.textContent.trim()];
+    }
+    if(type == "type") {
+        // lt of "<foo>", but "foo" is the interior;
+        // <<foo/bar>> is how you write it with a for,
+        // not <foo/<bar>> or whatever.
+        for(var i = 0; i < ltAlts.length; i++) {
+            const lt = ltAlts[i];
+            const match = /<(.*)>/.exec(lt);
+            if(match) { ltAlts[i] = match[1]; }
+        }
+    }
+
+    let forAlts;
+    if(dfn.hasAttribute('data-dfn-for')) {
+        forAlts = dfn.getAttribute('data-dfn-for')
+            .split(",")
+            .map(x=>x.trim());
+    } else {
+        forAlts = [''];
+    }
+
+    let linkingSyntaxes = [];
+    if(!needsFor(type)) {
+        for(const lt of ltAlts) {
+            linkingSyntaxes.push(linkFormatter(lt));
+        }
+    }
+    if(!refusesFor(type)) {
+        for(const f of forAlts) {
+            linkingSyntaxes.push(linkFormatter(`${f}/${ltAlts[0]}`))
+        }
+    }
+    return [
+        mk.b({}, 'Possible linking syntaxes:'),
+        mk.ul({},
+            ...linkingSyntaxes.map(link => {
+                const copyLink = async () =>
+                    await navigator.clipboard.writeText(link);
+                return mk.li({},
+                    mk.div({ class: 'link-item' },
+                        mk.button({
+                            class: 'copy-icon', title: 'Copy',
+                            type: 'button',
+                            _onclick: copyLink,
+                            tabindex: 0,
+                        }, mk.span({ class: 'icon' }) ),
+                        mk.span({}, link)
+                    )
+                );
+            })
+        )
+    ];
+}
+}
+</script>
+<script>/* Boilerplate: script-ref-hints */
+"use strict";
+{
+let refsData = {
+"#abstract-opdef-check-entry-intersection": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Check entry intersection","type":"abstract-op","url":"#abstract-opdef-check-entry-intersection"},
+"#abstract-opdef-extend-a-font-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Extend a Font Subset","type":"abstract-op","url":"#abstract-opdef-extend-a-font-subset"},
+"#abstract-opdef-fully-expand-a-font-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Fully Expand a Font Subset","type":"abstract-op","url":"#abstract-opdef-fully-expand-a-font-subset"},
+"#abstract-opdef-handle-errors": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Handle errors","type":"abstract-op","url":"#abstract-opdef-handle-errors"},
+"#abstract-opdef-interpret-format-1-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-1-patch-map"},
+"#abstract-opdef-interpret-format-2-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map"},
+"#abstract-opdef-interpret-format-2-patch-map-entry": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map Entry","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map-entry"},
+"#abstract-opdef-load-patch-file": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Load patch file","type":"abstract-op","url":"#abstract-opdef-load-patch-file"},
+"#branch-factor-encoding": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"branch factor encoding","type":"dfn","url":"#branch-factor-encoding"},
+"#brotli-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotli patch","type":"dfn","url":"#brotli-patch"},
+"#brotli-patch-brotlistream": {"export":true,"for_":["Brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#brotli-patch-brotlistream"},
+"#brotli-patch-format": {"export":true,"for_":["Brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#brotli-patch-format"},
+"#brotli-patch-id": {"export":true,"for_":["Brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"id","type":"dfn","url":"#brotli-patch-id"},
+"#design-space-segment": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"design space segment","type":"dfn","url":"#design-space-segment"},
+"#design-space-segment-end": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"end","type":"dfn","url":"#design-space-segment-end"},
+"#design-space-segment-start": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"start","type":"dfn","url":"#design-space-segment-start"},
+"#design-space-segment-tag": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#design-space-segment-tag"},
+"#entrymaprecord": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecord","type":"dfn","url":"#entrymaprecord"},
+"#entrymaprecord-firstentryindex": {"export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstentryindex","type":"dfn","url":"#entrymaprecord-firstentryindex"},
+"#entrymaprecord-lastentryindex": {"export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"lastentryindex","type":"dfn","url":"#entrymaprecord-lastentryindex"},
+"#feature-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"feature map","type":"dfn","url":"#feature-map"},
+"#feature-map-entrymaprecords": {"export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecords","type":"dfn","url":"#feature-map-entrymaprecords"},
+"#feature-map-featurerecords": {"export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecords","type":"dfn","url":"#feature-map-featurerecords"},
+"#featurerecord": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecord","type":"dfn","url":"#featurerecord"},
+"#featurerecord-entrymapcount": {"export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymapcount","type":"dfn","url":"#featurerecord-entrymapcount"},
+"#featurerecord-featuretag": {"export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretag","type":"dfn","url":"#featurerecord-featuretag"},
+"#featurerecord-firstentryindex": {"export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstentryindex","type":"dfn","url":"#featurerecord-firstentryindex"},
+"#font-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font patch","type":"dfn","url":"#font-patch"},
+"#font-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset","type":"dfn","url":"#font-subset"},
+"#font-subset-definition": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset definition","type":"dfn","url":"#font-subset-definition"},
+"#format-1-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 1 patch map","type":"dfn","url":"#format-1-patch-map"},
+"#format-1-patch-map-appliedentriesbitmap": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"appliedentriesbitmap","type":"dfn","url":"#format-1-patch-map-appliedentriesbitmap"},
+"#format-1-patch-map-entrycount": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrycount","type":"dfn","url":"#format-1-patch-map-entrycount"},
+"#format-1-patch-map-format": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-1-patch-map-format"},
+"#format-1-patch-map-glyphcount": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#format-1-patch-map-glyphcount"},
+"#format-1-patch-map-id": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"id","type":"dfn","url":"#format-1-patch-map-id"},
+"#format-1-patch-map-patchencoding": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchencoding","type":"dfn","url":"#format-1-patch-map-patchencoding"},
+"#format-1-patch-map-uritemplate": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-1-patch-map-uritemplate"},
+"#format-2-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 2 patch map","type":"dfn","url":"#format-2-patch-map"},
+"#format-2-patch-map-defaultpatchencoding": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"defaultpatchencoding","type":"dfn","url":"#format-2-patch-map-defaultpatchencoding"},
+"#format-2-patch-map-entries": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#format-2-patch-map-entries"},
+"#format-2-patch-map-entrycount": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrycount","type":"dfn","url":"#format-2-patch-map-entrycount"},
+"#format-2-patch-map-entryidstringdata": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringdata","type":"dfn","url":"#format-2-patch-map-entryidstringdata"},
+"#format-2-patch-map-format": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-2-patch-map-format"},
+"#format-2-patch-map-id": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"id","type":"dfn","url":"#format-2-patch-map-id"},
+"#format-2-patch-map-uritemplate": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-2-patch-map-uritemplate"},
+"#full-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"full invalidation","type":"dfn","url":"#full-invalidation"},
+"#glyph-keyed-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph keyed patch","type":"dfn","url":"#glyph-keyed-patch"},
+"#glyph-keyed-patch-brotlistream": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#glyph-keyed-patch-brotlistream"},
+"#glyph-keyed-patch-format": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#glyph-keyed-patch-format"},
+"#glyph-keyed-patch-id": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"id","type":"dfn","url":"#glyph-keyed-patch-id"},
+"#glyph-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph map","type":"dfn","url":"#glyph-map"},
+"#glyph-map-entryindex": {"export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryindex","type":"dfn","url":"#glyph-map-entryindex"},
+"#glyph-map-firstmappedglyph": {"export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstmappedglyph","type":"dfn","url":"#glyph-map-firstmappedglyph"},
+"#glyphpatches": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphpatches","type":"dfn","url":"#glyphpatches"},
+"#glyphpatches-glyphcount": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#glyphpatches-glyphcount"},
+"#glyphpatches-glyphdata": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdata","type":"dfn","url":"#glyphpatches-glyphdata"},
+"#glyphpatches-glyphdataoffsets": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdataoffsets","type":"dfn","url":"#glyphpatches-glyphdataoffsets"},
+"#glyphpatches-glyphids": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphids","type":"dfn","url":"#glyphpatches-glyphids"},
+"#glyphpatches-tables": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tables","type":"dfn","url":"#glyphpatches-tables"},
+"#incremental-font": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"incremental font","type":"dfn","url":"#incremental-font"},
+"#mapping-entries": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entries","type":"dfn","url":"#mapping-entries"},
+"#mapping-entries-entries": {"export":true,"for_":["Mapping Entries"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#mapping-entries-entries"},
+"#mapping-entry": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entry","type":"dfn","url":"#mapping-entry"},
+"#mapping-entry-bias": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"bias","type":"dfn","url":"#mapping-entry-bias"},
+"#mapping-entry-codepoints": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"codepoints","type":"dfn","url":"#mapping-entry-codepoints"},
+"#mapping-entry-copycount": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"copycount","type":"dfn","url":"#mapping-entry-copycount"},
+"#mapping-entry-copyindices": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"copyindices","type":"dfn","url":"#mapping-entry-copyindices"},
+"#mapping-entry-designspacecount": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacecount","type":"dfn","url":"#mapping-entry-designspacecount"},
+"#mapping-entry-designspacesegments": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacesegments","type":"dfn","url":"#mapping-entry-designspacesegments"},
+"#mapping-entry-entryiddelta": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryiddelta","type":"dfn","url":"#mapping-entry-entryiddelta"},
+"#mapping-entry-entryidstringlength": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringlength","type":"dfn","url":"#mapping-entry-entryidstringlength"},
+"#mapping-entry-featurecount": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurecount","type":"dfn","url":"#mapping-entry-featurecount"},
+"#mapping-entry-featuretags": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretags","type":"dfn","url":"#mapping-entry-featuretags"},
+"#mapping-entry-formatflags": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"formatflags","type":"dfn","url":"#mapping-entry-formatflags"},
+"#mapping-entry-patchencoding": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchencoding","type":"dfn","url":"#mapping-entry-patchencoding"},
+"#no-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"no invalidation","type":"dfn","url":"#no-invalidation"},
+"#partial-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"partial invalidation","type":"dfn","url":"#partial-invalidation"},
+"#patch-application-algorithm": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch application algorithm","type":"dfn","url":"#patch-application-algorithm"},
+"#patch-format": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch format","type":"dfn","url":"#patch-format"},
+"#patch-map-entries": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map entries","type":"dfn","url":"#patch-map-entries"},
+"#per-table-brotli-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"per table brotli patch","type":"dfn","url":"#per-table-brotli-patch"},
+"#per-table-brotli-patch-format": {"export":true,"for_":["Per table brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#per-table-brotli-patch-format"},
+"#per-table-brotli-patch-id": {"export":true,"for_":["Per table brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"id","type":"dfn","url":"#per-table-brotli-patch-id"},
+"#per-table-brotli-patch-patches": {"export":true,"for_":["Per table brotli patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patches","type":"dfn","url":"#per-table-brotli-patch-patches"},
+"#sparse-bit-set": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"sparse bit set","type":"dfn","url":"#sparse-bit-set"},
+"#tablepatch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tablepatch","type":"dfn","url":"#tablepatch"},
+"#tablepatch-brotlistream": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#tablepatch-brotlistream"},
+"#tablepatch-flags": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#tablepatch-flags"},
+"#tablepatch-tag": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#tablepatch-tag"},
+};
+
+function mkRefHint(link, ref) {
+    const linkText = link.textContent;
+    let dfnTextElements = '';
+    if (ref.text != linkText) {
+        dfnTextElements =
+            mk.li({},
+                mk.b({}, "Term: "),
+                mk.span({}, ref.text)
+            );
+    }
+    const forList = ref.for_;
+    let forListElements;
+    if(forList.length == 0) {
+        forListElements = [];
+    } else if(forList.length == 1) {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.span({}, forList[0]),
+        );
+    } else {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.ul({},
+                ...forList.map(forItem =>
+                    mk.li({},
+                        mk.span({}, forItem)
+                    ),
+                ),
+            ),
+        );
+    }
+    const url = ref.url;
+    const safeUrl = encodeURIComponent(url);
+    const hintPanel = mk.aside({
+        class: "ref-hint",
+        id: `ref-hint-for-${safeUrl}`,
+        "data-for": url,
+        "aria-labelled-by": `ref-hint-for-${safeUrl}`,
+    },
+        mk.ul({},
+            dfnTextElements,
+            mk.li({},
+                mk.b({}, "URL: "),
+                mk.a({ href: url, class: "ref" }, url),
+            ),
+            mk.li({},
+                mk.b({}, "Type: "),
+                mk.span({}, `${ref.type}`),
+            ),
+            mk.li({},
+                mk.b({}, "Spec: "),
+                mk.span({}, `${ref.spec ? ref.spec : ''}`),
+            ),
+            forListElements
+        ),
+    );
+    hintPanel.forLink = link;
+    setupRefHintEventListeners(link, hintPanel);
+    return hintPanel;
+}
+
+function hideAllRefHints() {
+    queryAll(".ref-hint").forEach(el=>hideRefHint(el));
+}
+
+function hideRefHint(refHint) {
+    const link = refHint.forLink;
+    link.setAttribute("aria-expanded", "false");
+    if(refHint.teardownEventListeners) {
+        refHint.teardownEventListeners();
+    }
+    refHint.remove();
+}
+
+function showRefHint(link) {
+    if(link.classList.contains("dfn-link")) return;
+    const url = link.getAttribute("href");
+    const ref = refsData[url];
+    if(!ref) return;
+
+    hideAllRefHints(); // Only display one at this time.
+
+    const refHint = mkRefHint(link, ref);
+    append(document.body, refHint);
+    link.setAttribute("aria-expanded", "true");
+    positionRefHint(refHint);
+}
+
+function setupRefHintEventListeners(link, refHint) {
+    if (refHint.teardownEventListeners) return;
+    // Add event handlers to hide the refHint after the user moves away
+    // from both the link and refHint, if not hovering either within one second.
+    let timeout = null;
+    const startHidingRefHint = (event) => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+            hideRefHint(refHint);
+        }, 1000);
+    }
+    const resetHidingRefHint = (event) => {
+        if (timeout) clearTimeout(timeout);
+        timeout = null;
+    };
+    link.addEventListener("mouseleave", startHidingRefHint);
+    link.addEventListener("mouseenter", resetHidingRefHint);
+    link.addEventListener("blur", startHidingRefHint);
+    link.addEventListener("focus", resetHidingRefHint);
+    refHint.addEventListener("mouseleave", startHidingRefHint);
+    refHint.addEventListener("mouseenter", resetHidingRefHint);
+    refHint.addEventListener("blur", startHidingRefHint);
+    refHint.addEventListener("focus", resetHidingRefHint);
+
+    refHint.teardownEventListeners = () => {
+        // remove event listeners
+        resetHidingRefHint();
+        link.removeEventListener("mouseleave", startHidingRefHint);
+        link.removeEventListener("mouseenter", resetHidingRefHint);
+        link.removeEventListener("blur", startHidingRefHint);
+        link.removeEventListener("focus", resetHidingRefHint);
+        refHint.removeEventListener("mouseleave", startHidingRefHint);
+        refHint.removeEventListener("mouseenter", resetHidingRefHint);
+        refHint.removeEventListener("blur", startHidingRefHint);
+        refHint.removeEventListener("focus", resetHidingRefHint);
+    };
+}
+
+function positionRefHint(refHint) {
+    const link = refHint.forLink;
+    const linkPos = getBounds(link);
+    refHint.style.top = linkPos.bottom + "px";
+    refHint.style.left = linkPos.left + "px";
+
+    const panelPos = refHint.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, linkPos.left - overflowAmount);
+        refHint.style.left = newLeft + "px";
+    }
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function showRefHintListener(e) {
+    // If the target isn't in a link (or is a link),
+    // just ignore it.
+    let link = e.target.closest("a");
+    if(!link) return;
+
+    // If the target is in a ref-hint panel
+    // (aka a link in the already-open one),
+    // also just ignore it.
+    if(link.closest(".ref-hint")) return;
+
+    // Otherwise, show the panel for the link.
+    showRefHint(link);
+}
+
+function hideAllHintsListener(e) {
+    // If the click is inside a ref-hint panel, ignore it.
+    if(e.target.closest(".ref-hint")) return;
+    // Otherwise, close all the current panels.
+    hideAllRefHints();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.body.addEventListener("mousedown", showRefHintListener);
+    document.body.addEventListener("focus", showRefHintListener);
+
+    document.body.addEventListener("click", hideAllHintsListener);
+});
+
+window.addEventListener("resize", () => {
+    // Hide any open ref hint.
+    hideAllRefHints();
+});
 }
 </script>
 <script>/* Boilerplate: script-var-click-highlighting */
+"use strict";
+{
 /*
 Color-choosing design:
 
-Colors are ordered by goodness.
-Each color has a usage count (initially zero).
-Each variable has a last-used color.
-
-* If the var has a last-used color, and that color's usage is 0,
-    return that color.
-* Otherwise, return the lowest-indexed color with the lowest usage.
-    Increment the color's usage and set it as the last-used color
-    for that var.
-* On unclicking, decrement usage of the color.
+* Colors are ordered by goodness.
+* On clicking a var, give it the earliest color
+    with the lowest usage in the algorithm.
+* On re-clicking, re-use the var's most recent color
+    if that's not currently being used elsewhere.
 */
-"use strict";
-{
-    document.addEventListener("click", e=>{
-        if(e.target.nodeName == "VAR") {
-            highlightSameAlgoVars(e.target);
-        }
-    });
-    const indexCounts = new Map();
-    const indexNames = new Map();
-    function highlightSameAlgoVars(v) {
-        // Find the algorithm container.
-        let algoContainer = null;
-        let searchEl = v;
-        while(algoContainer == null && searchEl != document.body) {
-            searchEl = searchEl.parentNode;
-            if(searchEl.hasAttribute("data-algorithm")) {
-                algoContainer = searchEl;
-            }
-        }
 
-        // Not highlighting document-global vars,
-        // too likely to be unrelated.
-        if(algoContainer == null) return;
+const COLOR_COUNT = 7;
 
-        const algoName = algoContainer.getAttribute("data-algorithm");
-        const varName = getVarName(v);
-        const addClass = !v.classList.contains("selected");
-        let highlightClass = null;
-        if(addClass) {
-            const index = chooseHighlightIndex(algoName, varName);
-            indexCounts.get(algoName)[index] += 1;
-            indexNames.set(algoName+"///"+varName, index);
-            highlightClass = nameFromIndex(index);
-        } else {
-            const index = previousHighlightIndex(algoName, varName);
-            indexCounts.get(algoName)[index] -= 1;
-            highlightClass = nameFromIndex(index);
-        }
+document.addEventListener("click", e=>{
+    if(e.target.nodeName == "VAR") {
+        highlightSameAlgoVars(e.target);
+    }
+});
 
-        // Find all same-name vars, and toggle their class appropriately.
+function highlightSameAlgoVars(v) {
+    // Find the algorithm container.
+    let algoContainer = findAlgoContainer(v);
+
+    // Not highlighting document-global vars,
+    // too likely to be unrelated.
+    if(algoContainer == null) return;
+
+    const varName = nameFromVar(v);
+    if(!v.hasAttribute("data-var-color")) {
+        const newColor = chooseHighlightColor(algoContainer, v);
         for(const el of algoContainer.querySelectorAll("var")) {
-            if(getVarName(el) == varName) {
-                el.classList.toggle("selected", addClass);
-                el.classList.toggle(highlightClass, addClass);
+            if(nameFromVar(el) == varName) {
+                el.setAttribute("data-var-color", newColor);
+                el.setAttribute("data-var-last-color", newColor);
+            }
+        }
+    } else {
+        for(const el of algoContainer.querySelectorAll("var")) {
+            if(nameFromVar(el) == varName) {
+                el.removeAttribute("data-var-color");
             }
         }
     }
-    function getVarName(el) {
-        return el.textContent.replace(/(\s|\xa0)+/, " ").trim();
+}
+function findAlgoContainer(el) {
+    while(el != document.body) {
+        if(el.hasAttribute("data-algorithm")) return el;
+        el = el.parentNode;
     }
-    function chooseHighlightIndex(algoName, varName) {
-        let indexes = null;
-        if(indexCounts.has(algoName)) {
-            indexes = indexCounts.get(algoName);
-        } else {
-            // 7 classes right now
-            indexes = [0,0,0,0,0,0,0];
-            indexCounts.set(algoName, indexes);
-        }
+    return null;
+}
+function nameFromVar(el) {
+    return el.textContent.replace(/(\s|\xa0)+/g, " ").trim();
+}
+function colorCountsFromContainer(container) {
+    const namesFromColor = Array.from({length:COLOR_COUNT}, x=>new Set());
+    for(let v of container.querySelectorAll("var[data-var-color]")) {
+        let color = +v.getAttribute("data-var-color");
+        namesFromColor[color].add(nameFromVar(v));
+    }
 
-        // If the element was recently unclicked,
-        // *and* that color is still unclaimed,
-        // give it back the same color.
-        const lastIndex = previousHighlightIndex(algoName, varName);
-        if(indexes[lastIndex] === 0) return lastIndex;
-
-        // Find the earliest index with the lowest count.
-        const minCount = Math.min.apply(null, indexes);
-        let index = null;
-        for(var i = 0; i < indexes.length; i++) {
-            if(indexes[i] == minCount) {
-                return i;
-            }
+    return namesFromColor.map(x=>x.size);
+}
+function leastUsedColor(colors) {
+    // Find the earliest color with the lowest count.
+    let minCount = Infinity;
+    let minColor = null;
+    for(var i = 0; i < colors.length; i++) {
+        if(colors[i] < minCount) {
+            minColor = i;
+            minCount = colors[i];
         }
     }
-    function previousHighlightIndex(algoName, varName) {
-        return indexNames.get(algoName+"///"+varName);
+    return minColor;
+}
+function chooseHighlightColor(container, v) {
+    const colorCounts = colorCountsFromContainer(container);
+    if(v.hasAttribute("data-var-last-color")) {
+        let color = +v.getAttribute("data-var-last-color");
+        if(colorCounts[color] == 0) return color;
     }
-    function nameFromIndex(index) {
-        return "selected" + index;
-    }
+    return leastUsedColor(colorCounts);
+}
 }
 </script>
