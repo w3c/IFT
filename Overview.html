@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="00d0030c338b9f5268b8e66ecd3648df116b1a28" name="revision">
+  <meta content="d839924333049e2fff0e3ee1989332c0d882cd97" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -1004,6 +1004,10 @@ not support <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-f
      <p>Format 2: can encode arbitrary mappings including ones with design space or overlapping subset definitions. However, it
 is typically less compact than format 1.</p>
    </ul>
+   <p>Each format defines an algorithm for interpreting bytes encoded with that format to produce the list of entries it represents. The <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset">Extend a Font Subset</a> algorithm invokes the interpretation algorithms and operates on the resulting entry list. The encoded bytes
+are the source of truth at all times for the patch map. Patch application during subset extension will alter the encoded bytes of the
+patch map and as a result the entry list derived from the encoded bytes will change. The extension algorithm reinterprets the encoded
+bytes at the start of every iteration to pick up any changes made in the previous iteration.</p>
    <h4 class="heading settled" data-level="4.2.1" id="patch-map-format-1"><span class="secno">4.2.1. </span><span class="content">Patch Map Table: Format 1</span><a class="self-link" href="#patch-map-format-1"></a></h4>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="format-1-patch-map">Format 1 Patch Map</dfn> encoding:</p>
    <table>
@@ -2180,7 +2184,7 @@ patches to be applied.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Invoke <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset">Extend a Font Subset</a> with <var>font subset</var>. The input target subset definition is a special one which
+     <p>Invoke <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset①">Extend a Font Subset</a> with <var>font subset</var>. The input target subset definition is a special one which
 is considered to intersect all entries in the <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection①">Check entry intersection</a> step. Return the resulting font subset as
 the <var>expanded font</var>.</p>
    </ol>
@@ -2191,11 +2195,11 @@ The <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-fon
     <li data-md>
      <p>Must meet all of the requirements in <a href="#font-format-extensions">§ 4 Extensions to the Font Format</a> and <a href="#font-patch-formats">§ 5 Font Patch Formats</a>.</p>
     <li data-md>
-     <p>Must be consistent, that is: for any possible <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑧">font subset definition</a> the result of invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset①">Extend a Font Subset</a> with that subset definition and the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑦">incremental font</a> must always be the same regardless of the particular order
-of patch selection chosen in step 6 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset②">Extend a Font Subset</a>.</p>
+     <p>Must be consistent, that is: for any possible <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑧">font subset definition</a> the result of invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset②">Extend a Font Subset</a> with that subset definition and the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑦">incremental font</a> must always be the same regardless of the particular order
+of patch selection chosen in step 6 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset③">Extend a Font Subset</a>.</p>
     <li data-md>
      <p>Should preserve the functionality of the fully expanded font, that is:
- given the <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset①">fully expanded font</a> derived from the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑧">incremental font</a> and any content, then the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③⓪">font subset</a> produced by invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset③">Extend a Font Subset</a> with the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑨">incremental font</a> and the minimal subset definition covering that content should
+ given the <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset①">fully expanded font</a> derived from the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑧">incremental font</a> and any content, then the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③⓪">font subset</a> produced by invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-a-font-subset" id="ref-for-abstract-opdef-extend-a-font-subset④">Extend a Font Subset</a> with the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑨">incremental font</a> and the minimal subset definition covering that content should
  render identically to the fully expanded font for that content.</p>
     <li data-md>
      <p>When an encoder is used to transform an existing font into an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⓪">incremental font</a> the associated <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset②">fully expanded font</a> should be equivalent to the existing font. An equivalent fully expanded font
@@ -2745,7 +2749,7 @@ let dfnPanelData = {
 "abstract-opdef-apply-per-table-brotli-patch": {"dfnID":"abstract-opdef-apply-per-table-brotli-patch","dfnText":"Apply per table brotli patch","external":false,"refSections":[],"url":"#abstract-opdef-apply-per-table-brotli-patch"},
 "abstract-opdef-check-entry-intersection": {"dfnID":"abstract-opdef-check-entry-intersection","dfnText":"Check entry intersection","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection"}],"title":"6. Extending a Font Subset"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2460"}],"title":"6.1. Fully Expanding a Font"}],"url":"#abstract-opdef-check-entry-intersection"},
 "abstract-opdef-decoding-sparse-bit-set-treedata": {"dfnID":"abstract-opdef-decoding-sparse-bit-set-treedata","dfnText":"Decoding sparse bit set treeData","external":false,"refSections":[],"url":"#abstract-opdef-decoding-sparse-bit-set-treedata"},
-"abstract-opdef-extend-a-font-subset": {"dfnID":"abstract-opdef-extend-a-font-subset","dfnText":"Extend a Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-extend-a-font-subset"}],"title":"6.1. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-extend-a-font-subset\u2460"},{"id":"ref-for-abstract-opdef-extend-a-font-subset\u2461"},{"id":"ref-for-abstract-opdef-extend-a-font-subset\u2462"}],"title":"7. Encoder"}],"url":"#abstract-opdef-extend-a-font-subset"},
+"abstract-opdef-extend-a-font-subset": {"dfnID":"abstract-opdef-extend-a-font-subset","dfnText":"Extend a Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-extend-a-font-subset"}],"title":"4.2. Patch Map Table"},{"refs":[{"id":"ref-for-abstract-opdef-extend-a-font-subset\u2460"}],"title":"6.1. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-extend-a-font-subset\u2461"},{"id":"ref-for-abstract-opdef-extend-a-font-subset\u2462"},{"id":"ref-for-abstract-opdef-extend-a-font-subset\u2463"}],"title":"7. Encoder"}],"url":"#abstract-opdef-extend-a-font-subset"},
 "abstract-opdef-fully-expand-a-font-subset": {"dfnID":"abstract-opdef-fully-expand-a-font-subset","dfnText":"Fully Expand a Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset"}],"title":"2.1. Offline Usage"},{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2460"},{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2461"}],"title":"7. Encoder"}],"url":"#abstract-opdef-fully-expand-a-font-subset"},
 "abstract-opdef-handle-errors": {"dfnID":"abstract-opdef-handle-errors","dfnText":"Handle errors","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-handle-errors"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-handle-errors"},
 "abstract-opdef-interpret-format-1-patch-map": {"dfnID":"abstract-opdef-interpret-format-1-patch-map","dfnText":"Interpret Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-1-patch-map"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-interpret-format-1-patch-map"},
