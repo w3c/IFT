@@ -415,7 +415,7 @@ Patch Map Table {#patch-map}
 ----------------------------
 
 A patch map table encodes a list of <dfn dfn>patch map entries</dfn>, where each entry has a key and value. The key is a
-[=font subset definition=] and the value is a URI, the [[#font-patch-formats]] used by the data at the URI, and the unique ID
+[=font subset definition=] and the value is a URI, the [[#font-patch-formats]] used by the data at the URI, and the compatibility ID
 of the patch map table. A map is encoded in one of two formats:
 
 *  Format 1: a limited, but more compact encoding. It encodes a one-to-one mapping from glyph id to patch URIs. It does
@@ -445,7 +445,7 @@ of the patch map table. A map is encoded in one of two formats:
   </tr>
   <tr>
     <td>uint32</td>
-    <td><dfn for="Format 1 Patch Map">id</dfn>[4]</td>
+    <td><dfn for="Format 1 Patch Map">compatibilityId</dfn>[4]</td>
     <td>Unique ID used to identify patches that are compatible with this font.</td>
   </tr>
   <tr>
@@ -647,7 +647,8 @@ The algorithm:
     *  d. Convert <var>entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
 
     *  e. Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains only the unicode code point set and
-        maps to the generated URI, the patch encoding specified by [=Format 1 Patch Map/patchEncoding=], and [=Format 1 Patch Map/id=].
+        maps to the generated URI, the patch encoding specified by [=Format 1 Patch Map/patchEncoding=], and
+        [=Format 1 Patch Map/compatibilityId=].
 
 3.  For each [=FeatureRecord=] and associated [=EntryMapRecord=] in [=Feature Map/featureRecords=] and [=Feature Map/entryMapRecords=]:
 
@@ -666,7 +667,7 @@ The algorithm:
 
         *  Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains the unicode code point set and
             a feature tag set containing only [=FeatureRecord/featureTag=]. The entry  maps to the generated URI, the patch encoding
-            specified by [=Format 1 Patch Map/patchEncoding=], and [=Format 1 Patch Map/id=].
+            specified by [=Format 1 Patch Map/patchEncoding=], and [=Format 1 Patch Map/compatibilityId=].
 
 4.  Return <var>entry list</var>.
 
@@ -718,7 +719,7 @@ The algorithm:
   </tr>
   <tr>
     <td>uint32</td>
-    <td><dfn for="Format 2 Patch Map">id</dfn>[4]</td>
+    <td><dfn for="Format 2 Patch Map">compatibilityId</dfn>[4]</td>
     <td>Unique ID used to identify patches that are compatible with this font.</td>
   </tr>
   <tr>
@@ -972,8 +973,8 @@ The algorithm:
 
      *  Add the returned consumed id string byte count to <var>current id string byte</var>.
 
-     *  If the returned value of ignored is false, then set the unique ID of the returned entry to [=Format 2 Patch Map/id=] and add
-         the  entry to <var>entry list</var>.
+     *  If the returned value of ignored is false, then set the compatibility ID of the returned entry to
+         [=Format 2 Patch Map/compatibilityId=] and add the  entry to <var>entry list</var>.
 
 4.  Return <var>entry list</var>.
 
@@ -1264,17 +1265,17 @@ Patch Invalidations {#font-patch-invalidations}
 -----------------------------------------------
 
 Patches in an incremental [=font subset=] when applied may invalidate other available patches, making them invalid to be applied
-to the extended [=font subset=]. Patch validity is checked using the unique ID from the [[#patch-map]]. Every patch has a
-unique ID encoded within it which needs to match the unique ID from the [[#patch-map]] which lists that patch. Additionally to
-aid the client in determining what invalidations will occur, every patch is categorized into one of three categories:
+to the extended [=font subset=]. Patch validity is checked using the compatibility ID from the [[#patch-map]]. Every patch has a
+compatibility ID encoded within it which needs to match the compatibility ID from the [[#patch-map]] which lists that patch. Additionally
+to aid the client in determining what invalidations will occur, every patch is categorized into one of three categories:
 
 * <dfn dfn>Full Invalidation</dfn>: when this patch is applied all other patches currently listed in the [=font subset=] are invalidated.
-    The unique ID in both the 'IFT ' and 'IFTX' [[#patch-map]] will be changed.
+    The compatibility ID in both the 'IFT ' and 'IFTX' [[#patch-map]] will be changed.
 
 * <dfn dfn>Partial Invalidation</dfn>: when this patch is applied all other patches in the same [[#patch-map]] will be invalidated.
-    The unique ID of only the [[#patch-map]] which contains this patch will be changed.
+    The compatibility ID of only the [[#patch-map]] which contains this patch will be changed.
 
-* <dfn dfn>No Invalidation</dfn>: no other patches will be invalidated by the application of this patch. The unique ID of the
+* <dfn dfn>No Invalidation</dfn>: no other patches will be invalidated by the application of this patch. The compatibility ID of the
     'IFT ' and 'IFTX' [[#patch-map]] will not change.
 
 The invalidation behaviour of a specific patch is encoded in its format number which can be found in the following section.
@@ -1352,8 +1353,8 @@ of a short header followed by brotli encoded data.
   </tr>
   <tr>
     <td>uint32</td>
-    <td><dfn for="Brotli patch">id</dfn>[4]</td>
-    <td>The id of the [=font subset=] which this patch can be applied too. See [[#font-patch-invalidations]].</td>
+    <td><dfn for="Brotli patch">compatibilityId</dfn>[4]</td>
+    <td>The compatibility id of the [=font subset=] which this patch can be applied too. See [[#font-patch-invalidations]].</td>
   </tr>
   <tr>
     <td>uint32</td>
@@ -1380,7 +1381,7 @@ The inputs to this algorithm are:
 
 * <var>patch</var>: a [=brotli patch=] to be applied to <var>base font subset</var>.
 
-* <var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.
+* <var>compatibility id</var>: The compatibility ID from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.
 
 The algorithm outputs:
 
@@ -1392,7 +1393,7 @@ The algorithm:
     not equal, then <var>patch</var> is not correctly formatted. Patch application has failed, return
     an error.
 
-2. Check that the [=Brotli patch/id=] field in <var>patch</var> is equal to  <var>id</var>.
+2. Check that the [=Brotli patch/compatibilityId=] field in <var>patch</var> is equal to  <var>compatibility id</var>.
     If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
     has failed, return an error.
 
@@ -1427,7 +1428,7 @@ or remove tables in a [=font subset=].
   </tr>
   <tr>
     <td>uint32</td>
-    <td><dfn for="Per table brotli patch">id</dfn>[4]</td>
+    <td><dfn for="Per table brotli patch">compatibilityId</dfn>[4]</td>
     <td>The id of the [=font subset=] which this patch can be applied too. See [[#font-patch-invalidations]].</td>
   </tr>
   <tr>
@@ -1485,7 +1486,7 @@ The inputs to this algorithm are:
 
 * <var>patch</var>: a [=per table brotli patch=] to be applied to <var>base font subset</var>.
 
-* <var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.
+* <var>compatibility id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.
 
 The algorithm outputs:
 
@@ -1499,7 +1500,7 @@ The algorithm:
     not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
     an error.
 
-3. Check that the [=Per table brotli patch/id=] field in <var>patch</var> is equal to <var>id</var>.
+3. Check that the [=Per table brotli patch/compatibilityId=] field in <var>patch</var> is equal to <var>compatibility id</var>.
     If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
     has failed, return an error.
 
@@ -1567,8 +1568,8 @@ A glyph keyed patch contains a collection of data chunks that are each associate
   </tr>
   <tr>
     <td>uint32</td>
-    <td><dfn for="Glyph keyed patch">id</dfn>[4]</td>
-    <td>The id of the [=font subset=] which this patch can be applied too. See [[#font-patch-invalidations]].</td>
+    <td><dfn for="Glyph keyed patch">compatibilityId</dfn>[4]</td>
+    <td>The compatibility id of the [=font subset=] which this patch can be applied too. See [[#font-patch-invalidations]].</td>
   </tr>
   <tr>
     <td>uint32</td>
@@ -1645,7 +1646,7 @@ The inputs to this algorithm are:
 
 * <var>patch uri</var>: the URI where the patch data is located.
 
-* <var>id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.
+* <var>compatibility id</var>: The compatibility ID from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.
 
 The algorithm outputs:
 
@@ -1657,7 +1658,7 @@ The algorithm:
     not equal, then <var>patch</var> is not correctly formatted and patch application has failed, return
     an error.
 
-2. Check that the [=Glyph keyed patch/id=] field in <var>patch</var> is equal to <var>id</var>.
+2. Check that the [=Glyph keyed patch/compatibilityId=] field in <var>patch</var> is equal to <var>compatibility id</var>.
     If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application has
     failed, return an error.
 
@@ -1688,10 +1689,10 @@ The algorithm:
 
 
 
-5. Locate the [[#patch-map]] table which has the same [=Glyph keyed patch/id=] as <var>id</var>. If it is a format 1 patch map then,
-    invoke [$Remove Entries from Format 1 Patch Map$] with the patch map table and <var>patch uri</var> as an input. Otherwise if it is
-    a format 2 patch map then, invoke [$Remove Entries from Format 2 Patch Map$] with the patch map table and <var>patch uri</var> as an
-    input. Copy the modified patch map table into <var>extended font subset</var>.
+5. Locate the [[#patch-map]] table which has the same [=Glyph keyed patch/compatibilityId=] as <var>compatibility id</var>. If it is a
+    format 1 patch map then, invoke [$Remove Entries from Format 1 Patch Map$] with the patch map table and <var>patch uri</var> as an
+    input. Otherwise if it is a format 2 patch map then, invoke [$Remove Entries from Format 2 Patch Map$] with the patch map table and
+    <var>patch uri</var> as an input. Copy the modified patch map table into <var>extended font subset</var>.
 
 6. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
     the entries processed in step 4 or 5, add a copy of that table to <var>extended font subset</var>.
@@ -1755,7 +1756,7 @@ The algorithm:
     <var>entry</var> patch URI as the patch URI.
 
 8.  Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from
-    [[#font-patch-formats]] to apply the <var>patch file</var> using the patch URI and the id from <var>entry</var> to
+    [[#font-patch-formats]] to apply the <var>patch file</var> using the patch URI and the compatibility id from <var>entry</var> to
     <var>extended font subset</var>.
 
 9.  Go to step 2.
