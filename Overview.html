@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="7a47efd145dc7864962d5240e3fd05e3c41a976d" name="revision">
+  <meta content="f9bb00654fa19d59be3143cc8b46c2649b8a4ee5" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -689,6 +689,7 @@ be loaded over multiple requests where each request incrementally adds additiona
          <a href="#patch-map-format-1"><span class="secno">4.2.1</span> <span class="content">Patch Map Table: Format 1</span></a>
          <ol class="toc">
           <li><a href="#interpreting-patch-map-format-1"><span class="secno">4.2.1.1</span> <span class="content">Interpreting Format 1</span></a>
+          <li><a href="#remove-entries-format-1"><span class="secno">4.2.1.2</span> <span class="content">Remove Entries from Format 1</span></a>
          </ol>
         <li>
          <a href="#patch-map-format-2"><span class="secno">4.2.2</span> <span class="content">Patch Map Table: Format 2</span></a>
@@ -1194,6 +1195,32 @@ specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id
      </ul>
     <li data-md>
      <p>Return <var>entry list</var>.</p>
+   </ol>
+   <h5 class="heading settled algorithm" data-algorithm="Remove Entries from Format 1" data-level="4.2.1.2" id="remove-entries-format-1"><span class="secno">4.2.1.2. </span><span class="content">Remove Entries from Format 1</span><a class="self-link" href="#remove-entries-format-1"></a></h5>
+   <p>This algorithm is used to remove entries from a format 1 patch map. This removal modifies the bytes of the patch map but does not
+change the number of bytes.</p>
+   <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-remove-entries-from-format-1-patch-map">Remove Entries from Format 1 Patch Map</dfn></p>
+   <p>The inputs to this algorithm are:</p>
+   <ul>
+    <li data-md>
+     <p><var>patch map</var>: a <a data-link-type="dfn" href="#format-1-patch-map" id="ref-for-format-1-patch-map①">Format 1 Patch Map</a> encoded patch map. May be modified by this procedure.</p>
+    <li data-md>
+     <p><var>patch URI</var>: URI for a patch which identifies the entries to be removed.</p>
+   </ul>
+   <p>The algorithm:</p>
+   <ol>
+    <li data-md>
+     <p>Check that the <var>patch map</var> has <a data-link-type="dfn" href="#format-1-patch-map-format" id="ref-for-format-1-patch-map-format①">format</a> equal to 1 and is valid according to the requirements in <a href="#patch-map-format-1">§ 4.2.1 Patch Map Table: Format 1</a>. If it is not return an error.</p>
+    <li data-md>
+     <p>For each unique <var>entry index</var> in <a data-link-type="dfn" href="#glyph-map-entryindex" id="ref-for-glyph-map-entryindex①">entryIndex</a> of <var>patch map</var>:</p>
+     <ul>
+      <li data-md>
+       <p>If the bit for <var>entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap②">appliedEntriesBitMap</a> is set to 1, skip this <var>entry index</var>.</p>
+      <li data-md>
+       <p>Convert <var>entry index</var> into a URI by applying <a data-link-type="dfn" href="#format-1-patch-map-uritemplate" id="ref-for-format-1-patch-map-uritemplate②">uriTemplate</a> following <a href="#uri-templates">§ 3.3 URI Templates</a>.</p>
+      <li data-md>
+       <p>If the generated URI is equal to <var>patch URI</var> then set the bit for <var>entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap③">appliedEntriesBitMap</a> to 1.</p>
+     </ul>
    </ol>
    <h4 class="heading settled" data-level="4.2.2" id="patch-map-format-2"><span class="secno">4.2.2. </span><span class="content">Patch Map Table: Format 2</span><a class="self-link" href="#patch-map-format-2"></a></h4>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="format-2-patch-map">Format 2 Patch Map</dfn> encoding:</p>
@@ -1993,7 +2020,7 @@ the entries processed in step 4, add a copy of that table to <var>extended font 
     <li data-md>
      <p>Locate the <a href="#patch-map">§ 4.2 Patch Map Table</a> table which has the same <a data-link-type="dfn" href="#glyph-keyed-patch-id" id="ref-for-glyph-keyed-patch-id①">id</a> as <var>id</var>. Update the table to remove all entries
 which have a URI which matches <var>patch uri</var>. For <a href="#patch-map-format-1">§ 4.2.1 Patch Map Table: Format 1</a> entries are removed by setting the appropriate
-bit in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap②">appliedEntriesBitMap</a>. For <a href="#patch-map-format-2">§ 4.2.2 Patch Map Table: Format 2</a> entries are removed by setting the "ignored" bit
+bit in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap④">appliedEntriesBitMap</a>. For <a href="#patch-map-format-2">§ 4.2.2 Patch Map Table: Format 2</a> entries are removed by setting the "ignored" bit
 in that entry’s <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑨">formatFlags</a>.</p>
     <li data-md>
      <p>If the contents of any <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">fonts table</a> was modified during the previous steps then,
@@ -2439,6 +2466,7 @@ required too many patches.</p>
    <li><a href="#patch-format">patch format</a><span>, in § 5.1</span>
    <li><a href="#patch-map-entries">patch map entries</a><span>, in § 4.2</span>
    <li><a href="#per-table-brotli-patch">Per table brotli patch</a><span>, in § 5.5</span>
+   <li><a href="#abstract-opdef-remove-entries-from-format-1-patch-map">Remove Entries from Format 1 Patch Map</a><span>, in § 4.2.1.2</span>
    <li><a href="#sparse-bit-set">Sparse Bit Set</a><span>, in § 4.2.2.2</span>
    <li><a href="#design-space-segment-start">start</a><span>, in § 4.2.2</span>
    <li><a href="#tablepatch">TablePatch</a><span>, in § 5.5</span>
@@ -2705,6 +2733,7 @@ let dfnPanelData = {
 "abstract-opdef-interpret-format-2-patch-map": {"dfnID":"abstract-opdef-interpret-format-2-patch-map","dfnText":"Interpret Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-interpret-format-2-patch-map"},
 "abstract-opdef-interpret-format-2-patch-map-entry": {"dfnID":"abstract-opdef-interpret-format-2-patch-map-entry","dfnText":"Interpret Format 2 Patch Map Entry","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#abstract-opdef-interpret-format-2-patch-map-entry"},
 "abstract-opdef-load-patch-file": {"dfnID":"abstract-opdef-load-patch-file","dfnText":"Load patch file","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-load-patch-file"}],"title":"6. Extending a Font Subset"}],"url":"#abstract-opdef-load-patch-file"},
+"abstract-opdef-remove-entries-from-format-1-patch-map": {"dfnID":"abstract-opdef-remove-entries-from-format-1-patch-map","dfnText":"Remove Entries from Format 1 Patch Map","external":false,"refSections":[],"url":"#abstract-opdef-remove-entries-from-format-1-patch-map"},
 "branch-factor-encoding": {"dfnID":"branch-factor-encoding","dfnText":"Branch Factor Encoding","external":false,"refSections":[{"refs":[{"id":"ref-for-branch-factor-encoding"}],"title":"4.2.2.2. Sparse Bit Set"}],"url":"#branch-factor-encoding"},
 "brotli-patch": {"dfnID":"brotli-patch","dfnText":"Brotli patch","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch"},
 "brotli-patch-brotlistream": {"dfnID":"brotli-patch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch-brotlistream"}],"title":"5.4. Brotli Patch"},{"refs":[{"id":"ref-for-brotli-patch-brotlistream\u2460"}],"title":"5.4.1. Applying Brotli Patches"}],"url":"#brotli-patch-brotlistream"},
@@ -2727,14 +2756,14 @@ let dfnPanelData = {
 "font-patch": {"dfnID":"font-patch","dfnText":"font patch","external":false,"refSections":[{"refs":[{"id":"ref-for-font-patch"},{"id":"ref-for-font-patch\u2460"}],"title":"5.1. Definitions"},{"refs":[{"id":"ref-for-font-patch\u2461"}],"title":"7. Encoder"}],"url":"#font-patch"},
 "font-subset": {"dfnID":"font-subset","dfnText":"font subset","external":false,"refSections":[{"refs":[{"id":"ref-for-font-subset"}],"title":"3.1. Font Subset"},{"refs":[{"id":"ref-for-font-subset\u2460"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-font-subset\u2461"}],"title":"5. Font Patch Formats"},{"refs":[{"id":"ref-for-font-subset\u2462"},{"id":"ref-for-font-subset\u2463"},{"id":"ref-for-font-subset\u2464"},{"id":"ref-for-font-subset\u2465"}],"title":"5.1. Definitions"},{"refs":[{"id":"ref-for-font-subset\u2466"},{"id":"ref-for-font-subset\u2467"},{"id":"ref-for-font-subset\u2468"}],"title":"5.2. Patch Invalidations"},{"refs":[{"id":"ref-for-font-subset\u2460\u24ea"},{"id":"ref-for-font-subset\u2460\u2460"},{"id":"ref-for-font-subset\u2460\u2461"},{"id":"ref-for-font-subset\u2460\u2462"}],"title":"5.3. Formats Summary"},{"refs":[{"id":"ref-for-font-subset\u2460\u2463"}],"title":"5.4. Brotli Patch"},{"refs":[{"id":"ref-for-font-subset\u2460\u2464"},{"id":"ref-for-font-subset\u2460\u2465"},{"id":"ref-for-font-subset\u2460\u2466"}],"title":"5.4.1. Applying Brotli Patches"},{"refs":[{"id":"ref-for-font-subset\u2460\u2467"},{"id":"ref-for-font-subset\u2460\u2468"}],"title":"5.5. Per Table Brotli"},{"refs":[{"id":"ref-for-font-subset\u2461\u24ea"},{"id":"ref-for-font-subset\u2461\u2460"},{"id":"ref-for-font-subset\u2461\u2461"}],"title":"5.5.1. Applying Per Table Brotli Patches"},{"refs":[{"id":"ref-for-font-subset\u2461\u2462"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-font-subset\u2461\u2463"},{"id":"ref-for-font-subset\u2461\u2464"},{"id":"ref-for-font-subset\u2461\u2465"}],"title":"5.6.1. Applying Glyph Keyed Patches"},{"refs":[{"id":"ref-for-font-subset\u2461\u2466"},{"id":"ref-for-font-subset\u2461\u2467"}],"title":"6. Extending a Font Subset"},{"refs":[{"id":"ref-for-font-subset\u2461\u2468"}],"title":"6.1. Fully Expanding a Font"},{"refs":[{"id":"ref-for-font-subset\u2462\u24ea"}],"title":"7. Encoder"},{"refs":[{"id":"ref-for-font-subset\u2462\u2460"}],"title":"7.1. Encoder Considerations"}],"url":"#font-subset"},
 "font-subset-definition": {"dfnID":"font-subset-definition","dfnText":"font subset definition","external":false,"refSections":[{"refs":[{"id":"ref-for-font-subset-definition"}],"title":"4. Extensions to the Font Format"},{"refs":[{"id":"ref-for-font-subset-definition\u2460"},{"id":"ref-for-font-subset-definition\u2461"}],"title":"4.2. Patch Map Table"},{"refs":[{"id":"ref-for-font-subset-definition\u2462"},{"id":"ref-for-font-subset-definition\u2463"},{"id":"ref-for-font-subset-definition\u2464"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-font-subset-definition\u2465"},{"id":"ref-for-font-subset-definition\u2466"}],"title":"6. Extending a Font Subset"},{"refs":[{"id":"ref-for-font-subset-definition\u2467"}],"title":"7. Encoder"},{"refs":[{"id":"ref-for-font-subset-definition\u2468"}],"title":"7.1. Encoder Considerations"}],"url":"#font-subset-definition"},
-"format-1-patch-map": {"dfnID":"format-1-patch-map","dfnText":"Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map"},
-"format-1-patch-map-appliedentriesbitmap": {"dfnID":"format-1-patch-map-appliedentriesbitmap","dfnText":"appliedEntriesBitMap","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2460"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2461"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#format-1-patch-map-appliedentriesbitmap"},
+"format-1-patch-map": {"dfnID":"format-1-patch-map","dfnText":"Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map\u2460"}],"title":"4.2.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map"},
+"format-1-patch-map-appliedentriesbitmap": {"dfnID":"format-1-patch-map-appliedentriesbitmap","dfnText":"appliedEntriesBitMap","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2460"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2461"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2462"}],"title":"4.2.1.2. Remove Entries from Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2463"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#format-1-patch-map-appliedentriesbitmap"},
 "format-1-patch-map-entrycount": {"dfnID":"format-1-patch-map-entrycount","dfnText":"entryCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-entrycount"},{"id":"ref-for-format-1-patch-map-entrycount\u2460"},{"id":"ref-for-format-1-patch-map-entrycount\u2461"},{"id":"ref-for-format-1-patch-map-entrycount\u2462"},{"id":"ref-for-format-1-patch-map-entrycount\u2463"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-entrycount"},
-"format-1-patch-map-format": {"dfnID":"format-1-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-format"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-format"},
+"format-1-patch-map-format": {"dfnID":"format-1-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-format"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-format\u2460"}],"title":"4.2.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-format"},
 "format-1-patch-map-glyphcount": {"dfnID":"format-1-patch-map-glyphcount","dfnText":"glyphCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-glyphcount"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-glyphcount"},
 "format-1-patch-map-id": {"dfnID":"format-1-patch-map-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-id"},{"id":"ref-for-format-1-patch-map-id\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-id"},
 "format-1-patch-map-patchencoding": {"dfnID":"format-1-patch-map-patchencoding","dfnText":"patchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-patchencoding"},{"id":"ref-for-format-1-patch-map-patchencoding\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-patchencoding"},
-"format-1-patch-map-uritemplate": {"dfnID":"format-1-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate"},{"id":"ref-for-format-1-patch-map-uritemplate\u2460"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-uritemplate"},
+"format-1-patch-map-uritemplate": {"dfnID":"format-1-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate"},{"id":"ref-for-format-1-patch-map-uritemplate\u2460"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate\u2461"}],"title":"4.2.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-uritemplate"},
 "format-2-patch-map": {"dfnID":"format-2-patch-map","dfnText":"Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map"},
 "format-2-patch-map-defaultpatchencoding": {"dfnID":"format-2-patch-map-defaultpatchencoding","dfnText":"defaultPatchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding"}],"title":"4.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding\u2460"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-defaultpatchencoding"},
 "format-2-patch-map-entries": {"dfnID":"format-2-patch-map-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entries"}],"title":"4.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entries"},
@@ -2750,7 +2779,7 @@ let dfnPanelData = {
 "glyph-keyed-patch-format": {"dfnID":"glyph-keyed-patch-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-format"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-format"},
 "glyph-keyed-patch-id": {"dfnID":"glyph-keyed-patch-id","dfnText":"id","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-id"},{"id":"ref-for-glyph-keyed-patch-id\u2460"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-id"},
 "glyph-map": {"dfnID":"glyph-map","dfnText":"Glyph Map","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#glyph-map"},
-"glyph-map-entryindex": {"dfnID":"glyph-map-entryindex","dfnText":"entryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map-entryindex"}],"title":"4.2.1.1. Interpreting Format 1"}],"url":"#glyph-map-entryindex"},
+"glyph-map-entryindex": {"dfnID":"glyph-map-entryindex","dfnText":"entryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map-entryindex"}],"title":"4.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-glyph-map-entryindex\u2460"}],"title":"4.2.1.2. Remove Entries from Format 1"}],"url":"#glyph-map-entryindex"},
 "glyph-map-firstmappedglyph": {"dfnID":"glyph-map-firstmappedglyph","dfnText":"firstMappedGlyph","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map-firstmappedglyph"}],"title":"4.2.1. Patch Map Table: Format 1"}],"url":"#glyph-map-firstmappedglyph"},
 "glyphpatches": {"dfnID":"glyphpatches","dfnText":"GlyphPatches","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches"},{"id":"ref-for-glyphpatches\u2460"}],"title":"5.6. Glyph Keyed"},{"refs":[{"id":"ref-for-glyphpatches\u2461"}],"title":"5.6.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches"},
 "glyphpatches-glyphcount": {"dfnID":"glyphpatches-glyphcount","dfnText":"glyphCount","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-glyphcount"},{"id":"ref-for-glyphpatches-glyphcount\u2460"}],"title":"5.6. Glyph Keyed"}],"url":"#glyphpatches-glyphcount"},
