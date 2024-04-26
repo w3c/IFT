@@ -1064,7 +1064,7 @@ The algorithm:
 12. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, [=Mapping Entry/entryIdStringLength=] as
      <var>consumed id string bytes</var>, and <var>ignored</var>.
 
-<h5 algorithm id="remove-entries-format-1">Remove Entries from Format 2</h5>
+<h5 algorithm id="remove-entries-format-2">Remove Entries from Format 2</h5>
 
 This algorithm is used to remove entries from a format 2 patch map. This removal modifies the bytes of the patch map but does not
 change the number of bytes.
@@ -1686,15 +1686,17 @@ The algorithm:
 
     *  Insert the synthesized table into <var>extended font subset</var>.
 
-5. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
-    the entries processed in step 4, add a copy of that table to <var>extended font subset</var>.
 
-6. Locate the [[#patch-map]] table which has the same [=Glyph keyed patch/id=] as <var>id</var>. Update the table to remove all entries
-    which have a URI which matches <var>patch uri</var>. For [[#patch-map-format-1]] entries are removed by setting the appropriate
-    bit in [=Format 1 Patch Map/appliedEntriesBitMap=]. For [[#patch-map-format-2]] entries are removed by setting the "ignored" bit
-    in that entry's [=Mapping Entry/formatFlags=].
 
-7. If the contents of any [[open-type/otff#table-directory|fonts table]] was modified during the previous steps then,
+5. Locate the [[#patch-map]] table which has the same [=Glyph keyed patch/id=] as <var>id</var>. If it is a format 1 patch map then,
+    invoke [$Remove Entries from Format 1 Patch Map$] with the patch map table and <var>patch uri</var> as an input. Otherwise if it is
+    a format 2 patch map then, invoke [$Remove Entries from Format 2 Patch Map$] with the patch map table and <var>patch uri</var> as an
+    input. Copy the modified patch map table into <var>extended font subset</var>.
+
+6. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
+    the entries processed in step 4 or 5, add a copy of that table to <var>extended font subset</var>.
+
+7. If the contents of any [[open-type/otff#table-directory|font table]] was modified during the previous steps then,
     for each modified table: update the checksums in the [[open-type/otff#table-directory|fonts table directory]] to match the table's
     new contents.
 
