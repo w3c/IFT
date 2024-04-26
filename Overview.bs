@@ -670,6 +670,34 @@ The algorithm:
 
 4.  Return <var>entry list</var>.
 
+<h5 algorithm id="remove-entries-format-1">Remove Entries from Format 1</h5>
+
+This algorithm is used to remove entries from a format 1 patch map. This removal modifies the bytes of the patch map but does not
+change the number of bytes.
+
+<dfn abstract-op>Remove Entries from Format 1 Patch Map</dfn>
+
+The inputs to this algorithm are:
+
+* <var>patch map</var>: a [=Format 1 Patch Map=] encoded patch map. May be modified by this procedure.
+
+* <var>patch URI</var>: URI for a patch which identifies the entries to be removed.
+
+The algorithm:
+
+1.  Check that the <var>patch map</var> has [=Format 1 Patch Map/format=] equal to 1 and is valid according to the requirements in
+     [[#patch-map-format-1]]. If it is not return an error.
+
+2.  For each unique <var>entry index</var> in [=Glyph Map/entryIndex=] of <var>patch map</var>:
+
+    *  If the bit for <var>entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
+        <var>entry index</var>.
+
+    *  Convert <var>entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
+
+    *  If the generated URI is equal to <var>patch URI</var> then set the bit for <var>entry index</var> in
+        [=Format 1 Patch Map/appliedEntriesBitMap=] to 1.
+
 ### Patch Map Table: Format 2 ### {#patch-map-format-2}
 
 <dfn>Format 2 Patch Map</dfn> encoding:
