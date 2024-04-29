@@ -115,22 +115,22 @@ to this specification.
 Overview {#overview}
 --------------------
 
-An IFT font is a regular [[open-type|OpenType]] font that is reformated to include incremental functionality, partly in virtue of
-of two additional [[open-type/otff#table-directory|tables]]. Using these new tables the font can be augmented (eg. to cover more codepoints)
-by loading and applying patches to it.
+An <dfn dfn>incremental font</dfn> is a regular [[open-type|OpenType]] font that is reformatted to include incremental functionality,
+partly in virtue of two additional [[open-type/otff#table-directory|tables]]. Using these new tables the font can be augmented
+(eg. to cover more codepoints) by loading and applying patches to it.
 
 The IFT technology has four main pieces:
+
+*  [[#extending-font-subset]]: provides the algorithm that is used by a client to select and apply patches.
 
 *  [[#font-format-extensions]]: defines the new tables which contain a list of patches that are available to be applied to a font.
 
 *  [[#font-patch-formats]]: defines three different types of patches that can be used. Two are "generic" binary patches, one is
      specific to the font's format for storing glyph data.
 
-*  [[#extending-font-subset]]: provides the algorithm that is used by a client to select and apply patches.
-
 *  [[#encoder]]: creates the font and associated patches that form an incremental font.
 
-At a high level an IFT font is used like this:
+At a high level an [=incremental font=] is used like this:
 
 1. The client downloads an initial font file, which contains some initial subset of data from the full version of the font along with
     [[#font-format-extensions|embedded data]] describing the set of [[#font-patch-formats|patches]] which can be used to extend 
@@ -146,7 +146,7 @@ Creating an Incremental Font {#making-incremental-fonts}
 It is expected that the most common way to produce an incremental font will be to convert an existing font to use the incremental
 encoding defined in this specification. At a high level converting an existing font to be incremental will look like this:
 
-1.  Choose the content of the initial [[#font-subset-info|subset]], this will be included in the initial font file the client loads
+1.  Choose the content of the initial [[#font-subset-dfn|subset]], this will be included in the initial font file the client loads
     and usually consists of any data from the original font that is expected to always be needed.
 
 2.  Choose a segmentation of the font. Individual segments will be added to the base subset by the client using patches. Choosing an
@@ -254,7 +254,7 @@ by invoking [$Fully Expand a Font Subset$] and replace references to the increme
 Definitions {#definitions}
 ===============================
 
-Font Subset {#font-subset-info}
+Font Subset {#font-subset-dfn}
 -------------------------------
 
 A <dfn dfn>font subset</dfn> is a modified version of a font file [[!iso14496-22]] that contains only the data
@@ -276,116 +276,238 @@ variation axis space) that a [=font subset=] should support.
 Note: For convenience the remainder of this document links to the [[open-type]] specification which is a copy of
 [[!iso14496-22]].
 
+Font Patch {#font-patch-definitions}
+-------------------------------------
+
+A <dfn dfn>font patch</dfn> is a file which encodes changes to be made to an IFT-encoded font. Patches are used to extend
+an existing [=font subset=] and provide expanded coverage.
+
+A <dfn dfn>patch format</dfn> is a specified encoding of changes to be applied relative to a [=font subset=]. A set of
+changes encoded according to the format is a [=font patch=]. Each [=patch format=] has an associated 
+<dfn dfn>patch application algorithm</dfn> which takes a
+[=font subset=] and a [=font patch=] encoded in the [=patch format=] as input and outputs an extended
+[=font subset=].
+
+
+Patch Map {#patch-map-dfn}
+--------------------------
+
+A <dfn dfn>patch map</dfn> is an [[open-type/otff#table-directory|open type table]] which encodes a collection of mappings from
+[=font subset definition|font subset definitions=] to URIs which host [[#font-patch-formats|patches]] that extend the
+[=incremental font=]. A [=patch map=] table encodes a list of <dfn dfn>patch map entries</dfn>, where each entry has a key and value.
+The key is a [=font subset definition=] and the value is a URI, the [[#font-patch-formats]] used by the data at the URI, and the
+[[#font-patch-invalidations|compatibility ID]] of the patch map table. More details of the format of patch maps can be found
+in [[#font-format-extensions]].
+
+[=patch map entries|Patch Map Entry=] summary:
+<table>
+  <tr><th>Key</th><th>Value</th></tr>
+  <tr>
+    <td>
+      * [=font subset definition=]
+
+    </td>
+    <td>
+      * Patch URI
+      * [[#font-patch-formats|Patch Format]]
+      * [[#font-patch-invalidations|compatibility ID]]
+      
+    </td>
+  </tr>
+</table>
+
 Data Types {#data-types}
 ------------------------
 
 Encoded data structures in the remainder of this specification are described in terms of the data types defined
 in [[open-type/otff#data-types]]. As with the rest of OpenType, all fields use "big-endian" byte ordering.
 
-URI Templates {#uri-templates}
-------------------------------
+Extending a Font Subset {#extending-font-subset}
+================================================
 
-URI templates [[!rfc6570]] are used to convert numeric or string IDs into URIs where patch files are located.
-A string ID is a sequence of [[!unicode|Unicode]] code point values obtained from decoding a
-[[UTF-8]] string (see [[rfc6570#section-1.6]]). Several variables are defined which are used to produce the
-expansion of the template:
+This sections defines the algorithm that a client uses to extend an [=incremental font|incremental=] [=font subset=] to cover additional
+codepoints, layout features and/or design space.
 
-<table>
-  <tr><th>Variable</th><th>Value</th></tr>
-  <tr>
-    <td>id</td>
-    <td>
-      If the input id is numeric then this is the  numeric value converted to a string in hexadecimal representation
-      (using the digits 0-9, A-F). No padding with 0's is used. Otherwise, this is the string id value.
-    </td>
-  </tr>
-  <tr>
-    <td>d1</td>
-    <td>
-      The last character of the string in the id variable.
-      If id variable is empty then, the value is the character 0 (U+0030).
-    </td>
-  </tr>
-  <tr>
-    <td>d2</td>
-    <td>
-      The second last character of the string in the id variable.
-      If the id variable has less than 2 characters then, the value is the character 0 (U+0030).
-    </td>
-  </tr>
-  <tr>
-    <td>d3</td>
-    <td>
-      The third last character of the string in the id variable.
-      If the id variable has less than 3 characters then, the value is the character 0 (U+0030).
-    </td>
-  </tr>
-  <tr>
-    <td>d4</td>
-    <td>
-      The fourth last character of the string in the id variable.
-      If the id variable has less than 4 characters then, the value is the character 0 (U+0030).
-    </td>
-  </tr>
-</table>
+Patch Invalidations {#font-patch-invalidations}
+-----------------------------------------------
 
-The variables d1 through d4 select a specific character of the id variable. In this context a character is a [[!unicode]] code point.
-If the code point is not an ASCII code point then during expansion it will need to be converted to
-[[UTF-8]] and percent encoded as required by [[rfc6570#section-1.6]].
+Patches in an incremental [=font subset=] when applied may invalidate other available patches, making them invalid to be applied
+to the extended [=font subset=]. Patch validity is checked using the compatibility ID from the [[#patch-map-table]]. Every patch has a
+compatibility ID encoded within it which needs to match the compatibility ID from the [[#patch-map-table]] which lists that patch.
+Additionally to aid the client in determining what invalidations will occur, every patch is categorized into one of three categories:
 
-<div class="example">
+* <dfn dfn>Full Invalidation</dfn>: when this patch is applied all other patches currently listed in the [=font subset=] are invalidated.
+    The compatibility ID in both the 'IFT ' and 'IFTX' [[#patch-map-table]] will be changed.
 
-Some example inputs and the corresponding expansions:
+* <dfn dfn>Partial Invalidation</dfn>: when this patch is applied all other patches in the same [[#patch-map-table]] will be invalidated.
+    The compatibility ID of only the [[#patch-map-table]] which contains this patch will be changed.
 
-<table>
-  <tr><th>Template</th><th>Input ID</th><th>Expansion</th></tr>
-  <tr>
-    <td>//foo.bar/{id}</td>
-    <td>123</td>
-    <td>//foo.bar/7B</td>
-  </tr>
-  <tr>
-    <td>//foo.bar{/d1,d2,id}</td>
-    <td>123</td>
-    <td>//foo.bar/B/7/7B</td>
-  </tr>
-  <tr>
-    <td>//foo.bar{/d1,d2,d3,id}</td>
-    <td>123</td>
-    <td>//foo.bar/B/7/0/7B</td>
-  </tr>
-    <tr>
-    <td>//foo.bar{/d1,d2,d3,id}</td>
-    <td>baz</td>
-    <td>//foo.bar/z/a/b/baz</td>
-  </tr>
-  </tr>
-    <tr>
-    <td>//foo.bar{/d1,d2,d3,id}</td>
-    <td>az</td>
-    <td>//foo.bar/z/a/0/az</td>
-  </tr>
-  </tr>
-    <tr>
-    <td>//foo.bar{/d1,d2,d3,id}</td>
-    <td>àbc</td>
-    <td>//foo.bar/c/b/%C3%A0/%C3%A0bc</td>
-  </tr>
-</table>
+* <dfn dfn>No Invalidation</dfn>: no other patches will be invalidated by the application of this patch. The compatibility ID of the
+    'IFT ' and 'IFTX' [[#patch-map-table]] will not change.
 
-</div>
+The invalidation behaviour of a specific patch is encoded in its format number which can be found in [[#font-patch-formats-summary]].
 
+<h3 algorithm id="extend-font-subset">Incremental Font Extension Algorithm</h2>
+
+<dfn abstract-op>Extend an Incremental Font Subset</dfn>
+
+The inputs to this algorithm are:
+
+* <var>font subset</var>: an [=incremental font|incremental=] [=font subset=].
+
+* <var>font subset URI</var>: an [[rfc3986#section-4.3|abslolute URI]] which identifies the location of <var>font subset</var>.
+
+* <var>target subset definition</var>: the [=font subset definition=] that the client wants to extend <var>font subset</var> to cover.
+
+The algorithm outputs:
+
+* <var>extended font subset</var>: an extended version of <var>font subset</var>. May or may not be an [=incremental font=].
+
+The algorithm:
+
+1.  Set <var>extended font subset</var> to <var>font subset</var>.
+
+2.  Load the 'IFT ' and 'IFTX' (if present) mapping [[open-type/otff#table-directory|tables]] from <var>extended font subset</var>. Both
+    tables are formatted as a [[#patch-map-table]]. Check that they are valid according to the requirements in [[#patch-map-table]]. If
+    either table is not valid, invoke [$Handle errors$]. If <var>extended font subset</var> does not have an 'IFT ' table, then it is
+    not an [=incremental font=] and cannot be extended, return <var>extended font subset</var>.
+
+3.  For each of [[open-type/otff#table-directory|tables]] 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
+    invoking [$Interpret Format 1 Patch Map$] or [$Interpret Format 2 Patch Map$]. Concatenate the returned entry lists into a single list,
+    <var>entry list</var>.
+
+4.  For each <var>entry</var> in <var>entry list</var> invoke [$Check entry intersection$] with <var>entry</var> and
+    <var>target subset definition</var> as inputs, if it returns false remove <var>entry</var>
+    from <var>entry list</var>.
+
+5.  If <var>entry list</var> is empty, then the extension operation is finished, return <var>extended font subset</var>.
+
+6.  Pick one <var>entry</var> from <var>entry list</var> with the following procedure:
+
+    *  If <var>entry list</var> contains one or more [=patch map entries=] which have a patch format that is [=Full Invalidation=]
+        then, select exactly one of the [=Full Invalidation=] entries in <var>entry list</var>. The criteria for selecting the single
+        entry is left up to the implementation to decide.
+
+    *  Otherwise if <var>entry list</var> contains one or more [=patch map entries=] which have a patch format that is
+        [=Partial Invalidation=] then, select exactly one of the [=Partial Invalidation=] entries in <var>entry list</var>.
+        The criteria for selecting the single entry is left up to the implementation to decide.
+
+    *  Otherwise select exactly one of the [=No Invalidation=] entries in <var>entry list</var>.
+        The criteria for selecting the single entry is left up to the implementation to decide.
+
+7.  Load <var>patch file</var> by invoking [$Load patch file$] with the <var>font subset URI</var> as the incremental font URI and the
+    <var>entry</var> patch URI as the patch URI.
+
+8.  Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from
+    [[#font-patch-formats]] to apply the <var>patch file</var> using the patch URI and the compatibility id from <var>entry</var> to
+    <var>extended font subset</var>.
+
+9.  Go to step 2.
+
+Note: the algorithm here presents patch loads as being done one at a time; however, to improve performance client implementations are
+encouraged to pre-fetch patch files that will be applied in later iterations by the algorithm. The
+[[#font-patch-invalidations|invalidation categories]] can be used to predict which intersecting patches from step 4 will remain be valid
+to be applied.
+
+<!-- TODO: provide criteria to exit if stuck in an infinite loop. Could require that no specific URL is loaded more than once?
+           Could require that each patch application result in an extended coverage in some way? Also allow the client to define
+	   an max iteration count? -->
+<!-- TODO: also consider adding additional changes to prevent degenerate behaviour from happening (eg. iteration limits, minimum codepoint group sizes). -->
+    
+<dfn abstract-op>Check entry intersection</dfn>
+
+The inputs to this algorithm are:
+
+*   <var>mapping entry</var>: a [=patch map entries|patch map entry=].
+
+*   <var>subset definition</var>: a [=font subset definition=].
+
+The algorithm outputs:
+
+*   <var>intersects</var>: true if <var>subset definition</var> intersects <var>mapping entry</var>, otherwise false.
+
+The algorithm:
+
+1.  For each set in <var>subset definition</var> (codepoints, feature tags, design space) check if the set intersects
+     the corresponding set from <var>mapping entry</var>. A set intersects when:
+
+     <table>
+       <tr>
+         <th></th><th>subset definition set is empty</th><th>subset definition set is not empty</th>
+       </tr>
+       <tr>
+         <th>mapping entry set is empty</th><td>true</td><td>true</td>
+       </tr>
+       <tr>
+         <th>mapping entry set is not empty</th><td>false</td><td>true if the two sets intersect</td>
+       </tr>
+     </table>
+
+2. If all sets checked in step 1 intersect, then return true for <var>intersects</var> otherwise false.
+
+<dfn abstract-op>Load patch file</dfn>
+
+<!-- TODO: consider requiring HTTPS (or disallowing HTTP specifically if we want to allow file:// and other url types) -->
+
+The inputs to this algorithm are:
+
+*   <var>Patch URI</var>: A [[rfc3986#section-4.1|URI Reference]] identifying the patch file to load. As a URI reference this may be a
+     relative path.
+
+*   <var>Incremental Font URI</var>: An [[rfc3986#section-4.3|abslolute URI]] which identifies the incremental font which contains
+     the reference to <var>Patch URI</var>.
+
+The algorithm outputs:
+
+*   <var>patch file</var>: the content (bytes) identified by <var>Patch URI</var>.
+
+The algorithm:
+
+1.  Perform [[rfc3986#section-5|reference resolution]] on <var>Patch URI</var> using <var>Incremental Font URI</var> as the base URI to
+     produce the <var>target URI</var>.
+
+2.  Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers,
+     [[fetch]] should be used. Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.
+
+<dfn abstract-op>Handle errors</dfn>
+
+Coming soon.
+
+<!-- TODO -->
+
+<!-- TODO: we should consider defining a valid encoded IFT font as one that produces a correct font subset for the corresponding
+           definition in the entry. This would likely be the only requirement made for encoders. -->
+
+<h3 algorithm id="fully-expanding-a-font">Fully Expanding a Font</h3>
+
+This sections defines an algorithm that can be used to transform an incremental font into a fully expanded non-incremental font. This
+process loads all available data provided by the incremental font and produces a single static font file that contains no further
+patches to be applied.
+
+<dfn abstract-op>Fully Expand a Font Subset</dfn>
+
+The inputs to this algorithm are:
+
+* <var>font subset</var>: an [=incremental font|incremental=] [=font subset=].
+
+The algorithm outputs:
+
+* <var>expanded font</var>: an [[open-type]] font that is not incremental.
+
+The algorithm:
+
+1. Invoke [$Extend an Incremental Font Subset$] with <var>font subset</var>. The input target subset definition is a special one which
+    is considered to intersect all entries in the [$Check entry intersection$] step. Return the resulting font subset as
+    the <var>expanded font</var>.
 
 Extensions to the Font Format {#font-format-extensions}
 =======================================================
 
-An <dfn dfn>incremental font</dfn> follows the existing [[open-type|OpenType]] format, but includes two new
+An [=incremental font=] follows the existing [[open-type|OpenType]] format, but includes two new
 [[open-type/otff#table-directory|tables]] identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both
-[[#patch-map|patch maps]], which encode a collection of mappings from [=font subset definition|font subset definitions=] to URIs which
-host [[#font-patch-formats|patches]] that extend the incremental font. All incremental fonts must contain the 'IFT ' table.
-The 'IFTX' table is optional. When both tables are present, the mapping of the font as a whole is the union of the mappings of
-the two tables. The two new tables are used only in this specification and are not being added to the [[open-type|Open-Type]]
-specification.
+[=patch map|patch maps=]. All incremental fonts must contain the 'IFT ' table. The 'IFTX' table is optional. When both tables are
+present, the mapping of the font as a whole is the union of the mappings of the two tables. The two new tables are used only in this
+specification and are not being added to the [[open-type|Open-Type]] specification.
 
 Note: allowing the mapping to be split between two distinct tables allows an incremental font to more easily make use of multiple
 patch types. For example all patches of one type can be specified in the 'IFT ' table, and all patches of a second type in the
@@ -411,12 +533,10 @@ is taken. If an incremental font will be encoded by WOFF2 for transfer:
 The 'IFT ' and 'IFTX' tables can be processed and brotli encoded by a WOFF2 encoder following the standard process defined in
 [[WOFF2#table_format]].
 
-Patch Map Table {#patch-map}
-----------------------------
+Patch Map Table {#patch-map-table}
+----------------------------------
 
-A patch map table encodes a list of <dfn dfn>patch map entries</dfn>, where each entry has a key and value. The key is a
-[=font subset definition=] and the value is a URI, the [[#font-patch-formats]] used by the data at the URI, and the compatibility ID
-of the patch map table. A map is encoded in one of two formats:
+A [=patch map=] is encoded in one of two formats:
 
 *  Format 1: a limited, but more compact encoding. It encodes a one-to-one mapping from glyph id to patch URIs. It does
     not support [=font subset definitions=] with design space or entries with overlapping subset definitions.
@@ -425,10 +545,10 @@ of the patch map table. A map is encoded in one of two formats:
     is typically less compact than format 1.
 
 Each format defines an algorithm for interpreting bytes encoded with that format to produce the list of entries it represents. The
-[$Extend a Font Subset$] algorithm invokes the interpretation algorithms and operates on the resulting entry list. The encoded bytes
-are the source of truth at all times for the patch map. Patch application during subset extension will alter the encoded bytes of the
-patch map and as a result the entry list derived from the encoded bytes will change. The extension algorithm reinterprets the encoded
-bytes at the start of every iteration to pick up any changes made in the previous iteration.
+[$Extend an Incremental Font Subset$] algorithm invokes the interpretation algorithms and operates on the resulting entry list. The
+encoded bytes are the source of truth at all times for the patch map. Patch application during subset extension will alter the encoded
+bytes of the patch map and as a result the entry list derived from the encoded bytes will change. The extension algorithm reinterprets
+the encoded bytes at the start of every iteration to pick up any changes made in the previous iteration.
 
 ### Patch Map Table: Format 1 ### {#patch-map-format-1}
 
@@ -949,14 +1069,13 @@ needs to be taken when choosing the set of characters to use in the file names.
 
 <h5 algorithm id="interpreting-patch-map-format-2">Interpreting Format 2</h5>
 
-This algorithm is used to convert a format 2 patch map into a list of [=patch map entries=].
-
+This algorithm is used to convert a format 2 [=patch map=] into a list of [=patch map entries=].
 
 <dfn abstract-op>Interpret Format 2 Patch Map</dfn>
 
 The inputs to this algorithm are:
 
-* <var>patch map</var>: a [=Format 2 Patch Map=] encoded patch map.
+* <var>patch map</var>: a [=Format 2 Patch Map=] encoded [=patch map=].
 
 The algorithm outputs:
 
@@ -1254,6 +1373,99 @@ to give the smallest encodings for most unicode codepoint sets typically encount
   ```
 </div>
 
+### URI Templates ### {#uri-templates}
+
+URI templates [[!rfc6570]] are used to convert numeric or string IDs into URIs where patch files are located.
+A string ID is a sequence of [[!unicode|Unicode]] code point values obtained from decoding a
+[[UTF-8]] string (see [[rfc6570#section-1.6]]). Several variables are defined which are used to produce the
+expansion of the template:
+
+<table>
+  <tr><th>Variable</th><th>Value</th></tr>
+  <tr>
+    <td>id</td>
+    <td>
+      If the input id is numeric then this is the  numeric value converted to a string in hexadecimal representation
+      (using the digits 0-9, A-F). No padding with 0's is used. Otherwise, this is the string id value.
+    </td>
+  </tr>
+  <tr>
+    <td>d1</td>
+    <td>
+      The last character of the string in the id variable.
+      If id variable is empty then, the value is the character 0 (U+0030).
+    </td>
+  </tr>
+  <tr>
+    <td>d2</td>
+    <td>
+      The second last character of the string in the id variable.
+      If the id variable has less than 2 characters then, the value is the character 0 (U+0030).
+    </td>
+  </tr>
+  <tr>
+    <td>d3</td>
+    <td>
+      The third last character of the string in the id variable.
+      If the id variable has less than 3 characters then, the value is the character 0 (U+0030).
+    </td>
+  </tr>
+  <tr>
+    <td>d4</td>
+    <td>
+      The fourth last character of the string in the id variable.
+      If the id variable has less than 4 characters then, the value is the character 0 (U+0030).
+    </td>
+  </tr>
+</table>
+
+The variables d1 through d4 select a specific character of the id variable. In this context a character is a [[!unicode]] code point.
+If the code point is not an ASCII code point then during expansion it will need to be converted to
+[[UTF-8]] and percent encoded as required by [[rfc6570#section-1.6]].
+
+<div class="example">
+
+Some example inputs and the corresponding expansions:
+
+<table>
+  <tr><th>Template</th><th>Input ID</th><th>Expansion</th></tr>
+  <tr>
+    <td>//foo.bar/{id}</td>
+    <td>123</td>
+    <td>//foo.bar/7B</td>
+  </tr>
+  <tr>
+    <td>//foo.bar{/d1,d2,id}</td>
+    <td>123</td>
+    <td>//foo.bar/B/7/7B</td>
+  </tr>
+  <tr>
+    <td>//foo.bar{/d1,d2,d3,id}</td>
+    <td>123</td>
+    <td>//foo.bar/B/7/0/7B</td>
+  </tr>
+n    <tr>
+    <td>//foo.bar{/d1,d2,d3,id}</td>
+    <td>baz</td>
+    <td>//foo.bar/z/a/b/baz</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>//foo.bar{/d1,d2,d3,id}</td>
+    <td>az</td>
+    <td>//foo.bar/z/a/0/az</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>//foo.bar{/d1,d2,d3,id}</td>
+    <td>àbc</td>
+    <td>//foo.bar/c/b/%C3%A0/%C3%A0bc</td>
+  </tr>
+</table>
+
+</div>
+
+
 Font Patch Formats {#font-patch-formats}
 ========================================
 
@@ -1261,36 +1473,6 @@ In incremental font transfer [=font subset|font subsets=] are extended by applyi
 This specification defines three patch formats, each appropriate to its own set of augmentation scenarios. A single
 encoding can make use of more than one patch format.
 
-Definitions {#font-patch-definitions}
--------------------------------------
-
-A <dfn dfn>font patch</dfn> is a file which encodes changes to be made to an IFT-encoded font. Patches are used to extend
-an existing [=font subset=] and provide expanded coverage.
-
-A <dfn dfn>patch format</dfn> is a specified encoding of changes to be applied relative to a [=font subset=]. A set of
-changes encoded according to the format is a [=font patch=]. Each [=patch format=] has an associated 
-<dfn dfn>patch application algorithm</dfn> which takes a
-[=font subset=] and a [=font patch=] encoded in the [=patch format=] as input and outputs an extended
-[=font subset=].
-
-Patch Invalidations {#font-patch-invalidations}
------------------------------------------------
-
-Patches in an incremental [=font subset=] when applied may invalidate other available patches, making them invalid to be applied
-to the extended [=font subset=]. Patch validity is checked using the compatibility ID from the [[#patch-map]]. Every patch has a
-compatibility ID encoded within it which needs to match the compatibility ID from the [[#patch-map]] which lists that patch. Additionally
-to aid the client in determining what invalidations will occur, every patch is categorized into one of three categories:
-
-* <dfn dfn>Full Invalidation</dfn>: when this patch is applied all other patches currently listed in the [=font subset=] are invalidated.
-    The compatibility ID in both the 'IFT ' and 'IFTX' [[#patch-map]] will be changed.
-
-* <dfn dfn>Partial Invalidation</dfn>: when this patch is applied all other patches in the same [[#patch-map]] will be invalidated.
-    The compatibility ID of only the [[#patch-map]] which contains this patch will be changed.
-
-* <dfn dfn>No Invalidation</dfn>: no other patches will be invalidated by the application of this patch. The compatibility ID of the
-    'IFT ' and 'IFTX' [[#patch-map]] will not change.
-
-The invalidation behaviour of a specific patch is encoded in its format number which can be found in the following section.
 
 Formats Summary {#font-patch-formats-summary}
 ---------------------------------------------
@@ -1701,7 +1883,7 @@ The algorithm:
 
 
 
-5. Locate the [[#patch-map]] table which has the same [=Glyph keyed patch/compatibilityId=] as <var>compatibility id</var>. If it is a
+5. Locate the [[#patch-map-table]] which has the same [=Glyph keyed patch/compatibilityId=] as <var>compatibility id</var>. If it is a
     format 1 patch map then, invoke [$Remove Entries from Format 1 Patch Map$] with the patch map table and <var>patch uri</var> as an
     input. Otherwise if it is a format 2 patch map then, invoke [$Remove Entries from Format 2 Patch Map$] with the patch map table and
     <var>patch uri</var> as an input. Copy the modified patch map table into <var>extended font subset</var>.
@@ -1713,162 +1895,6 @@ The algorithm:
     for each modified table: update the checksums in the [[open-type/otff#table-directory|fonts table directory]] to match the table's
     new contents.
 
-<h2 algorithm id="extending-font-subset">Extending a Font Subset</h2>
-
-This sections defines the algorithm that a client uses to extend an [=incremental font|incremental=] [=font subset=] to cover additional
-codepoints, layout features and/or design space.
-
-<dfn abstract-op>Extend a Font Subset</dfn>
-
-The inputs to this algorithm are:
-
-* <var>font subset</var>: an [=incremental font|incremental=] [=font subset=].
-
-* <var>font subset URI</var>: an [[rfc3986#section-4.3|abslolute URI]] which identifies the location of <var>font subset</var>.
-
-* <var>target subset definition</var>: the [=font subset definition=] that the client wants to extend <var>font subset</var> to cover.
-
-The algorithm outputs:
-
-* <var>extended font subset</var>: an extended version of <var>font subset</var>. May or may not be an [=incremental font=].
-
-The algorithm:
-
-1.  Set <var>extended font subset</var> to <var>font subset</var>.
-
-2.  Load the 'IFT ' and 'IFTX' (if present) mapping [[open-type/otff#table-directory|tables]] from <var>extended font subset</var>. Both
-    tables are formatted as a [[#patch-map]]. Check that they are valid according to the requirements in [[#patch-map]]. If either table
-    is not valid, invoke [$Handle errors$]. If <var>extended font subset</var> does not have an 'IFT ' table, then it is not an
-    [=incremental font=] and cannot be extended, return <var>extended font subset</var>.
-
-3.  For each of [[open-type/otff#table-directory|tables]] 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
-    invoking [$Interpret Format 1 Patch Map$] or [$Interpret Format 2 Patch Map$]. Concatenate the returned entry lists into a single list,
-    <var>entry list</var>.
-
-4.  For each <var>entry</var> in <var>entry list</var> invoke [$Check entry intersection$] with <var>entry</var> and
-    <var>target subset definition</var> as inputs, if it returns false remove <var>entry</var>
-    from <var>entry list</var>.
-
-5.  If <var>entry list</var> is empty, then the extension operation is finished, return <var>extended font subset</var>.
-
-6.  Pick one <var>entry</var> from <var>entry list</var> with the following procedure:
-
-    *  If <var>entry list</var> contains one or more [=patch map entries=] which have a patch format that is [=Full Invalidation=]
-        then, select exactly one of the [=Full Invalidation=] entries in <var>entry list</var>. The criteria for selecting the single
-        entry is left up to the implementation to decide.
-
-    *  Otherwise if <var>entry list</var> contains one or more [=patch map entries=] which have a patch format that is
-        [=Partial Invalidation=] then, select exactly one of the [=Partial Invalidation=] entries in <var>entry list</var>.
-        The criteria for selecting the single entry is left up to the implementation to decide.
-
-    *  Otherwise select exactly one of the [=No Invalidation=] entries in <var>entry list</var>.
-        The criteria for selecting the single entry is left up to the implementation to decide.
-
-7.  Load <var>patch file</var> by invoking [$Load patch file$] with the <var>font subset URI</var> as the incremental font URI and the
-    <var>entry</var> patch URI as the patch URI.
-
-8.  Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from
-    [[#font-patch-formats]] to apply the <var>patch file</var> using the patch URI and the compatibility id from <var>entry</var> to
-    <var>extended font subset</var>.
-
-9.  Go to step 2.
-
-Note: the algorithm here presents patch loads as being done one at a time; however, to improve performance client implementations are
-encouraged to pre-fetch patch files that will be applied in later iterations by the algorithm. The
-[[#font-patch-invalidations|invalidation categories]] can be used to predict which intersecting patches from step 4 will remain be valid
-to be applied.
-
-<!-- TODO: provide criteria to exit if stuck in an infinite loop. Could require that no specific URL is loaded more than once?
-           Could require that each patch application result in an extended coverage in some way? Also allow the client to define
-	   an max iteration count? -->
-<!-- TODO: also consider adding additional changes to prevent degenerate behaviour from happening (eg. iteration limits, minimum codepoint group sizes). -->
-    
-<dfn abstract-op>Check entry intersection</dfn>
-
-The inputs to this algorithm are:
-
-*   <var>mapping entry</var>: a [=patch map entries|patch map entry=].
-
-*   <var>subset definition</var>: a [=font subset definition=].
-
-The algorithm outputs:
-
-*   <var>intersects</var>: true if <var>subset definition</var> intersects <var>mapping entry</var>, otherwise false.
-
-The algorithm:
-
-1.  For each set in <var>subset definition</var> (codepoints, feature tags, design space) check if the set intersects
-     the corresponding set from <var>mapping entry</var>. A set intersects when:
-
-     <table>
-       <tr>
-         <th></th><th>subset definition set is empty</th><th>subset definition set is not empty</th>
-       </tr>
-       <tr>
-         <th>mapping entry set is empty</th><td>true</td><td>true</td>
-       </tr>
-       <tr>
-         <th>mapping entry set is not empty</th><td>false</td><td>true if the two sets intersect</td>
-       </tr>
-     </table>
-
-2. If all sets checked in step 1 intersect, then return true for <var>intersects</var> otherwise false.
-
-<dfn abstract-op>Load patch file</dfn>
-
-<!-- TODO: consider requiring HTTPS (or disallowing HTTP specifically if we want to allow file:// and other url types) -->
-
-The inputs to this algorithm are:
-
-*   <var>Patch URI</var>: A [[rfc3986#section-4.1|URI Reference]] identifying the patch file to load. As a URI reference this may be a
-     relative path.
-
-*   <var>Incremental Font URI</var>: An [[rfc3986#section-4.3|abslolute URI]] which identifies the incremental font which contains
-     the reference to <var>Patch URI</var>.
-
-The algorithm outputs:
-
-*   <var>patch file</var>: the content (bytes) identified by <var>Patch URI</var>.
-
-The algorithm:
-
-1.  Perform [[rfc3986#section-5|reference resolution]] on <var>Patch URI</var> using <var>Incremental Font URI</var> as the base URI to
-     produce the <var>target URI</var>.
-
-2.  Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers,
-     [[fetch]] should be used. Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.
-
-<dfn abstract-op>Handle errors</dfn>
-
-Coming soon.
-
-<!-- TODO -->
-
-<!-- TODO: we should consider defining a valid encoded IFT font as one that produces a correct font subset for the corresponding
-           definition in the entry. This would likely be the only requirement made for encoders. -->
-
-<h3 algorithm id="fully-expanding-a-font">Fully Expanding a Font</h3>
-
-This sections defines an algorithm that can be used to transform an incremental font into a fully expanded non-incremental font. This
-process loads all available data provided by the incremental font and produces a single static font file that contains no further
-patches to be applied.
-
-<dfn abstract-op>Fully Expand a Font Subset</dfn>
-
-The inputs to this algorithm are:
-
-* <var>font subset</var>: an [=incremental font|incremental=] [=font subset=].
-
-The algorithm outputs:
-
-* <var>expanded font</var>: an [[open-type]] font that is not incremental.
-
-The algorithm:
-
-1. Invoke [$Extend a Font Subset$] with <var>font subset</var>. The input target subset definition is a special one which
-    is considered to intersect all entries in the [$Check entry intersection$] step. Return the resulting font subset as
-    the <var>expanded font</var>.
-
 Encoder {#encoder}
 ==================
 
@@ -1877,13 +1903,13 @@ The [=incremental font=] and associated patches produced by a compliant encoder:
 
 1.  Must meet all of the requirements in [[#font-format-extensions]] and [[#font-patch-formats]].
 
-2.  Must be consistent, that is: for any possible [=font subset definition=] the result of invoking [$Extend a Font Subset$] 
+2.  Must be consistent, that is: for any possible [=font subset definition=] the result of invoking [$Extend an Incremental Font Subset$] 
     with that subset definition and the [=incremental font=] must always be the same regardless of the particular order
-    of patch selection chosen in step 6 of [$Extend a Font Subset$].
+    of patch selection chosen in step 6 of [$Extend an Incremental Font Subset$].
 
 3.  Should preserve the functionality of the fully expanded font, that is:
      given the [$Fully Expand a Font Subset|fully expanded font$] derived from the [=incremental font=]
-     and any content, then the [=font subset=] produced by invoking [$Extend a Font Subset$] with the
+     and any content, then the [=font subset=] produced by invoking [$Extend an Incremental Font Subset$] with the
      [=incremental font=] and the minimal subset definition covering that content should
      render identically to the fully expanded font for that content.
 
