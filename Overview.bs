@@ -316,8 +316,8 @@ in [[#font-format-extensions]].
   </tr>
 </table>
 
-Data Types {#data-types}
-------------------------
+Explanation of Data Types {#data-types}
+---------------------------------------
 
 Encoded data structures in the remainder of this specification are described in terms of the data types defined
 in [[open-type/otff#data-types]]. As with the rest of OpenType, all fields use "big-endian" byte ordering.
@@ -325,16 +325,17 @@ in [[open-type/otff#data-types]]. As with the rest of OpenType, all fields use "
 Extending a Font Subset {#extending-font-subset}
 ================================================
 
-This sections defines the algorithm that a client uses to extend an [=incremental font|incremental=] [=font subset=] to cover additional
+This section defines the algorithm that a client uses to extend an [=incremental font|incremental=] [=font subset=] to cover additional
 codepoints, layout features and/or design space.
 
 Patch Invalidations {#font-patch-invalidations}
 -----------------------------------------------
 
-Patches in an incremental [=font subset=] when applied may invalidate other available patches, making them invalid to be applied
-to the extended [=font subset=]. Patch validity is checked using the compatibility ID from the [[#patch-map-table]]. Every patch has a
+The application of a patch to an an incremental [=font subset=] may invalidate some or all of the other mapped patches, so that if
+one of those were to be applied the result would be a corrupt
+[=font subset|font=]. Patch validity is tracked by the compatibility ID from the [[#patch-map-table]]. Every patch has a
 compatibility ID encoded within it which needs to match the compatibility ID from the [[#patch-map-table]] which lists that patch.
-Additionally to aid the client in determining what invalidations will occur, every patch is categorized into one of three categories:
+Every patch is categorized into one of three types, depending on how it does or does not invalidate other patches in the map(s):
 
 * <dfn dfn>Full Invalidation</dfn>: when this patch is applied all other patches currently listed in the [=font subset=] are invalidated.
     The compatibility ID in both the 'IFT ' and 'IFTX' [[#patch-map-table]] will be changed.
@@ -345,7 +346,7 @@ Additionally to aid the client in determining what invalidations will occur, eve
 * <dfn dfn>No Invalidation</dfn>: no other patches will be invalidated by the application of this patch. The compatibility ID of the
     'IFT ' and 'IFTX' [[#patch-map-table]] will not change.
 
-The invalidation behaviour of a specific patch is encoded in its format number which can be found in [[#font-patch-formats-summary]].
+The invalidation behavior of a specific patch is encoded in its format number, which can be found in [[#font-patch-formats-summary]].
 
 <h3 algorithm id="extend-font-subset">Incremental Font Extension Algorithm</h2>
 
@@ -409,6 +410,9 @@ encouraged to pre-fetch patch files that will be applied in later iterations by 
 [[#font-patch-invalidations|invalidation categories]] can be used to predict which intersecting patches from step 4 will remain be valid
 to be applied.
 
+<!-- TODO: Can we say something specific in the above Note about "No Invalidation" patches? E.g. that when there are only such
+           patches they can always safely be loaded in parallel? -->
+
 <!-- TODO: provide criteria to exit if stuck in an infinite loop. Could require that no specific URL is loaded more than once?
            Could require that each patch application result in an extended coverage in some way? Also allow the client to define
 	   an max iteration count? -->
@@ -454,8 +458,15 @@ The inputs to this algorithm are:
 *   <var>Patch URI</var>: A [[rfc3986#section-4.1|URI Reference]] identifying the patch file to load. As a URI reference this may be a
      relative path.
 
-*   <var>Incremental Font URI</var>: An [[rfc3986#section-4.3|abslolute URI]] which identifies the incremental font which contains
+*   <var>Incremental Font URI</var>: An [[rfc3986#section-4.3|absolute URI]] which identifies the incremental font which contains
      the reference to <var>Patch URI</var>.
+
+<!-- TODO: We explicitly imply (via "may") that a Patch URI could be absolute. Then we say the Incremental Font URI "identifies
+           the incremental font which contains the reference to Patch URI". But only particular incremental instances may do so
+           e.g. in the case of full or partial invalidating patches. So are we meaning to leave open the option of the
+           Incremental Font URI changing over time, perhaps when a Patch URI is absolute? If not, we should change "Incremental
+           Font URI" to something like "Original Font URI". If so, I think we need to specify how that happens in the algorithm
+           below. -->
 
 The algorithm outputs:
 
@@ -483,6 +494,11 @@ Coming soon.
 This sections defines an algorithm that can be used to transform an incremental font into a fully expanded non-incremental font. This
 process loads all available data provided by the incremental font and produces a single static font file that contains no further
 patches to be applied.
+
+<!-- TODO:  Especially if we do plan to support having multiple invalidating patches that intersect some categories of
+            parameter but not others, might it be desirable to have some sort of breadcrumb in the map saying "privilege
+            this one next if you're trying to load the whole font"? Basically a field or a flag saying "this gets you
+            to the end fastest"? -->
 
 <dfn abstract-op>Fully Expand a Font Subset</dfn>
 
