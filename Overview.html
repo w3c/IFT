@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="4a24a41b1b8d0b2a4f6190f92c39b4c5e3488950" name="revision">
+  <meta content="1981855541cb3f3f32eadf103da0fcf1f31e613a" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -607,7 +607,7 @@ var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBC
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-29">29 April 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-30">30 April 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -677,7 +677,7 @@ be loaded over multiple requests where each request incrementally adds additiona
       <li><a href="#font-subset-dfn"><span class="secno">3.1</span> <span class="content">Font Subset</span></a>
       <li><a href="#font-patch-definitions"><span class="secno">3.2</span> <span class="content">Font Patch</span></a>
       <li><a href="#patch-map-dfn"><span class="secno">3.3</span> <span class="content">Patch Map</span></a>
-      <li><a href="#data-types"><span class="secno">3.4</span> <span class="content">Data Types</span></a>
+      <li><a href="#data-types"><span class="secno">3.4</span> <span class="content">Explanation of Data Types</span></a>
      </ol>
     <li>
      <a href="#extending-font-subset"><span class="secno">4</span> <span class="content">Extending a Font Subset</span></a>
@@ -931,17 +931,17 @@ in <a href="#font-format-extensions">§ 5 Extensions to the Font Format</a>.</
          <p><a href="#font-patch-invalidations">compatibility ID</a></p>
        </ul>
    </table>
-   <h3 class="heading settled" data-level="3.4" id="data-types"><span class="secno">3.4. </span><span class="content">Data Types</span><a class="self-link" href="#data-types"></a></h3>
+   <h3 class="heading settled" data-level="3.4" id="data-types"><span class="secno">3.4. </span><span class="content">Explanation of Data Types</span><a class="self-link" href="#data-types"></a></h3>
    <p>Encoded data structures in the remainder of this specification are described in terms of the data types defined
 in <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types">OpenType Specification § otff#data-types</a>. As with the rest of OpenType, all fields use "big-endian" byte ordering.</p>
    <h2 class="heading settled" data-level="4" id="extending-font-subset"><span class="secno">4. </span><span class="content">Extending a Font Subset</span><a class="self-link" href="#extending-font-subset"></a></h2>
-   <p>This sections defines the algorithm that a client uses to extend an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font②">incremental</a> <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> to cover additional
+   <p>This section defines the algorithm that a client uses to extend an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font②">incremental</a> <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> to cover additional
 codepoints, layout features and/or design space.</p>
    <h3 class="heading settled" data-level="4.1" id="font-patch-invalidations"><span class="secno">4.1. </span><span class="content">Patch Invalidations</span><a class="self-link" href="#font-patch-invalidations"></a></h3>
-   <p>Patches in an incremental <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a> when applied may invalidate other available patches, making them invalid to be applied
-to the extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font subset</a>. Patch validity is checked using the compatibility ID from the <a href="#patch-map-table">§ 5.2 Patch Map Table</a>. Every patch has a
+   <p>The application of a patch to an an incremental <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a> may invalidate some or all of the other mapped patches, so that if
+one of those were to be applied the result would be a corrupt <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font</a>. Patch validity is tracked by the compatibility ID from the <a href="#patch-map-table">§ 5.2 Patch Map Table</a>. Every patch has a
 compatibility ID encoded within it which needs to match the compatibility ID from the <a href="#patch-map-table">§ 5.2 Patch Map Table</a> which lists that patch.
-Additionally to aid the client in determining what invalidations will occur, every patch is categorized into one of three categories:</p>
+Every patch is categorized into one of three types, depending on how it does or does not invalidate other patches in the map(s):</p>
    <ul>
     <li data-md>
      <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="full-invalidation">Full Invalidation</dfn>: when this patch is applied all other patches currently listed in the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑧">font subset</a> are invalidated.
@@ -953,7 +953,7 @@ The compatibility ID of only the <a href="#patch-map-table">§ 5.2 Patch Map T
      <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="no-invalidation">No Invalidation</dfn>: no other patches will be invalidated by the application of this patch. The compatibility ID of the
 'IFT ' and 'IFTX' <a href="#patch-map-table">§ 5.2 Patch Map Table</a> will not change.</p>
    </ul>
-   <p>The invalidation behaviour of a specific patch is encoded in its format number which can be found in <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a>.</p>
+   <p>The invalidation behavior of a specific patch is encoded in its format number, which can be found in <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a>.</p>
    <h3 class="heading settled algorithm" data-algorithm="Incremental Font Extension Algorithm" data-level="4.2" id="extend-font-subset"><span class="secno">4.2. </span><span class="content">Incremental Font Extension Algorithm</span><a class="self-link" href="#extend-font-subset"></a></h3>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-extend-an-incremental-font-subset">Extend an Incremental Font Subset</dfn></p>
    <p>The inputs to this algorithm are:</p>
@@ -961,7 +961,8 @@ The compatibility ID of only the <a href="#patch-map-table">§ 5.2 Patch Map T
     <li data-md>
      <p><var>font subset</var>: an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font③">incremental</a> <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑨">font subset</a>.</p>
     <li data-md>
-     <p><var>font subset URI</var>: an <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.3">abslolute URI</a> which identifies the location of <var>font subset</var>.</p>
+     <p><var>original font subset URI</var>: an <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.3">absolute URI</a> which identifies the location of the original incremental
+font that <var>font subset</var> was derived from.</p>
     <li data-md>
      <p><var>target subset definition</var>: the <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition③">font subset definition</a> that the client wants to extend <var>font subset</var> to cover.</p>
    </ul>
@@ -1000,7 +1001,8 @@ The criteria for selecting the single entry is left up to the implementation to 
 The criteria for selecting the single entry is left up to the implementation to decide.</p>
      </ul>
     <li data-md>
-     <p>Load <var>patch file</var> by invoking <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the <var>font subset URI</var> as the incremental font URI and the <var>entry</var> patch URI as the patch URI.</p>
+     <p>Load <var>patch file</var> by invoking <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the <var>original font subset URI</var> as the original font URI and
+the <var>entry</var> patch URI as the patch URI.</p>
     <li data-md>
      <p>Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from <a href="#font-patch-formats">§ 6 Font Patch Formats</a> to apply the <var>patch file</var> using the patch URI and the compatibility id from <var>entry</var> to <var>extended font subset</var>.</p>
     <li data-md>
@@ -1008,7 +1010,8 @@ The criteria for selecting the single entry is left up to the implementation to 
    </ol>
    <p class="note" role="note"><span class="marker">Note:</span> the algorithm here presents patch loads as being done one at a time; however, to improve performance client implementations are
 encouraged to pre-fetch patch files that will be applied in later iterations by the algorithm. The <a href="#font-patch-invalidations">invalidation categories</a> can be used to predict which intersecting patches from step 4 will remain be valid
-to be applied.</p>
+to be applied. For example: in a case where there are only "No Invalidation" intersecting patches the client could safely load all
+intersecting patches in parallel, since no patch application will invalidate any of the other intersecting patches.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-check-entry-intersection">Check entry intersection</dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
@@ -1052,8 +1055,8 @@ to be applied.</p>
      <p><var>Patch URI</var>: A <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.1">URI Reference</a> identifying the patch file to load. As a URI reference this may be a
  relative path.</p>
     <li data-md>
-     <p><var>Incremental Font URI</var>: An <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.3">abslolute URI</a> which identifies the incremental font which contains
- the reference to <var>Patch URI</var>.</p>
+     <p><var>Original Font URI</var>: An <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.3">absolute URI</a> which identifies the original incremental font that the
+ patch URI was derived from.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -1063,7 +1066,7 @@ to be applied.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Perform <a href="https://www.rfc-editor.org/rfc/rfc3986#section-5">reference resolution</a> on <var>Patch URI</var> using <var>Incremental Font URI</var> as the base URI to
+     <p>Perform <a href="https://www.rfc-editor.org/rfc/rfc3986#section-5">reference resolution</a> on <var>Patch URI</var> using <var>Original Font URI</var> as the base URI to
  produce the <var>target URI</var>.</p>
     <li data-md>
      <p>Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers, <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> should be used. Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.</p>

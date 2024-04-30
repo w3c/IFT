@@ -354,11 +354,12 @@ The invalidation behavior of a specific patch is encoded in its format number, w
 
 The inputs to this algorithm are:
 
-* <var>font subset</var>: an [=incremental font|incremental=] [=font subset=].
+*  <var>font subset</var>: an [=incremental font|incremental=] [=font subset=].
 
-* <var>font subset URI</var>: an [[rfc3986#section-4.3|abslolute URI]] which identifies the location of <var>font subset</var>.
+*  <var>original font subset URI</var>: an [[rfc3986#section-4.3|absolute URI]] which identifies the location of the original incremental
+    font that <var>font subset</var> was derived from.
 
-* <var>target subset definition</var>: the [=font subset definition=] that the client wants to extend <var>font subset</var> to cover.
+*  <var>target subset definition</var>: the [=font subset definition=] that the client wants to extend <var>font subset</var> to cover.
 
 The algorithm outputs:
 
@@ -396,8 +397,8 @@ The algorithm:
     *  Otherwise select exactly one of the [=No Invalidation=] entries in <var>entry list</var>.
         The criteria for selecting the single entry is left up to the implementation to decide.
 
-7.  Load <var>patch file</var> by invoking [$Load patch file$] with the <var>font subset URI</var> as the incremental font URI and the
-    <var>entry</var> patch URI as the patch URI.
+7.  Load <var>patch file</var> by invoking [$Load patch file$] with the <var>original font subset URI</var> as the original font URI and
+    the <var>entry</var> patch URI as the patch URI.
 
 8.  Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from
     [[#font-patch-formats]] to apply the <var>patch file</var> using the patch URI and the compatibility id from <var>entry</var> to
@@ -408,15 +409,13 @@ The algorithm:
 Note: the algorithm here presents patch loads as being done one at a time; however, to improve performance client implementations are
 encouraged to pre-fetch patch files that will be applied in later iterations by the algorithm. The
 [[#font-patch-invalidations|invalidation categories]] can be used to predict which intersecting patches from step 4 will remain be valid
-to be applied.
-
-<!-- TODO: Can we say something specific in the above Note about "No Invalidation" patches? E.g. that when there are only such
-           patches they can always safely be loaded in parallel? -->
+to be applied. For example: in a case where there are only "No Invalidation" intersecting patches the client could safely load all
+intersecting patches in parallel, since no patch application will invalidate any of the other intersecting patches.
 
 <!-- TODO: provide criteria to exit if stuck in an infinite loop. Could require that no specific URL is loaded more than once?
            Could require that each patch application result in an extended coverage in some way? Also allow the client to define
 	   an max iteration count? -->
-<!-- TODO: also consider adding additional changes to prevent degenerate behaviour from happening (eg. iteration limits, minimum codepoint group sizes). -->
+<!-- TODO: also consider adding additional changes to prevent degenerate behavior from happening (eg. iteration limits, minimum codepoint group sizes). -->
     
 <dfn abstract-op>Check entry intersection</dfn>
 
@@ -458,15 +457,8 @@ The inputs to this algorithm are:
 *   <var>Patch URI</var>: A [[rfc3986#section-4.1|URI Reference]] identifying the patch file to load. As a URI reference this may be a
      relative path.
 
-*   <var>Incremental Font URI</var>: An [[rfc3986#section-4.3|absolute URI]] which identifies the incremental font which contains
-     the reference to <var>Patch URI</var>.
-
-<!-- TODO: We explicitly imply (via "may") that a Patch URI could be absolute. Then we say the Incremental Font URI "identifies
-           the incremental font which contains the reference to Patch URI". But only particular incremental instances may do so
-           e.g. in the case of full or partial invalidating patches. So are we meaning to leave open the option of the
-           Incremental Font URI changing over time, perhaps when a Patch URI is absolute? If not, we should change "Incremental
-           Font URI" to something like "Original Font URI". If so, I think we need to specify how that happens in the algorithm
-           below. -->
+*   <var>Original Font URI</var>: An [[rfc3986#section-4.3|absolute URI]] which identifies the original incremental font that the
+     patch URI was derived from.
 
 The algorithm outputs:
 
@@ -474,7 +466,7 @@ The algorithm outputs:
 
 The algorithm:
 
-1.  Perform [[rfc3986#section-5|reference resolution]] on <var>Patch URI</var> using <var>Incremental Font URI</var> as the base URI to
+1.  Perform [[rfc3986#section-5|reference resolution]] on <var>Patch URI</var> using <var>Original Font URI</var> as the base URI to
      produce the <var>target URI</var>.
 
 2.  Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers,
