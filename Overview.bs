@@ -1393,43 +1393,50 @@ expansion of the template:
   <tr>
     <td>id</td>
     <td>
-      If the input id is numeric then this is the  numeric value converted to a string in hexadecimal representation
-      (using the digits 0-9, A-F). No padding with 0's is used. Otherwise, this is the string id value.
+      The input id encoded as a [[rfc4648#section-7|base32hex]] string (using the digits 0-9, A-V) with padding
+      omitted. When the id is an unsigned integer only the significant bytes are encoded. (For example, when the
+      integer is less than 256 only one byte is encoded.) When the input id is a string it should first be
+      converted to [[UTF-8]] and then encoded as base32hex.
     </td>
   </tr>
   <tr>
     <td>d1</td>
     <td>
       The last character of the string in the id variable.
-      If id variable is empty then, the value is the character 0 (U+0030).
+      If id variable is empty then, the value is the character _ (U+005F).
     </td>
   </tr>
   <tr>
     <td>d2</td>
     <td>
       The second last character of the string in the id variable.
-      If the id variable has less than 2 characters then, the value is the character 0 (U+0030).
+      If the id variable has less than 2 characters then, the value is the character _ (U+005F).
     </td>
   </tr>
   <tr>
     <td>d3</td>
     <td>
       The third last character of the string in the id variable.
-      If the id variable has less than 3 characters then, the value is the character 0 (U+0030).
+      If the id variable has less than 3 characters then, the value is the character _ (U+005F).
     </td>
   </tr>
   <tr>
     <td>d4</td>
     <td>
       The fourth last character of the string in the id variable.
-      If the id variable has less than 4 characters then, the value is the character 0 (U+0030).
+      If the id variable has less than 4 characters then, the value is the character _ (U+005F).
+    </td>
+  </tr>
+  <tr>
+    <td>id64</td>
+    <td>
+      The input id encoded as a [[rfc4648#section-5|base64url]] string (using the digits A-Z, a-z, 0-9,
+      - (minus) and _ (underline)) with padding included. When the id is an unsigned integer only the
+      significant bytes are encoded. (For example, when the integer is less than 256 only one byte is
+      encoded.) When the input id is a string its raw bytes are encoded as base64url.
     </td>
   </tr>
 </table>
-
-The variables d1 through d4 select a specific character of the id variable. In this context a character is a [[!unicode]] code point.
-If the code point is not an ASCII code point then during expansion it will need to be converted to
-[[UTF-8]] and percent encoded as required by [[rfc6570#section-1.6]].
 
 <div class="example">
 
@@ -1440,39 +1447,44 @@ Some example inputs and the corresponding expansions:
   <tr>
     <td>//foo.bar/{id}</td>
     <td>123</td>
-    <td>//foo.bar/7B</td>
+    <td>//foo.bar/FC</td>
   </tr>
   <tr>
     <td>//foo.bar{/d1,d2,id}</td>
     <td>123</td>
-    <td>//foo.bar/B/7/7B</td>
+    <td>//foo.bar/C/F/FC</td>
   </tr>
   <tr>
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>123</td>
-    <td>//foo.bar/B/7/0/7B</td>
+    <td>//foo.bar/C/F/_/FC</td>
   </tr>
 n    <tr>
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>baz</td>
-    <td>//foo.bar/z/a/b/baz</td>
+    <td>//foo.bar/K/N/G/C9GNK</td>
   </tr>
   </tr>
     <tr>
     <td>//foo.bar{/d1,d2,d3,id}</td>
-    <td>az</td>
-    <td>//foo.bar/z/a/0/az</td>
+    <td>z</td>
+    <td>//foo.bar/8/F/_/F8</td>
   </tr>
   </tr>
     <tr>
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>àbc</td>
-    <td>//foo.bar/c/b/%C3%A0/%C3%A0bc</td>
+    <td>//foo.bar/0/0/4/OEG64OO</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>//foo.bar{id64}</td>
+    <td>àbc</td>
+    <td>//foo.bar/w6BiYw==</td>
   </tr>
 </table>
 
 </div>
-
 
 Font Patch Formats {#font-patch-formats}
 ========================================
@@ -2050,6 +2062,21 @@ incremental font. This can be accomplished by:
 <!-- TODO:
   - Max depth and/or combining segments at lower depths.
   -->
+
+<b>Choosing the input ID encoding</b>
+
+The specification supports two encodings for embedding patch IDs in the URL template. The first is [[rfc4648#section-7|base32hex]],
+which is a good match for pre-generated patches that will typically be stored in a filesystem. Base32hex encoding only uses the
+letters 0-9 and A-V, which are safe letters for a file name in every commonly used filesystem, with no risk of collisions due to
+case-insensitivity. Because the string is embedded without padding this format cannot be reliably decoded, so it may be a poor
+choice for dynamically generated patches. The other encoding is [[rfc4648#section-5|base64url]], a variant of base64 encoding
+appropriate for embedding in a URL or case-sensitive filesystem. When using this encoding the id is embedded with padding so that
+the value can be reliably decoded.
+
+The individual character selectors d1 through d4 are relative to the base64hex encoded id only. These are typically used to
+reduce the number of files stored in a single filesystem directory by spreading related files out into one or more levels of
+subdirectory according to the trailing letters of the id encoding. It is valid to mix d1 through d4 with a base64url-encoded
+id.
 
 <h2 class=no-num id=priv>Privacy Considerations</h2>
 
