@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="5380efe853a26da4338a0a73e95e038b9f250766" name="revision">
+  <meta content="5b395fc130a7d63677e1b4c5968d8d70f6a99ac0" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -607,7 +607,7 @@ var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBC
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-30">30 April 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-05-07">7 May 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1812,29 +1812,35 @@ expansion of the template:</p>
       <th>Value
      <tr>
       <td>id
-      <td> If the input id is numeric then this is the  numeric value converted to a string in hexadecimal representation
-      (using the digits 0-9, A-F). No padding with 0’s is used. Otherwise, this is the string id value. 
+      <td> The input id encoded as a <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a> string (using the digits 0-9, A-V) with padding
+      omitted. When the id is an unsigned integer only the significant bytes are encoded. (For example, when the
+      integer is less than 256 only one byte is encoded.) When the input id is a string it should first be
+      converted to <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> and then encoded as base32hex. 
      <tr>
       <td>d1
       <td> The last character of the string in the id variable.
-      If id variable is empty then, the value is the character 0 (U+0030). 
+      If id variable is empty then, the value is the character _ (U+005F). 
      <tr>
       <td>d2
       <td> The second last character of the string in the id variable.
-      If the id variable has less than 2 characters then, the value is the character 0 (U+0030). 
+      If the id variable has less than 2 characters then, the value is the character _ (U+005F). 
      <tr>
       <td>d3
       <td> The third last character of the string in the id variable.
-      If the id variable has less than 3 characters then, the value is the character 0 (U+0030). 
+      If the id variable has less than 3 characters then, the value is the character _ (U+005F). 
      <tr>
       <td>d4
       <td> The fourth last character of the string in the id variable.
-      If the id variable has less than 4 characters then, the value is the character 0 (U+0030). 
+      If the id variable has less than 4 characters then, the value is the character _ (U+005F). 
+     <tr>
+      <td>id64
+      <td> The input id encoded as a <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a> string (using the digits A-Z, a-z, 0-9, -
+      (minus) and _ (underline)) with padding included. When the id is an unsigned integer only the
+      significant bytes are encoded. (For example, when the integer is less than 256 only one byte is
+      encoded.) When the input id is a string its raw bytes are encoded as base64url. 
    </table>
-   <p>The variables d1 through d4 select a specific character of the id variable. In this context a character is a <a data-link-type="biblio" href="#biblio-unicode" title="The Unicode Standard">[unicode]</a> code point.
-If the code point is not an ASCII code point then during expansion it will need to be converted to <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> and percent encoded as required by <a href="https://www.rfc-editor.org/rfc/rfc6570#section-1.6">URI Template § section-1.6</a>.</p>
-   <div class="example" id="example-7d75e350">
-    <a class="self-link" href="#example-7d75e350"></a> 
+   <div class="example" id="example-9b3d3302">
+    <a class="self-link" href="#example-9b3d3302"></a> 
     <p>Some example inputs and the corresponding expansions:</p>
      n 
     <table>
@@ -1846,27 +1852,31 @@ If the code point is not an ASCII code point then during expansion it will need 
       <tr>
        <td>//foo.bar/{id}
        <td>123
-       <td>//foo.bar/7B
+       <td>//foo.bar/FC
       <tr>
        <td>//foo.bar{/d1,d2,id}
        <td>123
-       <td>//foo.bar/B/7/7B
+       <td>//foo.bar/C/F/FC
       <tr>
        <td>//foo.bar{/d1,d2,d3,id}
        <td>123
-       <td>//foo.bar/B/7/0/7B
+       <td>//foo.bar/C/F/_/FC
       <tr>
        <td>//foo.bar{/d1,d2,d3,id}
        <td>baz
-       <td>//foo.bar/z/a/b/baz
+       <td>//foo.bar/K/N/G/C9GNK
       <tr>
        <td>//foo.bar{/d1,d2,d3,id}
-       <td>az
-       <td>//foo.bar/z/a/0/az
+       <td>z
+       <td>//foo.bar/8/F/_/F8
       <tr>
        <td>//foo.bar{/d1,d2,d3,id}
        <td>àbc
-       <td>//foo.bar/c/b/%C3%A0/%C3%A0bc
+       <td>//foo.bar/0/0/4/OEG64OO
+      <tr>
+       <td>//foo.bar{id64}
+       <td>àbc
+       <td>//foo.bar/w6BiYw==
     </table>
    </div>
    <h2 class="heading settled" data-level="6" id="font-patch-formats"><span class="secno">6. </span><span class="content">Font Patch Formats</span><a class="self-link" href="#font-patch-formats"></a></h2>
@@ -2340,6 +2350,18 @@ the patch count reasonable.</p>
 required too many patches.</p>
    </ol>
    <p><b>Managing the number of patches</b></p>
+   <p><b>Choosing the input ID encoding</b></p>
+   <p>The specification supports two encodings for embedding patch IDs in the URL template. The first is <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a>,
+which is a good match for pre-generated patches that will typically be stored in a filesystem. Base32hex encoding only uses the
+letters 0-9 and A-V, which are safe letters for a file name in every commonly used filesystem, with no risk of collisions due to
+case-insensitivity. Because the string is embedded without padding this format cannot be reliably decoded, so it may be a poor
+choice for dynamically generated patches. The other encoding is <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a>, a variant of base64 encoding
+appropriate for embedding in a URL or case-sensitive filesystem. When using this encoding the id is embedded with padding so that
+the value can be reliably decoded.</p>
+   <p>The individual character selectors d1 through d4 are relative to the base64hex encoded id only. These are typically used to
+reduce the number of files stored in a single filesystem directory by spreading related files out into one or more levels of
+subdirectory according to the trailing letters of the id encoding. It is valid to mix d1 through d4 with a base64url-encoded
+id.</p>
    <h2 class="no-num heading settled" id="priv"><span class="content">Privacy Considerations</span><a class="self-link" href="#priv"></a></h2>
    <p>Coming soon.</p>
    <h2 class="no-num heading settled" id="sec"><span class="content">Security Considerations</span><a class="self-link" href="#sec"></a></h2>
@@ -2557,6 +2579,8 @@ required too many patches.</p>
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
    <dt id="biblio-rfc3986">[RFC3986]
    <dd>T. Berners-Lee; R. Fielding; L. Masinter. <a href="https://www.rfc-editor.org/rfc/rfc3986"><cite>Uniform Resource Identifier (URI): Generic Syntax</cite></a>. January 2005. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3986">https://www.rfc-editor.org/rfc/rfc3986</a>
+   <dt id="biblio-rfc4648">[RFC4648]
+   <dd>S. Josefsson. <a href="https://www.rfc-editor.org/rfc/rfc4648"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. October 2006. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>
    <dt id="biblio-rfc6570">[RFC6570]
    <dd>J. Gregorio; et al. <a href="https://www.rfc-editor.org/rfc/rfc6570"><cite>URI Template</cite></a>. March 2012. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc6570">https://www.rfc-editor.org/rfc/rfc6570</a>
    <dt id="biblio-rfc7932">[RFC7932]
