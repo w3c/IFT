@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="bcb93fd5c909171e15f96d6ee03abc89685c2b51" name="revision">
+  <meta content="062767e81b858e014d16c80241f8886229c5e759" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -607,7 +607,7 @@ var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBC
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-05-22">22 May 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-05-23">23 May 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1077,7 +1077,15 @@ intersecting patches in parallel, since no patch application will invalidate any
      <p>Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers, <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> should be used. Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.</p>
    </ol>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-handle-errors">Handle errors</dfn></p>
-   <p>Coming soon.</p>
+   <p>If the extending the font subset process has failed with an error then, some of the data within the font may not be fully loaded and as
+a result rendering content which relies on the missing data may result in incorrect renderings. The client may choose to continue using
+the font, but should only use it for the rendering of codepoints, features, and design space that are fully loaded. An element of the
+font can be considered fully loaded if data for that element is present in the font (eg. for codepoints, listed in the cmap) and there are
+no mapping entries in the font subset which reference that element. Rendering of all other content should fallback to a different font
+following normal client fallback logic.</p>
+   <p>If the error occurred during <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file①">Load patch file</a> then, the client may continue trying to extend the font subset
+if there are remaining patches available other than the one(s) that failed to load. In the case of all other errors the client
+must not attempt to further extend the font subset.</p>
    <h3 class="heading settled algorithm" data-algorithm="Fully Expanding a Font" data-level="4.3" id="fully-expanding-a-font"><span class="secno">4.3. </span><span class="content">Fully Expanding a Font</span><a class="self-link" href="#fully-expanding-a-font"></a></h3>
    <p>This sections defines an algorithm that can be used to transform an incremental font into a fully expanded non-incremental font. This
 process loads all available data provided by the incremental font and produces a single static font file that contains no further
@@ -2849,7 +2857,7 @@ let dfnPanelData = {
 "abstract-opdef-interpret-format-1-patch-map": {"dfnID":"abstract-opdef-interpret-format-1-patch-map","dfnText":"Interpret Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-1-patch-map"}],"title":"4.2. Incremental Font Extension Algorithm"}],"url":"#abstract-opdef-interpret-format-1-patch-map"},
 "abstract-opdef-interpret-format-2-patch-map": {"dfnID":"abstract-opdef-interpret-format-2-patch-map","dfnText":"Interpret Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map"}],"title":"4.2. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map\u2460"},{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map\u2461"},{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map\u2462"}],"title":"5.2.2.2. Remove Entries from Format 2"}],"url":"#abstract-opdef-interpret-format-2-patch-map"},
 "abstract-opdef-interpret-format-2-patch-map-entry": {"dfnID":"abstract-opdef-interpret-format-2-patch-map-entry","dfnText":"Interpret Format 2 Patch Map Entry","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry\u2460"}],"title":"5.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry\u2461"}],"title":"5.2.2.2. Remove Entries from Format 2"}],"url":"#abstract-opdef-interpret-format-2-patch-map-entry"},
-"abstract-opdef-load-patch-file": {"dfnID":"abstract-opdef-load-patch-file","dfnText":"Load patch file","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-load-patch-file"}],"title":"4.2. Incremental Font Extension Algorithm"}],"url":"#abstract-opdef-load-patch-file"},
+"abstract-opdef-load-patch-file": {"dfnID":"abstract-opdef-load-patch-file","dfnText":"Load patch file","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-load-patch-file"},{"id":"ref-for-abstract-opdef-load-patch-file\u2460"}],"title":"4.2. Incremental Font Extension Algorithm"}],"url":"#abstract-opdef-load-patch-file"},
 "abstract-opdef-remove-entries-from-format-1-patch-map": {"dfnID":"abstract-opdef-remove-entries-from-format-1-patch-map","dfnText":"Remove Entries from Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-remove-entries-from-format-1-patch-map"}],"title":"6.4.1. Applying Glyph Keyed Patches"}],"url":"#abstract-opdef-remove-entries-from-format-1-patch-map"},
 "abstract-opdef-remove-entries-from-format-2-patch-map": {"dfnID":"abstract-opdef-remove-entries-from-format-2-patch-map","dfnText":"Remove Entries from Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-remove-entries-from-format-2-patch-map"}],"title":"6.4.1. Applying Glyph Keyed Patches"}],"url":"#abstract-opdef-remove-entries-from-format-2-patch-map"},
 "branch-factor-encoding": {"dfnID":"branch-factor-encoding","dfnText":"Branch Factor Encoding","external":false,"refSections":[{"refs":[{"id":"ref-for-branch-factor-encoding"}],"title":"5.2.2.3. Sparse Bit Set"}],"url":"#branch-factor-encoding"},

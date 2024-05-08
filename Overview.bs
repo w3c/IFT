@@ -474,12 +474,16 @@ The algorithm:
 
 <dfn abstract-op>Handle errors</dfn>
 
-Coming soon.
+If the extending the font subset process has failed with an error then, some of the data within the font may not be fully loaded and as
+a result rendering content which relies on the missing data may result in incorrect renderings. The client may choose to continue using
+the font, but should only use it for the rendering of codepoints, features, and design space that are fully loaded. An element of the
+font can be considered fully loaded if data for that element is present in the font (eg. for codepoints, listed in the cmap) and there are
+no mapping entries in the font subset which reference that element. Rendering of all other content should fallback to a different font
+following normal client fallback logic.
 
-<!-- TODO -->
-
-<!-- TODO: we should consider defining a valid encoded IFT font as one that produces a correct font subset for the corresponding
-           definition in the entry. This would likely be the only requirement made for encoders. -->
+If the error occurred during [$Load patch file$] then, the client may continue trying to extend the font subset
+if there are remaining patches available other than the one(s) that failed to load. In the case of all other errors the client
+must not attempt to further extend the font subset.
 
 <h3 algorithm id="fully-expanding-a-font">Fully Expanding a Font</h3>
 
