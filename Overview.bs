@@ -1394,9 +1394,10 @@ expansion of the template:
     <td>id</td>
     <td>
       The input id encoded as a [[rfc4648#section-7|base32hex]] string (using the digits 0-9, A-V) with padding
-      omitted. When the id is an unsigned integer only the significant bytes are encoded. (For example, when the
-      integer is less than 256 only one byte is encoded.) When the input id is a string it should first be
-      converted to [[UTF-8]] and then encoded as base32hex.
+      omitted.  When the id is an unsigned integer it must first be converted to a big endian 64 bit unsigned integer,
+      but then all leading bytes that are equal to 0 are removed before encoding.  (For example, when the
+      integer is less than 256 only one byte is encoded.) When the input id is a string the raw bytes are
+      encoded as base32hex.
     </td>
   </tr>
   <tr>
@@ -1431,9 +1432,11 @@ expansion of the template:
     <td>id64</td>
     <td>
       The input id encoded as a [[rfc4648#section-5|base64url]] string (using the digits A-Z, a-z, 0-9, -
-      (minus) and _ (underline)) with padding included. When the id is an unsigned integer only the
-      significant bytes are encoded. (For example, when the integer is less than 256 only one byte is
-      encoded.) When the input id is a string its raw bytes are encoded as base64url.
+      (minus) and _ (underline)) with padding included. Because the padding character is '=', it must
+      be URL-encoded as "%3D'.  When the id is an unsigned integer it must first be converted to a big
+      endian 64 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding. 
+      (For example, when the integer is less than 256 only one byte is encoded.) When the input id is
+      a string its raw bytes are encoded as base64url.
     </td>
   </tr>
 </table>
@@ -1451,36 +1454,38 @@ Some example inputs and the corresponding expansions:
   </tr>
   <tr>
     <td>//foo.bar{/d1,d2,id}</td>
-    <td>123</td>
-    <td>//foo.bar/C/F/FC</td>
+    <td>478</td>
+    <td>//foo.bar/0/F/07F0</td>
   </tr>
   <tr>
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>123</td>
     <td>//foo.bar/C/F/_/FC</td>
   </tr>
-n    <tr>
+  <tr>
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>baz</td>
     <td>//foo.bar/K/N/G/C9GNK</td>
   </tr>
-  </tr>
-    <tr>
+  <tr>
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>z</td>
     <td>//foo.bar/8/F/_/F8</td>
   </tr>
-  </tr>
-    <tr>
+  <tr>
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>àbc</td>
     <td>//foo.bar/0/0/4/OEG64OO</td>
   </tr>
-  </tr>
-    <tr>
+  <tr>
     <td>//foo.bar{id64}</td>
     <td>àbc</td>
-    <td>//foo.bar/w6BiYw==</td>
+    <td>//foo.bar/w6BiYw%3D%3D</td>
+  </tr>
+  <tr>
+    <td>//foo.bar{+id64}</td>
+    <td>àbcd</td>
+    <td>//foo.bar/w6BiY2Q=</td>
   </tr>
 </table>
 
@@ -2073,9 +2078,11 @@ choice for dynamically generated patches. The other encoding is [[rfc4648#sectio
 appropriate for embedding in a URL or case-sensitive filesystem. When using this encoding the id is embedded with padding so that
 the value can be reliably decoded.
 
-The individual character selectors d1 through d4 are relative to the base64hex encoded id only. These are typically used to
+The individual character selectors d1 through d4 are relative to the base32hex encoded id only. These are typically used to
 reduce the number of files stored in a single filesystem directory by spreading related files out into one or more levels of
-subdirectory according to the trailing letters of the id encoding. It is valid to mix d1 through d4 with a base64url-encoded
+subdirectory according to the trailing letters of the id encoding. These will tend to be evenly distributed among the digits
+when using integer ids, but may be unevenly distributed or even constant for string ids. Encoders that wish to use string ids with
+d1 through d4 should take care to make the ends of the id strings vary.  It is valid to mix d1 through d4 with a base64url-encoded
 id.
 
 <h2 class=no-num id=priv>Privacy Considerations</h2>
