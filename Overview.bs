@@ -995,8 +995,8 @@ The algorithm:
     <td><dfn for="Mapping Entry">entryIdStringLength</dfn></td>
     <td>
       The number of bytes that the id string for this entry occupies in the [=Format 2 Patch Map/entryIdStringData=] data block.
-      Strings are encoded in [[UTF-8]]. Only present if [=Mapping Entry/formatFlags=] bit 2 is set and
-      [=Format 2 Patch Map/entryIdStringData=] is not null (0). If not present the length is assumed to be 0.
+      Only present if [=Mapping Entry/formatFlags=] bit 2 is set and [=Format 2 Patch Map/entryIdStringData=] is not null (0). If not
+      present the length is assumed to be 0.
     </td>
   </tr>
 
@@ -1035,12 +1035,6 @@ If an encoder is producing patches that will be stored on a file system and then
 used (via [=Mapping Entry/entryIdDelta=]) as these will generally produce the smallest encoding of the format 2 patch map. String IDs
 are useful in cases where patches are not being stored in advance and the ID strings can be then used to encode information about the patch
 being requested.
-
-If an encoder is using string IDs via [=Format 2 Patch Map/entryIdStringData=] and  [=Mapping Entry/entryIdStringLength=] then, the
-encoder should only use [[rfc3986#section-2.3|unreserved uri characters]] in the ID strings. This will prevent the need for percent
-encoding of the ID values when expanding the URI templates and maximize compatibility of the URLs and associated file names. Particularly,
-if patch files are to be stored on a file system which does not support unicode encoded file names or is case insensitive then special care
-needs to be taken when choosing the set of characters to use in the file names.
 
 <dfn>Design Space Segment</dfn> encoding:
 
@@ -1178,7 +1172,7 @@ The algorithm:
         and the mapping is malformed.
 
     *  Otherwise if <var>id string bytes</var> is present then, read [=Mapping Entry/entryIdStringLength=] bytes from
-        <var>id string bytes</var> and interpret the bytes as a [[UTF-8]] string. Set <var>entry id</var> to the result.
+        <var>id string bytes</var> and set <var>entry id</var> to the result.
 
 8.  If [=Mapping Entry/formatFlags=] bit 3 is set, then a patch encoding is present. Read the encoding specified by
      [=Mapping Entry/patchEncoding=] from <var>entry bytes</var> and set the patch encoding of <var>entry</var> to the read value.
