@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="5380efe853a26da4338a0a73e95e038b9f250766" name="revision">
+  <meta content="54dfdbb6ca7846d4e084d6b2e98bcbe5378e5e1a" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -607,7 +607,7 @@ var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBC
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-04-30">30 April 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-05-12">12 May 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1458,7 +1458,8 @@ change the number of bytes.</p>
       <td>uint16
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-entryidstringlength">entryIdStringLength</dfn>
       <td> The number of bytes that the id string for this entry occupies in the <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata①">entryIdStringData</a> data block.
-      Strings are encoded in <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a>. Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑦">formatFlags</a> bit 2 is set and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata②">entryIdStringData</a> is not null (0). If not present the length is assumed to be 0. 
+      Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑦">formatFlags</a> bit 2 is set and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata②">entryIdStringData</a> is not null (0). If not
+      present the length is assumed to be 0. 
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-patchencoding">patchEncoding</dfn>
@@ -1483,11 +1484,6 @@ change the number of bytes.</p>
 used (via <a data-link-type="dfn" href="#mapping-entry-entryiddelta" id="ref-for-mapping-entry-entryiddelta">entryIdDelta</a>) as these will generally produce the smallest encoding of the format 2 patch map. String IDs
 are useful in cases where patches are not being stored in advance and the ID strings can be then used to encode information about the patch
 being requested.</p>
-   <p>If an encoder is using string IDs via <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata③">entryIdStringData</a> and <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength">entryIdStringLength</a> then, the
-encoder should only use <a href="https://www.rfc-editor.org/rfc/rfc3986#section-2.3">unreserved uri characters</a> in the ID strings. This will prevent the need for percent
-encoding of the ID values when expanding the URI templates and maximize compatibility of the URLs and associated file names. Particularly,
-if patch files are to be stored on a file system which does not support unicode encoded file names or is case insensitive then special care
-needs to be taken when choosing the set of characters to use in the file names.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="design-space-segment">Design Space Segment</dfn> encoding:</p>
    <table>
     <tbody>
@@ -1533,8 +1529,8 @@ needs to be taken when choosing the set of characters to use in the file names.<
       <li data-md>
        <p>pass in the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entries" id="ref-for-format-2-patch-map-entries">entries</a>[<var>current byte</var>] to
  the end of <var>patch map</var>,
- the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata④">entryIdStringData</a>[<var>current id string byte</var>]
- to the end of <var>patch map</var> if <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata⑤">entryIdStringData</a> is non zero, <var>last entry id</var>, <a data-link-type="dfn" href="#format-2-patch-map-defaultpatchencoding" id="ref-for-format-2-patch-map-defaultpatchencoding①">defaultPatchEncoding</a>, and <a data-link-type="dfn" href="#format-2-patch-map-uritemplate" id="ref-for-format-2-patch-map-uritemplate">uriTemplate</a>.</p>
+ the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata③">entryIdStringData</a>[<var>current id string byte</var>]
+ to the end of <var>patch map</var> if <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata④">entryIdStringData</a> is non zero, <var>last entry id</var>, <a data-link-type="dfn" href="#format-2-patch-map-defaultpatchencoding" id="ref-for-format-2-patch-map-defaultpatchencoding①">defaultPatchEncoding</a>, and <a data-link-type="dfn" href="#format-2-patch-map-uritemplate" id="ref-for-format-2-patch-map-uritemplate">uriTemplate</a>.</p>
       <li data-md>
        <p>Set <var>last entry id</var> to the returned entry id.</p>
       <li data-md>
@@ -1610,7 +1606,7 @@ needs to be taken when choosing the set of characters to use in the file names.<
        <p>If <var>id string bytes</var> is not present then, read the id delta specified by <a data-link-type="dfn" href="#mapping-entry-entryiddelta" id="ref-for-mapping-entry-entryiddelta①">entryIdDelta</a> from <var>entry bytes</var> and add the delta to <var>entry id</var>. If <var>entry id</var> is negative this is an error
 and the mapping is malformed.</p>
       <li data-md>
-       <p>Otherwise if <var>id string bytes</var> is present then, read <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength①">entryIdStringLength</a> bytes from <var>id string bytes</var> and interpret the bytes as a <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> string. Set <var>entry id</var> to the result.</p>
+       <p>Otherwise if <var>id string bytes</var> is present then, read <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength">entryIdStringLength</a> bytes from <var>id string bytes</var> and set <var>entry id</var> to the result.</p>
      </ul>
     <li data-md>
      <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①④">formatFlags</a> bit 3 is set, then a patch encoding is present. Read the encoding specified by <a data-link-type="dfn" href="#mapping-entry-patchencoding" id="ref-for-mapping-entry-patchencoding">patchEncoding</a> from <var>entry bytes</var> and set the patch encoding of <var>entry</var> to the read value.</p>
@@ -1634,7 +1630,7 @@ codepoint add the bias value to it and then add the result to the codepoint set 
     <li data-md>
      <p>Convert <var>entry id</var> into a URI by applying <var>uri template</var> following <a href="#uri-templates">§ 5.2.3 URI Templates</a>. Set the patch uri of <var>entry</var> to the generated URI.</p>
     <li data-md>
-     <p>Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength②">entryIdStringLength</a> as <var>consumed id string bytes</var>, and <var>ignored</var>.</p>
+     <p>Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength①">entryIdStringLength</a> as <var>consumed id string bytes</var>, and <var>ignored</var>.</p>
    </ol>
    <h5 class="heading settled algorithm" data-algorithm="Remove Entries from Format 2" data-level="5.2.2.2" id="remove-entries-format-2"><span class="secno">5.2.2.2. </span><span class="content">Remove Entries from Format 2</span><a class="self-link" href="#remove-entries-format-2"></a></h5>
    <p>This algorithm is used to remove entries from a format 2 patch map. This removal modifies the bytes of the patch map but does not
@@ -1812,31 +1808,39 @@ expansion of the template:</p>
       <th>Value
      <tr>
       <td>id
-      <td> If the input id is numeric then this is the  numeric value converted to a string in hexadecimal representation
-      (using the digits 0-9, A-F). No padding with 0’s is used. Otherwise, this is the string id value. 
+      <td> The input id encoded as a <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a> string (using the digits 0-9, A-V) with padding
+      omitted.  When the id is an unsigned integer it must first be converted to a big endian 64 bit unsigned integer,
+      but then all leading bytes that are equal to 0 are removed before encoding.  (For example, when the
+      integer is less than 256 only one byte is encoded.) When the input id is a string the raw bytes are
+      encoded as base32hex. 
      <tr>
       <td>d1
       <td> The last character of the string in the id variable.
-      If id variable is empty then, the value is the character 0 (U+0030). 
+      If id variable is empty then, the value is the character _ (U+005F). 
      <tr>
       <td>d2
       <td> The second last character of the string in the id variable.
-      If the id variable has less than 2 characters then, the value is the character 0 (U+0030). 
+      If the id variable has less than 2 characters then, the value is the character _ (U+005F). 
      <tr>
       <td>d3
       <td> The third last character of the string in the id variable.
-      If the id variable has less than 3 characters then, the value is the character 0 (U+0030). 
+      If the id variable has less than 3 characters then, the value is the character _ (U+005F). 
      <tr>
       <td>d4
       <td> The fourth last character of the string in the id variable.
-      If the id variable has less than 4 characters then, the value is the character 0 (U+0030). 
+      If the id variable has less than 4 characters then, the value is the character _ (U+005F). 
+     <tr>
+      <td>id64
+      <td> The input id encoded as a <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a> string (using the digits A-Z, a-z, 0-9, -
+      (minus) and _ (underline)) with padding included. Because the padding character is '=', it must
+      be URL-encoded as "%3D'.  When the id is an unsigned integer it must first be converted to a big
+      endian 64 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding. 
+      (For example, when the integer is less than 256 only one byte is encoded.) When the input id is
+      a string its raw bytes are encoded as base64url. 
    </table>
-   <p>The variables d1 through d4 select a specific character of the id variable. In this context a character is a <a data-link-type="biblio" href="#biblio-unicode" title="The Unicode Standard">[unicode]</a> code point.
-If the code point is not an ASCII code point then during expansion it will need to be converted to <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> and percent encoded as required by <a href="https://www.rfc-editor.org/rfc/rfc6570#section-1.6">URI Template § section-1.6</a>.</p>
-   <div class="example" id="example-7d75e350">
-    <a class="self-link" href="#example-7d75e350"></a> 
+   <div class="example" id="example-73881657">
+    <a class="self-link" href="#example-73881657"></a> 
     <p>Some example inputs and the corresponding expansions:</p>
-     n 
     <table>
      <tbody>
       <tr>
@@ -1846,27 +1850,35 @@ If the code point is not an ASCII code point then during expansion it will need 
       <tr>
        <td>//foo.bar/{id}
        <td>123
-       <td>//foo.bar/7B
+       <td>//foo.bar/FC
       <tr>
        <td>//foo.bar{/d1,d2,id}
-       <td>123
-       <td>//foo.bar/B/7/7B
+       <td>478
+       <td>//foo.bar/0/F/07F0
       <tr>
        <td>//foo.bar{/d1,d2,d3,id}
        <td>123
-       <td>//foo.bar/B/7/0/7B
+       <td>//foo.bar/C/F/_/FC
       <tr>
        <td>//foo.bar{/d1,d2,d3,id}
        <td>baz
-       <td>//foo.bar/z/a/b/baz
+       <td>//foo.bar/K/N/G/C9GNK
       <tr>
        <td>//foo.bar{/d1,d2,d3,id}
-       <td>az
-       <td>//foo.bar/z/a/0/az
+       <td>z
+       <td>//foo.bar/8/F/_/F8
       <tr>
        <td>//foo.bar{/d1,d2,d3,id}
        <td>àbc
-       <td>//foo.bar/c/b/%C3%A0/%C3%A0bc
+       <td>//foo.bar/0/0/4/OEG64OO
+      <tr>
+       <td>//foo.bar{/id64}
+       <td>àbc
+       <td>//foo.bar/w6BiYw%3D%3D
+      <tr>
+       <td>//foo.bar{/+id64}
+       <td>àbcd
+       <td>//foo.bar/w6BiY2Q=
     </table>
    </div>
    <h2 class="heading settled" data-level="6" id="font-patch-formats"><span class="secno">6. </span><span class="content">Font Patch Formats</span><a class="self-link" href="#font-patch-formats"></a></h2>
@@ -2340,6 +2352,20 @@ the patch count reasonable.</p>
 required too many patches.</p>
    </ol>
    <p><b>Managing the number of patches</b></p>
+   <p><b>Choosing the input ID encoding</b></p>
+   <p>The specification supports two encodings for embedding patch IDs in the URL template. The first is <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a>,
+which is a good match for pre-generated patches that will typically be stored in a filesystem. Base32hex encoding only uses the
+letters 0-9 and A-V, which are safe letters for a file name in every commonly used filesystem, with no risk of collisions due to
+case-insensitivity. Because the string is embedded without padding this format cannot be reliably decoded, so it may be a poor
+choice for dynamically generated patches. The other encoding is <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a>, a variant of base64 encoding
+appropriate for embedding in a URL or case-sensitive filesystem. When using this encoding the id is embedded with padding so that
+the value can be reliably decoded.</p>
+   <p>The individual character selectors d1 through d4 are relative to the base32hex encoded id only. These are typically used to
+reduce the number of files stored in a single filesystem directory by spreading related files out into one or more levels of
+subdirectory according to the trailing letters of the id encoding. These will tend to be evenly distributed among the digits
+when using integer ids, but may be unevenly distributed or even constant for string ids. Encoders that wish to use string ids with
+d1 through d4 should take care to make the ends of the id strings vary.  It is valid to mix d1 through d4 with a base64url-encoded
+id.</p>
    <h2 class="no-num heading settled" id="priv"><span class="content">Privacy Considerations</span><a class="self-link" href="#priv"></a></h2>
    <p>Coming soon.</p>
    <h2 class="no-num heading settled" id="sec"><span class="content">Security Considerations</span><a class="self-link" href="#sec"></a></h2>
@@ -2557,6 +2583,8 @@ required too many patches.</p>
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
    <dt id="biblio-rfc3986">[RFC3986]
    <dd>T. Berners-Lee; R. Fielding; L. Masinter. <a href="https://www.rfc-editor.org/rfc/rfc3986"><cite>Uniform Resource Identifier (URI): Generic Syntax</cite></a>. January 2005. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3986">https://www.rfc-editor.org/rfc/rfc3986</a>
+   <dt id="biblio-rfc4648">[RFC4648]
+   <dd>S. Josefsson. <a href="https://www.rfc-editor.org/rfc/rfc4648"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. October 2006. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc4648">https://www.rfc-editor.org/rfc/rfc4648</a>
    <dt id="biblio-rfc6570">[RFC6570]
    <dd>J. Gregorio; et al. <a href="https://www.rfc-editor.org/rfc/rfc6570"><cite>URI Template</cite></a>. March 2012. Proposed Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc6570">https://www.rfc-editor.org/rfc/rfc6570</a>
    <dt id="biblio-rfc7932">[RFC7932]
@@ -2828,7 +2856,7 @@ let dfnPanelData = {
 "format-2-patch-map-defaultpatchencoding": {"dfnID":"format-2-patch-map-defaultpatchencoding","dfnText":"defaultPatchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-defaultpatchencoding"},
 "format-2-patch-map-entries": {"dfnID":"format-2-patch-map-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entries"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entries"},
 "format-2-patch-map-entrycount": {"dfnID":"format-2-patch-map-entrycount","dfnText":"entryCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entrycount"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entrycount\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entrycount"},
-"format-2-patch-map-entryidstringdata": {"dfnID":"format-2-patch-map-entryidstringdata","dfnText":"entryIdStringData","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2460"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2461"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2462"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata\u2463"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2464"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entryidstringdata"},
+"format-2-patch-map-entryidstringdata": {"dfnID":"format-2-patch-map-entryidstringdata","dfnText":"entryIdStringData","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2460"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2461"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata\u2462"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2463"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entryidstringdata"},
 "format-2-patch-map-format": {"dfnID":"format-2-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-format"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-format"},
 "format-2-patch-map-uritemplate": {"dfnID":"format-2-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-uritemplate"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-uritemplate"},
 "full-invalidation": {"dfnID":"full-invalidation","dfnText":"Full Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-full-invalidation"},{"id":"ref-for-full-invalidation\u2460"}],"title":"4.2. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-full-invalidation\u2461"},{"id":"ref-for-full-invalidation\u2462"}],"title":"6.1. Formats Summary"}],"url":"#full-invalidation"},
@@ -2857,7 +2885,7 @@ let dfnPanelData = {
 "mapping-entry-designspacecount": {"dfnID":"mapping-entry-designspacecount","dfnText":"designSpaceCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-designspacecount"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-designspacecount"},
 "mapping-entry-designspacesegments": {"dfnID":"mapping-entry-designspacesegments","dfnText":"designSpaceSegments","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-designspacesegments"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-designspacesegments"},
 "mapping-entry-entryiddelta": {"dfnID":"mapping-entry-entryiddelta","dfnText":"entryIdDelta","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-entryiddelta"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-entryiddelta\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-entryiddelta"},
-"mapping-entry-entryidstringlength": {"dfnID":"mapping-entry-entryidstringlength","dfnText":"entryIdStringLength","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-entryidstringlength"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-entryidstringlength\u2460"},{"id":"ref-for-mapping-entry-entryidstringlength\u2461"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-entryidstringlength"},
+"mapping-entry-entryidstringlength": {"dfnID":"mapping-entry-entryidstringlength","dfnText":"entryIdStringLength","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-entryidstringlength"},{"id":"ref-for-mapping-entry-entryidstringlength\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-entryidstringlength"},
 "mapping-entry-featurecount": {"dfnID":"mapping-entry-featurecount","dfnText":"featureCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-featurecount"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-featurecount"},
 "mapping-entry-featuretags": {"dfnID":"mapping-entry-featuretags","dfnText":"featureTags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-featuretags"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-featuretags"},
 "mapping-entry-formatflags": {"dfnID":"mapping-entry-formatflags","dfnText":"formatFlags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-formatflags"},{"id":"ref-for-mapping-entry-formatflags\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2467"},{"id":"ref-for-mapping-entry-formatflags\u2468"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u24ea"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2467"}],"title":"5.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u2468"}],"title":"5.2.2.2. Remove Entries from Format 2"}],"url":"#mapping-entry-formatflags"},
