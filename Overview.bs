@@ -2070,7 +2070,20 @@ sections.
 
 <b>Pre-loading data in the Initial Font</b>
 
-<!-- TODO: discuss how the initial font can be preloaded with data, and should typically contain things that are almost always needed -->
+The initial IFT font can contain a subset of data from the original font. This has two main benefits:
+
+1. Data in the initial font can be utilized to render content before any patches have been loaded. This allows an IFT font to provide
+    some amount of rendering capability on the first round trip.
+
+2. Any data placed in the initial font will always be available, with no augmentation needed. This can be helpful in cases of data
+    that are needed by many different segments.
+
+Thus any parts of the original font that are expected to be always (are almost always) needed are good candidates for inclusion in the
+initial font.
+
+An encoder may also want to consider providing multiple initial fonts that are each specific to a certain script. The script specific
+initial fonts could contain support a core set of codepoints for that script. When used with the corresponding script they would allow for
+basic text in that script to be rendered prior to any patches loading.
 
 <b>Patches can form graphs</b>
 

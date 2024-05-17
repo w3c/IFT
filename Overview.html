@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="bcb93fd5c909171e15f96d6ee03abc89685c2b51" name="revision">
+  <meta content="10f5cc2aa9c337bd9b20239d3b4da3a2a5adc12c" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -2371,6 +2371,20 @@ to be representative of all possible encoder implementations. Notably it does no
 patches. Most encoders will likely be more complex and need to consider additional factors some of which are discussed in the remaining
 sections.</p>
    <p><b>Pre-loading data in the Initial Font</b></p>
+   <p>The initial IFT font can contain a subset of data from the original font. This has two main benefits:</p>
+   <ol>
+    <li data-md>
+     <p>Data in the initial font can be utilized to render content before any patches have been loaded. This allows an IFT font to provide
+some amount of rendering capability on the first round trip.</p>
+    <li data-md>
+     <p>Any data placed in the initial font will always be available, with no augmentation needed. This can be helpful in cases of data
+that are needed by many different segments.</p>
+   </ol>
+   <p>Thus any parts of the original font that are expected to be always (are almost always) needed are good candidates for inclusion in the
+initial font.</p>
+   <p>An encoder may also want to consider providing multiple initial fonts that are each specific to a certain script. The script specific
+initial fonts could contain support a core set of codepoints for that script. When used with the corresponding script they would allow for
+basic text in that script to be rendered prior to any patches loading.</p>
    <p><b>Patches can form graphs</b></p>
    <p>Brotli based patches can modify the mapping table in the current font subset, which allows a patch to update the mapping table
 to point to a different set of patches which are valid against the result of the patch application. This allows a graph to be formed
