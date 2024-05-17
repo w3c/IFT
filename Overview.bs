@@ -776,18 +776,17 @@ The algorithm:
 
 2.  For each unique <var>entry index</var> in [=Glyph Map/entryIndex=]:
 
-    <!-- TODO: use ol and style which characters instead of numbers -->
-    *  a. If the bit for <var>entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
+    *  If the bit for <var>entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
         <var>entry index</var>.
 
-    *  b. Collect the set of glyph indices that map to the <var>entry index</var>.
+    *  Collect the set of glyph indices that map to the <var>entry index</var>.
 
-    *  c. Convert the set of glyph indices to a set of unicode code points using the code point to glyph mapping in the
+    *  Convert the set of glyph indices to a set of unicode code points using the code point to glyph mapping in the
         [[open-type/cmap|cmap]] table of <var>font subset</var>. Ignore any glyph indices that are not mapped by [[open-type/cmap|cmap]].
 
-    *  d. Convert <var>entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
+    *  Convert <var>entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
 
-    *  e. Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains only the unicode code point set and
+    *  Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains only the unicode code point set and
         maps to the generated URI, the patch encoding specified by [=Format 1 Patch Map/patchEncoding=], and
         [=Format 1 Patch Map/compatibilityId=].
 
