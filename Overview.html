@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="062767e81b858e014d16c80241f8886229c5e759" name="revision">
+  <meta content="ed3d73bd209225e5d9c41b8db425f0d68e0e773a" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -607,7 +607,7 @@ var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBC
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-05-23">23 May 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-05-24">24 May 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2279,11 +2279,59 @@ directly encoded into the IFT format from font authoring source files.</p>
    <p><em>This section is not normative.</em></p>
    <p>The details of the encoding process may differ by encoder and are beyond the scope of this document. However, this section provides
 guidance that encoder implementations may want to consider.</p>
+   <p><b>Choosing segmentations</b></p>
+   <p>One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. To maximize
+efficiency the encoder should try and group data (eg. codepoints) that are commonly used together into the same segments. This will
+reduce the amount of unneeded data load by clients when extending the font. The encoder must also decide the size of segments. Smaller
+segments will produce more patches, and thus incur more overhead by requiring more network requests, but will typically result in less
+unneeded data in each segment compared to larger segments. When segmenting codepoints, data on codepoint usage frequency can be helpful
+to guide segmentation.</p>
+   <p>During segmentation an encoder should also consider how codepoints interact with each other in the font. Keeping interacting codepoints
+in the same segment can avoid having to duplicate data between patches, which may be necessary to preserve the functionality of the
+original font when interacting codepoints reside in different segments.</p>
+   <p><b>Maintaining Functional Equivalence</b></p>
+   <p>As discussed in <a href="#encoder">§ 7 Encoder</a> a high quality encoder should preserve the functionality of the original font. Fonts are complex and
+often contain interactions between codepoints so maintaining functional equivalence with a partial copy of the font can be tricky.
+A couple of techniques that can be used to maintain functional equivalence are:</p>
+   <ol>
+    <li data-md>
+     <p>Enforcing a "glyph ID closure requirement".</p>
+    <li data-md>
+     <p>Utilize an existing font subsetter implementation.</p>
+   </ol>
+   <p><b>Glyph ID Closure Requirement</b></p>
+   <p>An encoding which only utilizes glyph keyed patches will only have glyph outline and variation data modified by patches and thus is
+simpler to maintain equivalence; which can be done by meeting the following requirements:</p>
+   <ol>
+    <li data-md>
+     <p>The <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="glyph-closure">glyph closure</dfn> of a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①⓪">font subset definition</a> is the full set of glyphs in the font that may be needed to
+render any combination of the described codepoints and layout features.</p>
+    <li data-md>
+     <p>The set of glyphs contained in the patches loaded for a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①①">font subset definition</a> through the patch map tables must be a superset
+of those in the <a data-link-type="dfn" href="#glyph-closure" id="ref-for-glyph-closure">glyph closure</a> of the <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①②">font subset definition</a>.</p>
+   </ol>
+   <p>Existing font subsetting libraries can be used to generate the glyph closures relative to font subset definitions. Encodings that modify
+other tables will need to enforce similar requirements for the additional tables, but the details will vary by the specific table
+type. For these cases it’s recommended to utilize an existing font subsetter implementation, which is discussed in the following section.</p>
+   <p>When generating an encoding utilizing glyph-keyed patches the encoder must decide how to distribute glyphs between all of the patches
+in a way that meets the above requirements. In some cases it may be required to have the same glyph in more than one segment, some
+strategies to deal with this:</p>
+   <ol>
+    <li data-md>
+     <p>If a glyph is needed in more than one segment, those segments can be combined to be contained within a single patch. This avoids
+ duplicating the common glyphs, but increases the segment’s size.</p>
+    <li data-md>
+     <p>Alternatively, the glyph can be included in the patches for all of the segments needing it. This will keep the segments smaller,
+ at the cost of duplicating the glyph’s data into multiple patches.</p>
+    <li data-md>
+     <p>Lastly, the common glyphs can be moved into the initial font. This avoids increasing segment sizes and duplicating the glyph data,
+ but will increase the size of the initial font. Also it will cause that glyph data to always be loaded even when not needed. This
+ can be useful for glyphs that are required in many segments or are otherwise complicating the segmentation.</p>
+   </ol>
    <p><b>Utilize an existing font subsetter implementation</b></p>
-   <p>As discussed in <a href="#encoder">§ 7 Encoder</a> a high quality encoder should preserve the functionality of the original font. One way to
-achieve this is to leverage an existing font subsetter implementation to produce font subsets that retain the functionality
-of the original font. The IFT patches can then be derived from these subsets.</p>
-   <p>A font subsetter produces a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③⓪">font subset</a> from an input font based on a desired <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①⓪">font subset definition</a>. The practice of reliably
+   <p>A more general way to achieve functional equivalence is to leverage an existing font subsetter implementation to produce font
+subsets that retain the functionality of the original font. The IFT patches can then be derived from these subsets.</p>
+   <p>A font subsetter produces a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③⓪">font subset</a> from an input font based on a desired <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①③">font subset definition</a>. The practice of reliably
 subsetting a font is well understood and has multiple open-source implementations (a full formal description is
 beyond the scope of this document). It typically involves a reachability analysis, where the data in tables is examined
 relative to the font subset definition to see which portions can be reached by any possible content covered by the subset definition.
@@ -2325,16 +2373,7 @@ requirements in <a href="#encoder">§ 7 Encoder</a> to be a neutral encoding. 
 to be representative of all possible encoder implementations. Notably it does not make use of nor demonstrate utilizing glyph keyed
 patches. Most encoders will likely be more complex and need to consider additional factors some of which are discussed in the remaining
 sections.</p>
-   <p><b>Choosing segmentations</b></p>
-   <p>One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. To maximize
-efficiency the encoder should try and group data (eg. codepoints) that are commonly used together into the same segments. This will
-reduce the amount of unneeded data load by clients when extending the font. The encoder must also decide the size of segments. Smaller
-segments will produce more patches, and thus incur more overhead by requiring more network requests, but will typically result in less
-unneeded data in each segment compared to larger segments. When segmenting codepoints, data on codepoint usage frequency can be helpful
-to guide segmentation.</p>
-   <p>During segmentation an encoder should also consider how codepoints interact with each other in the font. Keeping interacting codepoints
-in the same segment can avoid having to duplicate data between patches, which may be necessary to preserve the functionality of the
-original font when interacting codepoints reside in different segments.</p>
+   <p><b>Pre-loading data in the Initial Font</b></p>
    <p><b>Patches can form graphs</b></p>
    <p>Brotli based patches can modify the mapping table in the current font subset, which allows a patch to update the mapping table
 to point to a different set of patches which are valid against the result of the patch application. This allows a graph to be formed
@@ -2553,6 +2592,7 @@ that are not required by the current content to provide obfuscation of what patc
    <li><a href="#mapping-entry-formatflags">formatFlags</a><span>, in § 5.2.2</span>
    <li><a href="#full-invalidation">Full Invalidation</a><span>, in § 4.1</span>
    <li><a href="#abstract-opdef-fully-expand-a-font-subset">Fully Expand a Font Subset</a><span>, in § 4.3</span>
+   <li><a href="#glyph-closure">glyph closure</a><span>, in § 7.1</span>
    <li>
     glyphCount
     <ul>
@@ -2881,7 +2921,7 @@ let dfnPanelData = {
 "featurerecord-firstentryindex": {"dfnID":"featurerecord-firstentryindex","dfnText":"firstEntryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-featurerecord-firstentryindex"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#featurerecord-firstentryindex"},
 "font-patch": {"dfnID":"font-patch","dfnText":"font patch","external":false,"refSections":[{"refs":[{"id":"ref-for-font-patch"},{"id":"ref-for-font-patch\u2460"}],"title":"3.2. Font Patch"},{"refs":[{"id":"ref-for-font-patch\u2461"}],"title":"7. Encoder"}],"url":"#font-patch"},
 "font-subset": {"dfnID":"font-subset","dfnText":"font subset","external":false,"refSections":[{"refs":[{"id":"ref-for-font-subset"}],"title":"3.1. Font Subset"},{"refs":[{"id":"ref-for-font-subset\u2460"},{"id":"ref-for-font-subset\u2461"},{"id":"ref-for-font-subset\u2462"},{"id":"ref-for-font-subset\u2463"}],"title":"3.2. Font Patch"},{"refs":[{"id":"ref-for-font-subset\u2464"}],"title":"4. Extending a Font Subset"},{"refs":[{"id":"ref-for-font-subset\u2465"},{"id":"ref-for-font-subset\u2466"},{"id":"ref-for-font-subset\u2467"}],"title":"4.1. Patch Invalidations"},{"refs":[{"id":"ref-for-font-subset\u2468"}],"title":"4.2. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-font-subset\u2460\u24ea"}],"title":"4.3. Fully Expanding a Font"},{"refs":[{"id":"ref-for-font-subset\u2460\u2460"}],"title":"5.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-font-subset\u2460\u2461"}],"title":"6. Font Patch Formats"},{"refs":[{"id":"ref-for-font-subset\u2460\u2462"},{"id":"ref-for-font-subset\u2460\u2463"},{"id":"ref-for-font-subset\u2460\u2464"}],"title":"6.1. Formats Summary"},{"refs":[{"id":"ref-for-font-subset\u2460\u2465"}],"title":"6.2. Brotli Patch"},{"refs":[{"id":"ref-for-font-subset\u2460\u2466"},{"id":"ref-for-font-subset\u2460\u2467"},{"id":"ref-for-font-subset\u2460\u2468"}],"title":"6.2.1. Applying Brotli Patches"},{"refs":[{"id":"ref-for-font-subset\u2461\u24ea"},{"id":"ref-for-font-subset\u2461\u2460"}],"title":"6.3. Per Table Brotli"},{"refs":[{"id":"ref-for-font-subset\u2461\u2461"},{"id":"ref-for-font-subset\u2461\u2462"},{"id":"ref-for-font-subset\u2461\u2463"}],"title":"6.3.1. Applying Per Table Brotli Patches"},{"refs":[{"id":"ref-for-font-subset\u2461\u2464"}],"title":"6.4. Glyph Keyed"},{"refs":[{"id":"ref-for-font-subset\u2461\u2465"},{"id":"ref-for-font-subset\u2461\u2466"},{"id":"ref-for-font-subset\u2461\u2467"}],"title":"6.4.1. Applying Glyph Keyed Patches"},{"refs":[{"id":"ref-for-font-subset\u2461\u2468"}],"title":"7. Encoder"},{"refs":[{"id":"ref-for-font-subset\u2462\u24ea"}],"title":"7.1. Encoder Considerations"}],"url":"#font-subset"},
-"font-subset-definition": {"dfnID":"font-subset-definition","dfnText":"font subset definition","external":false,"refSections":[{"refs":[{"id":"ref-for-font-subset-definition"},{"id":"ref-for-font-subset-definition\u2460"},{"id":"ref-for-font-subset-definition\u2461"}],"title":"3.3. Patch Map"},{"refs":[{"id":"ref-for-font-subset-definition\u2462"},{"id":"ref-for-font-subset-definition\u2463"}],"title":"4.2. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-font-subset-definition\u2464"}],"title":"5.2. Patch Map Table"},{"refs":[{"id":"ref-for-font-subset-definition\u2465"},{"id":"ref-for-font-subset-definition\u2466"},{"id":"ref-for-font-subset-definition\u2467"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-font-subset-definition\u2468"}],"title":"7. Encoder"},{"refs":[{"id":"ref-for-font-subset-definition\u2460\u24ea"}],"title":"7.1. Encoder Considerations"}],"url":"#font-subset-definition"},
+"font-subset-definition": {"dfnID":"font-subset-definition","dfnText":"font subset definition","external":false,"refSections":[{"refs":[{"id":"ref-for-font-subset-definition"},{"id":"ref-for-font-subset-definition\u2460"},{"id":"ref-for-font-subset-definition\u2461"}],"title":"3.3. Patch Map"},{"refs":[{"id":"ref-for-font-subset-definition\u2462"},{"id":"ref-for-font-subset-definition\u2463"}],"title":"4.2. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-font-subset-definition\u2464"}],"title":"5.2. Patch Map Table"},{"refs":[{"id":"ref-for-font-subset-definition\u2465"},{"id":"ref-for-font-subset-definition\u2466"},{"id":"ref-for-font-subset-definition\u2467"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-font-subset-definition\u2468"}],"title":"7. Encoder"},{"refs":[{"id":"ref-for-font-subset-definition\u2460\u24ea"},{"id":"ref-for-font-subset-definition\u2460\u2460"},{"id":"ref-for-font-subset-definition\u2460\u2461"},{"id":"ref-for-font-subset-definition\u2460\u2462"}],"title":"7.1. Encoder Considerations"}],"url":"#font-subset-definition"},
 "format-1-patch-map": {"dfnID":"format-1-patch-map","dfnText":"Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map"}],"title":"5.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map\u2460"}],"title":"5.2.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map"},
 "format-1-patch-map-appliedentriesbitmap": {"dfnID":"format-1-patch-map-appliedentriesbitmap","dfnText":"appliedEntriesBitMap","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2460"}],"title":"5.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2461"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2462"}],"title":"5.2.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-appliedentriesbitmap"},
 "format-1-patch-map-compatibilityid": {"dfnID":"format-1-patch-map-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-compatibilityid"},{"id":"ref-for-format-1-patch-map-compatibilityid\u2460"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-compatibilityid"},
@@ -2899,6 +2939,7 @@ let dfnPanelData = {
 "format-2-patch-map-format": {"dfnID":"format-2-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-format"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-format"},
 "format-2-patch-map-uritemplate": {"dfnID":"format-2-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-uritemplate"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-uritemplate"},
 "full-invalidation": {"dfnID":"full-invalidation","dfnText":"Full Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-full-invalidation"},{"id":"ref-for-full-invalidation\u2460"}],"title":"4.2. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-full-invalidation\u2461"},{"id":"ref-for-full-invalidation\u2462"}],"title":"6.1. Formats Summary"}],"url":"#full-invalidation"},
+"glyph-closure": {"dfnID":"glyph-closure","dfnText":"glyph closure","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-closure"}],"title":"7.1. Encoder Considerations"}],"url":"#glyph-closure"},
 "glyph-keyed-patch": {"dfnID":"glyph-keyed-patch","dfnText":"Glyph keyed patch","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch"}],"title":"6.4.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch"},
 "glyph-keyed-patch-brotlistream": {"dfnID":"glyph-keyed-patch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-brotlistream"}],"title":"6.4. Glyph Keyed"},{"refs":[{"id":"ref-for-glyph-keyed-patch-brotlistream\u2460"}],"title":"6.4.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-brotlistream"},
 "glyph-keyed-patch-compatibilityid": {"dfnID":"glyph-keyed-patch-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-compatibilityid"},{"id":"ref-for-glyph-keyed-patch-compatibilityid\u2460"}],"title":"6.4.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-compatibilityid"},
@@ -3381,6 +3422,7 @@ let refsData = {
 "#format-2-patch-map-format": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-2-patch-map-format"},
 "#format-2-patch-map-uritemplate": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-2-patch-map-uritemplate"},
 "#full-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"full invalidation","type":"dfn","url":"#full-invalidation"},
+"#glyph-closure": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph closure","type":"dfn","url":"#glyph-closure"},
 "#glyph-keyed-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph keyed patch","type":"dfn","url":"#glyph-keyed-patch"},
 "#glyph-keyed-patch-brotlistream": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#glyph-keyed-patch-brotlistream"},
 "#glyph-keyed-patch-compatibilityid": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#glyph-keyed-patch-compatibilityid"},
