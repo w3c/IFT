@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="3a8ea0ee0c5463bcf7c6f9c9e4214460bc4079fb" name="revision">
+  <meta content="b93c658f1110bfbe3c12a469f68226c79167a4c8" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -2413,6 +2413,17 @@ the patch count reasonable.</p>
 required too many patches.</p>
    </ol>
    <p><b>Managing the number of patches</b></p>
+   <p>Using brotli patches along side a large number of segments can result in a very large number of patches needed. There are some techniques
+which can be used to reduce the total number of patches:</p>
+   <ol>
+    <li data-md>
+     <p>Use a maximum depth for the patch graph, once this limit is reached the font is patched to add all remaining parts of the full
+original font. This will cause the whole remaining font to be loaded after a certain number of segments have been added. Limiting
+the depth of the graph will reduced the combininatorial explosion of patches at the lower depths.</p>
+    <li data-md>
+     <p>Alternatively, at lower depths the encoder could begin combining multiple segments into single patches to reduce the fan out at each
+level.</p>
+   </ol>
    <p><b>Choosing the input ID encoding</b></p>
    <p>The specification supports two encodings for embedding patch IDs in the URL template. The first is <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a>,
 which is a good match for pre-generated patches that will typically be stored in a filesystem. Base32hex encoding only uses the
