@@ -2110,9 +2110,15 @@ incremental font. This can be accomplished by:
 
 <b>Managing the number of patches</b>
 
-<!-- TODO:
-  - Max depth and/or combining segments at lower depths.
-  -->
+Using brotli patches along side a large number of segments can result in a very large number of patches needed. There are some techniques
+which can be used to reduce the total number of patches:
+
+1. Use a maximum depth for the patch graph, once this limit is reached the font is patched to add all remaining parts of the full
+    original font. This will cause the whole remaining font to be loaded after a certain number of segments have been added. Limiting
+    the depth of the graph will reduced the combininatorial explosion of patches at the lower depths.
+
+2. Alternatively, at lower depths the encoder could begin combining multiple segments into single patches to reduce the fan out at each
+    level.
 
 <b>Choosing the input ID encoding</b>
 
