@@ -1964,11 +1964,62 @@ Encoder Considerations {#encoder-considerations}
 The details of the encoding process may differ by encoder and are beyond the scope of this document. However, this section provides
 guidance that encoder implementations may want to consider.
 
+<b>Choosing segmentations</b>
+
+One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. To maximize
+efficiency the encoder should try and group data (eg. codepoints) that are commonly used together into the same segments. This will
+reduce the amount of unneeded data load by clients when extending the font. The encoder must also decide the size of segments. Smaller
+segments will produce more patches, and thus incur more overhead by requiring more network requests, but will typically result in less
+unneeded data in each segment compared to larger segments. When segmenting codepoints, data on codepoint usage frequency can be helpful
+to guide segmentation.
+
+During segmentation an encoder should also consider how codepoints interact with each other in the font. Keeping interacting codepoints
+in the same segment can avoid having to duplicate data between patches, which may be necessary to preserve the functionality of the
+original font when interacting codepoints reside in different segments.
+
+
+<b>Maintaining Functional Equivalence</b>
+
+As discussed in [[#encoder]] a high quality encoder should preserve the functionality of the original font. Fonts are complex and
+often contain interactions between codepoints so maintaining functional equivalence with a partial copy of the font can be tricky.
+A couple of techniques that can be used to maintain functional equivalence are:
+
+1.  Enforcing a "glyph ID closure requirement".
+2.  Utilize an existing font subsetter implementation.
+
+<b>Glyph ID Closure Requirement</b>
+
+An encoding which only utilizes glyph keyed patches will only have glyph outline and variation data modified by patches and thus is
+simpler to maintain equivalence; which can be done by meeting the following requirements:
+
+1. The <dfn dfn>glyph closure</dfn> of a [=font subset definition=] is the full set of glyphs in the font that may be needed to
+    render any combination of the described codepoints and layout features.
+
+2. The set of glyphs contained in the patches loaded for a [=font subset definition=] through the patch map tables must be a superset
+    of those in the [=glyph closure=] of the [=font subset definition=].
+
+Existing font subsetting libraries can be used to generate the glyph closures relative to font subset definitions. Encodings that modify
+other tables will need to enforce similar requirements for the additional tables, but the details will vary by the specific table
+type. For these cases it's recommended to utilize an existing font subsetter implementation, which is discussed in the following section.
+
+When generating an encoding utilizing glyph-keyed patches the encoder must decide how to distribute glyphs between all of the patches
+in a way that meets the above requirements. In some cases it may be required to have the same glyph in more than one segment, some
+strategies to deal with this:
+
+1.  If a glyph is needed in more than one segment, those segments can be combined to be contained within a single patch. This avoids
+     duplicating the common glyphs, but increases the segment's size.
+
+2.  Alternatively, the glyph can be included in the patches for all of the segments needing it. This will keep the segments smaller,
+     at the cost of duplicating the glyph's data into multiple patches.
+
+3.  Lastly, the common glyphs can be moved into the initial font. This avoids increasing segment sizes and duplicating the glyph data,
+     but will increase the size of the initial font. Also it will cause that glyph data to always be loaded even when not needed. This
+     can be useful for glyphs that are required in many segments or are otherwise complicating the segmentation.
+
 <b>Utilize an existing font subsetter implementation</b>
 
-As discussed in [[#encoder]] a high quality encoder should preserve the functionality of the original font. One way to
-achieve this is to leverage an existing font subsetter implementation to produce font subsets that retain the functionality
-of the original font. The IFT patches can then be derived from these subsets.
+A more general way to achieve functional equivalence is to leverage an existing font subsetter implementation to produce font
+subsets that retain the functionality of the original font. The IFT patches can then be derived from these subsets.
 
 A font subsetter produces a [=font subset=] from an input font based on a desired [=font subset definition=]. The practice of reliably
 subsetting a font is well understood and has multiple open-source implementations (a full formal description is
@@ -2017,18 +2068,9 @@ to be representative of all possible encoder implementations. Notably it does no
 patches. Most encoders will likely be more complex and need to consider additional factors some of which are discussed in the remaining
 sections.
 
-<b>Choosing segmentations</b>
+<b>Pre-loading data in the Initial Font</b>
 
-One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. To maximize
-efficiency the encoder should try and group data (eg. codepoints) that are commonly used together into the same segments. This will
-reduce the amount of unneeded data load by clients when extending the font. The encoder must also decide the size of segments. Smaller
-segments will produce more patches, and thus incur more overhead by requiring more network requests, but will typically result in less
-unneeded data in each segment compared to larger segments. When segmenting codepoints, data on codepoint usage frequency can be helpful
-to guide segmentation.
-
-During segmentation an encoder should also consider how codepoints interact with each other in the font. Keeping interacting codepoints
-in the same segment can avoid having to duplicate data between patches, which may be necessary to preserve the functionality of the
-original font when interacting codepoints reside in different segments.
+<!-- TODO: discuss how the initial font can be preloaded with data, and should typically contain things that are almost always needed -->
 
 <b>Patches can form graphs</b>
 
