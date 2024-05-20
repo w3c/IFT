@@ -128,7 +128,7 @@ The IFT technology has four main pieces:
 *  [[#font-patch-formats]]: defines three different types of patches that can be used. Two are "generic" binary patches, one is
      specific to the font's format for storing glyph data.
 
-*  [[#encoder]]: creates the font and associated patches that form an incremental font.
+*  [[#encoding]]: creates the font and associated patches that form an incremental font.
 
 At a high level an [=incremental font=] is used like this:
 
@@ -149,17 +149,20 @@ encoding defined in this specification. At a high level converting an existing f
 1.  Choose the content of the initial [[#font-subset-dfn|subset]], this will be included in the initial font file the client loads
     and usually consists of any data from the original font that is expected to always be needed.
 
-2.  Choose a segmentation of the font. Individual segments will be added to the base subset by the client using patches. Choosing an
+2.  Choose the patch type or types. Different patch types have different qualities, so different use cases can call for different
+    patch types, or in some cases a mix of two types.
+
+3.  Choose a segmentation of the font. Individual segments will be added to the base subset by the client using patches. Choosing an
     appropriate segmentation is one of the most important parts of producing an efficient encoding.
 
-3.  Based on these choices, generate a set of patches, where each patch adds the data for a particular segment relative to either
+4.  Based on these choices, generate a set of patches, where each patch adds the data for a particular segment relative to either
     the initial font file or a previous patch.
 
-4.  Generate the initial font file including the initial subset and a [[#font-format-extensions|patch mapping]]. This mapping
+5.  Generate the initial font file including the initial subset and a [[#font-format-extensions|patch mapping]]. This mapping
     lists all of the available patch files, the url they reside at, and information on what data the patch will add to the font.
 
 Note: this is a highly simplified description of creating an incremental font, a more in-depth discussion of generating an encoding and
-requirements on the encoding can be found in the [[#encoder]] section.
+requirements on the encoding can be found in the [[#encoding]] section.
 
 Performance Considerations and the use of Incremental Font Transfer {#performance-considerations}
 -------------------------------------------------------------------------------------------------
@@ -1910,10 +1913,12 @@ The algorithm:
     for each modified table: update the checksums in the [[open-type/otff#table-directory|fonts table directory]] to match the table's
     new contents.
 
-Encoder {#encoder}
+Encoding {#encoding}
 ==================
 
-An encoder is a tool which produces an [=incremental font=] and set of associated [=font patch|patches=].
+An encoder is a tool which produces an [=incremental font=] and set of associated [=font patch|patches=]. "Encoding" refers to the
+process of using an encoder, including whatever parameters an encoder requires or allows to influence the result in a particular
+case.
 The [=incremental font=] and associated patches produced by a compliant encoder:
 
 1.  Must meet all of the requirements in [[#font-format-extensions]] and [[#font-patch-formats]].
@@ -1952,70 +1957,116 @@ functionality/data from all of its patch files even if those were included in th
 directly encoded into the IFT format from font authoring source files.
 
 
-Encoder Considerations {#encoder-considerations}
+Encoding Considerations {#encoding-considerations}
 ------------------------------------------------
 
 <em>This section is not normative.</em>
 
 The details of the encoding process may differ by encoder and are beyond the scope of this document. However, this section provides
-guidance that encoder implementations may want to consider.
+guidance that encoder implementations may want to consider, and that can be important to reproducing the appearance and behavior of
+an existing font file when producing an [=incremental font|incremental=] version of that font.
+
+<b>About [[#brotli]] and [[#per-table-brotli]] patches</b>
+
+A [[#brotli]] patch changes the content of an initial [=incremental font=] or subsequently updated font on a whole-file basis.
+This type of patch is therefore more or less incompatible with the [[#glyph-keyed]] patch type, although in theory a [[#brotli]]
+patch could add support for [[#glyph-keyed]] patches. [[#brotli]] patches also tend to mix poorly with [[#per-table-brotli]] patches.
+Therefore, a [[#brotli]] patch will typically mix only with other [[#brotli]] patches and will be Fully Invalidiating, as the
+application of a [[#brotli]] patch only yields the right result relative to a specific file content.
+
+A [[#per-table-brotli]] patch can change the contents of some font tables and not others. Each patched table typically needs to be
+relative to a specific table content, but other tables can have different contents. Therefore as long as a [[#per-table-brotli]]
+patch does not alter the tables containing glyph data it can be compatible with [[#glyph-keyed]] patches and therefore be only
+Partially Invalidating (in that it will invalidate other [[#per-table-brotli]] patches but not [[#glyph-keyed]] patches.
+
+Generally speaking the advantage of a [[#brotli]] patch over a [[#per-table-brotli]] patch is that the content of the patch is
+compressed together, and can use the full content of the file it patches as a compression "dictionary". The typical advantage
+of a [[#per-table-brotli]] patch over a [[#brotli]] patch is that it can be compatible with [[#glyph-keyed]] patches. The patch
+types leave the possibility of less typical patterns open. For example, one could use [[#per-table-brotli]] patches for all
+content other than the glyph tables but then use another set of [[#per-table-brotli]] patches for those tables rather than
+[[#glyph-keyed]] patches, and each of these could in theory be partially invalidating—leaving them mutually dependent but 
+independent of one another.
+
+The two patch types are similar in that they are at least Partially Invaliding, so that the choice of one from a table (IFT or IFTX)
+means that all others in that table are invalidated.  Assuming the patched result does not represent the fully expanded font,
+that patch will typically alter the IFT or IFTX table it was was listed in to add a new set of patches to further extend the
+font. This means that the total set of [[#brotli]] or [[#per-table-brotli]] patches forms a graph, in which each font subset
+in the segmentation is a node and each patch is a graph.  This also means that patches of these types are typically downloaded
+and applied in series, which has implications for the performance of this patch type relative to latency.
+
+<b>About [[#glyph-keyed]] patches</b>
+
+[[#glyph-keyed]] patches are quite distinct from the other patch types. First, [[#glyph-keyed]] patches can only modify 
+tables containing glyph outline data, and therefore an [=incremental font=] that only uses [[#glyph-keyed]] must include all
+other font table data in the initial font file. Second, [[#glyph-keyed]] patches are not Invalidating, and can therefore be
+downloaded and applied independently.
+
+<b>Choosing patch formats for an encoding</b>
+
+All encodings must chose one or more patch types to use. [[#brotli]] and [[#per-table-brotli]] patches allow
+all types of data in the font to be patched, but because these types are at least Partially Invalidating, the total number of
+patches needed increases exponentially with the number of segments rather than linearly. [[#glyph-keyed]] patches
+are limited to updating outline and variation delta data but the number needed scales linearly with number of segments.
+
+At the extremes the two types of Brotli patches are most appropriate for fonts with sizable non-outline data that only require a
+small number of patches, with the [[#brotli]] type providing better compression. Glyph keyed patches are most appropriate for
+fonts where the vast majority of data consists of glyph outlines, which is true of many existing CJK fonts.
+
+For fonts that are in-between, or in cases where fine-grained segmentation of glyph data is desired but segmentation of data
+in other tables is still needed, it can be desirable to mix the [[#per-table-brotli]] and [[#glyph-keyed]] patch types in this
+way:
+
+1. Keep all brotli patch entries in one mapping table and all glyph keyed entries in the other mapping table.
+2. Use per-table brotli patches to update all tables except for the tables touched by the glyph keyed patches (outline,
+    variation deltas, and the glyph keyed patch mapping table). These patches should use a small number of large segments to keep
+    the patch count reasonable.
+3. Lastly, use glyph keyed patches to update the remaining tables, here much smaller fine-grained segments can be utilized without
+    requiring too many patches.
+
+<b>Managing the number of patches</b>
+
+Using brotli patches along side a large number of segments can result in a very large number of patches needed, which can have two
+negative effects. First, the storage space needed for all of the pre-generated patches could be undesirably large. Second, more 
+patches will generally mean lower CDN cache performance, because a higher number of patches represents a higher number of paths
+from a given subset to a given subset, with different paths being taken by different users depending on the content they access.
+There are some techniques which can be used to reduce the total number of pre-generated patches:
+
+1. Use a maximum depth for the patch graph, once this limit is reached the font is patched to add all remaining parts of the full
+    original font. This will cause the whole remaining font to be loaded after a certain number of segments have been added. Limiting
+    the depth of the graph will reduced the combinatorial explosion of patches at the lower depths.
+
+2. Alternatively, at lower depths the encoder could begin combining multiple segments into single patches to reduce the fan out at each
+    level.
 
 <b>Choosing segmentations</b>
 
-One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. To maximize
-efficiency the encoder should try and group data (eg. codepoints) that are commonly used together into the same segments. This will
-reduce the amount of unneeded data load by clients when extending the font. The encoder must also decide the size of segments. Smaller
-segments will produce more patches, and thus incur more overhead by requiring more network requests, but will typically result in less
-unneeded data in each segment compared to larger segments. When segmenting codepoints, data on codepoint usage frequency can be helpful
-to guide segmentation.
+One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. The discussion
+above focused on the number of segments, but the performance of an [=incremental font=] depends much more on the grouping of data
+within segments. To maximize efficiency an encoder needs to group data (eg. codepoints) that are commonly used together into the same
+segments. This will reduce the amount of unneeded data load by clients when extending the font. The encoder must also decide the size
+of segments. Smaller segments will produce more patches, and thus incur more overhead by requiring more network requests, but will
+typically result in less unneeded data in each segment compared to larger segments. When segmenting codepoints, data on codepoint usage
+frequency can be helpful to guide segmentation.
 
-During segmentation an encoder should also consider how codepoints interact with each other in the font. Keeping interacting codepoints
-in the same segment can avoid having to duplicate data between patches, which may be necessary to preserve the functionality of the
-original font when interacting codepoints reside in different segments.
-
+Some codepoints may have self-evident segmentations, or at least there may be little question as to what codepoints to group together.
+For example, upper and lowercase letters of the Latin alphabet form a natural group. Other cases may be more complicated. For example,
+Chinese, Japanese, and Korean share some codepoints, but a codepoint that is high-frequency in Japanese may be lower-frequency in
+Chinese. In some cases one might choose to optimize an encoding for a single language. Another approach is to produce a compromise
+encoding. For example, when segmenting an encoder could put codepoints that are frequent in Japanese, Chinese, and Korean into one
+segment, and then those that are frequent only in Japanese and Chinese into another segment, and so on. Then the codepoints that
+are frequent in only one language can be handled in the usual way. This will result in less even segment sizes, but means that 
+loading high-frequency patches for any one of the languages will not pull in lower-frequency glyphs.
 
 <b>Maintaining Functional Equivalence</b>
 
-As discussed in [[#encoder]] a high quality encoder should preserve the functionality of the original font. Fonts are complex and
+As discussed in [[#encoding]] a high quality encoder should preserve the functionality of the original font. Fonts are complex and
 often contain interactions between codepoints so maintaining functional equivalence with a partial copy of the font can be tricky.
-A couple of techniques that can be used to maintain functional equivalence are:
 
-1.  Enforcing a "glyph ID closure requirement".
-2.  Utilize an existing font subsetter implementation.
+<b>Brotli patches</b>
 
-<b>Glyph ID Closure Requirement</b>
-
-An encoding which only utilizes glyph keyed patches will only have glyph outline and variation data modified by patches and thus is
-simpler to maintain equivalence; which can be done by meeting the following requirements:
-
-1. The <dfn dfn>glyph closure</dfn> of a [=font subset definition=] is the full set of glyphs in the font that may be needed to
-    render any combination of the described codepoints and layout features.
-
-2. The set of glyphs contained in the patches loaded for a [=font subset definition=] through the patch map tables must be a superset
-    of those in the [=glyph closure=] of the [=font subset definition=].
-
-Existing font subsetting libraries can be used to generate the glyph closures relative to font subset definitions. Encodings that modify
-other tables will need to enforce similar requirements for the additional tables, but the details will vary by the specific table
-type. For these cases it's recommended to utilize an existing font subsetter implementation, which is discussed in the following section.
-
-When generating an encoding utilizing glyph-keyed patches the encoder must decide how to distribute glyphs between all of the patches
-in a way that meets the above requirements. In some cases it may be required to have the same glyph in more than one segment, some
-strategies to deal with this:
-
-1.  If a glyph is needed in more than one segment, those segments can be combined to be contained within a single patch. This avoids
-     duplicating the common glyphs, but increases the segment's size.
-
-2.  Alternatively, the glyph can be included in the patches for all of the segments needing it. This will keep the segments smaller,
-     at the cost of duplicating the glyph's data into multiple patches.
-
-3.  Lastly, the common glyphs can be moved into the initial font. This avoids increasing segment sizes and duplicating the glyph data,
-     but will increase the size of the initial font. Also it will cause that glyph data to always be loaded even when not needed. This
-     can be useful for glyphs that are required in many segments or are otherwise complicating the segmentation.
-
-<b>Utilize an existing font subsetter implementation</b>
-
-A more general way to achieve functional equivalence is to leverage an existing font subsetter implementation to produce font
-subsets that retain the functionality of the original font. The IFT patches can then be derived from these subsets.
+When preparing [[#brotli]] or [[#per-table-brotli patches]], one means of achieving functional equivalence is to leverage an
+existing font subsetter implementation to produce font subsets that retain the functionality of the original font. The IFT patches
+can then be derived from these subsets.
 
 A font subsetter produces a [=font subset=] from an input font based on a desired [=font subset definition=]. The practice of reliably
 subsetting a font is well understood and has multiple open-source implementations (a full formal description is
@@ -2023,10 +2074,10 @@ beyond the scope of this document). It typically involves a reachability analysi
 relative to the font subset definition to see which portions can be reached by any possible content covered by the subset definition.
 Any reachable data is retained in the generated font subset, while any unreachable data may be removed.
 
-In the following example psuedo code a font subsetter is used to generate an IFT encoded font that utilizes only brotli patches:
+In the following example psuedo code a font subsetter is used to generate an IFT encoded font that utilizes only Brotli patches:
 
 ```
-# Encodes a font (full_font) into an incremental font that starts at base_subset_def
+# Encode a font (full_font) into an incremental font that starts at base_subset_def
 # and can incrementally add any of subset_definitions. Returns the IFT encoded font
 # and set of associated patches.
 encode_as_ift(full_font, base_subset_def, subset_definitions):
@@ -2057,67 +2108,71 @@ encode_node(full_font, base_font, cur_def, subset_definitions):
   return base_font, patches
 ```
 
-In this example implementation if the union of the input base subset definition and the list of subset definitions fully covers the input
+In this example implementation, if the union of the input base subset definition and the list of subset definitions fully covers the input
 full font, and the subsetter implementation used correctly retains all functionality then, the above implementation should meet the
-requirements in [[#encoder]] to be a neutral encoding. This basic encoder implementation is for demonstration purposes and not meant
+requirements in [[#encoding]] to be a neutral encoding. This basic encoder implementation is for demonstration purposes and not meant
 to be representative of all possible encoder implementations. Notably it does not make use of nor demonstrate utilizing glyph keyed
 patches. Most encoders will likely be more complex and need to consider additional factors some of which are discussed in the remaining
 sections.
 
+<b>[[#glyph-keyed]] patches</b>
+
+Specifically because they are parameterized by codepoints and feature tags but can be applied independently of one another,
+[[#glyph-keyed]] patches have additional requirements and cannot be directly derived by using a subsetter implementation.  However,
+such an implementation can help clarify what an encoder needs to do to maintain functional equivalence when producing this type
+of patch. Consider the result of producing the subset of a font relative to a given [=font subset definition=]. We can define
+the <dfn dfn>glyph closure</dfn> of that [=font subset definition=] as the full set of glyphs included in the subset, which the
+subsetter has determined is needed to render any combination of the described codepoints and layout features.
+
+Using that definition, the <b>glyph closure requirement</b> on the full set [[#glyph-keyed]] patches is:
+
+*   The set of glyphs contained in the patches loaded for a [=font subset definition=] through the patch map tables must be a superset
+    of those in the [=glyph closure=] of the [=font subset definition=].
+
+Assuming the subsetter does its job accurately, the glyph closure requirement is a consequence of the requirement for equivalent
+behavior: Suppose there is a [=font subset definition=] such that the subsetter includes glyph *i* in its subset, but an encoder that
+produces [[#glyph-keyed]] patches omits glyph *i* from the set of patches that correspond to that definition. If the subsetter is
+right, that glyph must be present to retain equivalent behavior when rendering some combination of the codepoints and features in 
+the definition. And this means that the [=incremental font=] will not behave equivalently when rendering that combination.
+
+Therefore, when generating an encoding utilizing glyph-keyed patches the encoder must determine how to distribute glyphs between all
+of the patches in a way that meets the glyph closure requirement. This is primarily a matter of looking at the codepoints assigned
+to a segment and determining what other glyphs must be included in the patch that corresponds to it, as when a glyph variant can
+be substituted for a glyph included in the segment by codepoint.  In some cases a glyph might only be needed when multiple segments
+have been loaded, in which case that glyph can be added to the patch corresponding to any of those segments. (This can be true of 
+a ligature or a pre-composed accented character.) Finally, after the initial analysis of segments the same glyph might be needed 
+when loading the patches for two or more segments.  There are three main strategies for dealing with that situation:
+
+1.  Two or more segments can be combined to be contained within a single patch. This avoids duplicating the common glyphs, but
+     increases the segment's size.
+
+2.  Alternatively, the glyph can be included in more than one of the patches that correspond to those segments. This will keep the
+     segments smaller, at the cost of duplicating the glyph's data into multiple patches.
+
+3.  Lastly, the common glyph can be moved into the initial font. This avoids increasing segment sizes and duplicating the glyph data,
+     but will increase the size of the initial font. It also means that the glyph's data is always loaded, even when not needed. This
+     can be useful for glyphs that are required in many segments or are otherwise complicating the segmentation.
+
 <b>Pre-loading data in the Initial Font</b>
 
-The initial IFT font can contain a subset of data from the original font. This has two main benefits:
+In some cases it might be desirable to avoid the overhead of applying patches to an initial file. For example, it could
+be desirable that the font loaded on a company home page already be able to render the content on that page. The main benefit
+of such a file is reduced rendering latency: the content can be rendered after a single round-trip.
 
-1. Data in the initial font can be utilized to render content before any patches have been loaded. This allows an IFT font to provide
-    some amount of rendering capability on the first round trip.
+There are two approaches to including data in the downloaded font file. One is to simply encode the [=incremental font=]
+as a whole so that the data is in the initial file. Any such data will always be available in any patched version of the font.
+This can be helpful in cases when the same data would otherwise be needed in many different segments.
 
-2. Any data placed in the initial font will always be available, with no augmentation needed. This can be helpful in cases of data
-    that are needed by many different segments.
+The other approach is to download an already-patched font. That is, one can encode a font with little or no data in the "base"
+file but then apply patches to that file on the server side, so that the file downloaded already includes the data contained
+in those patches.
 
-Thus any parts of the original font that are expected to be always (are almost always) needed are good candidates for inclusion in the
-initial font.
-
-An encoder may also want to consider providing multiple initial fonts that are each specific to a certain script. The script specific
-initial fonts could contain support a core set of codepoints for that script. When used with the corresponding script they would allow for
-basic text in that script to be rendered prior to any patches loading.
-
-<b>Patches can form graphs</b>
-
-Brotli based patches can modify the mapping table in the current font subset, which allows a patch to update the mapping table
-to point to a different set of patches which are valid against the result of the patch application. This allows a graph to be formed
-where a font subset is the node and each patch is an edge.
-
-<b>Choosing patch formats</b>
-
-An encoder must choose the appropriate patch type to use. Brotli patches allow all types of data in the font to be patched, while
-glyph keyed patches are limited to updating outline and variation delta data. However, using brotli patches can cause the number of
-patches to increase exponentially as the number of segments increases.  Glyph keyed patches on the other hand scale linearly with the
-number of segments.
-
-Brotli patches are most useful when a font has sizable non-outline data and requires only a small number of segments. Glyph keyed
-patches are most useful when a fonts data is primarily in the outline tables and the font would benefit from using a large segment count.
-
-Using per-table brotli patches and two mapping tables it becomes possible to mix both brotli and glyph keyed patching in the same
-incremental font. This can be accomplished by:
-
-1. Keep all brotli patch entries in one mapping table and all glyph keyed entries in the other mapping table.
-2. Use per-table brotli patches to update all tables except for the tables touched by the glyph keyed patches (outline,
-    variation deltas, and the glyph keyed patch mapping table). These patches should use a small number of large segments to keep
-    the patch count reasonable.
-3. Lastly, use glyph keyed patches to update the remaining tables, here much smaller fine-grained segments can be utilized without
-    required too many patches.
-
-<b>Managing the number of patches</b>
-
-Using brotli patches along side a large number of segments can result in a very large number of patches needed. There are some techniques
-which can be used to reduce the total number of patches:
-
-1. Use a maximum depth for the patch graph, once this limit is reached the font is patched to add all remaining parts of the full
-    original font. This will cause the whole remaining font to be loaded after a certain number of segments have been added. Limiting
-    the depth of the graph will reduced the combininatorial explosion of patches at the lower depths.
-
-2. Alternatively, at lower depths the encoder could begin combining multiple segments into single patches to reduce the fan out at each
-    level.
+When only one pre-loaded version of a font is needed these strategies will have roughly equivalent results, but the first is both
+simpler and in some cases more specific. However, when more than pre-loaded font is needed the pre-patching approach will often
+be better. When using the first approach, one would need to produce multiple encodings, one for each preloaded file. When using
+the second approach, all of the preloaded files will still share the same overall patch graph, which both reduces the total space
+needed to store the patches and improves CDN cache efficiency, as all the pre-loaded files will choose subsequent patches from the
+same set.
 
 <b>Choosing the input ID encoding</b>
 
