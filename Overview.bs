@@ -1971,41 +1971,42 @@ an existing font file when producing an [=incremental font|incremental=] version
 A [[#brotli]] patch changes the content of an initial [=incremental font=] or subsequently updated font on a whole-file basis.
 This type of patch is therefore more or less incompatible with the [[#glyph-keyed]] patch type, although in theory a [[#brotli]]
 patch could add support for [[#glyph-keyed]] patches. [[#brotli]] patches also tend to mix poorly with [[#per-table-brotli]] patches.
-Therefore, a [[#brotli]] patch will typically mix only with other [[#brotli]] patches and will be Fully Invalidiating, as the
-application of a [[#brotli]] patch only yields the right result relative to a specific file content.
+Therefore, a [[#brotli]] patch will typically mix only with other [[#brotli]] patches and will be [=Full Invalidation|Fully
+Invalidiating=], as the application of a [[#brotli]] patch only yields the right result relative to a specific file content.
 
 A [[#per-table-brotli]] patch can change the contents of some font tables and not others. Each patched table typically needs to be
 relative to a specific table content, but other tables can have different contents. Therefore as long as a [[#per-table-brotli]]
 patch does not alter the tables containing glyph data it can be compatible with [[#glyph-keyed]] patches and therefore be only
-Partially Invalidating (in that it will invalidate other [[#per-table-brotli]] patches but not [[#glyph-keyed]] patches.
+[=Partial Invalidation|Partially Invalidating=] (in that it will invalidate other [[#per-table-brotli]] patches but not
+[[#glyph-keyed]] patches.
 
 Generally speaking the advantage of a [[#brotli]] patch over a [[#per-table-brotli]] patch is that the content of the patch is
 compressed together, and can use the full content of the file it patches as a compression "dictionary". The typical advantage
 of a [[#per-table-brotli]] patch over a [[#brotli]] patch is that it can be compatible with [[#glyph-keyed]] patches. The patch
 types leave the possibility of less typical patterns open. For example, one could use [[#per-table-brotli]] patches for all
 content other than the glyph tables but then use another set of [[#per-table-brotli]] patches for those tables rather than
-[[#glyph-keyed]] patches, and each of these could in theory be partially invalidating—leaving them mutually dependent but 
-independent of one another.
+[[#glyph-keyed]] patches, and each of these could in theory be [=Partial Invalidation|Partially Invalidating=]—leaving them
+mutually dependent but independent of one another.
 
-The two patch types are similar in that they are at least Partially Invaliding, so that the choice of one from a table (IFT or IFTX)
-means that all others in that table are invalidated.  Assuming the patched result does not represent the fully expanded font,
-that patch will typically alter the IFT or IFTX table it was was listed in to add a new set of patches to further extend the
-font. This means that the total set of [[#brotli]] or [[#per-table-brotli]] patches forms a graph, in which each font subset
-in the segmentation is a node and each patch is a graph.  This also means that patches of these types are typically downloaded
-and applied in series, which has implications for the performance of this patch type relative to latency.
+The two patch types are similar in that they are at least [=Partial Invalidation|Partially Invaliding=], so that the choice of
+one from a table (IFT or IFTX) means that all others in that table are invalidated.  Assuming the patched result does not
+represent the fully expanded font, that patch will typically alter the IFT or IFTX table it was was listed in to add a new set
+of patches to further extend the font. This means that the total set of [[#brotli]] or [[#per-table-brotli]] patches forms a graph,
+in which each font subset in the segmentation is a node and each patch is an edge.  This also means that patches of these types
+are typically downloaded and applied in series, which has implications for the performance of this patch type relative to latency.
 
 <b>About [[#glyph-keyed]] patches</b>
 
 [[#glyph-keyed]] patches are quite distinct from the other patch types. First, [[#glyph-keyed]] patches can only modify 
 tables containing glyph outline data, and therefore an [=incremental font=] that only uses [[#glyph-keyed]] must include all
-other font table data in the initial font file. Second, [[#glyph-keyed]] patches are not Invalidating, and can therefore be
-downloaded and applied independently.
+other font table data in the initial font file. Second, [[#glyph-keyed]] patches are [=No Invalidation|not Invalidating=],
+and can therefore be downloaded and applied independently.
 
 <b>Choosing patch formats for an encoding</b>
 
 All encodings must chose one or more patch types to use. [[#brotli]] and [[#per-table-brotli]] patches allow
-all types of data in the font to be patched, but because these types are at least Partially Invalidating, the total number of
-patches needed increases exponentially with the number of segments rather than linearly. [[#glyph-keyed]] patches
+all types of data in the font to be patched, but because these types are at least [=Partial Invalidation|Partially Invalidating=],
+the total number of patches needed increases exponentially with the number of segments rather than linearly. [[#glyph-keyed]] patches
 are limited to updating outline and variation delta data but the number needed scales linearly with number of segments.
 
 At the extremes the two types of Brotli patches are most appropriate for fonts with sizable non-outline data that only require a
@@ -2133,7 +2134,7 @@ Assuming the subsetter does its job accurately, the glyph closure requirement is
 behavior: Suppose there is a [=font subset definition=] such that the subsetter includes glyph *i* in its subset, but an encoder that
 produces [[#glyph-keyed]] patches omits glyph *i* from the set of patches that correspond to that definition. If the subsetter is
 right, that glyph must be present to retain equivalent behavior when rendering some combination of the codepoints and features in 
-the definition. And this means that the [=incremental font=] will not behave equivalently when rendering that combination.
+the definition, which means that the [=incremental font=] will not behave equivalently when rendering that combination.
 
 Therefore, when generating an encoding utilizing glyph-keyed patches the encoder must determine how to distribute glyphs between all
 of the patches in a way that meets the glyph closure requirement. This is primarily a matter of looking at the codepoints assigned
