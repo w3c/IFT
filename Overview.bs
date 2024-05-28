@@ -479,7 +479,11 @@ The algorithm:
      produce the <var>target URI</var>.
 
 2.  Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers,
-     [[fetch]] should be used. Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.
+     [[fetch]] should be used. When using [[fetch]] the requests for patches should use the same CORS settings as the IFT font which
+     initiated the request. For a font loaded via CSS that means the patch request would follow:
+     [[css-fonts-4#font-fetching-requirements]].
+
+3.  Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.
 
 <dfn abstract-op>Handle errors</dfn>
 
@@ -2248,7 +2252,16 @@ found in the CSS Fonts 4 specification:
 
 <h2 class=no-num id=sec>Security Considerations</h2>
 
-No Security issues have been raised against this document
+One security concern is that IFT fonts could potentially generate a large number of network requests for patches. This could cause
+problems on the client or the service hosting the patches. The IFT specification contains a couple of mitigations to limit excessive
+number of requests:
+
+1.  [[#extending-font-subset]]: disallows re-requesting the same URI multiple times and has limits on the total number of requests
+     that can be issued during the extension process.
+
+2.  [$Load patch file$]: specifies the use of [[fetch]] in implementing web browsers and matches the CORS settings for the initial
+     font load. As a result cross-origin requests for patch files are disallowed unless the hosting service opts in via the appropriate
+     access control headers.
 
 <h2 class=no-num id=changes>Changes</h2>
 
