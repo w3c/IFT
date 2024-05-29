@@ -1933,23 +1933,26 @@ The [=incremental font=] and associated patches produced by a compliant encoder:
     with that subset definition and the [=incremental font=] must always be the same regardless of the particular order
     of patch selection chosen in step 6 of [$Extend an Incremental Font Subset$].
 
-3.  Should preserve the functionality of the fully expanded font, that is:
-     given the [$Fully Expand a Font Subset|fully expanded font$] derived from the [=incremental font=]
-     and any content, then the [=font subset=] produced by invoking [$Extend an Incremental Font Subset$] with the
-     [=incremental font=] and the minimal subset definition covering that content should
-     render identically to the fully expanded font for that content.
-
-4.  When an encoder is used to transform an existing font into an [=incremental font=] the associated
+3.  When an encoder is used to transform an existing font into an [=incremental font=] the associated
      [$Fully Expand a Font Subset|fully expanded font$] should be equivalent to the existing font. An equivalent fully expanded font
      should have all of the same [[open-type/otff#table-directory|tables]] as the existing font (excluding the incremental IFT/IFTX
      tables) and each of those tables should be functionally equivalent to the corresponding table in the existing font. Note: the fully
      expanded may not always be an exact binary match with the existing font.
 
+4.  Should preserve the functionality of the fully expanded font throughout the augmentation process, that is:
+     given the [$Fully Expand a Font Subset|fully expanded font$] derived from the [=incremental font=]
+     and any content, then the [=font subset=] produced by invoking [$Extend an Incremental Font Subset$] with the
+     [=incremental font=] and the minimal subset definition covering that content should
+     render identically to the fully expanded font for that content.
+
 When an encoder is used to transform an existing font file into and [=incremental font=] and a client is implemented according to the
 other sections of this document, the intent of the IFT specification is that appearance and behavior of the font in the client will be the
 same as if the entire file were transferred to the client. A primary goal of the IFT specification is that the IFT format and protocol can
 serve as a neutral medium for font transfer, comparable to WOFF2. If an encoder produces an encoding from a source font which meets all of
-the above requirements (1. through 4.), then the encoding will preserve all of the functionality of the original font.
+the above requirements (1. through 4.), then the encoding will preserve all of the functionality of the original font. Requirement 3 above
+ensures that all of the functionality in the original font can be reached. This works in conjunction with requirement 4, which requires
+that partial versions of an IFT font have equivalent functionality as the full version (original font here) for content which is a subset
+of the subset definition used to derive the partial font.
 
 This may be important for cases where a foundry or other rights-owner of a font wants be confident that the encoding and transfer of that
 font using IFT will not change its behavior and therefore the intent of the font's creators. Licenses or contracts might then include
@@ -1960,8 +1963,8 @@ However, nothing about these requirements on encoding conformance is meant to ru
 encodings that do not preserve all of the functionality of a source font. Any encoding meeting the minimum requirements (1. and 2. above)
 is valid and may have an appropriate use. Under some circumstances it might be desirable for an encoded font to omit support for some
 functionality/data from all of its patch files even if those were included in the original font file. In other cases a font might be
-directly encoded into the IFT format from font authoring source files.
-
+directly encoded into the IFT format from font authoring source files. In cases where an encoder chooses not to meet requirement 3 above
+it is still strongly encouraged to meet 4, which ensures consistent behavior of the font throughout the augmentation process.
 
 Encoding Considerations {#encoding-considerations}
 ------------------------------------------------
@@ -2066,8 +2069,9 @@ loading high-frequency patches for any one of the languages will not pull in low
 
 <b>Maintaining Functional Equivalence</b>
 
-As discussed in [[#encoding]] a high quality encoder should preserve the functionality of the original font. Fonts are complex and
-often contain interactions between codepoints so maintaining functional equivalence with a partial copy of the font can be tricky.
+As discussed in [[#encoding]] an encoder should preserve the functionality of the original font. Fonts are complex
+and often contain interactions between codepoints so maintaining functional equivalence with a partial copy of the font can be tricky.
+The next two subsections discuss maintaining functional equivalent using the different patch types.
 
 <b>Brotli patches</b>
 

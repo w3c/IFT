@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="91c52b08af5a4e9dd93cdb7a95dae6f8d49c5041" name="revision">
+  <meta content="e569cbfee82c022f97e5930d9072ce57a667edce" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -2268,20 +2268,23 @@ The <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-fon
      <p>Must be consistent, that is: for any possible <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑨">font subset definition</a> the result of invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset②">Extend an Incremental Font Subset</a> with that subset definition and the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⓪">incremental font</a> must always be the same regardless of the particular order
 of patch selection chosen in step 6 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset③">Extend an Incremental Font Subset</a>.</p>
     <li data-md>
-     <p>Should preserve the functionality of the fully expanded font, that is:
- given the <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset①">fully expanded font</a> derived from the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①①">incremental font</a> and any content, then the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⑨">font subset</a> produced by invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset④">Extend an Incremental Font Subset</a> with the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①②">incremental font</a> and the minimal subset definition covering that content should
- render identically to the fully expanded font for that content.</p>
-    <li data-md>
-     <p>When an encoder is used to transform an existing font into an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①③">incremental font</a> the associated <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset②">fully expanded font</a> should be equivalent to the existing font. An equivalent fully expanded font
+     <p>When an encoder is used to transform an existing font into an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①①">incremental font</a> the associated <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset①">fully expanded font</a> should be equivalent to the existing font. An equivalent fully expanded font
  should have all of the same <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> as the existing font (excluding the incremental IFT/IFTX
  tables) and each of those tables should be functionally equivalent to the corresponding table in the existing font. Note: the fully
  expanded may not always be an exact binary match with the existing font.</p>
+    <li data-md>
+     <p>Should preserve the functionality of the fully expanded font throughout the augmentation process, that is:
+ given the <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset②">fully expanded font</a> derived from the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①②">incremental font</a> and any content, then the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⑨">font subset</a> produced by invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset④">Extend an Incremental Font Subset</a> with the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①③">incremental font</a> and the minimal subset definition covering that content should
+ render identically to the fully expanded font for that content.</p>
    </ol>
    <p>When an encoder is used to transform an existing font file into and <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①④">incremental font</a> and a client is implemented according to the
 other sections of this document, the intent of the IFT specification is that appearance and behavior of the font in the client will be the
 same as if the entire file were transferred to the client. A primary goal of the IFT specification is that the IFT format and protocol can
 serve as a neutral medium for font transfer, comparable to WOFF2. If an encoder produces an encoding from a source font which meets all of
-the above requirements (1. through 4.), then the encoding will preserve all of the functionality of the original font.</p>
+the above requirements (1. through 4.), then the encoding will preserve all of the functionality of the original font. Requirement 3 above
+ensures that all of the functionality in the original font can be reached. This works in conjunction with requirement 4, which requires
+that partial versions of an IFT font have equivalent functionality as the full version (original font here) for content which is a subset
+of the subset definition used to derive the partial font.</p>
    <p>This may be important for cases where a foundry or other rights-owner of a font wants be confident that the encoding and transfer of that
 font using IFT will not change its behavior and therefore the intent of the font’s creators. Licenses or contracts might then include
 requirements about IFT conformance, and situations in which re-encoding a font in WOFF2 format is de facto permissible due to its
@@ -2290,7 +2293,8 @@ content-neutrality might also permit IFT encoding of that font.</p>
 encodings that do not preserve all of the functionality of a source font. Any encoding meeting the minimum requirements (1. and 2. above)
 is valid and may have an appropriate use. Under some circumstances it might be desirable for an encoded font to omit support for some
 functionality/data from all of its patch files even if those were included in the original font file. In other cases a font might be
-directly encoded into the IFT format from font authoring source files.</p>
+directly encoded into the IFT format from font authoring source files. In cases where an encoder chooses not to meet requirement 3 above
+it is still strongly encouraged to meet 4, which ensures consistent behavior of the font throughout the augmentation process.</p>
    <h3 class="heading settled" data-level="7.1" id="encoding-considerations"><span class="secno">7.1. </span><span class="content">Encoding Considerations</span><a class="self-link" href="#encoding-considerations"></a></h3>
    <p><em>This section is not normative.</em></p>
    <p>The details of the encoding process may differ by encoder and are beyond the scope of this document. However, this section provides
@@ -2374,8 +2378,9 @@ segment, and then those that are frequent only in Japanese and Chinese into anot
 are frequent in only one language can be handled in the usual way. This will result in less even segment sizes, but means that 
 loading high-frequency patches for any one of the languages will not pull in lower-frequency glyphs.</p>
    <p><b>Maintaining Functional Equivalence</b></p>
-   <p>As discussed in <a href="#encoding">§ 7 Encoding</a> a high quality encoder should preserve the functionality of the original font. Fonts are complex and
-often contain interactions between codepoints so maintaining functional equivalence with a partial copy of the font can be tricky.</p>
+   <p>As discussed in <a href="#encoding">§ 7 Encoding</a> an encoder should preserve the functionality of the original font. Fonts are complex
+and often contain interactions between codepoints so maintaining functional equivalence with a partial copy of the font can be tricky.
+The next two subsections discuss maintaining functional equivalent using the different patch types.</p>
    <p><b>Brotli patches</b></p>
    <p>When preparing <a href="#brotli">§ 6.2 Brotli Patch</a> or <a href="#per-table-brotli">§ 6.3 Per Table Brotli</a> patches, one means of achieving functional equivalence is to leverage an
 existing font subsetter implementation to produce font subsets that retain the functionality of the original font. The IFT patches
