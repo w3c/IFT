@@ -2030,10 +2030,16 @@ in other tables is still needed, it can be desirable to mix the [[#per-table-bro
 way:
 
 1. Keep all brotli patch entries in one mapping table and all glyph keyed entries in the other mapping table.
+
 2. Use per-table brotli patches to update all tables except for the tables touched by the glyph keyed patches (outline,
     variation deltas, and the glyph keyed patch mapping table). These patches should use a small number of large segments to keep
     the patch count reasonable.
-3. Lastly, use glyph keyed patches to update the remaining tables, here much smaller fine-grained segments can be utilized without
+
+3. Because glyph keyed patches reference the specific glyph IDs that are updated, the per-table brotli patches must not change
+    the glyph to glyph ID assignments used in the original font; otherwise, the glyph IDs listed in the glyph keyed patches may
+    become incorrect. In font subsetters this is often available as an option called "retain glyph IDs".
+
+4. Lastly, use glyph keyed patches to update the remaining tables, here much smaller fine-grained segments can be utilized without
     requiring too many patches.
 
 <b>Managing the number of patches</b>
