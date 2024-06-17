@@ -2194,6 +2194,13 @@ the second approach, all of the preloaded files will still share the same overal
 needed to store the patches and improves CDN cache efficiency, as all the pre-loaded files will choose subsequent patches from the
 same set.
 
+<b>Table order for per table brotli patches</b>
+
+Per table brotli patches have a seperate brotli stream for each patched table and the format allows these streams to be placed in any
+order in the patch file. Encoders should consider placing the mapping tables (IFT and IFTX) plus any additional tables needed to decode the
+mapping tables (cmap) as early as possible in the patch file . This will allow optimized client implementations to access the updated
+patch mapping prior to recieving all of the patch data and potentially initiate requests for additional patches earlier.
+
 <b>Choosing the input ID encoding</b>
 
 The specification supports two encodings for embedding patch IDs in the URL template. The first is [[rfc4648#section-7|base32hex]],
