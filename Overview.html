@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="0f7eb6e7fdb2c753037ceb320e98899deda3c44d" name="revision">
+  <meta content="bc4774d03cdf1b1a50e96035622534e9f7c7e195" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -2485,11 +2485,14 @@ be better. When using the first approach, one would need to produce multiple enc
 the second approach, all of the preloaded files will still share the same overall patch graph, which both reduces the total space
 needed to store the patches and improves CDN cache efficiency, as all the pre-loaded files will choose subsequent patches from the
 same set.</p>
-   <p><b>Table order for per table brotli patches</b></p>
-   <p>Per table brotli patches have a seperate brotli stream for each patched table and the format allows these streams to be placed in any
-order in the patch file. Encoders should consider placing the mapping tables (IFT and IFTX) plus any additional tables needed to decode the
-mapping tables (cmap) as early as possible in the patch file . This will allow optimized client implementations to access the updated
-patch mapping prior to recieving all of the patch data and potentially initiate requests for additional patches earlier.</p>
+   <p><b>Table ordering</b></p>
+   <p>In the initial font file (whether encoded as woff2 or not) it is possible to customize the order of the actual table bytes within
+the file. Encoders should consider placing the mapping tables (IFT and IFTX) plus any additional tables needed to decode the
+mapping tables (cmap) as early as possible in the file. This will allow optimized client implementations to access the 
+patch mapping prior to receiving all of the font data and potentially initiate requests for any required patches earlier.</p>
+   <p>Likewise per table brotli patches have a separate brotli stream for each patched table and the format allows these streams to be placed
+in any order in the patch file. So for the same reasons encoders should consider placing updates to the mapping tables plus any
+additional tables needed to decode the mapping tables as early as possible in the patch file.</p>
    <p><b>Choosing the input ID encoding</b></p>
    <p>The specification supports two encodings for embedding patch IDs in the URL template. The first is <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a>,
 which is a good match for pre-generated patches that will typically be stored in a filesystem. Base32hex encoding only uses the

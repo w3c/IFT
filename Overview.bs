@@ -2194,12 +2194,16 @@ the second approach, all of the preloaded files will still share the same overal
 needed to store the patches and improves CDN cache efficiency, as all the pre-loaded files will choose subsequent patches from the
 same set.
 
-<b>Table order for per table brotli patches</b>
+<b>Table ordering</b>
 
-Per table brotli patches have a seperate brotli stream for each patched table and the format allows these streams to be placed in any
-order in the patch file. Encoders should consider placing the mapping tables (IFT and IFTX) plus any additional tables needed to decode the
-mapping tables (cmap) as early as possible in the patch file . This will allow optimized client implementations to access the updated
-patch mapping prior to recieving all of the patch data and potentially initiate requests for additional patches earlier.
+In the initial font file (whether encoded as woff2 or not) it is possible to customize the order of the actual table bytes within
+the file. Encoders should consider placing the mapping tables (IFT and IFTX) plus any additional tables needed to decode the
+mapping tables (cmap) as early as possible in the file. This will allow optimized client implementations to access the 
+patch mapping prior to receiving all of the font data and potentially initiate requests for any required patches earlier.
+
+Likewise per table brotli patches have a separate brotli stream for each patched table and the format allows these streams to be placed
+in any order in the patch file. So for the same reasons encoders should consider placing updates to the mapping tables plus any
+additional tables needed to decode the mapping tables as early as possible in the patch file.
 
 <b>Choosing the input ID encoding</b>
 
