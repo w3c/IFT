@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="bc4774d03cdf1b1a50e96035622534e9f7c7e195" name="revision">
+  <meta content="34e5f832d59f4f2fd6d2856bfbd7a8c752689b3b" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -607,7 +607,7 @@ var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBC
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-06-18">18 June 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-06-19">19 June 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2326,12 +2326,17 @@ are typically downloaded and applied in series, which has implications for the p
    <p><a href="#glyph-keyed">§ 6.4 Glyph Keyed</a> patches are quite distinct from the other patch types. First, <a href="#glyph-keyed">§ 6.4 Glyph Keyed</a> patches can only modify
 tables containing glyph outline data, and therefore an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑦">incremental font</a> that only uses <a href="#glyph-keyed">§ 6.4 Glyph Keyed</a> must include all
 other font table data in the initial font file. Second, <a href="#glyph-keyed">§ 6.4 Glyph Keyed</a> patches are <a data-link-type="dfn" href="#no-invalidation" id="ref-for-no-invalidation②">not Invalidating</a>,
-and can therefore be downloaded and applied independently.</p>
+and can therefore be downloaded and applied independently. This independence means multiple patches can be downloaded in parallel
+which can significantly reduce the number of round trips needed relative to the invalidating patch types.</p>
    <p><b>Choosing patch formats for an encoding</b></p>
    <p>All encodings must chose one or more patch types to use. <a href="#brotli">§ 6.2 Brotli Patch</a> and <a href="#per-table-brotli">§ 6.3 Per Table Brotli</a> patches allow
 all types of data in the font to be patched, but because these types are at least <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation⑦">Partially Invalidating</a>,
 the total number of patches needed increases exponentially with the number of segments rather than linearly. <a href="#glyph-keyed">§ 6.4 Glyph Keyed</a> patches
 are limited to updating outline and variation delta data but the number needed scales linearly with number of segments.</p>
+   <p>In addition to the number of patches, the encoder should also consider the number of network round trips that will be needed to
+get patches for typical content. For invalidating patch types it is necessary to make patch requests in series. This means that if some
+content requires multiple segments then, multiple network round trips may be needed. Glyph keyed patches on the other hand are not
+invalidating and the patches can be fetched in parallel, needing only a single round trip.</p>
    <p>At the extremes the two types of Brotli patches are most appropriate for fonts with sizable non-outline data that only require a
 small number of patches, with the <a href="#brotli">§ 6.2 Brotli Patch</a> type providing better compression. Glyph keyed patches are most appropriate for
 fonts where the vast majority of data consists of glyph outlines, which is true of many existing CJK fonts.</p>
@@ -2353,6 +2358,14 @@ become incorrect. In font subsetters this is often available as an option called
      <p>Lastly, use glyph keyed patches to update the remaining tables, here much smaller fine-grained segments can be utilized without
 requiring too many patches.</p>
    </ol>
+   <p>The mixed patch type encoding is expected to be a commonly used approach since many fonts will fall somewhere in between the two
+extremes.</p>
+   <p><b>Reducing round trips with invalidating patches</b></p>
+   <p>One way to reduce the number of round trips needed with a segmentation that uses one of the invalidating patch types is to provide
+patches that add multiple segments at once (in addition to patches for single segments). For example consider a font which has 4 segments:
+A, B, C, and D. The patch table could list patches that add: A, B, C, D, A + B, A + C, A + D, B + C, B + D, and C + D. This would
+allow any two segments to be added in a single round trip. The downside to this approach is that it further increases the number of unique
+patches needed.</p>
    <p><b>Managing the number of patches</b></p>
    <p>Using brotli patches along side a large number of segments can result in a very large number of patches needed, which can have two
 negative effects. First, the storage space needed for all of the pre-generated patches could be undesirably large. Second, more 

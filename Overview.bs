@@ -2012,7 +2012,8 @@ are typically downloaded and applied in series, which has implications for the p
 [[#glyph-keyed]] patches are quite distinct from the other patch types. First, [[#glyph-keyed]] patches can only modify 
 tables containing glyph outline data, and therefore an [=incremental font=] that only uses [[#glyph-keyed]] must include all
 other font table data in the initial font file. Second, [[#glyph-keyed]] patches are [=No Invalidation|not Invalidating=],
-and can therefore be downloaded and applied independently.
+and can therefore be downloaded and applied independently. This independence means multiple patches can be downloaded in parallel
+which can significantly reduce the number of round trips needed relative to the invalidating patch types.
 
 <b>Choosing patch formats for an encoding</b>
 
@@ -2020,6 +2021,11 @@ All encodings must chose one or more patch types to use. [[#brotli]] and [[#per-
 all types of data in the font to be patched, but because these types are at least [=Partial Invalidation|Partially Invalidating=],
 the total number of patches needed increases exponentially with the number of segments rather than linearly. [[#glyph-keyed]] patches
 are limited to updating outline and variation delta data but the number needed scales linearly with number of segments.
+
+In addition to the number of patches, the encoder should also consider the number of network round trips that will be needed to
+get patches for typical content. For invalidating patch types it is necessary to make patch requests in series. This means that if some
+content requires multiple segments then, multiple network round trips may be needed. Glyph keyed patches on the other hand are not
+invalidating and the patches can be fetched in parallel, needing only a single round trip.
 
 At the extremes the two types of Brotli patches are most appropriate for fonts with sizable non-outline data that only require a
 small number of patches, with the [[#brotli]] type providing better compression. Glyph keyed patches are most appropriate for
@@ -2041,6 +2047,17 @@ way:
 
 4. Lastly, use glyph keyed patches to update the remaining tables, here much smaller fine-grained segments can be utilized without
     requiring too many patches.
+
+The mixed patch type encoding is expected to be a commonly used approach since many fonts will fall somewhere in between the two
+extremes.
+
+<b>Reducing round trips with invalidating patches</b>
+
+One way to reduce the number of round trips needed with a segmentation that uses one of the invalidating patch types is to provide
+patches that add multiple segments at once (in addition to patches for single segments). For example consider a font which has 4 segments:
+A, B, C, and D. The patch table could list patches that add: A, B, C, D, A + B, A + C, A + D, B + C, B + D, and C + D. This would
+allow any two segments to be added in a single round trip. The downside to this approach is that it further increases the number of unique
+patches needed.
 
 <b>Managing the number of patches</b>
 
