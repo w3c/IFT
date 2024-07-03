@@ -22,6 +22,7 @@
   - [Range Request](#range-request)
   - [Patch Subset](#patch-subset)
 - [Incremental Font Transfer](#incremental-font-transfer)
+- [Demo](#demo)
 - [Testing](#testing)
 - [Stakeholder Feedback / Opposition](#stakeholder-feedback--opposition)
 
@@ -55,7 +56,7 @@ For languages with a small set of glyphs, **static font subsetting** is widely d
 
 However, for those languages with **complex shaping requirements**,
 static subsetting gives small files (median WOFF2 size of [**93.5kB**](https://www.w3.org/TR/PFE-evaluation/#font-langtype))
-but is known to sometimes produce malformed, illegible text.
+but when combined with CSS `unicode-range` is known to sometimes produce malformed, illegible text.
 
 Static subsetting [fails](https://www.w3.org/TR/PFE-evaluation/#fail-subset) when there are
 complex inter-relationships between different OpenType™ tables,
@@ -116,13 +117,12 @@ which the client applied to produce a new, enlarged subset font.
 It therefore required new server capabilities,
 in addition to client changes.
 
-Work on Range Request was discontinued because, despite
+Work on Patch Subset was discontinued because, despite
 [median byte reductions of 90% for large fonts](https://www.w3.org/TR/PFE-evaluation/#analysis-cjk),
 
 - The dynamic subsetting severely impacted CDN **cache performance**
 - There was no subsetting of _design axes_, an unacceptable result with **variable fonts** becoming ubiquitous
 - Subsetting fonts with **complex interactions between glyphs** was challenging
-- Non-outline data was not subsetted, and can be significant (e.g. Color fonts)
 - Requiring an intelligent, dynamic server hindered widespread deployment
 - Very fine-grained subsetting [might be a privacy violation](https://www.w3.org/TR/2023/WD-IFT-20230530/#content-inference-from-character-set)
 
@@ -134,17 +134,30 @@ of patching a font to provide more data.
 However, instead of requiring custom patch generation for each user,
 the initial font has two new [_Patch Map_ tables](https://w3c.github.io/IFT/Overview.html#patch-map-dfn)
 which map each subset definition to **the link** of the relevant patch.
-Links are stored as RFC 6570 [URI Templates](https://www.rfc-editor.org/rfc/rfc6570).
+Links are [stored in the font](https://w3c.github.io/IFT/Overview.html#uri-templates) 
+as RFC 6570 [URI Templates](https://www.rfc-editor.org/rfc/rfc6570).
 
 Thus, static hosting of files (base fonts, and patches) is easy,
 and cache performance is good
 because patches are shared between users.
 
-Both **independent** (commutative) and **dependent** (non-commutative)
+We incorporated a new idea to allow patches of glyph-only data to be **independent**.
+(This type of patch would have been too costly to compute dynamically, but they work well with this new framework of pre-computed patches.)
+
+Thus, both **independent** (commutative) and **dependent** (non-commutative)
 patches are [supported](https://w3c.github.io/IFT/Overview.html#font-format-extensions).
 
 In addition, patches can add or extend design axes
 so performance with variable fonts will be much better.
+
+The main trade-off with this new approach is that
+the patches potentially become less granular,
+somewhat reducing peak efficiency,
+while also being more privacy-preserving.
+
+## Demo
+
+We have a [proof of concept demo](https://garretrieger.github.io/ift-demo/) of the new IFT approach.
 
 ## Testing
 
