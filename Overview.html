@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="34e5f832d59f4f2fd6d2856bfbd7a8c752689b3b" name="revision">
+  <meta content="024b91e5ab58162d4a867147fc4acd474c778bd6" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -607,7 +607,7 @@ var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBC
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-06-19">19 June 2024</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2024-07-04">4 July 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -643,11 +643,11 @@ be loaded over multiple requests where each request incrementally adds additiona
    <p> If you wish to make comments regarding this document, please <a href="https://github.com/w3c/PFE/issues/new">file an issue on the specification repository</a>. </p>
    <p> This document was produced by the <a href="https://www.w3.org/groups/wg/webfonts">Web Fonts Working Group</a> </p>
    <p> This document was produced by groups operating under
-  the <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/">W3C Patent Policy</a>.
+  the <a href="https://www.w3.org/policies/patent-policy/20200915/">W3C Patent Policy</a>.
   W3C maintains a <a href="https://www.w3.org/groups/wg/webfonts/ipr" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group;
   that page also includes instructions for disclosing a patent.
-  An individual who has actual knowledge of a patent which the individual believes contains <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/Consortium/Patent-Policy-20200915/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>. </p>
-   <p> This document is governed by the <a href="https://www.w3.org/2023/Process-20231103/" id="w3c_process_revision">03 November 2023 W3C Process Document</a>. </p>
+  An individual who has actual knowledge of a patent which the individual believes contains <a href="https://www.w3.org/policies/patent-policy/20200915/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/policies/patent-policy/20200915/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>. </p>
+   <p> This document is governed by the <a href="https://www.w3.org/policies/process/20231103/" id="w3c_process_revision">03 November 2023 W3C Process Document</a>. </p>
    <p></p>
   </div>
   <div data-fill-with="at-risk"></div>
@@ -2302,7 +2302,9 @@ it is still strongly encouraged to meet 4, which ensures consistent behavior of 
    <p><em>This section is not normative.</em></p>
    <p>The details of the encoding process may differ by encoder and are beyond the scope of this document. However, this section provides
 guidance that encoder implementations may want to consider, and that can be important to reproducing the appearance and behavior of
-an existing font file when producing an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑤">incremental</a> version of that font.</p>
+an existing font file when producing an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑤">incremental</a> version of that font. The guidance provided in this section
+is based on the experience of building an encoder implementation during development of this specification. It represents the  best
+understanding (at the time of writing) of how to generate a high performance encoding which meets requirements 1 through 4 of <a href="#encoding">§ 7 Encoding</a> and thus preserves all functionality/behavior of the original font being encoded.</p>
    <p><b>About <a href="#brotli">§ 6.2 Brotli Patch</a> and <a href="#per-table-brotli">§ 6.3 Per Table Brotli</a> patches</b></p>
    <p>A <a href="#brotli">§ 6.2 Brotli Patch</a> patch changes the content of an initial <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑥">incremental font</a> or subsequently updated font on a whole-file basis.
 This type of patch is therefore more or less incompatible with the <a href="#glyph-keyed">§ 6.4 Glyph Keyed</a> patch type, although in theory a <a href="#brotli">§ 6.2 Brotli Patch</a> patch could add support for <a href="#glyph-keyed">§ 6.4 Glyph Keyed</a> patches. <a href="#brotli">§ 6.2 Brotli Patch</a> patches also tend to mix poorly with <a href="#per-table-brotli">§ 6.3 Per Table Brotli</a> patches.
@@ -2493,7 +2495,7 @@ This can be helpful in cases when the same data would otherwise be needed in man
 file but then apply patches to that file on the server side, so that the file downloaded already includes the data contained
 in those patches.</p>
    <p>When only one pre-loaded version of a font is needed these strategies will have roughly equivalent results, but the first is both
-simpler and in some cases more specific. However, when more than pre-loaded font is needed the pre-patching approach will often
+simpler and in some cases more specific. However, when more than one pre-loaded font is needed the pre-patching approach will often
 be better. When using the first approach, one would need to produce multiple encodings, one for each preloaded file. When using
 the second approach, all of the preloaded files will still share the same overall patch graph, which both reduces the total space
 needed to store the patches and improves CDN cache efficiency, as all the pre-loaded files will choose subsequent patches from the
