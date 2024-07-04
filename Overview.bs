@@ -1976,7 +1976,10 @@ Encoding Considerations {#encoding-considerations}
 
 The details of the encoding process may differ by encoder and are beyond the scope of this document. However, this section provides
 guidance that encoder implementations may want to consider, and that can be important to reproducing the appearance and behavior of
-an existing font file when producing an [=incremental font|incremental=] version of that font.
+an existing font file when producing an [=incremental font|incremental=] version of that font. The guidance provided in this section
+is based on the experience of building an encoder implementation during development of this specification. It represents the  best
+understanding (at the time of writing) of how to generate a high performance encoding which meets requirements 1 through 4 of
+[[#encoding]] and thus preserves all functionality/behavior of the original font being encoded.
 
 <b>About [[#brotli]] and [[#per-table-brotli]] patches</b>
 
@@ -2205,7 +2208,7 @@ file but then apply patches to that file on the server side, so that the file do
 in those patches.
 
 When only one pre-loaded version of a font is needed these strategies will have roughly equivalent results, but the first is both
-simpler and in some cases more specific. However, when more than pre-loaded font is needed the pre-patching approach will often
+simpler and in some cases more specific. However, when more than one pre-loaded font is needed the pre-patching approach will often
 be better. When using the first approach, one would need to produce multiple encodings, one for each preloaded file. When using
 the second approach, all of the preloaded files will still share the same overall patch graph, which both reduces the total space
 needed to store the patches and improves CDN cache efficiency, as all the pre-loaded files will choose subsequent patches from the
