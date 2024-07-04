@@ -121,10 +121,10 @@ Work on Patch Subset was discontinued because, despite
 [median byte reductions of 90% for large fonts](https://www.w3.org/TR/PFE-evaluation/#analysis-cjk),
 
 - The dynamic subsetting severely impacted CDN **cache performance**
-- There was no subsetting of _design axes_, an unacceptable result with **variable fonts** becoming ubiquitous
 - Subsetting fonts with **complex interactions between glyphs** was challenging
 - Requiring an intelligent, dynamic server hindered widespread deployment
 - Very fine-grained subsetting [might be a privacy violation](https://www.w3.org/TR/2023/WD-IFT-20230530/#content-inference-from-character-set)
+- It required a custom protocol (and HTTP header) to communicate with the dynamic backend
 
 ## Incremental Font Transfer
 
@@ -147,8 +147,14 @@ We incorporated a new idea to allow patches of glyph-only data to be **independe
 Thus, both **independent** (commutative) and **dependent** (non-commutative)
 patches are [supported](https://w3c.github.io/IFT/Overview.html#font-format-extensions).
 
-In addition, patches can add or extend design axes
-so performance with variable fonts will be much better.
+In addition, patches can add or extend design axes,
+to support variable fonts.
+
+It no longer requires any special HTTP headers,
+or a custom protocol to fetch patches.
+Requests are just normal HTTP GET requests,
+making it easier to deploy and working well
+with existing CDN infrastructure.
 
 The main trade-off with this new approach is that
 the patches potentially become less granular,
