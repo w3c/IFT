@@ -142,7 +142,9 @@ and cache performance is good
 because patches are shared between users.
 
 We incorporated a new idea to allow patches of glyph-only data to be **independent**.
-(This type of patch would have been too costly to compute dynamically, but they work well with this new framework of pre-computed patches.)
+(This type of patch would have been too costly to compute dynamically, but they work well with this new framework of pre-computed patches.)  
+This also allows independent patches to be requested in parallel,
+which functionally is very similar to how unicode range webfont loading works.
 
 Thus, both **independent** (commutative) and **dependent** (non-commutative)
 patches are [supported](https://w3c.github.io/IFT/Overview.html#font-format-extensions).
@@ -153,7 +155,7 @@ to support variable fonts.
 It no longer requires any special HTTP headers,
 or a custom protocol to fetch patches.
 Requests are just normal HTTP GET requests,
-making it easier to deploy and working well
+making it easier to deploy and compatible
 with existing CDN infrastructure.
 
 The main trade-off with this new approach is that
