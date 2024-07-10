@@ -619,8 +619,8 @@ the encoded bytes at the start of every iteration to pick up any changes made in
   </tr>
   <tr>
     <td>Offset32</td>
-    <td>featureMapOffset</td>
-    <td>Offset to a [=Feature Map=] sub table. Offset is from the start of this table.</td>
+    <td><dfn for="Format 1 Patch Map">featureMapOffset</dfn></td>
+    <td>Offset to a [=Feature Map=] sub table. Offset is from the start of this table. May be null (0).</td>
   </tr>
   <tr>
     <td>uint8</td>
@@ -725,7 +725,7 @@ A feature map table associates combinations of [[open-type/featuretags|feature t
   </tr>
   <tr>
     <td>uint8/uint16</td>
-    <td><dfn for="FeatureRecord">firstEntryIndex</dfn></td>
+    <td><dfn for="FeatureRecord">firstNewEntryIndex</dfn></td>
     <td>
       uint8 if [=Format 1 Patch Map/entryCount=] is less than 256, otherwise uint16.
       The first entry index this record maps too.
@@ -751,7 +751,8 @@ A feature map table associates combinations of [[open-type/featuretags|feature t
     <td>uint8/uint16</td>
     <td><dfn for="EntryMapRecord">firstEntryIndex</dfn></td>
     <td>
-      uint8 if [=Format 1 Patch Map/entryCount=] is less than 256, otherwise uint16.
+      uint8 if [=Format 1 Patch Map/entryCount=] is less than 256, otherwise uint16. firstEntryIndex and lastEntryIndex specify
+      the set of [=Glyph Map=] entries which form the subset definitions for the entries created by this mapping.
     </td>
   </tr>
     <tr>
@@ -803,14 +804,16 @@ The algorithm:
         maps to the generated URI, the patch encoding specified by [=Format 1 Patch Map/patchEncoding=], and
         [=Format 1 Patch Map/compatibilityId=].
 
-3.  For each [=FeatureRecord=] and associated [=EntryMapRecord=] in [=Feature Map/featureRecords=] and [=Feature Map/entryMapRecords=]:
+3.  If [=Format 1 Patch Map/featureMapOffset=] is not null then, for each [=FeatureRecord=] and associated [=EntryMapRecord=] in
+        [=Feature Map/featureRecords=] and [=Feature Map/entryMapRecords=]:
 
-    *  For each <var>entry index</var> between [=EntryMapRecord/firstEntryIndex=] (inclusive) and [=EntryMapRecord/lastEntryIndex=]
+    *  For each <var>entry index</var> between [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=] (inclusive) and
+        [=EntryMapRecord/lastEntryIndex|EntryMapRecord::lastEntryIndex=]
         (inclusive), find the set of unicode codepoints associated with that entry index using the same process as in step 2b through
         2c.
 
         *  Compute <var>mapped entry index</var> =
-            [=FeatureRecord/firstEntryIndex|FeatureRecord::firstEntryIndex=] +
+            [=FeatureRecord/firstNewEntryIndex|FeatureRecord::firstNewEntryIndex=] +
             <var>entry index</var> - [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=].
             
         *  Convert <var>mapped entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
@@ -820,7 +823,9 @@ The algorithm:
 
         *  Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains the unicode code point set and
             a feature tag set containing only [=FeatureRecord/featureTag=]. The entry  maps to the generated URI, the patch encoding
-            specified by [=Format 1 Patch Map/patchEncoding=], and [=Format 1 Patch Map/compatibilityId=].
+            specified by [=Format 1 Patch Map/patchEncoding=], and [=Format 1 Patch Map/compatibilityId=]. If there is an existing
+	    [=patch map entries|entry=] in <var>entry list</var> which has the same patch URI as the generated URI then
+	    instead add [=FeatureRecord/featureTag=] and the computed unicode code point set to the existing entry's subset definition.
 
 4.  Return <var>entry list</var>.
 
