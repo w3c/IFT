@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="1ab8a106367fee11de3a83c212c00556d0c5632a" name="revision">
+  <meta content="ec98129f282437041103b8261eff8ee403b80c32" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1336,6 +1336,9 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <li data-md>
      <p>For each unique <var>entry index</var> in <a data-link-type="dfn" href="#glyph-map-entryindex" id="ref-for-glyph-map-entryindex">entryIndex</a>:</p>
      <ul>
+      <li data-md>
+       <p>If <var>entry index</var> is 0 then, this is a special entry used to mark glyphs which are already in the font. Skip this index
+and do not build an entry for it.</p>
       <li data-md>
        <p>If the <var>entry index</var> is larger than <a data-link-type="dfn" href="#format-1-patch-map-maxentryindex" id="ref-for-format-1-patch-map-maxentryindex⑤">maxEntryIndex</a> this table is invalid,
 return an error.</p>
