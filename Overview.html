@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="7dd61c696ae8b6636f60cdc6f94fb6ea91c3ae06" name="revision">
+  <meta content="a287147a7610374b57a0f6641912094596ddb159" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1713,6 +1713,8 @@ are equal then, set bit 6 of <a data-link-type="dfn" href="#mapping-entry-format
 each node has a fixed number of children that recursively sub-divides an interval into equal partitions. A tree of height <i>H</i> with
 branching factor <i>B</i> can store set membership for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree
 is encoded into an array of bytes for transport.</p>
+   <p>In the context of a <a data-link-type="dfn" href="#format-2-patch-map" id="ref-for-format-2-patch-map②">Format 2 Patch Map</a> a sparse bit set is used to store a set of <a data-link-type="biblio" href="#biblio-unicode" title="The Unicode Standard">Unicode</a> code points. As such integer
+values stored in a sparse bit set are restricted to being <a data-link-type="biblio" href="#biblio-unicode" title="The Unicode Standard">Unicode</a> code point values in the range 0 to 0x10FFFF.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sparse-bit-set">Sparse Bit Set</dfn> encoding:</p>
    <table>
     <tbody>
@@ -1740,23 +1742,30 @@ ignored.</p>
       <th>Bit 1
       <th>Bit 0
       <th>Branch Factor (B)
+      <th>Maximum Height (H) 
      <tr>
       <td>0
       <td>0
       <td>2
+      <td>31
      <tr>
       <td>0
       <td>1
       <td>4
+      <td>16
      <tr>
       <td>1
       <td>0
       <td>8
+      <td>11
      <tr>
       <td>1
       <td>1
       <td>32
+      <td>7
    </table>
+   <p>Sparse bit sets that have an encoded height (H) which is larger than the maximum height for the encoded branch factor (B) in the above table
+are invalid.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-decoding-sparse-bit-set-treedata">Decoding sparse bit set treeData</dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
@@ -1775,6 +1784,9 @@ ignored.</p>
    <p>The algorithm, using a FIFO (first in first out) queue <var>Q</var>:</p>
    <ol>
     <li data-md>
+     <p>If <var>H</var> is greater than the "Maximum Height" in the <a data-link-type="dfn" href="#branch-factor-encoding" id="ref-for-branch-factor-encoding①">Branch Factor Encoding</a> table in the row for <var>B</var> then,
+ the encoding is invalid, return an error.</p>
+    <li data-md>
      <p>If <var>H</var> is equal to 0, then this is an empty set and no bytes of <var>treeData</var> are consumed. Return an empty set.</p>
     <li data-md>
      <p>Insert the tuple (0, 1) into <var>Q</var>.</p>
@@ -1783,6 +1795,9 @@ ignored.</p>
     <li data-md>
      <p><var>treeData</var> is interpreted as a string of bits where the least significant bit of <var>treeData</var>[0] is the first bit in
  the string, the most significant bit of <var>treeData</var>[0] is the 8th bit, and so on.</p>
+    <li data-md>
+     <p>If in the following steps a value is added to <var>S</var> which is larger than the maximum unicode code point value (0x10FFFF) then,
+ ignore the value and do not add it to <var>S</var>.</p>
     <li data-md>
      <p>If <var>Q</var> is empty return <var>S</var>.</p>
     <li data-md>
@@ -1803,7 +1818,7 @@ into <var>S</var>. Go to step 5.</p>
  (<var>start</var> + (i - 1) * <var>B</var><sup><var>H</var> - <var>depth</var></sup>, <var>depth</var> + 1)
  into <var>Q</var>.</p>
     <li data-md>
-     <p>Go to step 5.</p>
+     <p>Go to step 7.</p>
    </ol>
    <p class="note" role="note"><span class="marker">Note:</span> when encoding sparse bit sets the encoder can use any of the possible branching factors, but it is recommended to
 use 4 as that has <a href="https://github.com/w3c/PFE-analysis/blob/main/results/set_encoding_branch_factor.md">been shown</a> to give the smallest encodings for most unicode codepoint sets typically encountered.</p>
@@ -3040,7 +3055,7 @@ let dfnPanelData = {
 "abstract-opdef-load-patch-file": {"dfnID":"abstract-opdef-load-patch-file","dfnText":"Load patch file","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-load-patch-file"},{"id":"ref-for-abstract-opdef-load-patch-file\u2460"}],"title":"4.2. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-abstract-opdef-load-patch-file\u2461"}],"title":"Security Considerations"}],"url":"#abstract-opdef-load-patch-file"},
 "abstract-opdef-remove-entries-from-format-1-patch-map": {"dfnID":"abstract-opdef-remove-entries-from-format-1-patch-map","dfnText":"Remove Entries from Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-remove-entries-from-format-1-patch-map"}],"title":"6.4.1. Applying Glyph Keyed Patches"}],"url":"#abstract-opdef-remove-entries-from-format-1-patch-map"},
 "abstract-opdef-remove-entries-from-format-2-patch-map": {"dfnID":"abstract-opdef-remove-entries-from-format-2-patch-map","dfnText":"Remove Entries from Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-remove-entries-from-format-2-patch-map"}],"title":"6.4.1. Applying Glyph Keyed Patches"}],"url":"#abstract-opdef-remove-entries-from-format-2-patch-map"},
-"branch-factor-encoding": {"dfnID":"branch-factor-encoding","dfnText":"Branch Factor Encoding","external":false,"refSections":[{"refs":[{"id":"ref-for-branch-factor-encoding"}],"title":"5.2.2.3. Sparse Bit Set"}],"url":"#branch-factor-encoding"},
+"branch-factor-encoding": {"dfnID":"branch-factor-encoding","dfnText":"Branch Factor Encoding","external":false,"refSections":[{"refs":[{"id":"ref-for-branch-factor-encoding"},{"id":"ref-for-branch-factor-encoding\u2460"}],"title":"5.2.2.3. Sparse Bit Set"}],"url":"#branch-factor-encoding"},
 "brotli-patch": {"dfnID":"brotli-patch","dfnText":"Brotli patch","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch"}],"title":"6.2.1. Applying Brotli Patches"}],"url":"#brotli-patch"},
 "brotli-patch-brotlistream": {"dfnID":"brotli-patch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch-brotlistream"}],"title":"6.2. Brotli Patch"},{"refs":[{"id":"ref-for-brotli-patch-brotlistream\u2460"}],"title":"6.2.1. Applying Brotli Patches"}],"url":"#brotli-patch-brotlistream"},
 "brotli-patch-compatibilityid": {"dfnID":"brotli-patch-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-brotli-patch-compatibilityid"}],"title":"6.2.1. Applying Brotli Patches"}],"url":"#brotli-patch-compatibilityid"},
@@ -3071,7 +3086,7 @@ let dfnPanelData = {
 "format-1-patch-map-maxentryindex": {"dfnID":"format-1-patch-map-maxentryindex","dfnText":"maxEntryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-maxentryindex"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2460"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2461"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2462"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2463"}],"title":"5.2.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-maxentryindex\u2464"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2465"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2466"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-maxentryindex"},
 "format-1-patch-map-patchencoding": {"dfnID":"format-1-patch-map-patchencoding","dfnText":"patchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-patchencoding"},{"id":"ref-for-format-1-patch-map-patchencoding\u2460"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-patchencoding"},
 "format-1-patch-map-uritemplate": {"dfnID":"format-1-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate"},{"id":"ref-for-format-1-patch-map-uritemplate\u2460"}],"title":"5.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate\u2461"}],"title":"5.2.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-uritemplate"},
-"format-2-patch-map": {"dfnID":"format-2-patch-map","dfnText":"Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map"}],"title":"5.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map\u2460"}],"title":"5.2.2.2. Remove Entries from Format 2"}],"url":"#format-2-patch-map"},
+"format-2-patch-map": {"dfnID":"format-2-patch-map","dfnText":"Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map"}],"title":"5.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map\u2460"}],"title":"5.2.2.2. Remove Entries from Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map\u2461"}],"title":"5.2.2.3. Sparse Bit Set"}],"url":"#format-2-patch-map"},
 "format-2-patch-map-compatibilityid": {"dfnID":"format-2-patch-map-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-compatibilityid"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-compatibilityid"},
 "format-2-patch-map-defaultpatchencoding": {"dfnID":"format-2-patch-map-defaultpatchencoding","dfnText":"defaultPatchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-defaultpatchencoding"},
 "format-2-patch-map-entries": {"dfnID":"format-2-patch-map-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entries"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entries"},
