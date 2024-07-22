@@ -1263,6 +1263,9 @@ each node has a fixed number of children that recursively sub-divides an interva
 branching factor <i>B</i> can store set membership for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree
 is encoded into an array of bytes for transport.
 
+In the context of a [=Format 2 Patch Map=] a sparse bit set is used to store a set of [[!unicode|Unicode]] code points. As such integer
+values stored in a sparse bit set are restricted to being [[!unicode|Unicode]] code point values in the range 0 to 0x10FFFF.
+
 <dfn>Sparse Bit Set</dfn> encoding:
 <table>
   <tr>
@@ -1287,23 +1290,27 @@ branch factors of 2 or 4 the last node may only partially consume the bits in a 
 ignored.
 
 <dfn>Branch Factor Encoding</dfn>:
+
 <table>
   <tr>
-    <th>Bit 1</th><th>Bit 0</th><th>Branch Factor (B)</th>
+    <th>Bit 1</th><th>Bit 0</th><th>Branch Factor (B)</th><th>Maximum Height (H)</ht>
   </tr>
   <tr>
-    <td>0</td><td>0</td><td>2</td>
+    <td>0</td><td>0</td><td>2</td><td>31</td>
   </tr>
   <tr>
-    <td>0</td><td>1</td><td>4</td>
+    <td>0</td><td>1</td><td>4</td><td>16</td>
   </tr>
   <tr>
-    <td>1</td><td>0</td><td>8</td>
+    <td>1</td><td>0</td><td>8</td><td>11</td>
   </tr>
   <tr>
-    <td>1</td><td>1</td><td>32</td>
+    <td>1</td><td>1</td><td>32</td><td>7</td>
   </tr>
 </table>
+
+Sparse bit sets that have an encoded height (H) which is larger than the maximum height for the encoded branch factor (B) in the above table
+are invalid.
 
 <dfn abstract-op>Decoding sparse bit set treeData</dfn>
 
@@ -1321,35 +1328,41 @@ The algorithm outputs:
 
 The algorithm, using a FIFO (first in first out) queue <var>Q</var>:
 
-1.  If <var>H</var> is equal to 0, then this is an empty set and no bytes of <var>treeData</var> are consumed. Return an empty set.
+1.  If <var>H</var> is greater than the "Maximum Height" in the [=Branch Factor Encoding=] table in the row for <var>B</var> then,
+     the encoding is invalid, return an error.
 
-2.  Insert the tuple (0, 1) into <var>Q</var>.
+2.  If <var>H</var> is equal to 0, then this is an empty set and no bytes of <var>treeData</var> are consumed. Return an empty set.
 
-3.  Initialize <var>S</var> to an empty set.
+3.  Insert the tuple (0, 1) into <var>Q</var>.
 
-4.  <var>treeData</var> is interpreted as a string of bits where the least significant bit of <var>treeData</var>[0] is the first bit in
+4.  Initialize <var>S</var> to an empty set.
+
+5.  <var>treeData</var> is interpreted as a string of bits where the least significant bit of <var>treeData</var>[0] is the first bit in
      the string, the most significant bit of <var>treeData</var>[0] is the 8th bit, and so on.
 
-5.  If <var>Q</var> is empty return <var>S</var>.
+6.  If in the following steps a value is added to <var>S</var> which is larger than the maximum unicode code point value (0x10FFFF) then,
+     ignore the value and do not add it to <var>S</var>.
 
-6.  Extract the next tuple <var>t</var> from <var>Q</var>. The first value of
+7.  If <var>Q</var> is empty return <var>S</var>.
+
+8.  Extract the next tuple <var>t</var> from <var>Q</var>. The first value of
      in <var>t</var> is <var>start</var> and the second value is <var>depth</var>.
 
-7.  Remove the next <var>B</var> bits from the <var>treeData</var> bit string. The first removed bit is <i>v<sub>1</sub></i>,
+9.  Remove the next <var>B</var> bits from the <var>treeData</var> bit string. The first removed bit is <i>v<sub>1</sub></i>,
      the second is <i>v<sub>2</sub></i>, and so on until the last removed bit which is <i>v<sub>B</sub></i>. If prior to removal there
      were less than <var>B</var> bits left in <var>treeData</var>, then <var>treeData</var> is malformed, return an error.
 
-8.  If all bits <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i> are 0, then insert all integers in the interval
+10.  If all bits <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i> are 0, then insert all integers in the interval
     [<var>start</var>, <var>start</var> + <var>B</var><sup><var>H</var> - <var>depth</var> + 1</sup>)
     into <var>S</var>. Go to step 5.
 
-9.  For each <i>v<sub>i</sub></i> which is equal to 1 in <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i>:
+11.  For each <i>v<sub>i</sub></i> which is equal to 1 in <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i>:
      If <var>depth</var> is equal to <var>H</var> add
      integer <var>start</var> + <i>i</i> - 1 to <var>S</var>. Otherwise, insert the tuple
      (<var>start</var> + (i - 1) * <var>B</var><sup><var>H</var> - <var>depth</var></sup>, <var>depth</var> + 1)
      into <var>Q</var>.
 
-10.  Go to step 5.
+12.  Go to step 7.
 
 Note: when encoding sparse bit sets the encoder can use any of the possible branching factors, but it is recommended to
 use 4 as that has <a href="https://github.com/w3c/PFE-analysis/blob/main/results/set_encoding_branch_factor.md">been shown</a>
