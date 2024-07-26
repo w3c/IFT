@@ -818,30 +818,32 @@ The algorithm:
 3.  If [=Format 1 Patch Map/featureMapOffset=] is not null then, for each [=FeatureRecord=] and associated [=EntryMapRecord=] in
         [=Feature Map/featureRecords=] and [=Feature Map/entryMapRecords=]:
 
+    *  Compute <var>mapped entry index</var>, the first [=EntryMapRecord=] associated with a [=FeatureRecord=] is
+        [=FeatureRecord/firstNewEntryIndex|FeatureRecord::firstNewEntryIndex=], the second
+        [=FeatureRecord/firstNewEntryIndex|FeatureRecord::firstNewEntryIndex=] + 1, and so on. The last will be
+        [=FeatureRecord/firstNewEntryIndex|FeatureRecord::firstNewEntryIndex=] + [=FeatureRecord/entryMapCount=] - 1.
+
+    *  If the computed <var>mapped entry index</var> is larger than [=Format 1 Patch Map/maxEntryIndex=] this table is invalid,
+        return an error.
+
+    *  Convert <var>mapped entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
+
+    *  If the bit for <var>mapped entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this entry.
+
+    *  Add an [=patch map entries|entry=] to <var>entry list</var> which  maps to the generated URI, the patch encoding
+        specified by [=Format 1 Patch Map/patchEncoding=], and [=Format 1 Patch Map/compatibilityId=]; or if there is an existing
+        [=patch map entries|entry=] in <var>entry list</var> which has the same patch URI as the generated URI then
+        instead modify the existing entry. Add [=FeatureRecord/featureTag=] to the new or existing entry's subset definition.
+
     *  For each <var>entry index</var> between [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=] (inclusive) and
         [=EntryMapRecord/lastEntryIndex|EntryMapRecord::lastEntryIndex=]
         (inclusive):
 
-        *  Find the set of unicode code points associated with <var>entry index</var> that was computed in step 2. If
-            <var>entry index</var> was not processed in step 2 this table is invalid, return an error.
-
-        *  Compute <var>mapped entry index</var> =
-            [=FeatureRecord/firstNewEntryIndex|FeatureRecord::firstNewEntryIndex=] +
-            <var>entry index</var> - [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=].
-
-        *  If the computed <var>mapped entry index</var> is larger than [=Format 1 Patch Map/maxEntryIndex=] this table is invalid,
-            return an error.
-            
-        *  Convert <var>mapped entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
-
-        *  If the bit for <var>mapped entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
-            <var>entry index</var>.
-
-        *  Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains the unicode code point set and
-            a feature tag set containing only [=FeatureRecord/featureTag=]. The entry  maps to the generated URI, the patch encoding
-            specified by [=Format 1 Patch Map/patchEncoding=], and [=Format 1 Patch Map/compatibilityId=]. If there is an existing
-            [=patch map entries|entry=] in <var>entry list</var> which has the same patch URI as the generated URI then
-            instead add [=FeatureRecord/featureTag=] and the computed unicode code point set to the existing entry's subset definition.
+        *  Find the set of unicode code points associated with <var>entry index</var> that was computed in step 2. If the
+            <var>entry index</var> was skipped because of [=Format 1 Patch Map/appliedEntriesBitMap=] compute the set of associated
+            codepoints as if it wasn't skipped. If <var>entry index</var> was not processed in step 2 this table is invalid, return an
+            error. Entries processed in step 2 that were marked as skipped by [=Format 1 Patch Map/appliedEntriesBitMap=] are valid to be
+            referenced here. Union the produced set of code points to the new or existing entry's subset definition.
 
 4.  Return <var>entry list</var>.
 
