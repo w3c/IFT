@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="a287147a7610374b57a0f6641912094596ddb159" name="revision">
+  <meta content="6a10ae2319424c041d6aa07f72ce06240d5f2a04" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -654,7 +654,7 @@ be loaded over multiple requests where each request incrementally adds additiona
    <p> Publication as a Working Draft does not imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. This is a draft document and may be updated, replaced or
   obsoleted by other documents at any time. It is inappropriate to cite this
   document as other than work in progress. </p>
-   <p> This document was produced by a group operating under
+   <p> This document was produced by groups operating under
   the <a href="https://www.w3.org/policies/patent-policy/20200915/">W3C Patent Policy</a>.
   W3C maintains a <a href="https://www.w3.org/groups/wg/webfonts/ipr" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group;
   that page also includes instructions for disclosing a patent.
@@ -1273,6 +1273,8 @@ the encoded bytes at the start of every iteration to pick up any changes made in
       featureRecords[1], entryMapRecords[featureRecords[0].entryMapCount + featureRecord[1].entryMapCount]] corresponding to the
       first entry of featureRecords[2], and so on. 
    </table>
+   <p><a data-link-type="dfn" href="#feature-map-featurerecords" id="ref-for-feature-map-featurerecords①">featureRecords</a> must be sorted by <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag①">featureTag</a> in ascending order with any feature tag occurring at most
+once. For sorting tag values are interpreted as a 4 byte big endian unsigned integer and sorted by the integer value.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="featurerecord">FeatureRecord</dfn> encoding:</p>
    <table>
     <tbody>
@@ -1356,7 +1358,7 @@ Multiple code points may map to the same glyph id. All code points associated wi
 maps to the generated URI, the patch encoding specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id="ref-for-format-1-patch-map-patchencoding">patchEncoding</a>, and <a data-link-type="dfn" href="#format-1-patch-map-compatibilityid" id="ref-for-format-1-patch-map-compatibilityid">compatibilityId</a>.</p>
      </ul>
     <li data-md>
-     <p>If <a data-link-type="dfn" href="#format-1-patch-map-featuremapoffset" id="ref-for-format-1-patch-map-featuremapoffset">featureMapOffset</a> is not null then, for each <a data-link-type="dfn" href="#featurerecord" id="ref-for-featurerecord①">FeatureRecord</a> and associated <a data-link-type="dfn" href="#entrymaprecord" id="ref-for-entrymaprecord②">EntryMapRecord</a> in <a data-link-type="dfn" href="#feature-map-featurerecords" id="ref-for-feature-map-featurerecords①">featureRecords</a> and <a data-link-type="dfn" href="#feature-map-entrymaprecords" id="ref-for-feature-map-entrymaprecords">entryMapRecords</a>:</p>
+     <p>If <a data-link-type="dfn" href="#format-1-patch-map-featuremapoffset" id="ref-for-format-1-patch-map-featuremapoffset">featureMapOffset</a> is not null then, for each <a data-link-type="dfn" href="#featurerecord" id="ref-for-featurerecord①">FeatureRecord</a> and associated <a data-link-type="dfn" href="#entrymaprecord" id="ref-for-entrymaprecord②">EntryMapRecord</a> in <a data-link-type="dfn" href="#feature-map-featurerecords" id="ref-for-feature-map-featurerecords②">featureRecords</a> and <a data-link-type="dfn" href="#feature-map-entrymaprecords" id="ref-for-feature-map-entrymaprecords">entryMapRecords</a>:</p>
      <ul>
       <li data-md>
        <p>For each <var>entry index</var> between <a data-link-type="dfn" href="#entrymaprecord-firstentryindex" id="ref-for-entrymaprecord-firstentryindex">EntryMapRecord::firstEntryIndex</a> (inclusive) and <a data-link-type="dfn" href="#entrymaprecord-lastentryindex" id="ref-for-entrymaprecord-lastentryindex">EntryMapRecord::lastEntryIndex</a> (inclusive):</p>
@@ -1374,9 +1376,9 @@ return an error.</p>
          <p>If the bit for <var>mapped entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap①">appliedEntriesBitMap</a> is set to 1, skip this <var>entry index</var>.</p>
         <li data-md>
          <p>Add an <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑦">entry</a> to <var>entry list</var> whose subset definition contains the unicode code point set and
-a feature tag set containing only <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag①">featureTag</a>. The entry  maps to the generated URI, the patch encoding
+a feature tag set containing only <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag②">featureTag</a>. The entry  maps to the generated URI, the patch encoding
 specified by <a data-link-type="dfn" href="#format-1-patch-map-patchencoding" id="ref-for-format-1-patch-map-patchencoding①">patchEncoding</a>, and <a data-link-type="dfn" href="#format-1-patch-map-compatibilityid" id="ref-for-format-1-patch-map-compatibilityid①">compatibilityId</a>. If there is an existing <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑧">entry</a> in <var>entry list</var> which has the same patch URI as the generated URI then
-instead add <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag②">featureTag</a> and the computed unicode code point set to the existing entry’s subset definition.</p>
+instead add <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag③">featureTag</a> and the computed unicode code point set to the existing entry’s subset definition.</p>
        </ul>
      </ul>
     <li data-md>
@@ -3069,10 +3071,10 @@ let dfnPanelData = {
 "entrymaprecord-lastentryindex": {"dfnID":"entrymaprecord-lastentryindex","dfnText":"lastEntryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-entrymaprecord-lastentryindex"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#entrymaprecord-lastentryindex"},
 "feature-map": {"dfnID":"feature-map","dfnText":"Feature Map","external":false,"refSections":[{"refs":[{"id":"ref-for-feature-map"}],"title":"5.2.1. Patch Map Table: Format 1"}],"url":"#feature-map"},
 "feature-map-entrymaprecords": {"dfnID":"feature-map-entrymaprecords","dfnText":"entryMapRecords","external":false,"refSections":[{"refs":[{"id":"ref-for-feature-map-entrymaprecords"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#feature-map-entrymaprecords"},
-"feature-map-featurerecords": {"dfnID":"feature-map-featurerecords","dfnText":"featureRecords","external":false,"refSections":[{"refs":[{"id":"ref-for-feature-map-featurerecords"}],"title":"5.2.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-feature-map-featurerecords\u2460"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#feature-map-featurerecords"},
+"feature-map-featurerecords": {"dfnID":"feature-map-featurerecords","dfnText":"featureRecords","external":false,"refSections":[{"refs":[{"id":"ref-for-feature-map-featurerecords"},{"id":"ref-for-feature-map-featurerecords\u2460"}],"title":"5.2.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-feature-map-featurerecords\u2461"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#feature-map-featurerecords"},
 "featurerecord": {"dfnID":"featurerecord","dfnText":"FeatureRecord","external":false,"refSections":[{"refs":[{"id":"ref-for-featurerecord"}],"title":"5.2.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-featurerecord\u2460"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#featurerecord"},
 "featurerecord-entrymapcount": {"dfnID":"featurerecord-entrymapcount","dfnText":"entryMapCount","external":false,"refSections":[{"refs":[{"id":"ref-for-featurerecord-entrymapcount"}],"title":"5.2.1. Patch Map Table: Format 1"}],"url":"#featurerecord-entrymapcount"},
-"featurerecord-featuretag": {"dfnID":"featurerecord-featuretag","dfnText":"featureTag","external":false,"refSections":[{"refs":[{"id":"ref-for-featurerecord-featuretag"}],"title":"5.2.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-featurerecord-featuretag\u2460"},{"id":"ref-for-featurerecord-featuretag\u2461"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#featurerecord-featuretag"},
+"featurerecord-featuretag": {"dfnID":"featurerecord-featuretag","dfnText":"featureTag","external":false,"refSections":[{"refs":[{"id":"ref-for-featurerecord-featuretag"},{"id":"ref-for-featurerecord-featuretag\u2460"}],"title":"5.2.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-featurerecord-featuretag\u2461"},{"id":"ref-for-featurerecord-featuretag\u2462"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#featurerecord-featuretag"},
 "featurerecord-firstnewentryindex": {"dfnID":"featurerecord-firstnewentryindex","dfnText":"firstNewEntryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-featurerecord-firstnewentryindex"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#featurerecord-firstnewentryindex"},
 "font-patch": {"dfnID":"font-patch","dfnText":"font patch","external":false,"refSections":[{"refs":[{"id":"ref-for-font-patch"},{"id":"ref-for-font-patch\u2460"}],"title":"3.2. Font Patch"},{"refs":[{"id":"ref-for-font-patch\u2461"}],"title":"7. Encoding"}],"url":"#font-patch"},
 "font-subset": {"dfnID":"font-subset","dfnText":"font subset","external":false,"refSections":[{"refs":[{"id":"ref-for-font-subset"}],"title":"3.1. Font Subset"},{"refs":[{"id":"ref-for-font-subset\u2460"},{"id":"ref-for-font-subset\u2461"},{"id":"ref-for-font-subset\u2462"},{"id":"ref-for-font-subset\u2463"}],"title":"3.2. Font Patch"},{"refs":[{"id":"ref-for-font-subset\u2464"}],"title":"4. Extending a Font Subset"},{"refs":[{"id":"ref-for-font-subset\u2465"},{"id":"ref-for-font-subset\u2466"},{"id":"ref-for-font-subset\u2467"}],"title":"4.1. Patch Invalidations"},{"refs":[{"id":"ref-for-font-subset\u2468"}],"title":"4.2. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-font-subset\u2460\u24ea"}],"title":"4.3. Fully Expanding a Font"},{"refs":[{"id":"ref-for-font-subset\u2460\u2460"}],"title":"5.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-font-subset\u2460\u2461"}],"title":"6. Font Patch Formats"},{"refs":[{"id":"ref-for-font-subset\u2460\u2462"},{"id":"ref-for-font-subset\u2460\u2463"},{"id":"ref-for-font-subset\u2460\u2464"}],"title":"6.1. Formats Summary"},{"refs":[{"id":"ref-for-font-subset\u2460\u2465"}],"title":"6.2. Brotli Patch"},{"refs":[{"id":"ref-for-font-subset\u2460\u2466"},{"id":"ref-for-font-subset\u2460\u2467"},{"id":"ref-for-font-subset\u2460\u2468"}],"title":"6.2.1. Applying Brotli Patches"},{"refs":[{"id":"ref-for-font-subset\u2461\u24ea"},{"id":"ref-for-font-subset\u2461\u2460"}],"title":"6.3. Per Table Brotli"},{"refs":[{"id":"ref-for-font-subset\u2461\u2461"},{"id":"ref-for-font-subset\u2461\u2462"},{"id":"ref-for-font-subset\u2461\u2463"}],"title":"6.3.1. Applying Per Table Brotli Patches"},{"refs":[{"id":"ref-for-font-subset\u2461\u2464"}],"title":"6.4. Glyph Keyed"},{"refs":[{"id":"ref-for-font-subset\u2461\u2465"},{"id":"ref-for-font-subset\u2461\u2466"},{"id":"ref-for-font-subset\u2461\u2467"}],"title":"6.4.1. Applying Glyph Keyed Patches"},{"refs":[{"id":"ref-for-font-subset\u2461\u2468"}],"title":"7. Encoding"},{"refs":[{"id":"ref-for-font-subset\u2462\u24ea"}],"title":"7.1. Encoding Considerations"}],"url":"#font-subset"},
