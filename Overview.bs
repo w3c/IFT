@@ -581,8 +581,6 @@ the encoded bytes at the start of every iteration to pick up any changes made in
 
 ### Patch Map Table: Format 1 ### {#patch-map-format-1}
 
-<!-- TODO: provide normative validation requirements for each encoding -->
-
 <dfn>Format 1 Patch Map</dfn> encoding:
 <table>
   <tr>
@@ -612,9 +610,16 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <td>The largest entry index encoded in this table.</td>
   </tr>
   <tr>
+    <td>uint16</td>
+    <td><dfn for="Format 1 Patch Map">maxGlyphMapEntryIndex</dfn></td>
+    <td>The largest [=Glyph Map=] entry index encoded in this table. Must be less than or equal to maxEntryIndex.</td>
+  </tr>
+  <tr>
     <td>uint32</td>
     <td><dfn for="Format 1 Patch Map">glyphCount</dfn></td>
     <td>Number of glyphs that mappings are provided for. Must match the numGlyphs field from [[open-type/maxp|maxp]].</td>
+    <!-- TODO(garretrieger): make this compatible with beyond64k
+         (https://github.com/harfbuzz/boring-expansion-spec/blob/main/beyond-64k.md) -->
   </tr>
   <tr>
     <td>Offset32</td>
@@ -699,8 +704,9 @@ A feature map table associates combinations of [[open-type/featuretags|feature t
     <td>[=FeatureRecord=]</td>
     <td><dfn for="Feature Map">featureRecords</dfn>[featureCount]</td>
     <td>
-      Provides mappings for a specific  [[open-type/featuretags|feature tag]]. Must be sorted by [=FeatureRecord/featureTag=]
-      with any feature tag occurring at most once.
+      Provides mappings for a specific  [[open-type/featuretags|feature tag]]. [=Feature Map/featureRecords=] are sorted by
+      [=FeatureRecord/featureTag=] in ascending order with any feature tag occurring at most once. For sorting tag values are interpreted
+      as a 4 byte big endian unsigned integer and sorted by the integer value.
     </td>
   </tr>
   <tr>
@@ -716,8 +722,7 @@ A feature map table associates combinations of [[open-type/featuretags|feature t
   </tr>
 </table>
 
-[=Feature Map/featureRecords=] must be sorted by [=FeatureRecord/featureTag=] in ascending order with any feature tag occurring at most
-once. For sorting tag values are interpreted as a 4 byte big endian unsigned integer and sorted by the integer value.
+
 
 <dfn>FeatureRecord</dfn> encoding:
 
@@ -767,7 +772,6 @@ once. For sorting tag values are interpreted as a 4 byte big endian unsigned int
     <td><dfn for="EntryMapRecord">lastEntryIndex</dfn></td>
     <td>
       uint8 if [=Format 1 Patch Map/maxEntryIndex=] is less than 256, otherwise uint16.
-      Must be greater than or equal to firstEntryIndex.
     </td>
   </tr>
 </table>
@@ -793,63 +797,73 @@ The algorithm outputs:
 The algorithm:
 
 1.  Check that the <var>patch map</var> has [=Format 1 Patch Map/format=] equal to 1 and is valid according to the requirements in
-     [[#patch-map-format-1]]. If it is not return an error.
+     [[#patch-map-format-1]] (requirements are marked with a "must"). If it is not return an error.
 
 2.  For each unique <var>entry index</var> in [=Glyph Map/entryIndex=]:
 
-    *  If <var>entry index</var> is 0 then, this is a special entry used to mark glyphs which are already in the font. Skip this index
-        and do not build an entry for it.
+    *  If <var>entry index</var> is 0 then, this is a special entry used to mark glyphs which are already in the initial font. Skip this
+        index and do not build an entry for it.
 
-    *  If the <var>entry index</var> is larger than [=Format 1 Patch Map/maxEntryIndex=] this table is invalid,
-        return an error.
+    *  If the <var>entry index</var> is larger than [=Format 1 Patch Map/maxGlyphMapEntryIndex=] this entry is invalid, skip this
+        <var>entry index</var>.
 
     *  If the bit for <var>entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
         <var>entry index</var>.
 
     *  Collect the set of glyph indices that map to the <var>entry index</var>.
 
-    *  Convert the set of glyph indices to a set of unicode code points using the code point to glyph mapping in the
+    *  Convert the set of glyph indices to a set of Unicode code points using the code point to glyph mapping in the
         [[open-type/cmap|cmap]] table of <var>font subset</var>. Ignore any glyph indices that are not mapped by [[open-type/cmap|cmap]].
         Multiple code points may map to the same glyph id. All code points associated with a glyph should be included.
 
     *  Convert <var>entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
 
-    *  Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains only the unicode code point set and
+    *  If the Unicode code point set is empty then, skip this <var>entry index</var>.
+
+    *  Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains only the Unicode code point set and
         maps to the generated URI, the patch encoding specified by [=Format 1 Patch Map/patchEncoding=], and
         [=Format 1 Patch Map/compatibilityId=].
 
 3.  If [=Format 1 Patch Map/featureMapOffset=] is not null then, for each [=FeatureRecord=] and associated [=EntryMapRecord=] in
         [=Feature Map/featureRecords=] and [=Feature Map/entryMapRecords=]:
 
+    *  Any [=FeatureRecord|FeatureRecord's=] whose [=FeatureRecord/featureTag=] is less than or equal to a [=FeatureRecord/featureTag=]
+        of any [=FeatureRecord=]  which occurred earlier in the list are invalid. All associated [=EntryMapRecord|EntryMapRecord's=] are
+        skipped. For ordering, tag values are interpreted as a 4 byte big endian unsigned integer and ordered by the integer value.
+
     *  Compute <var>mapped entry index</var>, the first [=EntryMapRecord=] associated with a [=FeatureRecord=] is
         [=FeatureRecord/firstNewEntryIndex|FeatureRecord::firstNewEntryIndex=], the second
         [=FeatureRecord/firstNewEntryIndex|FeatureRecord::firstNewEntryIndex=] + 1, and so on. The last will be
         [=FeatureRecord/firstNewEntryIndex|FeatureRecord::firstNewEntryIndex=] + [=FeatureRecord/entryMapCount=] - 1.
 
-    *  If the computed <var>mapped entry index</var> is larger than [=Format 1 Patch Map/maxEntryIndex=] this table is invalid,
-        return an error.
+    *  If the computed <var>mapped entry index</var> is less than or equal to [=Format 1 Patch Map/maxGlyphMapEntryIndex=] or larger than
+        [=Format 1 Patch Map/maxEntryIndex=] this [=EntryMapRecord=] is invalid, skip it.
 
-    *  If <var>mapped entry index</var> matches an entry index present in the [=Glyph Map=] this table is invalid,
-        return an error.
+    *  If [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=] is greater than
+        [=EntryMapRecord/lastEntryIndex|EntryMapRecord::lastEntryIndex=] this [=EntryMapRecord=] is invalid, skip it.
 
     *  Convert <var>mapped entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
 
     *  If the bit for <var>mapped entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this entry.
 
+    *  Construct a set of Unicode code points. For each <var>entry index</var> between
+        [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=] (inclusive) and
+        [=EntryMapRecord/lastEntryIndex|EntryMapRecord::lastEntryIndex=] (inclusive):
+
+        *  If <var>entry index</var> is greater than [=Format 1 Patch Map/maxGlyphMapEntryIndex=] then, this [=EntryMapRecord=] is invalid
+            skip it.
+
+        *  Add the set of Unicode code points associated with <var>entry index</var> that was computed in step 2 to the set. If the
+            <var>entry index</var> was skipped because it was 0 or [=Format 1 Patch Map/appliedEntriesBitMap=] compute the set of
+            associated code points as if it wasn't skipped.
+
+    *  If the constructed set of Unicode code points is empty then, this [=EntryMapRecord=] is invalid skip it.
+
     *  Add an [=patch map entries|entry=] to <var>entry list</var> which  maps to the generated URI, the patch encoding
         specified by [=Format 1 Patch Map/patchEncoding=], and [=Format 1 Patch Map/compatibilityId=]; or if there is an existing
         [=patch map entries|entry=] in <var>entry list</var> which has the same patch URI as the generated URI then
-        instead modify the existing entry. Add [=FeatureRecord/featureTag=] to the new or existing entry's subset definition.
-
-    *  For each <var>entry index</var> between [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=] (inclusive) and
-        [=EntryMapRecord/lastEntryIndex|EntryMapRecord::lastEntryIndex=]
-        (inclusive):
-
-        *  Find the set of unicode code points associated with <var>entry index</var> that was computed in step 2. If the
-            <var>entry index</var> was skipped because of [=Format 1 Patch Map/appliedEntriesBitMap=] compute the set of associated
-            code points as if it wasn't skipped. If <var>entry index</var> was not processed in step 2 this table is invalid, return an
-            error. Entries processed in step 2 that were marked as skipped by [=Format 1 Patch Map/appliedEntriesBitMap=] are valid to be
-            referenced here. Union the produced set of code points to the new or existing entry's subset definition.
+        instead modify the existing entry. Add the constructed set of Unicode code points and [=FeatureRecord/featureTag=] to the new or
+        existing entry's subset definition.
 
 4.  Return <var>entry list</var>.
 
