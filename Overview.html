@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="06f26256d87d90ac40082fe0185a436ddd3790c5" name="revision">
+  <meta content="0cc7e36d9b6aaf65e1fd7bb226727b785ac3f771" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1207,9 +1207,9 @@ the encoded bytes at the start of every iteration to pick up any changes made in
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-maxglyphmapentryindex">maxGlyphMapEntryIndex</dfn>
       <td>The largest <a data-link-type="dfn" href="#glyph-map" id="ref-for-glyph-map">Glyph Map</a> entry index encoded in this table. Must be less than or equal to maxEntryIndex.
      <tr>
-      <td>uint32
+      <td>uint24
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-glyphcount">glyphCount</dfn>
-      <td>Number of glyphs that mappings are provided for. Must match the numGlyphs field from <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a>.
+      <td>Number of glyphs that mappings are provided for. Must match the numGlyphs field from either <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a> or MAXP (if present). If both maxp and MAXP are present then, it must match the numGlyphs field in MAXP.
      <tr>
       <td>Offset32
       <td>glyphMapOffset

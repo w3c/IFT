@@ -615,11 +615,9 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <td>The largest [=Glyph Map=] entry index encoded in this table. Must be less than or equal to maxEntryIndex.</td>
   </tr>
   <tr>
-    <td>uint32</td>
+    <td>uint24</td>
     <td><dfn for="Format 1 Patch Map">glyphCount</dfn></td>
-    <td>Number of glyphs that mappings are provided for. Must match the numGlyphs field from [[open-type/maxp|maxp]].</td>
-    <!-- TODO(garretrieger): make this compatible with beyond64k
-         (https://github.com/harfbuzz/boring-expansion-spec/blob/main/beyond-64k.md) -->
+    <td>Number of glyphs that mappings are provided for. Must match the numGlyphs field from either [[open-type/maxp|maxp]] or MAXP (if present). If both maxp and MAXP are present then, it must match the numGlyphs field in MAXP.</td>
   </tr>
   <tr>
     <td>Offset32</td>
@@ -798,6 +796,8 @@ The algorithm:
 
 1.  Check that the <var>patch map</var> has [=Format 1 Patch Map/format=] equal to 1 and is valid according to the requirements in
      [[#patch-map-format-1]] (requirements are marked with a "must"). If it is not return an error.
+     <!-- TODO also mention validating there is enough data to fit all of the structures, error if not. -->
+     <!-- TODO also mention validating uri template (valid unicode) and the patch encoding format # -->
 
 2.  For each unique <var>entry index</var> in [=Glyph Map/entryIndex=]:
 
