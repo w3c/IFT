@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="0cc7e36d9b6aaf65e1fd7bb226727b785ac3f771" name="revision">
+  <meta content="c99782a24b108d251c0542f0e9d9c62294bf8291" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1230,11 +1230,13 @@ the encoded bytes at the start of every iteration to pick up any changes made in
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-uritemplate">uriTemplate</dfn>[uriTemplateLength]
-      <td> A <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string. Contains a <a href="#uri-templates">§ 5.2.3 URI Templates</a> which is used to produce URIs associated with each entry. 
+      <td> A <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string. Contains a <a href="#uri-templates">§ 5.2.3 URI Templates</a> which is used to produce URIs associated with each entry.
+      Must be a valid <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> sequence. 
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-patchencoding">patchEncoding</dfn>
-      <td> Specifies the format of the patches linked to by uriTemplate. Using the ID number from the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table. 
+      <td> Specifies the format of the patches linked to by uriTemplate.
+      Must be set to one of the format numbers from  the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table. 
    </table>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="glyph-map">Glyph Map</dfn> encoding:</p>
    <p>A glyph map table associates each glyph index in the font with an entry index.</p>
@@ -1338,7 +1340,8 @@ the encoded bytes at the start of every iteration to pick up any changes made in
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Check that the <var>patch map</var> has <a data-link-type="dfn" href="#format-1-patch-map-format" id="ref-for-format-1-patch-map-format">format</a> equal to 1 and is valid according to the requirements in <a href="#patch-map-format-1">§ 5.2.1 Patch Map Table: Format 1</a> (requirements are marked with a "must"). If it is not return an error.</p>
+     <p>Check that the <var>patch map</var> data is: complete and not truncated, has <a data-link-type="dfn" href="#format-1-patch-map-format" id="ref-for-format-1-patch-map-format">format</a> equal to 1, and is valid
+ according to the requirements in <a href="#patch-map-format-1">§ 5.2.1 Patch Map Table: Format 1</a> (requirements are marked with a "must"). If it is not return an error.</p>
     <li data-md>
      <p>For each unique <var>entry index</var> in <a data-link-type="dfn" href="#glyph-map-entryindex" id="ref-for-glyph-map-entryindex">entryIndex</a>:</p>
      <ul>
