@@ -650,13 +650,15 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <td><dfn for="Format 1 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
     <td>
       A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URIs associated with each entry.
+      Must be a valid [[!UTF-8]] sequence.
     </td>
   </tr>
   <tr>
     <td>uint8</td>
     <td><dfn for="Format 1 Patch Map">patchEncoding</dfn></td>
     <td>
-      Specifies the format of the patches linked to by uriTemplate. Using the ID number from the [[#font-patch-formats-summary]] table.
+      Specifies the format of the patches linked to by uriTemplate.
+      Must be set to one of the format numbers from  the [[#font-patch-formats-summary]] table.
     </td>
   </tr>
 </table>
@@ -794,10 +796,8 @@ The algorithm outputs:
 
 The algorithm:
 
-1.  Check that the <var>patch map</var> has [=Format 1 Patch Map/format=] equal to 1 and is valid according to the requirements in
-     [[#patch-map-format-1]] (requirements are marked with a "must"). If it is not return an error.
-     <!-- TODO also mention validating there is enough data to fit all of the structures, error if not. -->
-     <!-- TODO also mention validating uri template (valid unicode) and the patch encoding format # -->
+1.  Check that the <var>patch map</var> data is: complete and not truncated, has [=Format 1 Patch Map/format=] equal to 1, and is valid
+     according to the requirements in [[#patch-map-format-1]] (requirements are marked with a "must"). If it is not return an error.
 
 2.  For each unique <var>entry index</var> in [=Glyph Map/entryIndex=]:
 
