@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="c99782a24b108d251c0542f0e9d9c62294bf8291" name="revision">
+  <meta content="8bc90930185a4cad076e9f94b8a30951a9745b02" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1209,7 +1209,9 @@ the encoded bytes at the start of every iteration to pick up any changes made in
      <tr>
       <td>uint24
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-glyphcount">glyphCount</dfn>
-      <td>Number of glyphs that mappings are provided for. Must match the numGlyphs field from either <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a> or MAXP (if present). If both maxp and MAXP are present then, it must match the numGlyphs field in MAXP.
+      <td>Number of glyphs that mappings are provided for.
+        Must match the numGlyphs field from <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a> if present, or if numGlyphs is 65,535 then glyphCount
+        must be greater than or equal to 65,535.
      <tr>
       <td>Offset32
       <td>glyphMapOffset
@@ -1238,6 +1240,9 @@ the encoded bytes at the start of every iteration to pick up any changes made in
       <td> Specifies the format of the patches linked to by uriTemplate.
       Must be set to one of the format numbers from  the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table. 
    </table>
+   <p class="note" role="note"><span class="marker">Note:</span> <a data-link-type="dfn" href="#format-1-patch-map-glyphcount" id="ref-for-format-1-patch-map-glyphcount">glyphCount</a> is designed to be compatible with the
+      proposed <a href="https://github.com/harfbuzz/boring-expansion-spec/tree/main">future font format extension</a> to allow for more
+      than 65,535 glyphs.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="glyph-map">Glyph Map</dfn> encoding:</p>
    <p>A glyph map table associates each glyph index in the font with an entry index.</p>
    <table>
@@ -1252,7 +1257,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
       <td>All glyph indices less than firstMappedGlyph are implicitly mapped to entry index 0.
      <tr>
       <td>uint8/uint16
-      <td><dfn class="dfn-paneled" data-dfn-for="Glyph Map" data-dfn-type="dfn" data-noexport id="glyph-map-entryindex">entryIndex</dfn>[<a data-link-type="dfn" href="#format-1-patch-map-glyphcount" id="ref-for-format-1-patch-map-glyphcount">glyphCount</a> - firstMappedGlyph]
+      <td><dfn class="dfn-paneled" data-dfn-for="Glyph Map" data-dfn-type="dfn" data-noexport id="glyph-map-entryindex">entryIndex</dfn>[<a data-link-type="dfn" href="#format-1-patch-map-glyphcount" id="ref-for-format-1-patch-map-glyphcount①">glyphCount</a> - firstMappedGlyph]
       <td> The entry index for glyph <code>i</code> is stored in entryIndex[<code>i</code> - <a data-link-type="dfn" href="#glyph-map-firstmappedglyph" id="ref-for-glyph-map-firstmappedglyph">firstMappedGlyph</a>]. Array members
       are uint8 if <a data-link-type="dfn" href="#format-1-patch-map-maxentryindex" id="ref-for-format-1-patch-map-maxentryindex">maxEntryIndex</a> is less than 256, otherwise they are uint16. 
    </table>
@@ -3112,7 +3117,7 @@ let dfnPanelData = {
 "format-1-patch-map-compatibilityid": {"dfnID":"format-1-patch-map-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-compatibilityid"},{"id":"ref-for-format-1-patch-map-compatibilityid\u2460"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-compatibilityid"},
 "format-1-patch-map-featuremapoffset": {"dfnID":"format-1-patch-map-featuremapoffset","dfnText":"featureMapOffset","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-featuremapoffset"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-featuremapoffset"},
 "format-1-patch-map-format": {"dfnID":"format-1-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-format"}],"title":"5.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-format\u2460"}],"title":"5.2.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-format"},
-"format-1-patch-map-glyphcount": {"dfnID":"format-1-patch-map-glyphcount","dfnText":"glyphCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-glyphcount"}],"title":"5.2.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-glyphcount"},
+"format-1-patch-map-glyphcount": {"dfnID":"format-1-patch-map-glyphcount","dfnText":"glyphCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-glyphcount"},{"id":"ref-for-format-1-patch-map-glyphcount\u2460"}],"title":"5.2.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-glyphcount"},
 "format-1-patch-map-maxentryindex": {"dfnID":"format-1-patch-map-maxentryindex","dfnText":"maxEntryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-maxentryindex"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2460"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2461"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2462"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2463"}],"title":"5.2.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-maxentryindex\u2464"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2465"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-maxentryindex"},
 "format-1-patch-map-maxglyphmapentryindex": {"dfnID":"format-1-patch-map-maxglyphmapentryindex","dfnText":"maxGlyphMapEntryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-maxglyphmapentryindex"},{"id":"ref-for-format-1-patch-map-maxglyphmapentryindex\u2460"},{"id":"ref-for-format-1-patch-map-maxglyphmapentryindex\u2461"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-maxglyphmapentryindex"},
 "format-1-patch-map-patchencoding": {"dfnID":"format-1-patch-map-patchencoding","dfnText":"patchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-patchencoding"},{"id":"ref-for-format-1-patch-map-patchencoding\u2460"}],"title":"5.2.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-patchencoding"},
