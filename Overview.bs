@@ -118,7 +118,7 @@ Overview {#overview}
 
 An <dfn dfn>incremental font</dfn> is a regular [[open-type|OpenType]] font that is reformatted to include incremental functionality,
 partly in virtue of two additional [[open-type/otff#table-directory|tables]]. Using these new tables the font can be augmented
-(eg. to cover more codepoints) by loading and applying patches to it.
+(eg. to cover more code points) by loading and applying patches to it.
 
 The IFT technology has four main pieces:
 
@@ -212,10 +212,10 @@ As discussed in the previous section the most basic implementation of incrementa
 tend to increase the total number of requests made vs traditional font loading. Since each augmentation
 will typically require at least one round trip time, performance can be negatively impacted if too many requests
 are made. Depending on which patch types are available and how much information is provided in the 
-[[#font-format-extensions|patch mapping]], a client might preemptively request patches for codepoints that are not
+[[#font-format-extensions|patch mapping]], a client might preemptively request patches for code points that are not
 currently needed, but expected to be needed in the future. Intelligent use of this feature by an
 implementation can help reduce the total number of requests being made. The evaluation report explored
-this by testing the performance of a basic character frequency based [[PFE-report#codepredict|codepoint prediction]]
+this by testing the performance of a basic character frequency based [[PFE-report#codepredict|code point prediction]]
 scheme and found it improved overall performance.
 
 
@@ -264,17 +264,17 @@ Font Subset {#font-subset-dfn}
 A <dfn dfn>font subset</dfn> is a modified version of a font file [[!iso14496-22]] that contains only the data
 needed to render a subset of:
 
-*  the codepoints,
+*  the code points,
 *  [[open-type/featuretags|layout features]],
 *  and [[open-type/otvaroverview#terminology|design-variation space]].
 
 supported by the original font. When a subsetted font is used to render text using any combination of the subset
-codepoints, [[open-type/featuretags|layout features]], or [[open-type/otvaroverview#terminology|design-variation space]]
+code points, [[open-type/featuretags|layout features]], or [[open-type/otvaroverview#terminology|design-variation space]]
 it should render identically to the original font. This includes rendering with the use of any optional typographic
 features that a renderer may choose to use from the original font, such as hinting instructions. Design variation spaces
 are specified using the user-axis scales ([[open-type/otvaroverview#coordinate-scales-and-normalization]]).
 
-A <dfn dfn>font subset definition</dfn> describes the minimum data (codepoints, layout features,
+A <dfn dfn>font subset definition</dfn> describes the minimum data (code points, layout features,
 variation axis space) that a [=font subset=] should support.
 
 Note: For convenience the remainder of this document links to the [[open-type]] specification which is a copy of
@@ -330,7 +330,7 @@ Extending a Font Subset {#extending-font-subset}
 ================================================
 
 This section defines the algorithm that a client uses to extend an [=incremental font|incremental=] [=font subset=] to cover additional
-codepoints, layout features and/or design space.
+code points, layout features and/or design space.
 
 Patch Invalidations {#font-patch-invalidations}
 -----------------------------------------------
@@ -442,7 +442,7 @@ The algorithm outputs:
 
 The algorithm:
 
-1.  For each set in <var>subset definition</var> (codepoints, feature tags, design space) check if the set intersects
+1.  For each set in <var>subset definition</var> (code points, feature tags, design space) check if the set intersects
      the corresponding set from <var>mapping entry</var>. A set intersects when:
 
      <table>
@@ -490,8 +490,8 @@ The algorithm:
 
 If the extending the font subset process has failed with an error then, some of the data within the font may not be fully loaded and as
 a result rendering content which relies on the missing data may result in incorrect renderings. The client may choose to continue using
-the font, but should only use it for the rendering of codepoints, features, and design space that are fully loaded. An element of the
-font can be considered fully loaded if data for that element is present in the font (eg. for codepoints, listed in the cmap) and there are
+the font, but should only use it for the rendering of code points, features, and design space that are fully loaded. An element of the
+font can be considered fully loaded if data for that element is present in the font (eg. for code points, listed in the cmap) and there are
 no mapping entries in the font subset which reference that element. Rendering of all other content should fallback to a different font
 following normal client fallback logic.
 
@@ -844,7 +844,7 @@ The algorithm:
 
         *  Find the set of unicode code points associated with <var>entry index</var> that was computed in step 2. If the
             <var>entry index</var> was skipped because of [=Format 1 Patch Map/appliedEntriesBitMap=] compute the set of associated
-            codepoints as if it wasn't skipped. If <var>entry index</var> was not processed in step 2 this table is invalid, return an
+            code points as if it wasn't skipped. If <var>entry index</var> was not processed in step 2 this table is invalid, return an
             error. Entries processed in step 2 that were marked as skipped by [=Format 1 Patch Map/appliedEntriesBitMap=] are valid to be
             referenced here. Union the produced set of code points to the new or existing entry's subset definition.
 
@@ -1059,7 +1059,7 @@ The algorithm:
     <td>uint16/uint24</td>
     <td><dfn for="Mapping Entry">bias</dfn></td>
     <td>
-      Bias value which is added to all codepoint values in the codepoints set.
+      Bias value which is added to all code point values in the code points set.
       If format bit 4 is 0 and bit 5 is 1, then this is present and a uint16.
       If format bit 4 is 1 and bit 5 is 1, then this is present and a uint24.
       Otherwise it is not present.
@@ -1067,9 +1067,9 @@ The algorithm:
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Mapping Entry">codepoints</dfn>[variable]</td>
+    <td><dfn for="Mapping Entry">codePoints</dfn>[variable]</td>
     <td>
-      Set of codepoints for this mapping. Encoded as a [=Sparse Bit Set=].
+      Set of code points for this mapping. Encoded as a [=Sparse Bit Set=].
       Only present if [=Mapping Entry/formatFlags=] bit 4 and/or 5 is set. The length is
       determined by following the decoding procedures in [[#sparse-bit-set-decoding]].
     </td>
@@ -1222,7 +1222,7 @@ The algorithm:
 8.  If [=Mapping Entry/formatFlags=] bit 3 is set, then a patch encoding is present. Read the encoding specified by
      [=Mapping Entry/patchEncoding=] from <var>entry bytes</var> and set the patch encoding of <var>entry</var> to the read value.
 
-9.  If one or both of [=Mapping Entry/formatFlags=] bit 4 and bit 5 are set, then a codepoint list is present:
+9.  If one or both of [=Mapping Entry/formatFlags=] bit 4 and bit 5 are set, then a code point list is present:
 
     *  If [=Mapping Entry/formatFlags=] bit 4 is 0 and bit 5 is 1, then read the 2 byte (uint16) [=Mapping Entry/bias=] value
         from <var>entry bytes</var>.
@@ -1232,8 +1232,8 @@ The algorithm:
 
     *  Otherwise the bias is 0.
 
-    *  Read the sparse bit set [=Mapping Entry/codepoints=] from <var>entry bytes</var> following [[#sparse-bit-set-decoding]]. For each
-        codepoint add the bias value to it and then add the result to the codepoint set in <var>entry</var>.
+    *  Read the sparse bit set [=Mapping Entry/codePoints=] from <var>entry bytes</var> following [[#sparse-bit-set-decoding]]. For each
+        code point add the bias value to it and then add the result to the code point set in <var>entry</var>.
 
 10. If [=Mapping Entry/formatFlags=] bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.
 
@@ -1374,7 +1374,7 @@ The algorithm, using a FIFO (first in first out) queue <var>Q</var>:
 
 Note: when encoding sparse bit sets the encoder can use any of the possible branching factors, but it is recommended to
 use 4 as that has <a href="https://github.com/w3c/PFE-analysis/blob/main/results/set_encoding_branch_factor.md">been shown</a>
-to give the smallest encodings for most unicode codepoint sets typically encountered.
+to give the smallest encodings for most unicode code point sets typically encountered.
 
 
 <div class=example>
@@ -1634,7 +1634,7 @@ of a short header followed by brotli encoded data.
 
 <h4 algorithm id="apply-brotli">Applying Brotli Patches</h4>
 
-This [=patch application algorithm=] is used to apply a brotli patch to extend a [=font subset=] to cover additional codepoints,
+This [=patch application algorithm=] is used to apply a brotli patch to extend a [=font subset=] to cover additional code points,
 features, and/or design-variation space.
 
 <dfn abstract-op>Apply brotli patch</dfn>
@@ -1739,7 +1739,7 @@ of that [=TablePatch=].
 
 <h4 algorithm id="apply-per-table-brotli">Applying Per Table Brotli Patches</h4>
 
-This [=patch application algorithm=] is used to apply a per table brotli patch to extend a [=font subset=] to cover additional codepoints,
+This [=patch application algorithm=] is used to apply a per table brotli patch to extend a [=font subset=] to cover additional code points,
 features, and/or design-variation space.
 
 <dfn abstract-op>Apply per table brotli patch</dfn>
@@ -1897,7 +1897,7 @@ of that glyph data.
 
 <h4 algorithm id="apply-glyph-keyed">Applying Glyph Keyed Patches</h4>
 
-This [=patch application algorithm=] is used to apply a glyph keyed patch to extend a [=font subset=] to cover additional codepoints,
+This [=patch application algorithm=] is used to apply a glyph keyed patch to extend a [=font subset=] to cover additional code points,
 features, and/or design-variation space.
 
 <dfn abstract-op>Apply glyph keyed patch</dfn>
@@ -2124,25 +2124,25 @@ There are some techniques which can be used to reduce the total number of pre-ge
 
 One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. The discussion
 above focused on the number of segments, but the performance of an [=incremental font=] depends much more on the grouping of data
-within segments. To maximize efficiency an encoder needs to group data (eg. codepoints) that are commonly used together into the same
+within segments. To maximize efficiency an encoder needs to group data (eg. code points) that are commonly used together into the same
 segments. This will reduce the amount of unneeded data load by clients when extending the font. The encoder must also decide the size
 of segments. Smaller segments will produce more patches, and thus incur more overhead by requiring more network requests, but will
-typically result in less unneeded data in each segment compared to larger segments. When segmenting codepoints, data on codepoint usage
+typically result in less unneeded data in each segment compared to larger segments. When segmenting code points, data on code point usage
 frequency can be helpful to guide segmentation.
 
-Some codepoints may have self-evident segmentations, or at least there may be little question as to what codepoints to group together.
+Some code points may have self-evident segmentations, or at least there may be little question as to what code points to group together.
 For example, upper and lowercase letters of the Latin alphabet form a natural group. Other cases may be more complicated. For example,
-Chinese, Japanese, and Korean share some codepoints, but a codepoint that is high-frequency in Japanese may be lower-frequency in
+Chinese, Japanese, and Korean share some code points, but a code point that is high-frequency in Japanese may be lower-frequency in
 Chinese. In some cases one might choose to optimize an encoding for a single language. Another approach is to produce a compromise
-encoding. For example, when segmenting an encoder could put codepoints that are frequent in Japanese, Chinese, and Korean into one
-segment, and then those that are frequent only in Japanese and Chinese into another segment, and so on. Then the codepoints that
+encoding. For example, when segmenting an encoder could put code points that are frequent in Japanese, Chinese, and Korean into one
+segment, and then those that are frequent only in Japanese and Chinese into another segment, and so on. Then the code points that
 are frequent in only one language can be handled in the usual way. This will result in less even segment sizes, but means that 
 loading high-frequency patches for any one of the languages will not pull in lower-frequency glyphs.
 
 <b>Maintaining Functional Equivalence</b>
 
 As discussed in [[#encoding]] an encoder should preserve the functionality of the original font. Fonts are complex
-and often contain interactions between codepoints so maintaining functional equivalence with a partial copy of the font can be tricky.
+and often contain interactions between code points so maintaining functional equivalence with a partial copy of the font can be tricky.
 The next two subsections discuss maintaining functional equivalent using the different patch types.
 
 <b>Brotli patches</b>
@@ -2200,12 +2200,12 @@ sections.
 
 <b>[[#glyph-keyed]] patches</b>
 
-Specifically because they are parameterized by codepoints and feature tags but can be applied independently of one another,
+Specifically because they are parameterized by code points and feature tags but can be applied independently of one another,
 [[#glyph-keyed]] patches have additional requirements and cannot be directly derived by using a subsetter implementation.  However,
 such an implementation can help clarify what an encoder needs to do to maintain functional equivalence when producing this type
 of patch. Consider the result of producing the subset of a font relative to a given [=font subset definition=]. We can define
 the <dfn dfn>glyph closure</dfn> of that [=font subset definition=] as the full set of glyphs included in the subset, which the
-subsetter has determined is needed to render any combination of the described codepoints and layout features.
+subsetter has determined is needed to render any combination of the described code points and layout features.
 
 Using that definition, the <b>glyph closure requirement</b> on the full set [[#glyph-keyed]] patches is:
 
@@ -2215,13 +2215,13 @@ Using that definition, the <b>glyph closure requirement</b> on the full set [[#g
 Assuming the subsetter does its job accurately, the glyph closure requirement is a consequence of the requirement for equivalent
 behavior: Suppose there is a [=font subset definition=] such that the subsetter includes glyph *i* in its subset, but an encoder that
 produces [[#glyph-keyed]] patches omits glyph *i* from the set of patches that correspond to that definition. If the subsetter is
-right, that glyph must be present to retain equivalent behavior when rendering some combination of the codepoints and features in 
+right, that glyph must be present to retain equivalent behavior when rendering some combination of the code points and features in 
 the definition, which means that the [=incremental font=] will not behave equivalently when rendering that combination.
 
 Therefore, when generating an encoding utilizing glyph-keyed patches the encoder must determine how to distribute glyphs between all
-of the patches in a way that meets the glyph closure requirement. This is primarily a matter of looking at the codepoints assigned
+of the patches in a way that meets the glyph closure requirement. This is primarily a matter of looking at the code points assigned
 to a segment and determining what other glyphs must be included in the patch that corresponds to it, as when a glyph variant can
-be substituted for a glyph included in the segment by codepoint.  In some cases a glyph might only be needed when multiple segments
+be substituted for a glyph included in the segment by code point.  In some cases a glyph might only be needed when multiple segments
 have been loaded, in which case that glyph can be added to the patch corresponding to any of those segments. (This can be true of 
 a ligature or a pre-composed accented character.) Finally, after the initial analysis of segments the same glyph might be needed 
 when loading the patches for two or more segments.  There are three main strategies for dealing with that situation:
@@ -2299,9 +2299,9 @@ is <em>possible</em> that individual requests might be analyzed by a rogue font 
 which is being read. It is unclear how feasible this attack is, or the computational complexity required to exploit it, unless the
 characters being requested are very unusual.
 
-More specifically, a IFT font includes a collection of unicode codepoint groups and requests will be made for groups that intersect
-content being rendered. This provides information to the hosting server that at least one codepoint in a group was needed, but does not
-contain information on which specific codepoints within a group were needed. This is functionally quite similar to the existing
+More specifically, a IFT font includes a collection of unicode code point groups and requests will be made for groups that intersect
+content being rendered. This provides information to the hosting server that at least one code point in a group was needed, but does not
+contain information on which specific code points within a group were needed. This is functionally quite similar to the existing
 [[css-fonts-4#unicode-range-desc]] and has the same privacy implications. Discussion of the privacy implication of unicode-range can be
 found in the CSS Fonts 4 specification:
 

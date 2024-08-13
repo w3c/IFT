@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="fbcebf3cfb3afe758ac09a1286abf847cdf32a6a" name="revision">
+  <meta content="2b99efa12d92d726fd6e59fb89085110cdf4e111" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -654,7 +654,7 @@ be loaded over multiple requests where each request incrementally adds additiona
    <p> Publication as a Working Draft does not imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. This is a draft document and may be updated, replaced or
   obsoleted by other documents at any time. It is inappropriate to cite this
   document as other than work in progress. </p>
-   <p> This document was produced by groups operating under
+   <p> This document was produced by a group operating under
   the <a href="https://www.w3.org/policies/patent-policy/20200915/">W3C Patent Policy</a>.
   W3C maintains a <a href="https://www.w3.org/groups/wg/webfonts/ipr" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group;
   that page also includes instructions for disclosing a patent.
@@ -791,7 +791,7 @@ to this specification.</p>
    <h3 class="heading settled" data-level="1.2" id="overview"><span class="secno">1.2. </span><span class="content">Overview</span><a class="self-link" href="#overview"></a></h3>
    <p>An <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="incremental-font">incremental font</dfn> is a regular <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> font that is reformatted to include incremental functionality,
 partly in virtue of two additional <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a>. Using these new tables the font can be augmented
-(eg. to cover more codepoints) by loading and applying patches to it.</p>
+(eg. to cover more code points) by loading and applying patches to it.</p>
    <p>The IFT technology has four main pieces:</p>
    <ul>
     <li data-md>
@@ -875,10 +875,10 @@ original font and all of it’s layout rules.</p>
    <p>As discussed in the previous section the most basic implementation of incremental font transfer will
 tend to increase the total number of requests made vs traditional font loading. Since each augmentation
 will typically require at least one round trip time, performance can be negatively impacted if too many requests
-are made. Depending on which patch types are available and how much information is provided in the <a href="#font-format-extensions">patch mapping</a>, a client might preemptively request patches for codepoints that are not
+are made. Depending on which patch types are available and how much information is provided in the <a href="#font-format-extensions">patch mapping</a>, a client might preemptively request patches for code points that are not
 currently needed, but expected to be needed in the future. Intelligent use of this feature by an
 implementation can help reduce the total number of requests being made. The evaluation report explored
-this by testing the performance of a basic character frequency based <a href="https://www.w3.org/TR/PFE-evaluation/#codepredict">codepoint prediction</a> scheme and found it improved overall performance.</p>
+this by testing the performance of a basic character frequency based <a href="https://www.w3.org/TR/PFE-evaluation/#codepredict">code point prediction</a> scheme and found it improved overall performance.</p>
    <h2 class="heading settled" data-level="2" id="opt-in"><span class="secno">2. </span><span class="content">Opt-In Mechanism</span><a class="self-link" href="#opt-in"></a></h2>
    <p>Web pages can choose to opt-in to incremental transfer for a font via the use of a CSS font tech
 keyword (<a href="https://www.w3.org/TR/css-fonts-4/#font-tech-definitions"><cite>CSS Fonts 4</cite> § 11.1 Font tech</a>) inside the ''@font-face'' block. The keyword <code>incremental</code> is used to indicate the referenced font contains IFT data and should
@@ -907,17 +907,17 @@ by invoking <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a
 needed to render a subset of:</p>
    <ul>
     <li data-md>
-     <p>the codepoints,</p>
+     <p>the code points,</p>
     <li data-md>
      <p><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a>,</p>
     <li data-md>
      <p>and <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a>.</p>
    </ul>
    <p>supported by the original font. When a subsetted font is used to render text using any combination of the subset
-codepoints, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a>, or <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a> it should render identically to the original font. This includes rendering with the use of any optional typographic
+code points, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a>, or <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a> it should render identically to the original font. This includes rendering with the use of any optional typographic
 features that a renderer may choose to use from the original font, such as hinting instructions. Design variation spaces
 are specified using the user-axis scales (<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#coordinate-scales-and-normalization">OpenType Specification § otvaroverview#coordinate-scales-and-normalization</a>).</p>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-subset-definition">font subset definition</dfn> describes the minimum data (codepoints, layout features,
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-subset-definition">font subset definition</dfn> describes the minimum data (code points, layout features,
 variation axis space) that a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset">font subset</a> should support.</p>
    <p class="note" role="note"><span class="marker">Note:</span> For convenience the remainder of this document links to the <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">[open-type]</a> specification which is a copy of <a data-link-type="biblio" href="#biblio-iso14496-22" title="Information technology — Coding of audio-visual objects — Part 22: Open Font Format">[iso14496-22]</a>.</p>
    <h3 class="heading settled" data-level="3.2" id="font-patch-definitions"><span class="secno">3.2. </span><span class="content">Font Patch</span><a class="self-link" href="#font-patch-definitions"></a></h3>
@@ -956,7 +956,7 @@ in <a href="#font-format-extensions">§ 5 Extensions to the Font Format</a>.</
 in <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types">OpenType Specification § otff#data-types</a>. As with the rest of OpenType, all fields use "big-endian" byte ordering.</p>
    <h2 class="heading settled" data-level="4" id="extending-font-subset"><span class="secno">4. </span><span class="content">Extending a Font Subset</span><a class="self-link" href="#extending-font-subset"></a></h2>
    <p>This section defines the algorithm that a client uses to extend an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font②">incremental</a> <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> to cover additional
-codepoints, layout features and/or design space.</p>
+code points, layout features and/or design space.</p>
    <h3 class="heading settled" data-level="4.1" id="font-patch-invalidations"><span class="secno">4.1. </span><span class="content">Patch Invalidations</span><a class="self-link" href="#font-patch-invalidations"></a></h3>
    <p>The application of a patch to an incremental <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑥">font subset</a> may invalidate some or all of the other mapped patches, so that if
 one of those were to be applied the result would be a corrupt <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font</a>. Patch validity is tracked by the compatibility ID from the <a href="#patch-map-table">§ 5.2 Patch Map Table</a>. Every patch has a
@@ -1059,7 +1059,7 @@ intersecting patches in parallel, since no patch application will invalidate any
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>For each set in <var>subset definition</var> (codepoints, feature tags, design space) check if the set intersects
+     <p>For each set in <var>subset definition</var> (code points, feature tags, design space) check if the set intersects
  the corresponding set from <var>mapping entry</var>. A set intersects when:</p>
      <table>
       <tbody>
@@ -1108,8 +1108,8 @@ intersecting patches in parallel, since no patch application will invalidate any
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-handle-errors">Handle errors</dfn></p>
    <p>If the extending the font subset process has failed with an error then, some of the data within the font may not be fully loaded and as
 a result rendering content which relies on the missing data may result in incorrect renderings. The client may choose to continue using
-the font, but should only use it for the rendering of codepoints, features, and design space that are fully loaded. An element of the
-font can be considered fully loaded if data for that element is present in the font (eg. for codepoints, listed in the cmap) and there are
+the font, but should only use it for the rendering of code points, features, and design space that are fully loaded. An element of the
+font can be considered fully loaded if data for that element is present in the font (eg. for code points, listed in the cmap) and there are
 no mapping entries in the font subset which reference that element. Rendering of all other content should fallback to a different font
 following normal client fallback logic.</p>
    <p>If the error occurred during <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file①">Load patch file</a> then, the client may continue trying to extend the font subset
@@ -1381,7 +1381,7 @@ instead modify the existing entry. Add <a data-link-type="dfn" href="#featurerec
        <ul>
         <li data-md>
          <p>Find the set of unicode code points associated with <var>entry index</var> that was computed in step 2. If the <var>entry index</var> was skipped because of <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap②">appliedEntriesBitMap</a> compute the set of associated
-codepoints as if it wasn’t skipped. If <var>entry index</var> was not processed in step 2 this table is invalid, return an
+code points as if it wasn’t skipped. If <var>entry index</var> was not processed in step 2 this table is invalid, return an
 error. Entries processed in step 2 that were marked as skipped by <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap③">appliedEntriesBitMap</a> are valid to be
 referenced here. Union the produced set of code points to the new or existing entry’s subset definition.</p>
        </ul>
@@ -1533,14 +1533,14 @@ change the number of bytes.</p>
      <tr>
       <td>uint16/uint24
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-bias">bias</dfn>
-      <td> Bias value which is added to all codepoint values in the codepoints set.
+      <td> Bias value which is added to all code point values in the code points set.
       If format bit 4 is 0 and bit 5 is 1, then this is present and a uint16.
       If format bit 4 is 1 and bit 5 is 1, then this is present and a uint24.
       Otherwise it is not present. 
      <tr>
       <td>uint8
-      <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-codepoints">codepoints</dfn>[variable]
-      <td> Set of codepoints for this mapping. Encoded as a <a data-link-type="dfn" href="#sparse-bit-set" id="ref-for-sparse-bit-set">Sparse Bit Set</a>.
+      <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-codepoints">codePoints</dfn>[variable]
+      <td> Set of code points for this mapping. Encoded as a <a data-link-type="dfn" href="#sparse-bit-set" id="ref-for-sparse-bit-set">Sparse Bit Set</a>.
       Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑨">formatFlags</a> bit 4 and/or 5 is set. The length is
       determined by following the decoding procedures in <a href="#sparse-bit-set-decoding">§ 5.2.2.3 Sparse Bit Set</a>. 
    </table>
@@ -1675,7 +1675,7 @@ and the mapping is malformed.</p>
     <li data-md>
      <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①④">formatFlags</a> bit 3 is set, then a patch encoding is present. Read the encoding specified by <a data-link-type="dfn" href="#mapping-entry-patchencoding" id="ref-for-mapping-entry-patchencoding">patchEncoding</a> from <var>entry bytes</var> and set the patch encoding of <var>entry</var> to the read value.</p>
     <li data-md>
-     <p>If one or both of <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑤">formatFlags</a> bit 4 and bit 5 are set, then a codepoint list is present:</p>
+     <p>If one or both of <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑤">formatFlags</a> bit 4 and bit 5 are set, then a code point list is present:</p>
      <ul>
       <li data-md>
        <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑥">formatFlags</a> bit 4 is 0 and bit 5 is 1, then read the 2 byte (uint16) <a data-link-type="dfn" href="#mapping-entry-bias" id="ref-for-mapping-entry-bias">bias</a> value
@@ -1686,8 +1686,8 @@ from <var>entry bytes</var>.</p>
       <li data-md>
        <p>Otherwise the bias is 0.</p>
       <li data-md>
-       <p>Read the sparse bit set <a data-link-type="dfn" href="#mapping-entry-codepoints" id="ref-for-mapping-entry-codepoints">codepoints</a> from <var>entry bytes</var> following <a href="#sparse-bit-set-decoding">§ 5.2.2.3 Sparse Bit Set</a>. For each
-codepoint add the bias value to it and then add the result to the codepoint set in <var>entry</var>.</p>
+       <p>Read the sparse bit set <a data-link-type="dfn" href="#mapping-entry-codepoints" id="ref-for-mapping-entry-codepoints">codePoints</a> from <var>entry bytes</var> following <a href="#sparse-bit-set-decoding">§ 5.2.2.3 Sparse Bit Set</a>. For each
+code point add the bias value to it and then add the result to the code point set in <var>entry</var>.</p>
      </ul>
     <li data-md>
      <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑧">formatFlags</a> bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.</p>
@@ -1828,7 +1828,7 @@ into <var>S</var>. Go to step 5.</p>
      <p>Go to step 7.</p>
    </ol>
    <p class="note" role="note"><span class="marker">Note:</span> when encoding sparse bit sets the encoder can use any of the possible branching factors, but it is recommended to
-use 4 as that has <a href="https://github.com/w3c/PFE-analysis/blob/main/results/set_encoding_branch_factor.md">been shown</a> to give the smallest encodings for most unicode codepoint sets typically encountered.</p>
+use 4 as that has <a href="https://github.com/w3c/PFE-analysis/blob/main/results/set_encoding_branch_factor.md">been shown</a> to give the smallest encodings for most unicode code point sets typically encountered.</p>
    <div class="example" id="example-eb491b43">
     <a class="self-link" href="#example-eb491b43"></a> The set {2, 33, 323} in a tree with a branching factor of 8 can be encoded as the bit string: 
 <pre>bit string:
@@ -2028,7 +2028,7 @@ of a short header followed by brotli encoded data.</p>
       <td>Brotli encoded byte stream.
    </table>
    <h4 class="heading settled algorithm" data-algorithm="Applying Brotli Patches" data-level="6.2.1" id="apply-brotli"><span class="secno">6.2.1. </span><span class="content">Applying Brotli Patches</span><a class="self-link" href="#apply-brotli"></a></h4>
-   <p>This <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm">patch application algorithm</a> is used to apply a brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑦">font subset</a> to cover additional codepoints,
+   <p>This <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm">patch application algorithm</a> is used to apply a brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑦">font subset</a> to cover additional code points,
 features, and/or design-variation space.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-brotli-patch">Apply brotli patch</dfn></p>
    <p>The inputs to this algorithm are:</p>
@@ -2119,7 +2119,7 @@ of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">Ta
       <td>Brotli encoded byte stream.
    </table>
    <h4 class="heading settled algorithm" data-algorithm="Applying Per Table Brotli Patches" data-level="6.3.1" id="apply-per-table-brotli"><span class="secno">6.3.1. </span><span class="content">Applying Per Table Brotli Patches</span><a class="self-link" href="#apply-per-table-brotli"></a></h4>
-   <p>This <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm①">patch application algorithm</a> is used to apply a per table brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a> to cover additional codepoints,
+   <p>This <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm①">patch application algorithm</a> is used to apply a per table brotli patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a> to cover additional code points,
 features, and/or design-variation space.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-per-table-brotli-patch">Apply per table brotli patch</dfn></p>
    <p>The inputs to this algorithm are:</p>
@@ -2244,7 +2244,7 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
    <p>The difference between two consecutive offsets in the <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets">glyphDataOffsets</a> array gives the size
 of that glyph data.</p>
    <h4 class="heading settled algorithm" data-algorithm="Applying Glyph Keyed Patches" data-level="6.4.1" id="apply-glyph-keyed"><span class="secno">6.4.1. </span><span class="content">Applying Glyph Keyed Patches</span><a class="self-link" href="#apply-glyph-keyed"></a></h4>
-   <p>This <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm②">patch application algorithm</a> is used to apply a glyph keyed patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⑥">font subset</a> to cover additional codepoints,
+   <p>This <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm②">patch application algorithm</a> is used to apply a glyph keyed patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②⑥">font subset</a> to cover additional code points,
 features, and/or design-variation space.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-glyph-keyed-patch">Apply glyph keyed patch</dfn></p>
    <p>The inputs to this algorithm are:</p>
@@ -2435,22 +2435,22 @@ level.</p>
    <p><b>Choosing segmentations</b></p>
    <p>One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. The discussion
 above focused on the number of segments, but the performance of an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑧">incremental font</a> depends much more on the grouping of data
-within segments. To maximize efficiency an encoder needs to group data (eg. codepoints) that are commonly used together into the same
+within segments. To maximize efficiency an encoder needs to group data (eg. code points) that are commonly used together into the same
 segments. This will reduce the amount of unneeded data load by clients when extending the font. The encoder must also decide the size
 of segments. Smaller segments will produce more patches, and thus incur more overhead by requiring more network requests, but will
-typically result in less unneeded data in each segment compared to larger segments. When segmenting codepoints, data on codepoint usage
+typically result in less unneeded data in each segment compared to larger segments. When segmenting code points, data on code point usage
 frequency can be helpful to guide segmentation.</p>
-   <p>Some codepoints may have self-evident segmentations, or at least there may be little question as to what codepoints to group together.
+   <p>Some code points may have self-evident segmentations, or at least there may be little question as to what code points to group together.
 For example, upper and lowercase letters of the Latin alphabet form a natural group. Other cases may be more complicated. For example,
-Chinese, Japanese, and Korean share some codepoints, but a codepoint that is high-frequency in Japanese may be lower-frequency in
+Chinese, Japanese, and Korean share some code points, but a code point that is high-frequency in Japanese may be lower-frequency in
 Chinese. In some cases one might choose to optimize an encoding for a single language. Another approach is to produce a compromise
-encoding. For example, when segmenting an encoder could put codepoints that are frequent in Japanese, Chinese, and Korean into one
-segment, and then those that are frequent only in Japanese and Chinese into another segment, and so on. Then the codepoints that
+encoding. For example, when segmenting an encoder could put code points that are frequent in Japanese, Chinese, and Korean into one
+segment, and then those that are frequent only in Japanese and Chinese into another segment, and so on. Then the code points that
 are frequent in only one language can be handled in the usual way. This will result in less even segment sizes, but means that 
 loading high-frequency patches for any one of the languages will not pull in lower-frequency glyphs.</p>
    <p><b>Maintaining Functional Equivalence</b></p>
    <p>As discussed in <a href="#encoding">§ 7 Encoding</a> an encoder should preserve the functionality of the original font. Fonts are complex
-and often contain interactions between codepoints so maintaining functional equivalence with a partial copy of the font can be tricky.
+and often contain interactions between code points so maintaining functional equivalence with a partial copy of the font can be tricky.
 The next two subsections discuss maintaining functional equivalent using the different patch types.</p>
    <p><b>Brotli patches</b></p>
    <p>When preparing <a href="#brotli">§ 6.2 Brotli Patch</a> or <a href="#per-table-brotli">§ 6.3 Per Table Brotli</a> patches, one means of achieving functional equivalence is to leverage an
@@ -2499,11 +2499,11 @@ to be representative of all possible encoder implementations. Notably it does no
 patches. Most encoders will likely be more complex and need to consider additional factors some of which are discussed in the remaining
 sections.</p>
    <p><b><a href="#glyph-keyed">§ 6.4 Glyph Keyed</a> patches</b></p>
-   <p>Specifically because they are parameterized by codepoints and feature tags but can be applied independently of one another, <a href="#glyph-keyed">§ 6.4 Glyph Keyed</a> patches have additional requirements and cannot be directly derived by using a subsetter implementation.  However,
+   <p>Specifically because they are parameterized by code points and feature tags but can be applied independently of one another, <a href="#glyph-keyed">§ 6.4 Glyph Keyed</a> patches have additional requirements and cannot be directly derived by using a subsetter implementation.  However,
 such an implementation can help clarify what an encoder needs to do to maintain functional equivalence when producing this type
 of patch. Consider the result of producing the subset of a font relative to a given <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①①">font subset definition</a>. We can define
 the <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="glyph-closure">glyph closure</dfn> of that <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①②">font subset definition</a> as the full set of glyphs included in the subset, which the
-subsetter has determined is needed to render any combination of the described codepoints and layout features.</p>
+subsetter has determined is needed to render any combination of the described code points and layout features.</p>
    <p>Using that definition, the <b>glyph closure requirement</b> on the full set <a href="#glyph-keyed">§ 6.4 Glyph Keyed</a> patches is:</p>
    <ul>
     <li data-md>
@@ -2513,12 +2513,12 @@ of those in the <a data-link-type="dfn" href="#glyph-closure" id="ref-for-glyph-
    <p>Assuming the subsetter does its job accurately, the glyph closure requirement is a consequence of the requirement for equivalent
 behavior: Suppose there is a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①⑤">font subset definition</a> such that the subsetter includes glyph *i* in its subset, but an encoder that
 produces <a href="#glyph-keyed">§ 6.4 Glyph Keyed</a> patches omits glyph *i* from the set of patches that correspond to that definition. If the subsetter is
-right, that glyph must be present to retain equivalent behavior when rendering some combination of the codepoints and features in 
+right, that glyph must be present to retain equivalent behavior when rendering some combination of the code points and features in 
 the definition, which means that the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑨">incremental font</a> will not behave equivalently when rendering that combination.</p>
    <p>Therefore, when generating an encoding utilizing glyph-keyed patches the encoder must determine how to distribute glyphs between all
-of the patches in a way that meets the glyph closure requirement. This is primarily a matter of looking at the codepoints assigned
+of the patches in a way that meets the glyph closure requirement. This is primarily a matter of looking at the code points assigned
 to a segment and determining what other glyphs must be included in the patch that corresponds to it, as when a glyph variant can
-be substituted for a glyph included in the segment by codepoint.  In some cases a glyph might only be needed when multiple segments
+be substituted for a glyph included in the segment by code point.  In some cases a glyph might only be needed when multiple segments
 have been loaded, in which case that glyph can be added to the patch corresponding to any of those segments. (This can be true of 
 a ligature or a pre-composed accented character.) Finally, after the initial analysis of segments the same glyph might be needed 
 when loading the patches for two or more segments.  There are three main strategies for dealing with that situation:</p>
@@ -2580,9 +2580,9 @@ bytes transferred means that Web fonts become usable, including on mobile networ
 is <em>possible</em> that individual requests might be analyzed by a rogue font server to obtain intelligence about the type of content
 which is being read. It is unclear how feasible this attack is, or the computational complexity required to exploit it, unless the
 characters being requested are very unusual.</p>
-   <p>More specifically, a IFT font includes a collection of unicode codepoint groups and requests will be made for groups that intersect
-content being rendered. This provides information to the hosting server that at least one codepoint in a group was needed, but does not
-contain information on which specific codepoints within a group were needed. This is functionally quite similar to the existing <a href="https://www.w3.org/TR/css-fonts-4/#unicode-range-desc"><cite>CSS Fonts 4</cite> § 4.5 Character range: the unicode-range descriptor</a> and has the same privacy implications. Discussion of the privacy implication of unicode-range can be
+   <p>More specifically, a IFT font includes a collection of unicode code point groups and requests will be made for groups that intersect
+content being rendered. This provides information to the hosting server that at least one code point in a group was needed, but does not
+contain information on which specific code points within a group were needed. This is functionally quite similar to the existing <a href="https://www.w3.org/TR/css-fonts-4/#unicode-range-desc"><cite>CSS Fonts 4</cite> § 4.5 Character range: the unicode-range descriptor</a> and has the same privacy implications. Discussion of the privacy implication of unicode-range can be
 found in the CSS Fonts 4 specification:</p>
    <ul>
     <li data-md>
@@ -2687,7 +2687,7 @@ number of requests:</p>
      <li><a href="#tablepatch-brotlistream">dfn for TablePatch</a><span>, in § 6.3</span>
     </ul>
    <li><a href="#abstract-opdef-check-entry-intersection">Check entry intersection</a><span>, in § 4.2</span>
-   <li><a href="#mapping-entry-codepoints">codepoints</a><span>, in § 5.2.2</span>
+   <li><a href="#mapping-entry-codepoints">codePoints</a><span>, in § 5.2.2</span>
    <li>
     compatibilityId
     <ul>
@@ -2837,7 +2837,7 @@ number of requests:</p>
    <dt id="biblio-utf-8">[UTF-8]
    <dd>F. Yergeau. <a href="https://www.rfc-editor.org/rfc/rfc3629"><cite>UTF-8, a transformation format of ISO 10646</cite></a>. November 2003. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3629">https://www.rfc-editor.org/rfc/rfc3629</a>
    <dt id="biblio-woff2">[WOFF2]
-   <dd>Vladimir Levantovsky; Raph Levien. <a href="https://www.w3.org/TR/WOFF2/"><cite>WOFF File Format 2.0</cite></a>. 10 March 2022. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
+   <dd>Vladimir Levantovsky. <a href="https://www.w3.org/TR/WOFF2/"><cite>WOFF File Format 2.0</cite></a>. 8 August 2024. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
@@ -3122,7 +3122,7 @@ let dfnPanelData = {
 "mapping-entries-entries": {"dfnID":"mapping-entries-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entries-entries"},{"id":"ref-for-mapping-entries-entries\u2460"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entries-entries\u2461"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entries-entries"},
 "mapping-entry": {"dfnID":"mapping-entry","dfnText":"Mapping Entry","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry"},{"id":"ref-for-mapping-entry\u2460"},{"id":"ref-for-mapping-entry\u2461"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry\u2462"},{"id":"ref-for-mapping-entry\u2463"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry"},
 "mapping-entry-bias": {"dfnID":"mapping-entry-bias","dfnText":"bias","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-bias"},{"id":"ref-for-mapping-entry-bias\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-bias"},
-"mapping-entry-codepoints": {"dfnID":"mapping-entry-codepoints","dfnText":"codepoints","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-codepoints"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-codepoints"},
+"mapping-entry-codepoints": {"dfnID":"mapping-entry-codepoints","dfnText":"codePoints","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-codepoints"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-codepoints"},
 "mapping-entry-copycount": {"dfnID":"mapping-entry-copycount","dfnText":"copyCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-copycount"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-copycount"},
 "mapping-entry-copyindices": {"dfnID":"mapping-entry-copyindices","dfnText":"copyIndices","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-copyindices"},{"id":"ref-for-mapping-entry-copyindices\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-copyindices"},
 "mapping-entry-designspacecount": {"dfnID":"mapping-entry-designspacecount","dfnText":"designSpaceCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-designspacecount"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-designspacecount"},
