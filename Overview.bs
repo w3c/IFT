@@ -617,7 +617,9 @@ the encoded bytes at the start of every iteration to pick up any changes made in
   <tr>
     <td>uint24</td>
     <td><dfn for="Format 1 Patch Map">glyphCount</dfn></td>
-    <td>Number of glyphs that mappings are provided for. Must match the numGlyphs field from either [[open-type/maxp|maxp]] or MAXP (if present). If both maxp and MAXP are present then, it must match the numGlyphs field in MAXP.</td>
+    <td>Number of glyphs that mappings are provided for.
+        Must match the numGlyphs field from [[open-type/maxp|maxp]] if present, or if numGlyphs is 65,535 then glyphCount
+        must be greater than or equal to 65,535.</td>
   </tr>
   <tr>
     <td>Offset32</td>
@@ -662,6 +664,10 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     </td>
   </tr>
 </table>
+
+Note: [=Format 1 Patch Map/glyphCount=] is designed to be compatible with the
+      proposed <a href="https://github.com/harfbuzz/boring-expansion-spec/tree/main">future font format extension</a> to allow for more
+      than 65,535 glyphs.
 
 <dfn>Glyph Map</dfn> encoding:
 
