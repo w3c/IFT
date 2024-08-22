@@ -430,6 +430,8 @@ intersecting patches in parallel, since no patch application will invalidate any
 
 <dfn abstract-op>Check entry intersection</dfn>
 
+<!-- TODO: Explain how design spaces are intersected -->
+
 The inputs to this algorithm are:
 
 *   <var>mapping entry</var>: a [=patch map entries|patch map entry=].
@@ -911,8 +913,8 @@ The algorithm:
     <td>uint8</td>
     <td><dfn for="Format 2 Patch Map">defaultPatchEncoding</dfn></td>
     <td>
-      Specifies the format of the patches linked to by uriTemplate (unless overridden by an entry). Uses the ID numbers from the
-      [[#font-patch-formats-summary]] table.
+      Specifies the format of the patches linked to by uriTemplate (unless overridden by an entry).
+      Must be set to one of the format numbers from the [[#font-patch-formats-summary]] table.
     </td>
   </tr>
   <tr>
@@ -945,6 +947,7 @@ The algorithm:
     <td><dfn for="Format 2 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
     <td>
       A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URIs associated with each entry.
+      Must be a valid [[!UTF-8]] sequence.
     </td>
   </tr>
 </table>
@@ -1020,8 +1023,8 @@ The algorithm:
     <td>uint24</td>
     <td><dfn for="Mapping Entry">copyIndices</dfn>[copyCount]</td>
     <td>
-      List of indices from the [=Mapping Entries/entries=] array whose [=font subset definition=] should be copied into this entry. All
-      values must be less than the index of this [=Mapping Entry=] in [=Mapping Entries/entries=]. Only present if
+      List of indices from the [=Mapping Entries/entries=] array whose [=font subset definition=] should be copied into this entry. May
+      only reference entries that occurred prior to this [=Mapping Entry=] in [=Mapping Entries/entries=]. Only present if
       [=Mapping Entry/formatFlags=] bit 1 is set.
     </td>
   </tr>
@@ -1131,7 +1134,7 @@ The algorithm outputs:
 The algorithm:
 
 1.  Check that the <var>patch map</var> has [=Format 2 Patch Map/format=] equal to 2 and is valid according to the requirements in
-     [[#patch-map-format-2]]. If it is not return an error.
+     [[#patch-map-format-2]] (requirements are marked with a "must"). If it is not return an error.
 
 2.  Initialize <var>last entry id</var> to 0, <var>current byte</var> to 0, and <var>current id string byte</var> to 0.
 
@@ -1201,6 +1204,8 @@ The algorithm:
     *  Read the design space segment list specified by [=Mapping Entry/designSpaceCount=] and [=Mapping Entry/designSpaceSegments=]
         from <var>entry bytes</var> and add the design space segments to <var>entry</var>. Each segment defines an interval from
         [=Design Space Segment/start=] to [=Design Space Segment/end=] inclusive for the axis identified by [=Design Space Segment/tag=].
+        If any segment has a [=Design Space Segment/start=] which is greater than [=Design Space Segment/end=] then, this encoding is
+        invalid return an error.
 
 6.  If [=Mapping Entry/formatFlags=] bit 1 is set, then the copy indices list is present:
 
@@ -1208,19 +1213,21 @@ The algorithm:
 
     *  The copy indices refer to previously loaded entries. 0 is the first [=Mapping Entry=] in [=Mapping Entries/entries=], 1 the second
          and so on. For each index in [=Mapping Entry/copyIndices=] locate the previously loaded entry with a matching index and
-         add all code points, feature tags, and design space segments from it to <var>entry</var>.
+         add all code points, feature tags, and design space segments from it to <var>entry</var>. If a [=Mapping Entry/copyIndices=]
+         is greater than or equal to the index of this entry then, this encoding is invalid return an error.
 
 7.  If [=Mapping Entry/formatFlags=] bit 2 is set, then an id delta or id string length is present:
 
     *  If <var>id string bytes</var> is not present then, read the id delta specified by [=Mapping Entry/entryIdDelta=]
-        from <var>entry bytes</var> and add the delta to <var>entry id</var>. If <var>entry id</var> is negative this is an error
-        and the mapping is malformed.
+        from <var>entry bytes</var> and add the delta to <var>entry id</var>.
 
     *  Otherwise if <var>id string bytes</var> is present then, read [=Mapping Entry/entryIdStringLength=] bytes from
         <var>id string bytes</var> and set <var>entry id</var> to the result.
 
 8.  If [=Mapping Entry/formatFlags=] bit 3 is set, then a patch encoding is present. Read the encoding specified by
      [=Mapping Entry/patchEncoding=] from <var>entry bytes</var> and set the patch encoding of <var>entry</var> to the read value.
+     If [=Mapping Entry/patchEncoding=] is not one of the values in [[#font-patch-formats-summary]] then, this encoding is invalid
+     return an error.
 
 9.  If one or both of [=Mapping Entry/formatFlags=] bit 4 and bit 5 are set, then a code point list is present:
 
@@ -1233,14 +1240,17 @@ The algorithm:
     *  Otherwise the bias is 0.
 
     *  Read the sparse bit set [=Mapping Entry/codePoints=] from <var>entry bytes</var> following [[#sparse-bit-set-decoding]]. For each
-        code point add the bias value to it and then add the result to the code point set in <var>entry</var>.
+        code point add the bias value to it and then add the result to the code point set in <var>entry</var>. If there are not enough
+        bytes remaining to fully decode the sparse bit set then, this encoding is invalid return an error.
 
 10. If [=Mapping Entry/formatFlags=] bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.
 
-11. Convert <var>entry id</var> into a URI by applying <var>uri template</var> following [[#uri-templates]]. Set the patch uri of
+11. If <var>entry id</var> is negative or greater than 4,294,967,295 then, this encoding is invalid return an error.
+
+12. Convert <var>entry id</var> into a URI by applying <var>uri template</var> following [[#uri-templates]]. Set the patch uri of
      <var>entry</var> to the generated URI.
 
-12. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, [=Mapping Entry/entryIdStringLength=] as
+13. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, [=Mapping Entry/entryIdStringLength=] as
      <var>consumed id string bytes</var>, and <var>ignored</var>.
 
 <h5 algorithm id="remove-entries-format-2">Remove Entries from Format 2</h5>
@@ -1436,59 +1446,57 @@ to give the smallest encodings for most unicode code point sets typically encoun
 ### URI Templates ### {#uri-templates}
 
 URI templates [[!rfc6570]] are used to convert numeric or string IDs into URIs where patch files are located.
-A string ID is a sequence of [[!unicode|Unicode]] code point values obtained from decoding a
-[[UTF-8]] string (see [[rfc6570#section-1.6]]). Several variables are defined which are used to produce the
-expansion of the template:
+A string ID is a sequence of bytes. Several variables are defined which are used to produce the expansion of the template:
 
 <table>
   <tr><th>Variable</th><th>Value</th></tr>
   <tr>
-    <td>id</td>
+    <td><code>id</code></td>
     <td>
       The input id encoded as a [[rfc4648#section-7|base32hex]] string (using the digits 0-9, A-V) with padding
-      omitted.  When the id is an unsigned integer it must first be converted to a big endian 64 bit unsigned integer,
+      omitted.  When the id is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
       but then all leading bytes that are equal to 0 are removed before encoding.  (For example, when the
       integer is less than 256 only one byte is encoded.) When the input id is a string the raw bytes are
       encoded as base32hex.
     </td>
   </tr>
   <tr>
-    <td>d1</td>
+    <td><code>d1</code></td>
     <td>
-      The last character of the string in the id variable.
-      If id variable is empty then, the value is the character _ (U+005F).
+      The last character of the string in the <code>id</code> variable.
+      If <code>id</code> variable is empty then, the value is the character _ (U+005F).
     </td>
   </tr>
   <tr>
-    <td>d2</td>
+    <td><code>d2</code></td>
     <td>
-      The second last character of the string in the id variable.
-      If the id variable has less than 2 characters then, the value is the character _ (U+005F).
+      The second last character of the string in the <code>id</code> variable.
+      If the <code>id</code> variable has less than 2 characters then, the value is the character _ (U+005F).
     </td>
   </tr>
   <tr>
-    <td>d3</td>
+    <td><code>d3</code></td>
     <td>
-      The third last character of the string in the id variable.
-      If the id variable has less than 3 characters then, the value is the character _ (U+005F).
+      The third last character of the string in the <code>id</code> variable.
+      If the <code>id</code> variable has less than 3 characters then, the value is the character _ (U+005F).
     </td>
   </tr>
   <tr>
-    <td>d4</td>
+    <td><code>d4</code></td>
     <td>
-      The fourth last character of the string in the id variable.
-      If the id variable has less than 4 characters then, the value is the character _ (U+005F).
+      The fourth last character of the string in the <code>id</code> variable.
+      If the <code>id</code> variable has less than 4 characters then, the value is the character _ (U+005F).
     </td>
   </tr>
   <tr>
-    <td>id64</td>
+    <td><code>id64</code></td>
     <td>
       The input id encoded as a [[rfc4648#section-5|base64url]] string (using the digits A-Z, a-z, 0-9, -
       (minus) and _ (underline)) with padding included. Because the padding character is '=', it must
       be URL-encoded as "%3D'.  When the id is an unsigned integer it must first be converted to a big
-      endian 64 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding. 
+      endian 32 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding. 
       (For example, when the integer is less than 256 only one byte is encoded.) When the input id is
-      a string its raw bytes are encoded as base64url.
+      a string its raw bytes are encoded as [[rfc4648#section-5|base64url]].
     </td>
   </tr>
 </table>
