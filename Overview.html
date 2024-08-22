@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="3aeaf3cbaa5ce1392268e6747e9ae1363a6409e7" name="revision">
+  <meta content="58ea5038ead513a784305fc7fb6d1b359f388785" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1693,9 +1693,9 @@ from <var>entry bytes</var>.</p>
       <li data-md>
        <p>Otherwise the bias is 0.</p>
       <li data-md>
-       <p>Read the sparse bit set <a data-link-type="dfn" href="#mapping-entry-codepoints" id="ref-for-mapping-entry-codepoints">codePoints</a> from <var>entry bytes</var> following <a href="#sparse-bit-set-decoding">§ 5.2.2.3 Sparse Bit Set</a>. For each
-code point add the bias value to it and then add the result to the code point set in <var>entry</var>. If there are not enough
-bytes remaining to fully decode the sparse bit set then, this encoding is invalid return an error.</p>
+       <p>Read the sparse bit set <a data-link-type="dfn" href="#mapping-entry-codepoints" id="ref-for-mapping-entry-codepoints">codePoints</a> from <var>entry bytes</var> with bias following <a href="#sparse-bit-set-decoding">§ 5.2.2.3 Sparse Bit Set</a>.
+Add the resulting code point set to <var>entry</var>. If the sparse bit set decoding failed then, this encoding is invalid return
+an error.</p>
      </ul>
     <li data-md>
      <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑧">formatFlags</a> bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.</p>
@@ -1787,11 +1787,9 @@ are invalid.</p>
    <p>The inputs to this algorithm are:</p>
    <ul>
     <li data-md>
-     <p><var>H</var>: the tree height, <var>H</var>, from the header byte.</p>
-    <li data-md>
-     <p><var>B</var>: the branch factor, <var>B</var>, from the header byte.</p>
-    <li data-md>
      <p><var>treeData</var>: array of bytes to be decoded.</p>
+    <li data-md>
+     <p><var>bias</var>: unsigned integer value added to each decoded set member.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -1801,10 +1799,13 @@ are invalid.</p>
    <p>The algorithm, using a FIFO (first in first out) queue <var>Q</var>:</p>
    <ol>
     <li data-md>
+     <p>Remove the first byte from <var>treeData</var>. This is the header byte. Determine <var>H</var> the tree height and <var>B</var> the
+ branch factor following <a data-link-type="dfn" href="#sparse-bit-set" id="ref-for-sparse-bit-set①">Sparse Bit Set</a>.</p>
+    <li data-md>
      <p>If <var>H</var> is greater than the "Maximum Height" in the <a data-link-type="dfn" href="#branch-factor-encoding" id="ref-for-branch-factor-encoding①">Branch Factor Encoding</a> table in the row for <var>B</var> then,
  the encoding is invalid, return an error.</p>
     <li data-md>
-     <p>If <var>H</var> is equal to 0, then this is an empty set and no bytes of <var>treeData</var> are consumed. Return an empty set.</p>
+     <p>If <var>H</var> is equal to 0, then this is an empty set and no further bytes of <var>treeData</var> are consumed. Return an empty set.</p>
     <li data-md>
      <p>Insert the tuple (0, 1) into <var>Q</var>.</p>
     <li data-md>
@@ -1826,16 +1827,16 @@ are invalid.</p>
  were less than <var>B</var> bits left in <var>treeData</var>, then <var>treeData</var> is malformed, return an error.</p>
     <li data-md>
      <p>If all bits <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i> are 0, then insert all integers in the interval
-[<var>start</var>, <var>start</var> + <var>B</var><sup><var>H</var> - <var>depth</var> + 1</sup>)
+[<var>start</var> + <var>bias</var>, <var>start</var> + <var>bias</var> + <var>B</var><sup><var>H</var> - <var>depth</var> + 1</sup>)
 into <var>S</var>. Go to step 5.</p>
     <li data-md>
      <p>For each <i>v<sub>i</sub></i> which is equal to 1 in <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i>:
  If <var>depth</var> is equal to <var>H</var> add
- integer <var>start</var> + <i>i</i> - 1 to <var>S</var>. Otherwise, insert the tuple
+ integer <var>start</var> + <var>bias</var> + <i>i</i> - 1 to <var>S</var>. Otherwise, insert the tuple
  (<var>start</var> + (i - 1) * <var>B</var><sup><var>H</var> - <var>depth</var></sup>, <var>depth</var> + 1)
  into <var>Q</var>.</p>
     <li data-md>
-     <p>Go to step 7.</p>
+     <p>Go to step 8.</p>
    </ol>
    <p class="note" role="note"><span class="marker">Note:</span> when encoding sparse bit sets the encoder can use any of the possible branching factors, but it is recommended to
 use 4 as that has <a href="https://github.com/w3c/PFE-analysis/blob/main/results/set_encoding_branch_factor.md">been shown</a> to give the smallest encodings for most unicode code point sets typically encountered.</p>
@@ -3152,7 +3153,7 @@ let dfnPanelData = {
 "per-table-brotli-patch-compatibilityid": {"dfnID":"per-table-brotli-patch-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-per-table-brotli-patch-compatibilityid"}],"title":"6.3.1. Applying Per Table Brotli Patches"}],"url":"#per-table-brotli-patch-compatibilityid"},
 "per-table-brotli-patch-format": {"dfnID":"per-table-brotli-patch-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-per-table-brotli-patch-format"}],"title":"6.3.1. Applying Per Table Brotli Patches"}],"url":"#per-table-brotli-patch-format"},
 "per-table-brotli-patch-patches": {"dfnID":"per-table-brotli-patch-patches","dfnText":"patches","external":false,"refSections":[{"refs":[{"id":"ref-for-per-table-brotli-patch-patches"}],"title":"6.3. Per Table Brotli"},{"refs":[{"id":"ref-for-per-table-brotli-patch-patches\u2460"},{"id":"ref-for-per-table-brotli-patch-patches\u2461"},{"id":"ref-for-per-table-brotli-patch-patches\u2462"},{"id":"ref-for-per-table-brotli-patch-patches\u2463"},{"id":"ref-for-per-table-brotli-patch-patches\u2464"}],"title":"6.3.1. Applying Per Table Brotli Patches"}],"url":"#per-table-brotli-patch-patches"},
-"sparse-bit-set": {"dfnID":"sparse-bit-set","dfnText":"Sparse Bit Set","external":false,"refSections":[{"refs":[{"id":"ref-for-sparse-bit-set"}],"title":"5.2.2. Patch Map Table: Format 2"}],"url":"#sparse-bit-set"},
+"sparse-bit-set": {"dfnID":"sparse-bit-set","dfnText":"Sparse Bit Set","external":false,"refSections":[{"refs":[{"id":"ref-for-sparse-bit-set"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-sparse-bit-set\u2460"}],"title":"5.2.2.3. Sparse Bit Set"}],"url":"#sparse-bit-set"},
 "tablepatch": {"dfnID":"tablepatch","dfnText":"TablePatch","external":false,"refSections":[{"refs":[{"id":"ref-for-tablepatch"},{"id":"ref-for-tablepatch\u2460"}],"title":"6.3. Per Table Brotli"},{"refs":[{"id":"ref-for-tablepatch\u2461"}],"title":"6.3.1. Applying Per Table Brotli Patches"}],"url":"#tablepatch"},
 "tablepatch-brotlistream": {"dfnID":"tablepatch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-tablepatch-brotlistream"}],"title":"6.3. Per Table Brotli"},{"refs":[{"id":"ref-for-tablepatch-brotlistream\u2460"},{"id":"ref-for-tablepatch-brotlistream\u2461"},{"id":"ref-for-tablepatch-brotlistream\u2462"},{"id":"ref-for-tablepatch-brotlistream\u2463"}],"title":"6.3.1. Applying Per Table Brotli Patches"}],"url":"#tablepatch-brotlistream"},
 "tablepatch-flags": {"dfnID":"tablepatch-flags","dfnText":"flags","external":false,"refSections":[{"refs":[{"id":"ref-for-tablepatch-flags"},{"id":"ref-for-tablepatch-flags\u2460"}],"title":"6.3.1. Applying Per Table Brotli Patches"}],"url":"#tablepatch-flags"},
