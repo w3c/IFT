@@ -1137,7 +1137,8 @@ The algorithm:
 1.  Check that the <var>patch map</var> has [=Format 2 Patch Map/format=] equal to 2 and is valid according to the requirements in
      [[#patch-map-format-2]] (requirements are marked with a "must"). If it is not return an error.
 
-2.  Initialize <var>last entry id</var> to 0, <var>current byte</var> to 0, and <var>current id string byte</var> to 0.
+2.  If the [=Format 2 Patch Map/entryIdStringData=] offset is 0 then initialize <var>last entry id</var> to 0. Otherwise initialize
+     it to an empty byte string. Set <var>current byte</var> to 0, and <var>current id string byte</var> to 0.
 
 3.  Invoke [$Interpret Format 2 Patch Map Entry$], [=Format 2 Patch Map/entryCount=] times. For each invocation:
 
@@ -1191,7 +1192,8 @@ The algorithm:
 1.  For the all steps whenever data is loaded from <var>entry bytes</var> increment <var>consumed bytes</var> with the
      number of bytes read.
 
-2.  If <var>id string bytes</var> is not present then, set <var>entry id</var> = <var>last entry id</var> + 1.
+2.  If <var>id string bytes</var> is not present then, set <var>entry id</var> = <var>last entry id</var> + 1. Otherwise set
+     <var>entry id</var> = <var>last entry id</var>.
 
 3.  Set the patch encoding of <var>entry</var> to <var>default patch encoding</var>.
 
