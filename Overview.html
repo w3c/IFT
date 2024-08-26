@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="58ea5038ead513a784305fc7fb6d1b359f388785" name="revision">
+  <meta content="a56c6eafa3ec9e31981c22807c08a777842b571a" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1590,15 +1590,16 @@ being requested.</p>
     <li data-md>
      <p>Check that the <var>patch map</var> has <a data-link-type="dfn" href="#format-2-patch-map-format" id="ref-for-format-2-patch-map-format">format</a> equal to 2 and is valid according to the requirements in <a href="#patch-map-format-2">§ 5.2.2 Patch Map Table: Format 2</a> (requirements are marked with a "must"). If it is not return an error.</p>
     <li data-md>
-     <p>Initialize <var>last entry id</var> to 0, <var>current byte</var> to 0, and <var>current id string byte</var> to 0.</p>
+     <p>If the <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata③">entryIdStringData</a> offset is 0 then initialize <var>last entry id</var> to 0. Otherwise initialize
+ it to an empty byte string. Set <var>current byte</var> to 0, and <var>current id string byte</var> to 0.</p>
     <li data-md>
      <p>Invoke <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map-entry" id="ref-for-abstract-opdef-interpret-format-2-patch-map-entry①">Interpret Format 2 Patch Map Entry</a>, <a data-link-type="dfn" href="#format-2-patch-map-entrycount" id="ref-for-format-2-patch-map-entrycount①">entryCount</a> times. For each invocation:</p>
      <ul>
       <li data-md>
        <p>pass in the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entries" id="ref-for-format-2-patch-map-entries">entries</a>[<var>current byte</var>] to
  the end of <var>patch map</var>,
- the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata③">entryIdStringData</a>[<var>current id string byte</var>]
- to the end of <var>patch map</var> if <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata④">entryIdStringData</a> is non zero, <var>last entry id</var>, <a data-link-type="dfn" href="#format-2-patch-map-defaultpatchencoding" id="ref-for-format-2-patch-map-defaultpatchencoding①">defaultPatchEncoding</a>, and <a data-link-type="dfn" href="#format-2-patch-map-uritemplate" id="ref-for-format-2-patch-map-uritemplate">uriTemplate</a>.</p>
+ the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata④">entryIdStringData</a>[<var>current id string byte</var>]
+ to the end of <var>patch map</var> if <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata⑤">entryIdStringData</a> is non zero, <var>last entry id</var>, <a data-link-type="dfn" href="#format-2-patch-map-defaultpatchencoding" id="ref-for-format-2-patch-map-defaultpatchencoding①">defaultPatchEncoding</a>, and <a data-link-type="dfn" href="#format-2-patch-map-uritemplate" id="ref-for-format-2-patch-map-uritemplate">uriTemplate</a>.</p>
       <li data-md>
        <p>Set <var>last entry id</var> to the returned entry id.</p>
       <li data-md>
@@ -1644,7 +1645,7 @@ being requested.</p>
      <p>For the all steps whenever data is loaded from <var>entry bytes</var> increment <var>consumed bytes</var> with the
  number of bytes read.</p>
     <li data-md>
-     <p>If <var>id string bytes</var> is not present then, set <var>entry id</var> = <var>last entry id</var> + 1.</p>
+     <p>If <var>id string bytes</var> is not present then, set <var>entry id</var> = <var>last entry id</var> + 1. Otherwise set <var>entry id</var> = <var>last entry id</var>.</p>
     <li data-md>
      <p>Set the patch encoding of <var>entry</var> to <var>default patch encoding</var>.</p>
     <li data-md>
@@ -3108,7 +3109,7 @@ let dfnPanelData = {
 "format-2-patch-map-defaultpatchencoding": {"dfnID":"format-2-patch-map-defaultpatchencoding","dfnText":"defaultPatchEncoding","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchencoding\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-defaultpatchencoding"},
 "format-2-patch-map-entries": {"dfnID":"format-2-patch-map-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entries"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entries"},
 "format-2-patch-map-entrycount": {"dfnID":"format-2-patch-map-entrycount","dfnText":"entryCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entrycount"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entrycount\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entrycount"},
-"format-2-patch-map-entryidstringdata": {"dfnID":"format-2-patch-map-entryidstringdata","dfnText":"entryIdStringData","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2460"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2461"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata\u2462"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2463"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entryidstringdata"},
+"format-2-patch-map-entryidstringdata": {"dfnID":"format-2-patch-map-entryidstringdata","dfnText":"entryIdStringData","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2460"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2461"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata\u2462"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2463"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2464"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entryidstringdata"},
 "format-2-patch-map-format": {"dfnID":"format-2-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-format"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-format"},
 "format-2-patch-map-uritemplate": {"dfnID":"format-2-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-uritemplate"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-uritemplate"},
 "full-invalidation": {"dfnID":"full-invalidation","dfnText":"Full Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-full-invalidation"},{"id":"ref-for-full-invalidation\u2460"},{"id":"ref-for-full-invalidation\u2461"}],"title":"4.2. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-full-invalidation\u2462"},{"id":"ref-for-full-invalidation\u2463"}],"title":"6.1. Formats Summary"},{"refs":[{"id":"ref-for-full-invalidation\u2464"}],"title":"7.1. Encoding Considerations"}],"url":"#full-invalidation"},
