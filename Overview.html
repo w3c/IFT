@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="88022e4975c403c00cdf2f4d0f9457bcd9cb55cf" name="revision">
+  <meta content="a8e318551e8da0b79096ec4db59b2cb4d550a5b0" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -697,6 +697,7 @@ be loaded over multiple requests where each request incrementally adds additiona
       <li><a href="#font-patch-invalidations"><span class="secno">4.1</span> <span class="content">Patch Invalidations</span></a>
       <li><a href="#extend-font-subset"><span class="secno">4.2</span> <span class="content">Incremental Font Extension Algorithm</span></a>
       <li><a href="#fully-expanding-a-font"><span class="secno">4.3</span> <span class="content">Fully Expanding a Font</span></a>
+      <li><a href="#caching-incremental-fonts"><span class="secno">4.4</span> <span class="content">Caching Extended Incremental Fonts</span></a>
      </ol>
     <li>
      <a href="#font-format-extensions"><span class="secno">5</span> <span class="content">Extensions to the Font Format</span></a>
@@ -1139,6 +1140,11 @@ patches to be applied.</p>
 is considered to intersect all entries in the <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection①">Check entry intersection</a> step. Return the resulting font subset as
 the <var>expanded font</var>.</p>
    </ol>
+   <h3 class="heading settled" data-level="4.4" id="caching-incremental-fonts"><span class="secno">4.4. </span><span class="content">Caching Extended Incremental Fonts</span><a class="self-link" href="#caching-incremental-fonts"></a></h3>
+   <p>Incremental fonts that have been extended contain all of the state needed to perform any future extension operations according
+to the procedures in this section. So if an incremental font needs to be stored or cached for future use by a client it is sufficient to
+store only the font binary produced by the most recent application of the extension algorithm. It is not necessary to retain the initial
+font or any versions produced by prior extensions.</p>
    <h2 class="heading settled" data-level="5" id="font-format-extensions"><span class="secno">5. </span><span class="content">Extensions to the Font Format</span><a class="self-link" href="#font-format-extensions"></a></h2>
    <p>An <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑦">incremental font</a> follows the existing <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> format, but includes two new <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map①">patch maps</a>. All incremental fonts must contain the 'IFT ' table. The 'IFTX' table is optional. When both tables are
 present, the mapping of the font as a whole is the union of the mappings of the two tables. The two new tables are used only in this
