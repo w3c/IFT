@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="8bc90930185a4cad076e9f94b8a30951a9745b02" name="revision">
+  <meta content="88022e4975c403c00cdf2f4d0f9457bcd9cb55cf" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1209,9 +1209,11 @@ the encoded bytes at the start of every iteration to pick up any changes made in
      <tr>
       <td>uint24
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-glyphcount">glyphCount</dfn>
-      <td>Number of glyphs that mappings are provided for.
-        Must match the numGlyphs field from <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a> if present, or if numGlyphs is 65,535 then glyphCount
-        must be greater than or equal to 65,535.
+      <td>
+       Number of glyphs that mappings are provided for.
+        Must match the number of glyphs in the the font file. 
+       <p class="note" role="note"><span class="marker">Note:</span> the number of glyphs in the font is encoded in the font file. At the time of writing, this value is listed in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a> table; however, future font format extensions may use alternate tables to encode the value for number of
+        glyphs.</p>
      <tr>
       <td>Offset32
       <td>glyphMapOffset
