@@ -361,6 +361,16 @@ Every patch is categorized into one of three types, depending on how it does or 
 
 The invalidation behavior of a specific patch is encoded in its format number, which can be found in [[#font-patch-formats-summary]].
 
+Default Layout Features {#default-layout-features}
+--------------------------------------------------
+
+Most text shapers have a set of [[open-type/featuretags|layout features]] which are always enabled and thus always required in an
+incrementally loaded font. [[#feature-tag-list]] collects a list of features that at the time of writing are known to be required
+by default in common shaper implementations. When forming a [=font subset definition=] as input to the extension algorithm the client
+should typically include all features found in [[#feature-tag-list]] in the subset definition. However, in some cases the client might
+know that the specific shaper which will be used may not make use of some features in [[#feature-tag-list]] and may
+opt to exclude those unused features from the subset definition.
+
 <h3 algorithm id="extend-font-subset">Incremental Font Extension Algorithm</h2>
 
 <dfn abstract-op>Extend an Incremental Font Subset</dfn>
