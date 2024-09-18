@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="b8b9c5d175b1c84b670b38172ced14909651004e" name="revision">
+  <meta content="f82318493ba5dcc8d7d07caab3f0331fa414ec15" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -2492,6 +2492,10 @@ encoding. For example, when segmenting an encoder could put code points that are
 segment, and then those that are frequent only in Japanese and Chinese into another segment, and so on. Then the code points that
 are frequent in only one language can be handled in the usual way. This will result in less even segment sizes, but means that 
 loading high-frequency patches for any one of the languages will not pull in lower-frequency glyphs.</p>
+   <p><b>Include default layout features</b></p>
+   <p><a href="#feature-tag-list">Appendix A: Default Feature Tags</a> collects a list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a> which are commonly used by default. Since the features
+in this list will typically always be used by shapers, for best performance encoders should typically not make any of these features
+optional in the encoding of a font.</p>
    <p><b>Maintaining Functional Equivalence</b></p>
    <p>As discussed in <a href="#encoding">§ 7 Encoding</a> an encoder should preserve the functionality of the original font. Fonts are complex
 and often contain interactions between code points so maintaining functional equivalence with a partial copy of the font can be tricky.
