@@ -69,6 +69,15 @@ spec:fetch; type:dfn; for:/; text:response
     "publisher": "What WG",
     "title": "Fetch Standard",
     "date": "17 June 2024"
+  },
+
+  "enabling-typography": {
+    "href": "https://tiro.com/John/Enabling_Typography_(OTL).pdf",
+    "authors": ["John Hudson"],
+    "status": "Note",
+    "publisher": "John Hudson",
+    "title": "Enabling Typography: towards a general model of OpenType Layout",
+    "date": "April 15th, 2014"
   }
 }
 </pre>
@@ -349,6 +358,16 @@ Every patch is categorized into one of three types, depending on how it does or 
     'IFT ' and 'IFTX' [[#patch-map-table]] will not change.
 
 The invalidation behavior of a specific patch is encoded in its format number, which can be found in [[#font-patch-formats-summary]].
+
+Default Layout Features {#default-layout-features}
+--------------------------------------------------
+
+Most text shapers have a set of [[open-type/featuretags|layout features]] which are always enabled and thus always required in an
+incrementally loaded font. [[#feature-tag-list]] collects a list of features that at the time of writing are known to be required
+by default in common shaper implementations. When forming a [=font subset definition=] as input to the extension algorithm the client
+should typically include all features found in [[#feature-tag-list]] in the subset definition. However, in some cases the client might
+know that the specific shaper which will be used may not make use of some features in [[#feature-tag-list]] and may
+opt to exclude those unused features from the subset definition.
 
 <h3 algorithm id="extend-font-subset">Incremental Font Extension Algorithm</h2>
 
@@ -2182,6 +2201,12 @@ segment, and then those that are frequent only in Japanese and Chinese into anot
 are frequent in only one language can be handled in the usual way. This will result in less even segment sizes, but means that 
 loading high-frequency patches for any one of the languages will not pull in lower-frequency glyphs.
 
+<b>Include default layout features</b>
+
+[[#feature-tag-list]] collects a list of [[open-type/featuretags|layout features]] which are commonly used by default. Since the features
+in this list will typically always be used by shapers, for best performance encoders should typically not make any of these features
+optional in the encoding of a font.
+
 <b>Maintaining Functional Equivalence</b>
 
 As discussed in [[#encoding]] an encoder should preserve the functionality of the original font. Fonts are complex
@@ -2395,3 +2420,23 @@ Since the <a href="https://www.w3.org/TR/2023/WD-IFT-20230530/">Working
   <li>Complete rewrite of the specification. Separate 'Patch Subset' and 'Range Request' methods have been removed in favour
       of a single unified approach.</li>
 </ul>
+
+
+<h2 id="feature-tag-list">
+Appendix A: Default Feature Tags</h2>
+
+<em>This appendix is not normative.</em> It provides a list of [[open-type/featuretags|layout features]] which are considered
+to be used by default in most shaper implementations. This list was assembled from:
+
+*  [[open-type/featurelist|OpenType Layout Feature Registry]]
+
+*  Features which are listed as "default on" in [[enabling-typography]]
+
+*  Features which are in default set in the
+    <a href="https://github.com/harfbuzz/harfbuzz/blob/main/src/hb-subset-input.cc">harfbuzz subsetter</a>.
+
+<b>Layout Features used by Default in Shapers</b>
+<pre class=include>
+<!-- Edit feature-registry.csv to update this table. -->
+path: feature-registry.html
+</pre>
