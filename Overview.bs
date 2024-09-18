@@ -257,12 +257,10 @@ font feature selection. For example a <code>@font-face</code> could include two 
 Offline Usage {#offline-usage}
 ------------------------------
 
-Special consideration must be taken when saving a page for offline usage that uses an incrementally
-transferred font since the saved page won't be able to increment the font if content changes (eg.
-due to JavaScript execution). In these cases the page saving mechanism should fully expand the incremental font
+In some cases a user agent may wish to save a web page for offline use. Saved pages may be viewed while there is no network connection
+and thus it won't be possible to request any additional patches referenced by an incremental font. Since it won't be possible extend
+incremental fonts if content changes (eg. due to JavaScript execution), the page saving mechanism should fully expand the incremental font
 by invoking [$Fully Expand a Font Subset$] and replace references to the incremental font with the fully expanded one.
-
-<!-- TODO: I'm wondering about this. Should the norm really be to download the whole font "just in case"? -->
 
 Definitions {#definitions}
 ===============================
