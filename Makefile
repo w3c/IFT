@@ -1,6 +1,6 @@
 all: Overview.html
 
-Overview.html: Overview.bs
+Overview.html: Overview.bs feature-registry.html
 	bikeshed spec Overview.bs
 
 feature-registry.html: feature-registry.csv registry_to_html.py
