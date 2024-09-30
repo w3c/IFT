@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="b0fe8556e0a5bbadabfa30a65c33328d03d9e1ce" name="revision">
+  <meta content="9a847d01678cd3d42cade08c8c9bb0b91e2591e0" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -2324,7 +2324,7 @@ is based on the experience of building an encoder implementation during developm
 understanding (at the time of writing) of how to generate a high performance encoding which meets requirements 1 through 4 of <a href="#encoding">§ 7 Encoding</a> and thus preserves all functionality/behavior of the original font being encoded.</p>
    <p><b>About <a href="#table-keyed">§ 6.2 Table Keyed</a> patches</b></p>
    <p>A <a href="#table-keyed">§ 6.2 Table Keyed</a> patch can change the contents of some font tables and not others. Each patched table typically needs to be
-relative to a specific table content, but other tables can have different contents. Therefore as long as a <a href="#table-keyed">§ 6.2 Table Keyed</a> patch does not alter the tables containing glyph data it can be compatible with <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches and therefore be only <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation④">Partially Invalidating</a> (in that it will invalidate other <a href="#table-keyed">§ 6.2 Table Keyed</a> patches but not <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches. Additionally two sets of <a href="#table-keyed">§ 6.2 Table Keyed</a> patches can be independent of each other if they do not
+relative to a specific table content, but other tables can have different contents. Therefore as long as a <a href="#table-keyed">§ 6.2 Table Keyed</a> patch does not alter the tables containing glyph data it can be compatible with <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches and therefore be only <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation④">Partially Invalidating</a> (in that it will invalidate other <a href="#table-keyed">§ 6.2 Table Keyed</a> patches but not <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches). Additionally two sets of <a href="#table-keyed">§ 6.2 Table Keyed</a> patches can be independent of each other if they do not
 modify any of the same tables.  For example, one could use <a href="#table-keyed">§ 6.2 Table Keyed</a> patches for all
 content other than the glyph tables but then use another set of <a href="#table-keyed">§ 6.2 Table Keyed</a> patches for those tables rather than <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches, and each of these could in theory be <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation⑤">Partially Invalidating</a>—leaving them
 mutually dependent but independent of one another.</p>
@@ -2347,8 +2347,8 @@ are limited to updating outline and variation delta data but the number needed s
 get patches for typical content. For invalidating patch types it is necessary to make patch requests in series. This means that if some
 content requires multiple segments then, multiple network round trips may be needed. Glyph keyed patches on the other hand are not
 invalidating and the patches can be fetched in parallel, needing only a single round trip.</p>
-   <p>At the extremes of the two types of <a href="#table-keyed">§ 6.2 Table Keyed</a> patches are most appropriate for fonts with sizable non-outline data that only require a
-small number of patches. <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches are most appropriate for fonts where the vast majority of data consists of glyph
+   <p>At the extremes of the two types, <a href="#table-keyed">§ 6.2 Table Keyed</a> patches, are most appropriate for fonts with sizable non-outline data that only require
+a small number of patches. <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches are most appropriate for fonts where the vast majority of data consists of glyph
 outlines, which is true of many existing CJK fonts.</p>
    <p>For fonts that are in-between, or in cases where fine-grained segmentation of glyph data is desired but segmentation of data
 in other tables is still needed, it can be desirable to mix the <a href="#table-keyed">§ 6.2 Table Keyed</a> and <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patch types in this
