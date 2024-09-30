@@ -2015,7 +2015,7 @@ A [[#table-keyed]] patch can change the contents of some font tables and not oth
 relative to a specific table content, but other tables can have different contents. Therefore as long as a [[#table-keyed]]
 patch does not alter the tables containing glyph data it can be compatible with [[#glyph-keyed]] patches and therefore be only
 [=Partial Invalidation|Partially Invalidating=] (in that it will invalidate other [[#table-keyed]] patches but not
-[[#glyph-keyed]] patches. Additionally two sets of [[#table-keyed]] patches can be independent of each other if they do not
+[[#glyph-keyed]] patches). Additionally two sets of [[#table-keyed]] patches can be independent of each other if they do not
 modify any of the same tables.  For example, one could use [[#table-keyed]] patches for all
 content other than the glyph tables but then use another set of [[#table-keyed]] patches for those tables rather than
 [[#glyph-keyed]] patches, and each of these could in theory be [=Partial Invalidation|Partially Invalidating=]—leaving them
@@ -2046,8 +2046,8 @@ get patches for typical content. For invalidating patch types it is necessary to
 content requires multiple segments then, multiple network round trips may be needed. Glyph keyed patches on the other hand are not
 invalidating and the patches can be fetched in parallel, needing only a single round trip.
 
-At the extremes of the two types of [[#table-keyed]] patches are most appropriate for fonts with sizable non-outline data that only require a
-small number of patches. [[#glyph-keyed]] patches are most appropriate for fonts where the vast majority of data consists of glyph
+At the extremes of the two types, [[#table-keyed]] patches, are most appropriate for fonts with sizable non-outline data that only require
+a small number of patches. [[#glyph-keyed]] patches are most appropriate for fonts where the vast majority of data consists of glyph
 outlines, which is true of many existing CJK fonts.
 
 For fonts that are in-between, or in cases where fine-grained segmentation of glyph data is desired but segmentation of data
