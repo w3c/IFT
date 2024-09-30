@@ -579,7 +579,7 @@ Incremental Font Transfer and WOFF2 {#ift-and-woff2}
 is taken. If an incremental font will be encoded by WOFF2 for transfer:
 
 1.  If the WOFF2 encoding will include a transformed glyf and loca table ([[WOFF2#glyf_table_format]]) then, the incremental
-     font should not contain [[#per-table-brotli]] patches which modify either the glyf or loca table. The WOFF2 format does not
+     font should not contain [[#per-table]] patches which modify either the glyf or loca table. The WOFF2 format does not
      guarantee the specific bytes that result from decoding a transformed glyf and loca table. [[#glyph-keyed]] patches may be used
      in conjunction with a transformed glyf and loca table.
 
@@ -1617,7 +1617,7 @@ Formats Summary {#font-patch-formats-summary}
 
 The following patch formats are defined by this specification:
 
-* [[#per-table-brotli]]: a collection of brotli encoded binary diffs that use tables from a [=font subset=] as bases.
+* [[#per-table]]: a collection of brotli encoded binary diffs that use tables from a [=font subset=] as bases.
 
 * [[#glyph-keyed]]: a collection of opaque binary blobs, each associated with a glyph id and table.
 
@@ -1634,12 +1634,12 @@ The following format numbers are used to identify the patch format and invalidat
 
   <tr>
     <td>1</td>
-    <td>[[#per-table-brotli]]</td>
+    <td>[[#per-table]]</td>
     <td>[=Full Invalidation=]</td>
   </tr>
   <tr>
     <td>2</td>
-    <td>[[#per-table-brotli]]</td>
+    <td>[[#per-table]]</td>
     <td>[=Partial Invalidation=]</td>
   </tr>
 
@@ -1650,25 +1650,25 @@ The following format numbers are used to identify the patch format and invalidat
   </tr>
 </table>
 
-Per Table Brotli {#per-table-brotli}
+Per Table {#per-table}
 --------------------------------------------------
 
-A per table brotli patch contains a collection of patches which are applied to the individual
+A per table patch contains a collection of patches which are applied to the individual
 [[open-type/otff#table-directory|font tables]] in the input font file. Each table patch is encoded with
 [[!RFC7932|brotli compression]] using the corresponding table from the input font file as a
-[[Shared-Brotli#section-3.2|shared LZ77 dictionary]]. A per table brotli encoded patch consists of a short header followed
+[[Shared-Brotli#section-3.2|shared LZ77 dictionary]]. A per table encoded patch consists of a short header followed
 by one or more brotli encoded patches. In addition to patching tables, patches may also replace (existing table data is not used)
 or remove tables in a [=font subset=].
 
-<dfn>Per table brotli patch</dfn> encoding:
+<dfn>Per table patch</dfn> encoding:
 <table>
   <tr>
     <th>Type</th><th>Name</th><th>Description</th>
   </tr>
   <tr>
     <td>Tag</td>
-    <td><dfn for="Per table brotli patch">format</dfn></td>
-    <td>Identifies the encoding as per table brotli, set to 'ifbt'</td>
+    <td><dfn for="Per table patch">format</dfn></td>
+    <td>Identifies the encoding as per table, set to 'ifpt'</td>
   </tr>
   <tr>
     <td>uint32</td>
@@ -1677,7 +1677,7 @@ or remove tables in a [=font subset=].
   </tr>
   <tr>
     <td>uint32</td>
-    <td><dfn for="Per table brotli patch">compatibilityId</dfn>[4]</td>
+    <td><dfn for="Per table patch">compatibilityId</dfn>[4]</td>
     <td>The id of the [=font subset=] which this patch can be applied too. See [[#font-patch-invalidations]].</td>
   </tr>
   <tr>
@@ -1687,12 +1687,12 @@ or remove tables in a [=font subset=].
   </tr>
   <tr>
     <td>Offset32</td>
-    <td><dfn for="Per table brotli patch">patches</dfn>[patchesCount+1]</td>
+    <td><dfn for="Per table patch">patches</dfn>[patchesCount+1]</td>
     <td>Each entry is an offset from the start of this table to a [=TablePatch=]. Offsets must be sorted in ascending order.</td>
   </tr>
 </table>
 
-The difference between two consecutive offsets in the [=Per table brotli patch/patches=] array gives the size
+The difference between two consecutive offsets in the [=Per table patch/patches=] array gives the size
 of that [=TablePatch=].
 
 <dfn>TablePatch</dfn> encoding:
@@ -1722,18 +1722,18 @@ of that [=TablePatch=].
   </tr>
 </table>
 
-<h4 algorithm id="apply-per-table-brotli">Applying Per Table Brotli Patches</h4>
+<h4 algorithm id="apply-per-table">Applying Per Table Patches</h4>
 
-This [=patch application algorithm=] is used to apply a per table brotli patch to extend a [=font subset=] to cover additional code points,
+This [=patch application algorithm=] is used to apply a per table patch to extend a [=font subset=] to cover additional code points,
 features, and/or design-variation space.
 
-<dfn abstract-op>Apply per table brotli patch</dfn>
+<dfn abstract-op>Apply per table patch</dfn>
 
 The inputs to this algorithm are:
 
 * <var>base font subset</var>: a [=font subset=] which is to be extended.
 
-* <var>patch</var>: a [=per table brotli patch=] to be applied to <var>base font subset</var>.
+* <var>patch</var>: a [=per table patch=] to be applied to <var>base font subset</var>.
 
 * <var>compatibility id</var>: The ID number from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.
 
@@ -1745,11 +1745,11 @@ The algorithm:
 
 1. Initialize <var>extended font subset</var> to be an empty font with no tables.
 
-2. Check that the [=Per table brotli patch/format=] field in <var>patch</var> is equal to 'ifbt', if it is
+2. Check that the [=Per table patch/format=] field in <var>patch</var> is equal to 'ifpt', if it is
     not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
     an error.
 
-3. Check that the [=Per table brotli patch/compatibilityId=] field in <var>patch</var> is equal to <var>compatibility id</var>.
+3. Check that the [=Per table patch/compatibilityId=] field in <var>patch</var> is equal to <var>compatibility id</var>.
     If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
     has failed, return an error.
 
@@ -1758,16 +1758,16 @@ The algorithm:
     type specification. That entry includes a checksum for the table data. When an existing table is copied unmodified, the client
     can re-use the checksum from the entry in the source font. Otherwise a new checksum will need to be computed.
 
-5. For each entry in [=Per table brotli patch/patches=], with index <var>i</var>:
+5. For each entry in [=Per table patch/patches=], with index <var>i</var>:
 
     *  Find the [=TablePatch=] associated with index <var>i</var>. The object starts at the offset
-        [=Per table brotli patch/patches|patches[i]=] (inclusive) and ends at the offset
-        [=Per table brotli patch/patches|patches[i+1]=] (exclusive). Both offsets are relative to the start of
+        [=Per table patch/patches|patches[i]=] (inclusive) and ends at the offset
+        [=Per table patch/patches|patches[i+1]=] (exclusive). Both offsets are relative to the start of
         the <var>patch</var>.
 
-    *  If an entry in [=Per table brotli patch/patches=] was previously applied that has the same [=TablePatch/tag=] as
+    *  If an entry in [=Per table patch/patches=] was previously applied that has the same [=TablePatch/tag=] as
         this entry, then ignore this entry and continue the iteration to the next one. Entries are processed in same order as they
-        are listed in the [=Per table brotli patch/patches=] array.
+        are listed in the [=Per table patch/patches=] array.
 
 
     *  If bit 0 (least significant bit) of [=TablePatch/flags=] is set, then decode [=TablePatch/brotliStream=] following
@@ -2009,20 +2009,20 @@ is based on the experience of building an encoder implementation during developm
 understanding (at the time of writing) of how to generate a high performance encoding which meets requirements 1 through 4 of
 [[#encoding]] and thus preserves all functionality/behavior of the original font being encoded.
 
-<b>About [[#per-table-brotli]] patches</b>
+<b>About [[#per-table]] patches</b>
 
-A [[#per-table-brotli]] patch can change the contents of some font tables and not others. Each patched table typically needs to be
-relative to a specific table content, but other tables can have different contents. Therefore as long as a [[#per-table-brotli]]
+A [[#per-table]] patch can change the contents of some font tables and not others. Each patched table typically needs to be
+relative to a specific table content, but other tables can have different contents. Therefore as long as a [[#per-table]]
 patch does not alter the tables containing glyph data it can be compatible with [[#glyph-keyed]] patches and therefore be only
-[=Partial Invalidation|Partially Invalidating=] (in that it will invalidate other [[#per-table-brotli]] patches but not
-[[#glyph-keyed]] patches. Additionally two sets of [[#per-table-brotli]] patches can be independent of each other if they do not
-modify any of the same tables.  For example, one could use [[#per-table-brotli]] patches for all
-content other than the glyph tables but then use another set of [[#per-table-brotli]] patches for those tables rather than
+[=Partial Invalidation|Partially Invalidating=] (in that it will invalidate other [[#per-table]] patches but not
+[[#glyph-keyed]] patches. Additionally two sets of [[#per-table]] patches can be independent of each other if they do not
+modify any of the same tables.  For example, one could use [[#per-table]] patches for all
+content other than the glyph tables but then use another set of [[#per-table]] patches for those tables rather than
 [[#glyph-keyed]] patches, and each of these could in theory be [=Partial Invalidation|Partially Invalidating=]—leaving them
 mutually dependent but independent of one another.
 
-An application of a [[#per-table-brotli]] patch will typically alter the IFT or IFTX table it was was listed in to add a new set
-of patches to further extend the font. This means that the total set of [[#per-table-brotli]] patches forms a graph,
+An application of a [[#per-table]] patch will typically alter the IFT or IFTX table it was was listed in to add a new set
+of patches to further extend the font. This means that the total set of [[#per-table]] patches forms a graph,
 in which each font subset in the segmentation is a node and each patch is an edge. This also means that patches of these types
 are typically downloaded and applied in series, which has implications for the performance of this patch type relative to latency.
 
@@ -2036,7 +2036,7 @@ which can significantly reduce the number of round trips needed relative to the 
 
 <b>Choosing patch formats for an encoding</b>
 
-All encodings must chose one or more patch types to use. [[#per-table-brotli]] patches allow
+All encodings must chose one or more patch types to use. [[#per-table]] patches allow
 all types of data in the font to be patched, but because this type is at least [=Partial Invalidation|Partially Invalidating=],
 the total number of patches needed increases exponentially with the number of segments rather than linearly. [[#glyph-keyed]] patches
 are limited to updating outline and variation delta data but the number needed scales linearly with number of segments.
@@ -2046,21 +2046,21 @@ get patches for typical content. For invalidating patch types it is necessary to
 content requires multiple segments then, multiple network round trips may be needed. Glyph keyed patches on the other hand are not
 invalidating and the patches can be fetched in parallel, needing only a single round trip.
 
-At the extremes the two types of Brotli patches are most appropriate for fonts with sizable non-outline data that only require a
-small number of patches. Glyph keyed patches are most appropriate for fonts where the vast majority of data consists of glyph outlines,
-which is true of many existing CJK fonts.
+At the extremes of the two types of [[#per-table]] patches are most appropriate for fonts with sizable non-outline data that only require a
+small number of patches. [[#glyph-keyed]] patches are most appropriate for fonts where the vast majority of data consists of glyph
+outlines, which is true of many existing CJK fonts.
 
 For fonts that are in-between, or in cases where fine-grained segmentation of glyph data is desired but segmentation of data
-in other tables is still needed, it can be desirable to mix the [[#per-table-brotli]] and [[#glyph-keyed]] patch types in this
+in other tables is still needed, it can be desirable to mix the [[#per-table]] and [[#glyph-keyed]] patch types in this
 way:
 
-1. Keep all brotli patch entries in one mapping table and all glyph keyed entries in the other mapping table.
+1. Keep all per table patch entries in one mapping table and all glyph keyed entries in the other mapping table.
 
-2. Use per-table brotli patches to update all tables except for the tables touched by the glyph keyed patches (outline,
+2. Use per table patches to update all tables except for the tables touched by the glyph keyed patches (outline,
     variation deltas, and the glyph keyed patch mapping table). These patches should use a small number of large segments to keep
     the patch count reasonable.
 
-3. Because glyph keyed patches reference the specific glyph IDs that are updated, the per-table brotli patches must not change
+3. Because glyph keyed patches reference the specific glyph IDs that are updated, the per table patches must not change
     the glyph to glyph ID assignments used in the original font; otherwise, the glyph IDs listed in the glyph keyed patches may
     become incorrect. In font subsetters this is often available as an option called "retain glyph IDs".
 
@@ -2080,7 +2080,7 @@ patches needed.
 
 <b>Managing the number of patches</b>
 
-Using brotli patches along side a large number of segments can result in a very large number of patches needed, which can have two
+Using [[#per-table]] patches along side a large number of segments can result in a very large number of patches needed, which can have two
 negative effects. First, the storage space needed for all of the pre-generated patches could be undesirably large. Second, more 
 patches will generally mean lower CDN cache performance, because a higher number of patches represents a higher number of paths
 from a given subset to a given subset, with different paths being taken by different users depending on the content they access.
@@ -2124,9 +2124,9 @@ As discussed in [[#encoding]] an encoder should preserve the functionality of th
 and often contain interactions between code points so maintaining functional equivalence with a partial copy of the font can be tricky.
 The next two subsections discuss maintaining functional equivalent using the different patch types.
 
-<b>Brotli patches</b>
+<b>Per table patches</b>
 
-When preparing [[#per-table-brotli]] patches, one means of achieving functional equivalence is to leverage an
+When preparing [[#per-table]] patches, one means of achieving functional equivalence is to leverage an
 existing font subsetter implementation to produce font subsets that retain the functionality of the original font. The IFT patches
 can then be derived from these subsets.
 
@@ -2136,7 +2136,7 @@ beyond the scope of this document). It typically involves a reachability analysi
 relative to the font subset definition to see which portions can be reached by any possible content covered by the subset definition.
 Any reachable data is retained in the generated font subset, while any unreachable data may be removed.
 
-In the following example psuedo code a font subsetter is used to generate an IFT encoded font that utilizes only Brotli patches:
+In the following example psuedo code a font subsetter is used to generate an IFT encoded font that utilizes only per table patches:
 
 ```
 # Encode a font (full_font) into an incremental font that starts at base_subset_def
@@ -2164,7 +2164,7 @@ encode_node(full_font, base_font, cur_def, subset_definitions):
     next_fonts += (next_font, next_def, patch_url)
 
   for each (next_font, next_def, patch_url) in next_fonts:
-    patch = brotli_patch_diff(base_font, next_font)
+    patch = per_table_patch_diff(base_font, next_font)
     patches += (patch, patch_url)
   
   return base_font, patches
@@ -2243,7 +2243,7 @@ the file. Encoders should consider placing the mapping tables (IFT and IFTX) plu
 mapping tables (cmap) as early as possible in the file. This will allow optimized client implementations to access the 
 patch mapping prior to receiving all of the font data and potentially initiate requests for any required patches earlier.
 
-Likewise per table brotli patches have a separate brotli stream for each patched table and the format allows these streams to be placed
+Likewise per table patches have a separate brotli stream for each patched table and the format allows these streams to be placed
 in any order in the patch file. So for the same reasons encoders should consider placing updates to the mapping tables plus any
 additional tables needed to decode the mapping tables as early as possible in the patch file.
 
