@@ -212,7 +212,7 @@ however only part of a font is expected to be needed. For example:
 An alternative to incremental transfer is to break a font into distinct subsets (typically by script)
 and use the unicode range feature of @font-face to load only the subsets needed. However, this can alter
 the rendering of some content [[PFE-report#fail-subset]] if there are layout rules between characters in
-different subsets. Incremental font transfer does not suffer from this issue as it can emcompass the
+different subsets. Incremental font transfer does not suffer from this issue as it can encompass the
 original font and all of it's layout rules.
 
 ### Reducing the Number of Network Requests ### {#reduce-requests}
@@ -394,7 +394,7 @@ The inputs to this algorithm are:
 
 *  <var>font subset</var>: an [=incremental font|incremental=] [=font subset=].
 
-*  <var>original font subset URI</var>: an [[rfc3986#section-4.3|absolute URI]] which identifies the location of the original incremental
+*  <var>initial font subset URI</var>: an [[rfc3986#section-4.3|absolute URI]] which identifies the location of the initial incremental
     font that <var>font subset</var> was derived from.
 
 *  <var>target subset definition</var>: the [=font subset definition=] that the client wants to extend <var>font subset</var> to cover.
@@ -439,7 +439,7 @@ The algorithm:
     *  Otherwise select exactly one of the [=No Invalidation=] entries in <var>entry list</var>.
         The criteria for selecting the single entry is left up to the implementation to decide.
 
-8.  Load <var>patch file</var> by invoking [$Load patch file$] with the <var>original font subset URI</var> as the original font URI and
+8.  Load <var>patch file</var> by invoking [$Load patch file$] with the <var>initial font subset URI</var> as the initial font URI and
     the <var>entry</var> patch URI as the patch URI. The total number of patches that a client can load and apply during a single execution
     of this algorithm is limited to:
 
@@ -505,7 +505,7 @@ The inputs to this algorithm are:
 *   <var>Patch URI</var>: A [[rfc3986#section-4.1|URI Reference]] identifying the patch file to load. As a URI reference this may be a
      relative path.
 
-*   <var>Original Font URI</var>: An [[rfc3986#section-4.3|absolute URI]] which identifies the original incremental font that the
+*   <var>Initial Font URI</var>: An [[rfc3986#section-4.3|absolute URI]] which identifies the initial incremental font that the
      patch URI was derived from.
 
 The algorithm outputs:
@@ -514,7 +514,7 @@ The algorithm outputs:
 
 The algorithm:
 
-1.  Perform [[rfc3986#section-5|reference resolution]] on <var>Patch URI</var> using <var>Original Font URI</var> as the base URI to
+1.  Perform [[rfc3986#section-5|reference resolution]] on <var>Patch URI</var> using <var>Initial Font URI</var> as the base URI to
      produce the <var>target URI</var>.
 
 2.  Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers,
