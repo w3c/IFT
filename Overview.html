@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="cdddb50677d9472e6bba0426c0b4b78e5775cc26" name="revision">
+  <meta content="dae2dc1472f2280bfb926fefc6cd933eaa04f2bc" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -867,7 +867,7 @@ headline.</p>
    <p>An alternative to incremental transfer is to break a font into distinct subsets (typically by script)
 and use the unicode range feature of @font-face to load only the subsets needed. However, this can alter
 the rendering of some content <a href="https://www.w3.org/TR/PFE-evaluation/#fail-subset">Progressive Font Enrichment: Evaluation Report § fail-subset</a> if there are layout rules between characters in
-different subsets. Incremental font transfer does not suffer from this issue as it can emcompass the
+different subsets. Incremental font transfer does not suffer from this issue as it can encompass the
 original font and all of it’s layout rules.</p>
    <h4 class="heading settled" data-level="1.4.1" id="reduce-requests"><span class="secno">1.4.1. </span><span class="content">Reducing the Number of Network Requests</span><a class="self-link" href="#reduce-requests"></a></h4>
    <p>As discussed in the previous section the most basic implementation of incremental font transfer will
@@ -1002,7 +1002,7 @@ code points, layout features and/or design space.</p>
     <li data-md>
      <p><var>font subset</var>: an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font④">incremental</a> <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑧">font subset</a>.</p>
     <li data-md>
-     <p><var>original font subset URI</var>: an <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.3">absolute URI</a> which identifies the location of the original incremental
+     <p><var>initial font subset URI</var>: an <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.3">absolute URI</a> which identifies the location of the initial incremental
 font that <var>font subset</var> was derived from.</p>
     <li data-md>
      <p><var>target subset definition</var>: the <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition④">font subset definition</a> that the client wants to extend <var>font subset</var> to cover.</p>
@@ -1045,7 +1045,7 @@ The criteria for selecting the single entry is left up to the implementation to 
 The criteria for selecting the single entry is left up to the implementation to decide.</p>
      </ul>
     <li data-md>
-     <p>Load <var>patch file</var> by invoking <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the <var>original font subset URI</var> as the original font URI and
+     <p>Load <var>patch file</var> by invoking <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the <var>initial font subset URI</var> as the initial font URI and
 the <var>entry</var> patch URI as the patch URI. The total number of patches that a client can load and apply during a single execution
 of this algorithm is limited to:</p>
      <ul>
@@ -1109,7 +1109,7 @@ intersecting patches in parallel, since no patch application will invalidate any
      <p><var>Patch URI</var>: A <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.1">URI Reference</a> identifying the patch file to load. As a URI reference this may be a
  relative path.</p>
     <li data-md>
-     <p><var>Original Font URI</var>: An <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.3">absolute URI</a> which identifies the original incremental font that the
+     <p><var>Initial Font URI</var>: An <a href="https://www.rfc-editor.org/rfc/rfc3986#section-4.3">absolute URI</a> which identifies the initial incremental font that the
  patch URI was derived from.</p>
    </ul>
    <p>The algorithm outputs:</p>
@@ -1120,7 +1120,7 @@ intersecting patches in parallel, since no patch application will invalidate any
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Perform <a href="https://www.rfc-editor.org/rfc/rfc3986#section-5">reference resolution</a> on <var>Patch URI</var> using <var>Original Font URI</var> as the base URI to
+     <p>Perform <a href="https://www.rfc-editor.org/rfc/rfc3986#section-5">reference resolution</a> on <var>Patch URI</var> using <var>Initial Font URI</var> as the base URI to
  produce the <var>target URI</var>.</p>
     <li data-md>
      <p>Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers, <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> should be used. When using <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> a request for patches should use the same CORS settings as the initial request for
