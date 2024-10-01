@@ -337,16 +337,29 @@ Extending a Font Subset {#extending-font-subset}
 ================================================
 
 This section defines the algorithm that a client uses to extend an [=incremental font|incremental=] [=font subset=] to cover additional
-code points, layout features and/or design space.
+code points, layout features and/or design space. It is an iterative algorithm which, repeatedly:
+
+*  parses the font subset's patch mappings into a list of available patches.
+
+*  checks if any available patches match the content to be rendered.
+
+*  selects one available patch, loads it, and then applies it.
+
+This process repeats until no more relevant patches remain. Since a patch application may alter the patch mappings
+embedded in the font file, on each iteration the patch map in the current version of the font subset is reparsed to see what  patches
+remain. Thus the font subset is on each iteration is the source of truth for what patches are available, and fully encapsulates the current
+state of the augmentation process.
 
 Patch Invalidations {#font-patch-invalidations}
 -----------------------------------------------
 
-The application of a patch to an incremental [=font subset=] may invalidate some or all of the other mapped patches, so that if
-one of those were to be applied the result would be a corrupt
-[=font subset|font=]. Patch validity is tracked by the compatibility ID from the [[#patch-map-table]]. Every patch has a
-compatibility ID encoded within it which needs to match the compatibility ID from the [[#patch-map-table]] which lists that patch.
-Every patch is categorized into one of three types, depending on how it does or does not invalidate other patches in the map(s):
+The patch mappings embedded in a font subset encode an invalidation mode for each patch. The invalidation mode for a patch
+marks which other patches will no longer be valid after the application of that patch. This invalidation mode is used by the
+extension algorithm to determine which patches are compatible and influences the order of selection. Patch validity during patch
+application is enforced by the compatibility ID from the [[#patch-map-table]]. Every patch has a compatibility ID encoded within it
+which needs to match the compatibility ID from the [[#patch-map-table]] which lists that patch.
+
+There are three invalidation modes:
 
 * <dfn dfn>Full Invalidation</dfn>: when this patch is applied all other patches currently listed in the [=font subset=] are invalidated.
     The compatibility ID in both the 'IFT ' and 'IFTX' [[#patch-map-table]] will be changed.
@@ -357,7 +370,8 @@ Every patch is categorized into one of three types, depending on how it does or 
 * <dfn dfn>No Invalidation</dfn>: no other patches will be invalidated by the application of this patch. The compatibility ID of the
     'IFT ' and 'IFTX' [[#patch-map-table]] will not change.
 
-The invalidation behavior of a specific patch is encoded in its format number, which can be found in [[#font-patch-formats-summary]].
+The invalidation mode of a specific patch is encoded in its format number, which can be found in [[#font-patch-formats-summary]].
+
 
 Default Layout Features {#default-layout-features}
 --------------------------------------------------
@@ -370,6 +384,9 @@ know that the specific shaper which will be used may not make use of some featur
 opt to exclude those unused features from the subset definition.
 
 <h3 algorithm id="extend-font-subset">Incremental Font Extension Algorithm</h2>
+
+The following algorithm is used by a client to extend an [=incremental font|incremental=] [=font subset=] to cover additional
+code points, layout features and/or design space.
 
 <dfn abstract-op>Extend an Incremental Font Subset</dfn>
 
