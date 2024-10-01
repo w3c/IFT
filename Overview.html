@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="ff2fe5a903cd8707b1dcb43216b487c4e7c7cf84" name="revision">
+  <meta content="926f033991d842eccb7b63ad7c9b7193150f1697" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -2492,14 +2492,26 @@ to a segment and determining what other glyphs must be included in the patch tha
 be substituted for a glyph included in the segment by code point.  In some cases a glyph might only be needed when multiple segments
 have been loaded, in which case that glyph can be added to the patch corresponding to any of those segments. (This can be true of 
 a ligature or a pre-composed accented character.) Finally, after the initial analysis of segments the same glyph might be needed 
-when loading the patches for two or more segments.  There are three main strategies for dealing with that situation:</p>
+when loading the patches for two or more segments.  There are four main strategies for dealing with that situation:</p>
    <ol>
     <li data-md>
      <p>Two or more segments can be combined to be contained within a single patch. This avoids duplicating the common glyphs, but
  increases the segment’s size.</p>
     <li data-md>
-     <p>Alternatively, the glyph can be included in more than one of the patches that correspond to those segments. This will keep the
- segments smaller, at the cost of duplicating the glyph’s data into multiple patches.</p>
+     <p>The common glyphs can be placed in their own patch and then mapping entries set up to trigger the load of that common patch along side
+ any of the segments that will need it. For example if 'c' is a common segment needed by segments 'a' and 'b' then, you could
+ have the following mapping entries (via a format 2 mapping table):</p>
+     <ul>
+      <li data-md>
+       <p>subset definition a → segment a</p>
+      <li data-md>
+       <p>subset definition b → segment b</p>
+      <li data-md>
+       <p>subset definition a union subset definition b → segment c</p>
+     </ul>
+    <li data-md>
+     <p>Alternatively, the glyph can be included in more than one of the patches that correspond to those segments at the cost of duplicating
+ the glyph’s data into multiple patches.</p>
     <li data-md>
      <p>Lastly, the common glyph can be moved into the initial font. This avoids increasing segment sizes and duplicating the glyph data,
  but will increase the size of the initial font. It also means that the glyph’s data is always loaded, even when not needed. This

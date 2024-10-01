@@ -2206,15 +2206,22 @@ to a segment and determining what other glyphs must be included in the patch tha
 be substituted for a glyph included in the segment by code point.  In some cases a glyph might only be needed when multiple segments
 have been loaded, in which case that glyph can be added to the patch corresponding to any of those segments. (This can be true of 
 a ligature or a pre-composed accented character.) Finally, after the initial analysis of segments the same glyph might be needed 
-when loading the patches for two or more segments.  There are three main strategies for dealing with that situation:
+when loading the patches for two or more segments.  There are four main strategies for dealing with that situation:
 
 1.  Two or more segments can be combined to be contained within a single patch. This avoids duplicating the common glyphs, but
      increases the segment's size.
 
-2.  Alternatively, the glyph can be included in more than one of the patches that correspond to those segments. This will keep the
-     segments smaller, at the cost of duplicating the glyph's data into multiple patches.
+2.  The common glyphs can be placed in their own patch and then mapping entries set up to trigger the load of that common patch along side
+     any of the segments that will need it. For example if 'c' is a common segment needed by segments 'a' and 'b' then, you could
+     have the following mapping entries (via a format 2 mapping table):
+     *  subset definition a → segment a
+     *  subset definition b → segment b
+     *  subset definition a union subset definition b → segment c
 
-3.  Lastly, the common glyph can be moved into the initial font. This avoids increasing segment sizes and duplicating the glyph data,
+3.  Alternatively, the glyph can be included in more than one of the patches that correspond to those segments at the cost of duplicating
+     the glyph's data into multiple patches.
+
+4.  Lastly, the common glyph can be moved into the initial font. This avoids increasing segment sizes and duplicating the glyph data,
      but will increase the size of the initial font. It also means that the glyph's data is always loaded, even when not needed. This
      can be useful for glyphs that are required in many segments or are otherwise complicating the segmentation.
 
