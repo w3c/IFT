@@ -1687,8 +1687,8 @@ or remove tables in a [=font subset=].
   </tr>
   <tr>
     <td>Tag</td>
-    <td><dfn for="Table keyed patch">format</dfn></td>
-    <td>Identifies the encoding as table keyed, set to 'iftk'</td>
+    <td>format</td>
+    <td>Identifies the encoding as table keyed, must be set to 'iftk'</td>
   </tr>
   <tr>
     <td>uint32</td>
@@ -1732,8 +1732,8 @@ of that [=TablePatch=].
   </tr>
   <tr>
     <td>uint32</td>
-    <td>length</td>
-    <td>The uncompressed length of [=TablePatch/brotliStream=].</td>
+    <td><dfn for="TablePatch">maxUncompressedLength</dfn></td>
+    <td>The maximum uncompressed length of [=TablePatch/brotliStream=].</td>
   </tr>
   <tr>
     <td>uint8</td>
@@ -1765,9 +1765,8 @@ The algorithm:
 
 1. Initialize <var>extended font subset</var> to be an empty font with no tables.
 
-2. Check that the [=Table keyed patch/format=] field in <var>patch</var> is equal to 'iftk', if it is
-    not equal then <var>patch</var> is not correctly formatted. Patch application has failed, return
-    an error.
+2. Check that the <var>patch</var> is valid according to the requirements in [[#table-keyed]] (requirements are marked with a
+    "must") and all [=TablePatch=]'s are contained within <var>patch</var>. If it is not return an error.
 
 3. Check that the [=Table keyed patch/compatibilityId=] field in <var>patch</var> is equal to <var>compatibility id</var>.
     If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
@@ -1790,22 +1789,25 @@ The algorithm:
         are listed in the [=Table keyed patch/patches=] array.
 
 
-    *  If bit 0 (least significant bit) of [=TablePatch/flags=] is set, then decode [=TablePatch/brotliStream=] following
-        [[RFC7932#section-10]]. No shared dictionary is used. Add a [[open-type/otff#table-directory|table]] to
-        <var>extended font subset</var> identified by [=TablePatch/tag=] with it's contents set to the decoded [=TablePatch/brotliStream=].
-
     *  If bit 1 of [=TablePatch/flags=] is set, then do not copy or add a [[open-type/otff#table-directory|table]] to
-        <var>extended font subset</var> identified by [=TablePatch/tag=].
+        <var>extended font subset</var> identified by [=TablePatch/tag=]. Continue to the next entry.
+
+    *  If bit 0 (least significant bit) of [=TablePatch/flags=] is set, then decode [=TablePatch/brotliStream=] following
+        [[RFC7932#section-10]]. No shared dictionary is used. If the decoded data is larger than [=TablePatch/maxUncompressedLength=]
+        return an error. If there is any data in [=TablePatch/brotliStream=] which was not used by the decoding process return an error.
+        Add a [[open-type/otff#table-directory|table]] to <var>extended font subset</var> identified by
+        [=TablePatch/tag=] with it's contents set to the decoded [=TablePatch/brotliStream=]. Continue to the next entry.
 
     *  Otherwise, decode [=TablePatch/brotliStream=] following [[RFC7932#section-10]] and using the
         [[open-type/otff#table-directory|table]] identified by [=TablePatch/tag=] in <var>base font subset</var>
-        as a [[Shared-Brotli#section-3.2|shared LZ77 dictionary]]. Add a [[open-type/otff#table-directory|table]] to
-        <var>extended font subset</var> identified by [=TablePatch/tag=] with it's contents set to the decoded [=TablePatch/brotliStream=].
+        as a [[Shared-Brotli#section-3.2|shared LZ77 dictionary]]. If no such table exists return an error. If the decoded data is
+        larger than [=TablePatch/maxUncompressedLength=] return an error. If there is any data in [=TablePatch/brotliStream=] which was
+        not used by the decoding process return an error. Add a [[open-type/otff#table-directory|table]] to
+        <var>extended font subset</var> identified by [=TablePatch/tag=] with it's contents set to the decoded
+        [=TablePatch/brotliStream=].
 
 6. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
     the entries processed in step 5, add a copy of that table to <var>extended font subset</var>.
-
-
 
 Glyph Keyed {#glyph-keyed}
 --------------------------
