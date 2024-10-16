@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="f088d8aa65f12d652e10de3f12037454f3953d74" name="revision">
+  <meta content="76b46d72d58df9c2d350a4fa85c502042f5ab922" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -2134,7 +2134,7 @@ features, and/or design-variation space.</p>
      <p>Initialize <var>extended font subset</var> to be an empty font with no tables.</p>
     <li data-md>
      <p>Check that the <var>patch</var> is valid according to the requirements in <a href="#table-keyed">§ 6.2 Table Keyed</a> (requirements are marked with a
-"must") and all <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch②">TablePatch</a>'s are contained within <var>patch</var>. If it is not return an error.</p>
+"must") and all <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch②">TablePatch</a>'s are contained within <var>patch</var>. Otherwise, return an error</p>
     <li data-md>
      <p>Check that the <a data-link-type="dfn" href="#table-keyed-patch-compatibilityid" id="ref-for-table-keyed-patch-compatibilityid">compatibilityId</a> field in <var>patch</var> is equal to <var>compatibility id</var>.
 If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
@@ -2179,8 +2179,8 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
       <th>Description
      <tr>
       <td>Tag
-      <td><dfn class="dfn-paneled" data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-format">format</dfn>
-      <td>Identifies the encoding as glyph keyed, set to 'ifgk'
+      <td>format
+      <td>Identifies the encoding as glyph keyed, must be set to 'ifgk'
      <tr>
       <td>uint32
       <td>reserved
@@ -2195,8 +2195,8 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
       <td>The compatibility id of the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑧">font subset</a> which this patch can be applied too. See <a href="#font-patch-invalidations">§ 4.1 Patch Invalidations</a>.
      <tr>
       <td>uint32
-      <td>length
-      <td>The uncompressed length of <a data-link-type="dfn" href="#glyph-keyed-patch-brotlistream" id="ref-for-glyph-keyed-patch-brotlistream">brotliStream</a>.
+      <td><dfn class="dfn-paneled" data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-maxuncompressedlength">maxUncompressedLength</dfn>
+      <td>The maximum uncompressed length of <a data-link-type="dfn" href="#glyph-keyed-patch-brotlistream" id="ref-for-glyph-keyed-patch-brotlistream">brotliStream</a>.
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Glyph keyed patch" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch-brotlistream">brotliStream</dfn>[variable]
@@ -2260,16 +2260,16 @@ features, and/or design-variation space.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Check that the <a data-link-type="dfn" href="#glyph-keyed-patch-format" id="ref-for-glyph-keyed-patch-format">format</a> field in <var>patch</var> is equal to 'ifgk', if it is
-not equal, then <var>patch</var> is not correctly formatted and patch application has failed, return
-an error.</p>
+     <p>Check that the <var>patch</var> is valid according to the requirements in <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> (requirements are marked with a
+"must"). Otherwise, return an error</p>
     <li data-md>
      <p>Check that the <a data-link-type="dfn" href="#glyph-keyed-patch-compatibilityid" id="ref-for-glyph-keyed-patch-compatibilityid">compatibilityId</a> field in <var>patch</var> is equal to <var>compatibility id</var>.
 If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application has
 failed, return an error.</p>
     <li data-md>
      <p>Decode the brotli encoded data in <a data-link-type="dfn" href="#glyph-keyed-patch-brotlistream" id="ref-for-glyph-keyed-patch-brotlistream①">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a>. The
-decoded data is a <a data-link-type="dfn" href="#glyphpatches" id="ref-for-glyphpatches②">GlyphPatches</a> table.</p>
+decoded data is a <a data-link-type="dfn" href="#glyphpatches" id="ref-for-glyphpatches②">GlyphPatches</a> table. If the decoded data is larger than <a data-link-type="dfn" href="#glyph-keyed-patch-maxuncompressedlength" id="ref-for-glyph-keyed-patch-maxuncompressedlength">maxUncompressedLength</a> return an
+error</p>
     <li data-md>
      <p>For each <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a> listed in <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables②">tables</a>, with index <code>i</code>:</p>
      <ul>
@@ -2954,7 +2954,6 @@ to be used by default in most shaper implementations. This list was assembled fr
     <ul>
      <li><a href="#format-1-patch-map-format">dfn for Format 1 Patch Map</a><span>, in § 5.2.1</span>
      <li><a href="#format-2-patch-map-format">dfn for Format 2 Patch Map</a><span>, in § 5.2.2</span>
-     <li><a href="#glyph-keyed-patch-format">dfn for Glyph keyed patch</a><span>, in § 6.3</span>
     </ul>
    <li><a href="#format-1-patch-map">Format 1 Patch Map</a><span>, in § 5.2.1</span>
    <li><a href="#format-2-patch-map">Format 2 Patch Map</a><span>, in § 5.2.2</span>
@@ -2985,7 +2984,12 @@ to be used by default in most shaper implementations. This list was assembled fr
    <li><a href="#mapping-entry">Mapping Entry</a><span>, in § 5.2.2</span>
    <li><a href="#format-1-patch-map-maxentryindex">maxEntryIndex</a><span>, in § 5.2.1</span>
    <li><a href="#format-1-patch-map-maxglyphmapentryindex">maxGlyphMapEntryIndex</a><span>, in § 5.2.1</span>
-   <li><a href="#tablepatch-maxuncompressedlength">maxUncompressedLength</a><span>, in § 6.2</span>
+   <li>
+    maxUncompressedLength
+    <ul>
+     <li><a href="#glyph-keyed-patch-maxuncompressedlength">dfn for Glyph keyed patch</a><span>, in § 6.3</span>
+     <li><a href="#tablepatch-maxuncompressedlength">dfn for TablePatch</a><span>, in § 6.2</span>
+    </ul>
    <li><a href="#no-invalidation">No Invalidation</a><span>, in § 4.1</span>
    <li><a href="#partial-invalidation">Partial Invalidation</a><span>, in § 4.1</span>
    <li><a href="#patch-application-algorithm">patch application algorithm</a><span>, in § 3.2</span>
@@ -3317,7 +3321,7 @@ let dfnPanelData = {
 "glyph-keyed-patch-brotlistream": {"dfnID":"glyph-keyed-patch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-brotlistream"}],"title":"6.3. Glyph Keyed"},{"refs":[{"id":"ref-for-glyph-keyed-patch-brotlistream\u2460"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-brotlistream"},
 "glyph-keyed-patch-compatibilityid": {"dfnID":"glyph-keyed-patch-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-compatibilityid"},{"id":"ref-for-glyph-keyed-patch-compatibilityid\u2460"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-compatibilityid"},
 "glyph-keyed-patch-flags": {"dfnID":"glyph-keyed-patch-flags","dfnText":"flags","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-flags"}],"title":"6.3. Glyph Keyed"}],"url":"#glyph-keyed-patch-flags"},
-"glyph-keyed-patch-format": {"dfnID":"glyph-keyed-patch-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-format"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-format"},
+"glyph-keyed-patch-maxuncompressedlength": {"dfnID":"glyph-keyed-patch-maxuncompressedlength","dfnText":"maxUncompressedLength","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-maxuncompressedlength"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-maxuncompressedlength"},
 "glyph-map": {"dfnID":"glyph-map","dfnText":"Glyph Map","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map"},{"id":"ref-for-glyph-map\u2460"},{"id":"ref-for-glyph-map\u2461"}],"title":"5.2.1. Patch Map Table: Format 1"}],"url":"#glyph-map"},
 "glyph-map-entryindex": {"dfnID":"glyph-map-entryindex","dfnText":"entryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map-entryindex"}],"title":"5.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-glyph-map-entryindex\u2460"}],"title":"5.2.1.2. Remove Entries from Format 1"}],"url":"#glyph-map-entryindex"},
 "glyph-map-firstmappedglyph": {"dfnID":"glyph-map-firstmappedglyph","dfnText":"firstMappedGlyph","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-map-firstmappedglyph"}],"title":"5.2.1. Patch Map Table: Format 1"}],"url":"#glyph-map-firstmappedglyph"},
@@ -3798,7 +3802,7 @@ let refsData = {
 "#glyph-keyed-patch-brotlistream": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#glyph-keyed-patch-brotlistream"},
 "#glyph-keyed-patch-compatibilityid": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#glyph-keyed-patch-compatibilityid"},
 "#glyph-keyed-patch-flags": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#glyph-keyed-patch-flags"},
-"#glyph-keyed-patch-format": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#glyph-keyed-patch-format"},
+"#glyph-keyed-patch-maxuncompressedlength": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#glyph-keyed-patch-maxuncompressedlength"},
 "#glyph-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph map","type":"dfn","url":"#glyph-map"},
 "#glyph-map-entryindex": {"export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryindex","type":"dfn","url":"#glyph-map-entryindex"},
 "#glyph-map-firstmappedglyph": {"export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstmappedglyph","type":"dfn","url":"#glyph-map-firstmappedglyph"},
