@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="76b46d72d58df9c2d350a4fa85c502042f5ab922" name="revision">
+  <meta content="638716059f49ef8de5ced79cf3d2e137355cbd36" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -2283,8 +2283,10 @@ that glyph index.</p>
 offset to the associated glyph data is <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets①">glyphDataOffsets[i * glyphCount + j]</a>. The length
 of the associated glyph data is <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets②">glyphDataOffsets[i * glyphCount + j + 1]</a> minus <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets③">glyphDataOffsets[i * glyphCount + j]</a>.</p>
       <li data-md>
-       <p>The specific process for synthesizing the new table, depends on the specified format of the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Any non-glyph associated data should be copied from the table in <var>base font subset</var>. Tables of the type <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>/<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, or <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> are supported. Entries for tables
-of any other types must be ignored.</p>
+       <p>The specific process for synthesizing the new table, depends on the specified format of the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Any non-glyph associated data should be copied from the table in <var>base font subset</var>. Tables of the type <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, or <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> are supported. Entries for tables
+of any other types must be ignored. When updating <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a> the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a> table must be updated as
+well. No other tables in the font can be modified as a result of this step. In particular this means that a patch cannot add glyph
+with indices  beyond the numGlyphs specified in <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a>.</p>
       <li data-md>
        <p>If <var>base font subset</var> does not have a matching table, return an error.</p>
       <li data-md>
