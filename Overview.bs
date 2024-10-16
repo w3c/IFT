@@ -1824,8 +1824,8 @@ A glyph keyed patch contains a collection of data chunks that are each associate
   </tr>
   <tr>
     <td>Tag</td>
-    <td><dfn for="Glyph keyed patch">format</dfn></td>
-    <td>Identifies the encoding as glyph keyed, set to 'ifgk'</td>
+    <td>format</td>
+    <td>Identifies the encoding as glyph keyed, must be set to 'ifgk'</td>
   </tr>
   <tr>
     <td>uint32</td>
@@ -1844,8 +1844,8 @@ A glyph keyed patch contains a collection of data chunks that are each associate
   </tr>
   <tr>
     <td>uint32</td>
-    <td>length</td>
-    <td>The uncompressed length of [=Glyph keyed patch/brotliStream=].</td>
+    <td><dfn for="Glyph keyed patch">maxUncompressedLength</dfn></td>
+    <td>The maximum uncompressed length of [=Glyph keyed patch/brotliStream=].</td>
   </tr>
   <tr>
     <td>uint8</td>
@@ -1925,16 +1925,17 @@ The algorithm outputs:
 
 The algorithm:
 
-1. Check that the [=Glyph keyed patch/format=] field in <var>patch</var> is equal to 'ifgk', if it is
-    not equal, then <var>patch</var> is not correctly formatted and patch application has failed, return
-    an error.
+1. Check that the <var>patch</var> is valid according to the requirements in [[#glyph-keyed]] (requirements are marked with a
+    "must"). Otherwise, return an error
+
 
 2. Check that the [=Glyph keyed patch/compatibilityId=] field in <var>patch</var> is equal to <var>compatibility id</var>.
     If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application has
     failed, return an error.
 
 3. Decode the brotli encoded data in [=Glyph keyed patch/brotliStream=] following [[RFC7932#section-10]]. The
-    decoded data is a [=GlyphPatches=] table.
+    decoded data is a [=GlyphPatches=] table. If the decoded data is larger than [=Glyph keyed patch/maxUncompressedLength=] return an
+    error
 
 4. For each [[open-type/otff#table-directory|font table]] listed in [=GlyphPatches/tables=], with index <code>i</code>:
 
