@@ -1951,9 +1951,11 @@ The algorithm:
 
     *  The specific process for synthesizing the new table, depends on the specified format of the
         [[open-type/otff#table-directory|table]]. Any non-glyph associated data should be copied from the table in
-        <var>base font subset</var>. Tables of the type [[open-type/glyf|glyf]]/[[open-type/loca|loca]],
+        <var>base font subset</var>. Tables of the type [[open-type/glyf|glyf]],
         [[open-type/gvar|gvar]], [[open-type/cff|CFF]], or [[open-type/cff2|CFF2]] are supported. Entries for tables
-        of any other types must be ignored.
+        of any other types must be ignored. When updating [[open-type/glyf|glyf]] the [[open-type/loca|loca]] table must be updated as
+        well. No other tables in the font can be modified as a result of this step. In particular this means that a patch cannot add glyph
+        with indices  beyond the numGlyphs specified in [[open-type/maxp|maxp]].
 
     *  If <var>base font subset</var> does not have a matching table, return an error.
 
