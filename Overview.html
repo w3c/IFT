@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="638716059f49ef8de5ced79cf3d2e137355cbd36" name="revision">
+  <meta content="4572f5f4fa2ff38e0255681dffe1b3a3bfa0d9ff" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -2216,11 +2216,14 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
      <tr>
       <td>uint8
       <td>tableCount
-      <td>The number of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> the patch has data for.
+      <td> The number of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> the patch has data for. Must be in ascending sorted order and must not
+      contain any duplicate values. For sorting tag values are interpreted as a 4 byte big endian unsigned integer and sorted by the
+      integer value. 
      <tr>
       <td>uint16/uint24
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphids">glyphIds</dfn>[glyphCount]
-      <td>An array of glyph indices included in the patch. Elements are uint24’s if bit 0 (least significant bit) of <a data-link-type="dfn" href="#glyph-keyed-patch-flags" id="ref-for-glyph-keyed-patch-flags">flags</a> is set, otherwise elements are uint16’s.
+      <td> An array of glyph indices included in the patch. Elements are uint24’s if bit 0 (least significant bit) of <a data-link-type="dfn" href="#glyph-keyed-patch-flags" id="ref-for-glyph-keyed-patch-flags">flags</a> is set, otherwise elements are uint16’s. Must be in ascending sorted order and must not
+      contain any duplicate values. 
      <tr>
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-tables">tables</dfn>[tableCount]
