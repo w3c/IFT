@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="0d75a6c2ab28a5270ebf37ea59f9960ede1371e6" name="revision">
+  <meta content="45dd96de6b7bb7bea3aaae1d1cebfe878e29ccb4" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1060,7 +1060,8 @@ an existing <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset�
 changes encoded according to the format is a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch">font patch</a>. Each <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format">patch format</a> has an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-application-algorithm">patch application algorithm</dfn> which takes a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③">font subset</a> and a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch①">font patch</a> encoded in the <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format①">patch format</a> as input and outputs an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a>.</p>
    <h3 class="heading settled" data-level="3.3" id="patch-map-dfn"><span class="secno">3.3. </span><span class="content">Patch Map</span><a class="self-link" href="#patch-map-dfn"></a></h3>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map">patch map</dfn> is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">open type table</a> which encodes a collection of mappings from <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">font subset definitions</a> to URIs which host <a href="#font-patch-formats">patches</a> that extend the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①">incremental font</a>. A <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map">patch map</a> table encodes a list of <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map-entries">patch map entries</dfn>, where each entry has a key and value.
-The key is a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">font subset definition</a> and the value is a URI, the <a href="#font-patch-formats">§ 6 Font Patch Formats</a> used by the data at the URI, and the <a href="#font-patch-invalidations">compatibility ID</a> of the patch map table. More details of the format of patch maps can be found
+The key is one or more <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">font subset definition</a> and the value is a URI, the <a href="#font-patch-formats">§ 6 Font Patch Formats</a> used by the data at the URI, and
+the <a href="#font-patch-invalidations">compatibility ID</a> of the patch map table. More details of the format of patch maps can be found
 in <a href="#font-format-extensions">§ 5 Extensions to the Font Format</a>.</p>
    <p><a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries">Patch Map Entry</a> summary:</p>
    <table>
@@ -1072,7 +1073,7 @@ in <a href="#font-format-extensions">§ 5 Extensions to the Font Format</a>.</
       <td>
        <ul>
         <li data-md>
-         <p><a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition②">font subset definition</a></p>
+         <p>One or more <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition②">font subset definition</a></p>
        </ul>
       <td>
        <ul>
@@ -1215,8 +1216,9 @@ intersecting patches in parallel, since no patch application will invalidate any
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>For each set in <var>subset definition</var> (code points, feature tags, design space) check if the set intersects
- the corresponding set from <var>mapping entry</var>. A set intersects when:</p>
+     <p>For each subset definition in <var>mapping entry</var> and each set in <var>subset definition</var> (code points, feature tags,
+ design space) check if the set intersects the corresponding set from the <var>mapping entry</var> subset definition. A set
+ intersects when:</p>
      <table>
       <tbody>
        <tr>
@@ -1237,6 +1239,122 @@ intersecting patches in parallel, since no patch application will invalidate any
     <li data-md>
      <p>If all sets checked in step 1 intersect, then return true for <var>intersects</var> otherwise false.</p>
    </ol>
+   <div class="example" id="example-fc4eb029">
+    <a class="self-link" href="#example-fc4eb029"></a> 
+    <table>
+     <tbody>
+      <tr>
+       <th>mapping entry
+       <th>subset definition
+       <th>intersects?
+      <tr>
+       <td>
+<pre>subset definitions: [
+  {
+    code points: {1, 2, 3},
+    feature tags: {},
+    design space: {}
+  },
+],
+</pre>
+       <td>
+<pre>code points: {2},
+feature tags: {},
+design space: {},
+</pre>
+       <td>true
+      <tr>
+       <td>
+<pre>subset definitions: [
+  {
+    code points: {1, 2, 3},
+    feature tags: {},
+    design space: {}
+  },
+],
+</pre>
+       <td>
+<pre>code points: {5},
+feature tags: {},
+design space: {},
+</pre>
+       <td>false
+      <tr>
+       <td>
+<pre>subset definitions: [
+  {
+    code points: {1, 2, 3},
+    feature tags: {},
+    design space: {}
+  },
+],
+</pre>
+       <td>
+<pre>code points: {2},
+feature tags: {smcp},
+design space: {},
+</pre>
+       <td>true
+      <tr>
+       <td>
+<pre>subset definitions: [
+  {
+    code points: {1, 2, 3},
+    feature tags: {},
+    design space: {}
+  },
+],
+</pre>
+       <td>
+<pre>code points: {},
+feature tags: {smcp},
+design space: {},
+</pre>
+       <td>false
+      <tr>
+       <td>
+<pre>subset definitions: [
+  {
+    code points: {1, 2, 3},
+    feature tags: {},
+    design space: {}
+  },
+  {
+    code points: {4, 5, 6},
+    feature tags: {},
+    design space: {}
+  },
+],
+</pre>
+       <td>
+<pre>code points: {2},
+feature tags: {},
+design space: {},
+</pre>
+       <td>false
+      <tr>
+       <td>
+<pre>subset definitions: [
+  {
+    code points: {1, 2, 3},
+    feature tags: {},
+    design space: {}
+  },
+  {
+    code points: {4, 5, 6},
+    feature tags: {},
+    design space: {}
+  },
+],
+</pre>
+       <td>
+<pre>code points: {2, 6},
+feature tags: {},
+design space: {},
+</pre>
+       <td>true
+    </table>
+   </div>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-load-patch-file">Load patch file</dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
