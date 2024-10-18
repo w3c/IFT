@@ -320,8 +320,8 @@ Patch Map {#patch-map-dfn}
 A <dfn dfn>patch map</dfn> is an [[open-type/otff#table-directory|open type table]] which encodes a collection of mappings from
 [=font subset definition|font subset definitions=] to URIs which host [[#font-patch-formats|patches]] that extend the
 [=incremental font=]. A [=patch map=] table encodes a list of <dfn dfn>patch map entries</dfn>, where each entry has a key and value.
-The key is a [=font subset definition=] and the value is a URI, the [[#font-patch-formats]] used by the data at the URI, and the
-[[#font-patch-invalidations|compatibility ID]] of the patch map table. More details of the format of patch maps can be found
+The key is one or more [=font subset definition=] and the value is a URI, the [[#font-patch-formats]] used by the data at the URI, and
+the [[#font-patch-invalidations|compatibility ID]] of the patch map table. More details of the format of patch maps can be found
 in [[#font-format-extensions]].
 
 [=patch map entries|Patch Map Entry=] summary:
@@ -329,7 +329,7 @@ in [[#font-format-extensions]].
   <tr><th>Key</th><th>Value</th></tr>
   <tr>
     <td>
-      * [=font subset definition=]
+      * One or more [=font subset definition=]
 
     </td>
     <td>
@@ -490,8 +490,9 @@ The algorithm outputs:
 
 The algorithm:
 
-1.  For each set in <var>subset definition</var> (code points, feature tags, design space) check if the set intersects
-     the corresponding set from <var>mapping entry</var>. A set intersects when:
+1.  For each subset definition in <var>mapping entry</var> and each set in <var>subset definition</var> (code points, feature tags,
+     design space) check if the set intersects the corresponding set from the <var>mapping entry</var> subset definition. A set
+     intersects when:
 
      <table>
        <tr>
@@ -509,6 +510,149 @@ The algorithm:
      (tags are equal and the ranges intersect).
 
 2. If all sets checked in step 1 intersect, then return true for <var>intersects</var> otherwise false.
+
+
+<div class=example>
+
+<table>
+  <tr><th>mapping entry</th><th>subset definition</th><th>intersects?</th></tr>
+  <tr>
+    <td>
+    ```
+    subset definitions: [
+      {
+        code points: {1, 2, 3},
+        feature tags: {},
+        design space: {}
+      },
+    ],
+    ```
+    </td>
+    <td>
+    ```
+    code points: {2},
+    feature tags: {},
+    design space: {},
+    ```
+    </td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>
+    ```
+    subset definitions: [
+      {
+        code points: {1, 2, 3},
+        feature tags: {},
+        design space: {}
+      },
+    ],
+    ```
+    </td>
+    <td>
+    ```
+    code points: {5},
+    feature tags: {},
+    design space: {},
+    ```
+    </td>
+    <td>false</td>
+  </tr>
+  <td>
+    ```
+    subset definitions: [
+      {
+        code points: {1, 2, 3},
+        feature tags: {},
+        design space: {}
+      },
+    ],
+    ```
+    </td>
+    <td>
+    ```
+    code points: {2},
+    feature tags: {smcp},
+    design space: {},
+    ```
+    </td>
+    <td>true</td>
+  </tr>
+  <td>
+    ```
+    subset definitions: [
+      {
+        code points: {1, 2, 3},
+        feature tags: {},
+        design space: {}
+      },
+    ],
+    ```
+    </td>
+    <td>
+    ```
+    code points: {},
+    feature tags: {smcp},
+    design space: {},
+    ```
+    </td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>
+    ```
+    subset definitions: [
+      {
+        code points: {1, 2, 3},
+        feature tags: {},
+        design space: {}
+      },
+      {
+        code points: {4, 5, 6},
+        feature tags: {},
+        design space: {}
+      },
+    ],
+    ```
+    </td>
+    <td>
+    ```
+    code points: {2},
+    feature tags: {},
+    design space: {},
+    ```
+    </td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>
+    ```
+    subset definitions: [
+      {
+        code points: {1, 2, 3},
+        feature tags: {},
+        design space: {}
+      },
+      {
+        code points: {4, 5, 6},
+        feature tags: {},
+        design space: {}
+      },
+    ],
+    ```
+    </td>
+    <td>
+    ```
+    code points: {2, 6},
+    feature tags: {},
+    design space: {},
+    ```
+    </td>
+    <td>true</td>
+  </tr>
+</table>
+
+</div>
 
 <dfn abstract-op>Load patch file</dfn>
 
