@@ -1341,14 +1341,16 @@ The algorithm:
 
   <tr>
     <td>uint8</td>
-    <td><dfn for="Mapping Entry">copyCount</dfn></td>
+    <td><dfn for="Mapping Entry">copyModeAndCount</dfn></td>
     <td>
-      Number of entries in the copyIndices list. Only present if [=Mapping Entry/formatFlags=] bit 1 is set.
+      The most significant bit is used to indicate the copy mode, if the bit is set copy mode is "append" otherwise it is "union".
+      The remaining 7 bits are interpreted as a unsigned integer and represent the number of entries in the copyIndices list. This
+      field is only present if [=Mapping Entry/formatFlags=] bit 1 is set.
     </td>
   </tr>
   <tr>
     <td>uint24</td>
-    <td><dfn for="Mapping Entry">copyIndices</dfn>[copyCount]</td>
+    <td><dfn for="Mapping Entry">copyIndices</dfn>[copyModeAndCount]</td>
     <td>
       List of indices from the [=Mapping Entries/entries=] array whose [=font subset definition=] should be copied into this entry. May
       only reference entries that occurred prior to this [=Mapping Entry=] in [=Mapping Entries/entries=]. Only present if
@@ -1523,27 +1525,32 @@ The algorithm:
 
 3.  Set the patch encoding of <var>entry</var> to <var>default patch encoding</var>.
 
-4.  Read [=Mapping Entry/formatFlags=] from <var>entry bytes</var>.
+4.  Add a single [=font subset definition=] to <var>entry</var> with all sets initialized to be empty.
 
-5.  If [=Mapping Entry/formatFlags=] bit 0 is set, then the feature tag and design space lists are present:
+5.  Read [=Mapping Entry/formatFlags=] from <var>entry bytes</var>.
+
+6.  If [=Mapping Entry/formatFlags=] bit 0 is set, then the feature tag and design space lists are present:
 
     *  Read the feature tag list specified by [=Mapping Entry/featureCount=] and [=Mapping Entry/featureTags=] from <var>entry bytes</var>
-        and add the loaded tags to <var>entry</var>.
+        and add the loaded tags to the first [=font subset definition=] in <var>entry</var>.
 
     *  Read the design space segment list specified by [=Mapping Entry/designSpaceCount=] and [=Mapping Entry/designSpaceSegments=]
-        from <var>entry bytes</var> and add the design space segments to <var>entry</var>. Each segment defines an interval from
-        [=Design Space Segment/start=] to [=Design Space Segment/end=] inclusive for the axis identified by [=Design Space Segment/tag=].
-        If any segment has a [=Design Space Segment/start=] which is greater than [=Design Space Segment/end=] then, this encoding is
-        invalid return an error.
+        from <var>entry bytes</var> and add the design space segments to the first [=font subset definition=] in <var>entry</var>. Each
+        segment defines an interval from [=Design Space Segment/start=] to [=Design Space Segment/end=] inclusive for the axis identified
+        by [=Design Space Segment/tag=]. If any segment has a [=Design Space Segment/start=] which is greater than
+        [=Design Space Segment/end=] then, this encoding is invalid return an error.
 
 6.  If [=Mapping Entry/formatFlags=] bit 1 is set, then the copy indices list is present:
 
-    *  Read the copy indices list specified by [=Mapping Entry/copyCount=] and [=Mapping Entry/copyIndices=] from <var>entry bytes</var>.
+    *  Read the copy indices list specified by [=Mapping Entry/copyModeAndCount=] and [=Mapping Entry/copyIndices=] from
+         <var>entry bytes</var>.
 
     *  The copy indices refer to previously loaded entries. 0 is the first [=Mapping Entry=] in [=Mapping Entries/entries=], 1 the second
-         and so on. For each index in [=Mapping Entry/copyIndices=] locate the previously loaded entry with a matching index and
-         add all code points, feature tags, and design space segments from it to <var>entry</var>. If a [=Mapping Entry/copyIndices=]
-         is greater than or equal to the index of this entry then, this encoding is invalid return an error.
+         and so on. For each index in [=Mapping Entry/copyIndices=] locate the previously loaded entry with a matching index.
+         If the most significant bit of [=Mapping Entry/copyModeAndCount=] is set then append all [=font subset definition=]s from
+         the previous entry to <var>entry</var>. Otherwise union all code points, feature tags, and design space segments from
+         all [=font subset definition=]s in the previous entry into the first [=font subset definition=] in <var>entry</var>. If a
+         [=Mapping Entry/copyIndices=] is greater than or equal to the index of this entry then, this encoding is invalid return an error.
 
 7.  If [=Mapping Entry/formatFlags=] bit 2 is set, then an id delta or id string length is present:
 
@@ -1569,8 +1576,8 @@ The algorithm:
     *  Otherwise the bias is 0.
 
     *  Read the sparse bit set [=Mapping Entry/codePoints=] from <var>entry bytes</var> with bias following [[#sparse-bit-set-decoding]].
-        Add the resulting code point set to <var>entry</var>. If the sparse bit set decoding failed then, this encoding is invalid return
-        an error.
+        Add the resulting code point set to the first [=font subset definition=] in <var>entry</var>. If the sparse bit set decoding
+        failed then, this encoding is invalid return an error.
 
 10. If [=Mapping Entry/formatFlags=] bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.
 
