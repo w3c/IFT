@@ -306,8 +306,8 @@ Patch Map {#patch-map-dfn}
 A <dfn dfn>patch map</dfn> is an [[open-type/otff#table-directory|open type table]] which encodes a collection of mappings from
 [=font subset definition|font subset definitions=] to URIs which host [[#font-patch-formats|patches]] that extend the
 [=incremental font=]. A [=patch map=] table encodes a list of <dfn dfn>patch map entries</dfn>, where each entry has a key and value.
-The key is a [=font subset definition=] and the value is a URI, the [[#font-patch-formats]] used by the data at the URI, and the
-[[#font-patch-invalidations|compatibility ID]] of the patch map table. More details of the format of patch maps can be found
+The key is one or more [=font subset definition=] and the value is a URI, the [[#font-patch-formats]] used by the data at the URI, and
+the [[#font-patch-invalidations|compatibility ID]] of the patch map table. More details of the format of patch maps can be found
 in [[#font-format-extensions]].
 
 [=patch map entries|Patch Map Entry=] summary:
@@ -315,7 +315,7 @@ in [[#font-format-extensions]].
   <tr><th>Key</th><th>Value</th></tr>
   <tr>
     <td>
-      * [=font subset definition=]
+      * One or more [=font subset definition=]
 
     </td>
     <td>
@@ -476,8 +476,9 @@ The algorithm outputs:
 
 The algorithm:
 
-1.  For each set in <var>subset definition</var> (code points, feature tags, design space) check if the set intersects
-     the corresponding set from <var>mapping entry</var>. A set intersects when:
+1.  For each subset definition in <var>mapping entry</var> and each set in <var>subset definition</var> (code points, feature tags,
+     design space) check if the set intersects the corresponding set from the <var>mapping entry</var> subset definition. A set
+     intersects when:
 
      <table>
        <tr>
@@ -495,6 +496,149 @@ The algorithm:
      (tags are equal and the ranges intersect).
 
 2. If all sets checked in step 1 intersect, then return true for <var>intersects</var> otherwise false.
+
+
+<div class=example>
+
+<table>
+  <tr><th>mapping entry</th><th>subset definition</th><th>intersects?</th></tr>
+  <tr>
+    <td>
+    ```
+    subset definitions: [
+      {
+        code points: {1, 2, 3},
+        feature tags: {},
+        design space: {}
+      },
+    ],
+    ```
+    </td>
+    <td>
+    ```
+    code points: {2},
+    feature tags: {},
+    design space: {},
+    ```
+    </td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>
+    ```
+    subset definitions: [
+      {
+        code points: {1, 2, 3},
+        feature tags: {},
+        design space: {}
+      },
+    ],
+    ```
+    </td>
+    <td>
+    ```
+    code points: {5},
+    feature tags: {},
+    design space: {},
+    ```
+    </td>
+    <td>false</td>
+  </tr>
+  <td>
+    ```
+    subset definitions: [
+      {
+        code points: {1, 2, 3},
+        feature tags: {},
+        design space: {}
+      },
+    ],
+    ```
+    </td>
+    <td>
+    ```
+    code points: {2},
+    feature tags: {smcp},
+    design space: {},
+    ```
+    </td>
+    <td>true</td>
+  </tr>
+  <td>
+    ```
+    subset definitions: [
+      {
+        code points: {1, 2, 3},
+        feature tags: {},
+        design space: {}
+      },
+    ],
+    ```
+    </td>
+    <td>
+    ```
+    code points: {},
+    feature tags: {smcp},
+    design space: {},
+    ```
+    </td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>
+    ```
+    subset definitions: [
+      {
+        code points: {1, 2, 3},
+        feature tags: {},
+        design space: {}
+      },
+      {
+        code points: {4, 5, 6},
+        feature tags: {},
+        design space: {}
+      },
+    ],
+    ```
+    </td>
+    <td>
+    ```
+    code points: {2},
+    feature tags: {},
+    design space: {},
+    ```
+    </td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>
+    ```
+    subset definitions: [
+      {
+        code points: {1, 2, 3},
+        feature tags: {},
+        design space: {}
+      },
+      {
+        code points: {4, 5, 6},
+        feature tags: {},
+        design space: {}
+      },
+    ],
+    ```
+    </td>
+    <td>
+    ```
+    code points: {2, 6},
+    feature tags: {},
+    design space: {},
+    ```
+    </td>
+    <td>true</td>
+  </tr>
+</table>
+
+</div>
 
 <dfn abstract-op>Load patch file</dfn>
 
@@ -875,8 +1019,8 @@ The algorithm:
 
     *  If the Unicode code point set is empty then, skip this <var>entry index</var>.
 
-    *  Add an [=patch map entries|entry=] to <var>entry list</var> whose subset definition contains only the Unicode code point set and
-        maps to the generated URI, the patch encoding specified by [=Format 1 Patch Map/patchEncoding=], and
+    *  Add an [=patch map entries|entry=] to <var>entry list</var> with one subset definition which contains only the Unicode code point
+        set and maps to the generated URI, the patch encoding specified by [=Format 1 Patch Map/patchEncoding=], and
         [=Format 1 Patch Map/compatibilityId=].
 
 3.  If [=Format 1 Patch Map/featureMapOffset=] is not null then, for each [=FeatureRecord=] and associated [=EntryMapRecord=] in
@@ -918,7 +1062,7 @@ The algorithm:
         specified by [=Format 1 Patch Map/patchEncoding=], and [=Format 1 Patch Map/compatibilityId=]; or if there is an existing
         [=patch map entries|entry=] in <var>entry list</var> which has the same patch URI as the generated URI then
         instead modify the existing entry. Add the constructed set of Unicode code points and [=FeatureRecord/featureTag=] to the new or
-        existing entry's subset definition.
+        existing entry's single subset definition.
 
 4.  Return <var>entry list</var>.
 
@@ -1084,14 +1228,16 @@ The algorithm:
 
   <tr>
     <td>uint8</td>
-    <td><dfn for="Mapping Entry">copyCount</dfn></td>
+    <td><dfn for="Mapping Entry">copyModeAndCount</dfn></td>
     <td>
-      Number of entries in the copyIndices list. Only present if [=Mapping Entry/formatFlags=] bit 1 is set.
+      The most significant bit is used to indicate the copy mode, if the bit is set copy mode is "append" otherwise it is "union".
+      The remaining 7 bits are interpreted as a unsigned integer and represent the number of entries in the copyIndices list. This
+      field is only present if [=Mapping Entry/formatFlags=] bit 1 is set.
     </td>
   </tr>
   <tr>
     <td>uint24</td>
-    <td><dfn for="Mapping Entry">copyIndices</dfn>[copyCount]</td>
+    <td><dfn for="Mapping Entry">copyIndices</dfn>[copyModeAndCount]</td>
     <td>
       List of indices from the [=Mapping Entries/entries=] array whose [=font subset definition=] should be copied into this entry. May
       only reference entries that occurred prior to this [=Mapping Entry=] in [=Mapping Entries/entries=]. Only present if
@@ -1266,27 +1412,32 @@ The algorithm:
 
 3.  Set the patch encoding of <var>entry</var> to <var>default patch encoding</var>.
 
-4.  Read [=Mapping Entry/formatFlags=] from <var>entry bytes</var>.
+4.  Add a single [=font subset definition=] to <var>entry</var> with all sets initialized to be empty.
 
-5.  If [=Mapping Entry/formatFlags=] bit 0 is set, then the feature tag and design space lists are present:
+5.  Read [=Mapping Entry/formatFlags=] from <var>entry bytes</var>.
+
+6.  If [=Mapping Entry/formatFlags=] bit 0 is set, then the feature tag and design space lists are present:
 
     *  Read the feature tag list specified by [=Mapping Entry/featureCount=] and [=Mapping Entry/featureTags=] from <var>entry bytes</var>
-        and add the loaded tags to <var>entry</var>.
+        and add the loaded tags to the first [=font subset definition=] in <var>entry</var>.
 
     *  Read the design space segment list specified by [=Mapping Entry/designSpaceCount=] and [=Mapping Entry/designSpaceSegments=]
-        from <var>entry bytes</var> and add the design space segments to <var>entry</var>. Each segment defines an interval from
-        [=Design Space Segment/start=] to [=Design Space Segment/end=] inclusive for the axis identified by [=Design Space Segment/tag=].
-        If any segment has a [=Design Space Segment/start=] which is greater than [=Design Space Segment/end=] then, this encoding is
-        invalid return an error.
+        from <var>entry bytes</var> and add the design space segments to the first [=font subset definition=] in <var>entry</var>. Each
+        segment defines an interval from [=Design Space Segment/start=] to [=Design Space Segment/end=] inclusive for the axis identified
+        by [=Design Space Segment/tag=]. If any segment has a [=Design Space Segment/start=] which is greater than
+        [=Design Space Segment/end=] then, this encoding is invalid return an error.
 
 6.  If [=Mapping Entry/formatFlags=] bit 1 is set, then the copy indices list is present:
 
-    *  Read the copy indices list specified by [=Mapping Entry/copyCount=] and [=Mapping Entry/copyIndices=] from <var>entry bytes</var>.
+    *  Read the copy indices list specified by [=Mapping Entry/copyModeAndCount=] and [=Mapping Entry/copyIndices=] from
+         <var>entry bytes</var>.
 
     *  The copy indices refer to previously loaded entries. 0 is the first [=Mapping Entry=] in [=Mapping Entries/entries=], 1 the second
-         and so on. For each index in [=Mapping Entry/copyIndices=] locate the previously loaded entry with a matching index and
-         add all code points, feature tags, and design space segments from it to <var>entry</var>. If a [=Mapping Entry/copyIndices=]
-         is greater than or equal to the index of this entry then, this encoding is invalid return an error.
+         and so on. For each index in [=Mapping Entry/copyIndices=] locate the previously loaded entry with a matching index.
+         If the most significant bit of [=Mapping Entry/copyModeAndCount=] is set then append all [=font subset definition=]s from
+         the previous entry to <var>entry</var>. Otherwise union all code points, feature tags, and design space segments from
+         all [=font subset definition=]s in the previous entry into the first [=font subset definition=] in <var>entry</var>. If a
+         [=Mapping Entry/copyIndices=] is greater than or equal to the index of this entry then, this encoding is invalid return an error.
 
 7.  If [=Mapping Entry/formatFlags=] bit 2 is set, then an id delta or id string length is present:
 
@@ -1312,8 +1463,8 @@ The algorithm:
     *  Otherwise the bias is 0.
 
     *  Read the sparse bit set [=Mapping Entry/codePoints=] from <var>entry bytes</var> with bias following [[#sparse-bit-set-decoding]].
-        Add the resulting code point set to <var>entry</var>. If the sparse bit set decoding failed then, this encoding is invalid return
-        an error.
+        Add the resulting code point set to the first [=font subset definition=] in <var>entry</var>. If the sparse bit set decoding
+        failed then, this encoding is invalid return an error.
 
 10. If [=Mapping Entry/formatFlags=] bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.
 
@@ -2235,7 +2386,7 @@ to a segment and determining what other glyphs must be included in the patch tha
 be substituted for a glyph included in the segment by code point.  In some cases a glyph might only be needed when multiple segments
 have been loaded, in which case that glyph can be added to the patch corresponding to any of those segments. (This can be true of 
 a ligature or a pre-composed accented character.) Finally, after the initial analysis of segments the same glyph might be needed 
-when loading the patches for two or more segments.  There are four main strategies for dealing with that situation:
+when loading the patches for two or more segments.  There are five main strategies for dealing with that situation:
 
 1.  Two or more segments can be combined to be contained within a single patch. This avoids duplicating the common glyphs, but
      increases the segment's size.
@@ -2247,10 +2398,17 @@ when loading the patches for two or more segments.  There are four main strategi
      *  subset definition b → segment b
      *  subset definition a union subset definition b → segment c
 
-3.  Alternatively, the glyph can be included in more than one of the patches that correspond to those segments at the cost of duplicating
+3.  In some cases, such as with [[open-type/cmap#format-14-unicode-variation-sequences|Unicode variation selectors]], there will be a
+     modifier code point which triggers a glyph substitution when paired with many other code points. Given the large number of alternate
+     glyphs it's desirable to keep them in their own patches which are only loaded when both the modifier code point and appropriate base
+     code point(s) are present. This can be achieved by using a [[#patch-map-format-2|Format 2 Patch Map]] and multiple subset definitions
+     per entry via [=Mapping Entry/copyModeAndCount=]. For the entry one subset definition should contain the modifier code point and a
+     second one has the base code point(s).
+
+4.  Alternatively, the glyph can be included in more than one of the patches that correspond to those segments at the cost of duplicating
      the glyph's data into multiple patches.
 
-4.  Lastly, the common glyph can be moved into the initial font. This avoids increasing segment sizes and duplicating the glyph data,
+5.  Lastly, the common glyph can be moved into the initial font. This avoids increasing segment sizes and duplicating the glyph data,
      but will increase the size of the initial font. It also means that the glyph's data is always loaded, even when not needed. This
      can be useful for glyphs that are required in many segments or are otherwise complicating the segmentation.
 
