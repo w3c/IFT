@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="4c2c26160f626d1b3b01fda623655edef77a5e4d" name="revision">
+  <meta content="f8ae95814f7c787037b1b027cd66cbb49962bcc2" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -2863,7 +2863,7 @@ to a segment and determining what other glyphs must be included in the patch tha
 be substituted for a glyph included in the segment by code point.  In some cases a glyph might only be needed when multiple segments
 have been loaded, in which case that glyph can be added to the patch corresponding to any of those segments. (This can be true of 
 a ligature or a pre-composed accented character.) Finally, after the initial analysis of segments the same glyph might be needed 
-when loading the patches for two or more segments.  There are four main strategies for dealing with that situation:</p>
+when loading the patches for two or more segments.  There are five main strategies for dealing with that situation:</p>
    <ol>
     <li data-md>
      <p>Two or more segments can be combined to be contained within a single patch. This avoids duplicating the common glyphs, but
@@ -2880,6 +2880,13 @@ when loading the patches for two or more segments.  There are four main strategi
       <li data-md>
        <p>subset definition a union subset definition b → segment c</p>
      </ul>
+    <li data-md>
+     <p>In some cases, such as with <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#format-14-unicode-variation-sequences">Unicode variation selectors</a>, there will be a
+ modifier code point which triggers a glyph substitution when paired with many other code points. Given the large number of alternate
+ glyphs it’s desirable to keep them in their own patches which are only loaded when both the modifier code point and appropriate base
+ code point(s) are present. This can be achieved by using a <a href="#patch-map-format-2">Format 2 Patch Map</a> and multiple subset definitions
+ per entry via <a data-link-type="dfn" href="#mapping-entry-copymodeandcount" id="ref-for-mapping-entry-copymodeandcount②">copyModeAndCount</a>. For the entry one subset definition should contain the modifier code point and a
+ second one has the base code point(s).</p>
     <li data-md>
      <p>Alternatively, the glyph can be included in more than one of the patches that correspond to those segments at the cost of duplicating
  the glyph’s data into multiple patches.</p>
@@ -3691,7 +3698,7 @@ let dfnPanelData = {
 "mapping-entry-bias": {"dfnID":"mapping-entry-bias","dfnText":"bias","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-bias"},{"id":"ref-for-mapping-entry-bias\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-bias"},
 "mapping-entry-codepoints": {"dfnID":"mapping-entry-codepoints","dfnText":"codePoints","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-codepoints"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-codepoints"},
 "mapping-entry-copyindices": {"dfnID":"mapping-entry-copyindices","dfnText":"copyIndices","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-copyindices"},{"id":"ref-for-mapping-entry-copyindices\u2460"},{"id":"ref-for-mapping-entry-copyindices\u2461"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-copyindices"},
-"mapping-entry-copymodeandcount": {"dfnID":"mapping-entry-copymodeandcount","dfnText":"copyModeAndCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-copymodeandcount"},{"id":"ref-for-mapping-entry-copymodeandcount\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-copymodeandcount"},
+"mapping-entry-copymodeandcount": {"dfnID":"mapping-entry-copymodeandcount","dfnText":"copyModeAndCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-copymodeandcount"},{"id":"ref-for-mapping-entry-copymodeandcount\u2460"}],"title":"5.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-mapping-entry-copymodeandcount\u2461"}],"title":"7.1. Encoding Considerations"}],"url":"#mapping-entry-copymodeandcount"},
 "mapping-entry-designspacecount": {"dfnID":"mapping-entry-designspacecount","dfnText":"designSpaceCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-designspacecount"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-designspacecount"},
 "mapping-entry-designspacesegments": {"dfnID":"mapping-entry-designspacesegments","dfnText":"designSpaceSegments","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-designspacesegments"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-designspacesegments"},
 "mapping-entry-entryiddelta": {"dfnID":"mapping-entry-entryiddelta","dfnText":"entryIdDelta","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-entryiddelta"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-entryiddelta\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-entryiddelta"},
