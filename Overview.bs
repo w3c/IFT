@@ -527,10 +527,8 @@ The algorithm:
 
 If the extending the font subset process has failed with an error then, some of the data within the font may not be fully loaded and as
 a result rendering content which relies on the missing data may result in incorrect renderings. The client may choose to continue using
-the font, but should only use it for the rendering of code points, features, and design space that are fully loaded. An element of the
-font can be considered fully loaded if data for that element is present in the font (eg. for code points, listed in the cmap) and there are
-no mapping entries in the font subset which reference that element. Rendering of all other content should fallback to a different font
-following normal client fallback logic.
+the font, but should only use it for the rendering of code points, features, and design space that are fully loaded according to
+[[#ift-font-coverage]]. Rendering of all other content should fallback to a different font following normal client fallback logic.
 
 If the error occurred during [$Load patch file$] then, the client may continue trying to extend the font subset
 if there are remaining patches available other than the one(s) that failed to load. In the case of all other errors the client

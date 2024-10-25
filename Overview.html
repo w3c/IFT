@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="c10aca5375dfdf6859ed3513ac122f7710df93fd" name="revision">
+  <meta content="ced2f4606f51c9f307f0874c8baa3fd8390cf652" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1133,10 +1133,7 @@ intersecting patches in parallel, since no patch application will invalidate any
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-handle-errors">Handle errors</dfn></p>
    <p>If the extending the font subset process has failed with an error then, some of the data within the font may not be fully loaded and as
 a result rendering content which relies on the missing data may result in incorrect renderings. The client may choose to continue using
-the font, but should only use it for the rendering of code points, features, and design space that are fully loaded. An element of the
-font can be considered fully loaded if data for that element is present in the font (eg. for code points, listed in the cmap) and there are
-no mapping entries in the font subset which reference that element. Rendering of all other content should fallback to a different font
-following normal client fallback logic.</p>
+the font, but should only use it for the rendering of code points, features, and design space that are fully loaded according to <a href="#ift-font-coverage">§ 4.5 Determining what Content a Font can Render</a>. Rendering of all other content should fallback to a different font following normal client fallback logic.</p>
    <p>If the error occurred during <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file①">Load patch file</a> then, the client may continue trying to extend the font subset
 if there are remaining patches available other than the one(s) that failed to load. In the case of all other errors the client
 must not attempt to further extend the font subset.</p>
