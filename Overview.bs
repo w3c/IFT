@@ -550,6 +550,47 @@ renders the overall content as long as:
 *  Where a shaping unit is a span of text which the client will process together as a single unit during
     <a href="https://harfbuzz.github.io/what-is-harfbuzz.html#what-is-text-shaping">text shaping</a>.
 
+
+Determining what Content a Font can Render {#ift-font-coverage}
+-----------------------------------------------------------------------
+
+Given some incremental font (whether the initial font or one that has been partially extended) a client may wish to know what content
+that font can render in it's current state. This is of particular importance where the client is looking to determine which portions
+of the text to use fallback fonts for.
+
+The following procedure can be used by a client to check what parts of some content an incremental font can render:
+
+* Split the content up into the shaping units (see [[#target-subset-definitions]]) on which the content will be processed during text
+    shaping.
+
+* For each shaping unit there are two checks:
+
+    * First, if for any code point in the shaping unit there is not a [[open-type/cmap|cmap]] entry for it, or the entry maps to glyph
+        0 then the incremental font does not fully support rendering the shaping unit.
+
+    * Second, compute the corresponding [=font subset definition=] and execute the [$Extend an Incremental Font Subset$] algorithm,
+        stopping at step 6. If the entry list is not empty then the incremental font does not fully support rendering the shaping unit.
+
+In most cases the client may also wish to know what the font can render at a more granular level than a shaping unit. The following
+procedure can produce an approximate check at the Unicode code point level for any shaping units which failed the previous check:
+
+* For each code point within a shaping unit:
+
+    *  Any code point in the shaping unit where there is not a [[open-type/cmap|cmap]] entry for it, or the entry maps to glyph
+        0 then the incremental font does not support rendering that code point.
+
+    *  Compute the point in design space and set of layout features which will apply to that
+         code point. Form a [=font subset definition=] which contains the code point, computed design space point, and layout features.
+         Execute the [$Extend an Incremental Font Subset$] algorithm, stopping at step 6. If the entry list is not empty then the
+         incremental font does not fully support rendering this specific code point at this position in the text.
+
+In some rare cases the per code point procedure may report a code point as supported when there is an optional layout feature and multi
+character substitution lookup which has not been added to the font yet. The check will confirm that the font has enough support to render
+the code point in isolation.
+
+Note: The per code point check above should not be used to drive incremental font extension. Target subset definitions for full executions
+of [$Extend an Incremental Font Subset$] should follow the guidelines in [[#target-subset-definitions]].
+
 <h3 algorithm id="fully-expanding-a-font">Fully Expanding a Font</h3>
 
 This sections defines an algorithm that can be used to transform an incremental font into a fully expanded non-incremental font. This
