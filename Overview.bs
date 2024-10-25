@@ -536,6 +536,20 @@ If the error occurred during [$Load patch file$] then, the client may continue t
 if there are remaining patches available other than the one(s) that failed to load. In the case of all other errors the client
 must not attempt to further extend the font subset.
 
+Target Subset Definition {#target-subset-definitions}
+-----------------------------------------------------
+
+The [$Extend an Incremental Font Subset$] algorithm takes as an input a target subset definition based on some content that the client
+wants to render. The client may choose to form one single subset definition for the content as a whole and run the extension algorithm
+once. Alternatively, the client may instead break the content up into smaller spans, form a subset definition for each span, and run
+the extension algorithm on each of the smaller subset definitions. Either approach will ultimately produce a font which equivalently
+renders the overall content as long as:
+
+*  Each span of text which generates a subset definition is built from only one or more complete shaping units.
+
+*  Where a shaping unit is a span of text which the client will process together as a single unit during
+    <a href="https://harfbuzz.github.io/what-is-harfbuzz.html#what-is-text-shaping">text shaping</a>.
+
 <h3 algorithm id="fully-expanding-a-font">Fully Expanding a Font</h3>
 
 This sections defines an algorithm that can be used to transform an incremental font into a fully expanded non-incremental font. This
