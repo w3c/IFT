@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="75d55d4f35818826858aa7bd5f693ec5785e04a1" name="revision">
+  <meta content="0d75a6c2ab28a5270ebf37ea59f9960ede1371e6" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1012,6 +1012,18 @@ only be loaded by a user agent which supports incremental font transfer.</p>
 }
 </pre>
    </div>
+   <div class="example" id="example-04425b82">
+    <a class="self-link" href="#example-04425b82"></a> 
+<pre>@font-face {
+    font-family: "MyCoolWebFont";
+    src: url("MyCoolWebFont.otf") tech(incremental);
+    unicode-range: U+0000-00FF;
+}
+</pre>
+   </div>
+   <p>As shown in the second example, <a href="https://www.w3.org/TR/css-fonts-4/#unicode-range-desc">unicode-range</a> can be used in conjuction with an IFT font. The
+unicode ranges should be set to match the coverage of the fully extended font. This will allow clients to avoid trying to load the IFT font
+if the font does not support any code points which are needed.</p>
    <p class="note" role="note"><span class="marker">Note:</span> Each individual <code>@font-face</code> block may or may not opt-in to IFT. This is due to the
 variety of ways fonts are used on web pages. Authors have control over which fonts they want to use
 this technology with, and which they do not.</p>
@@ -1304,7 +1316,7 @@ incremental font:</p>
 <c- c1># shaping_unit is an array where each item has a code point, associated list of</c->
 <c- c1># layout features, and the design space point that code point is being rendered with.</c->
 <c- k>def</c-> <c- nf>supported_spans</c-><c- p>(</c-><c- n>shaping_unit</c-><c- p>,</c-> <c- n>ift_font</c-><c- p>):</c->
-  <c- n>current_start</c-><c- p>,</c-> <c- n>current_end</c-><c- p>,</c-> <c- n>current_subset_def</c-> <c- o>=</c-> <c- kc>None</c->
+  <c- n>current_start</c-> <c- o>=</c-> <c- n>current_end</c-> <c- o>=</c-> <c- n>current_subset_def</c-> <c- o>=</c-> <c- kc>None</c->
   <c- n>supported_spans</c-> <c- o>=</c-> <c- p>[]</c->
 
   <c- n>i</c-> <c- o>=</c-> <c- mi>0</c->
@@ -1329,7 +1341,7 @@ incremental font:</p>
     <c- k>else</c-><c- p>:</c->
       <c- n>i</c-> <c- o>+=</c-> <c- mi>1</c->
 
-    <c- n>current_start</c-><c- p>,</c-> <c- n>current_end</c-><c- p>,</c-> <c- n>current_subset_def</c-> <c- o>=</c-> <c- kc>None</c->
+    <c- n>current_start</c-> <c- o>=</c-> <c- n>current_end</c-> <c- o>=</c-> <c- n>current_subset_def</c-> <c- o>=</c-> <c- kc>None</c->
 
   <c- k>return</c-> <c- n>supported_spans</c->
 
