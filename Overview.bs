@@ -575,29 +575,69 @@ parts of some content an incremental font can render:
 
 * Any shaping units that passed both checks can be rendered in their entirety with the font.
 
-The client may also wish to know what the font can render at a more granular level than a shaping unit. The following
-procedure can produce an approximate check at the Unicode code point level for any shaping units which failed the previous check:
+The client may also wish to know what the font can render at a more granular level than a shaping unit. The following pseudo code
+demonstrates a possible method for splitting a shaping unit which failed the above check up into spans which can be rendered using the
+incremental font:
 
-* For each code point within a shaping unit:
+<pre highlight="python">
+# Returns a list of spans, [start, end] inclusive, within shaping_unit that are
+# supported by and can be safely rendered with ift_font.
+#
+# shaping_unit is an array where each item has a code point, associated list of
+# features, and the design space point that code point is being rendered with.
+def supported_spans(shaping_unit, ift_font):
+  current_start = None
+  current_end = None
+  current_subset_def = None
 
-    *  If there is not a [[open-type/cmap|cmap]] entry for the code point, or the entry maps to glyph 0 then the incremental font does not
-         support rendering that code point.
+  supported_spans = []
 
-    *  Compute the point in design space and set of layout features which will apply to that
-         code point. Form a [=font subset definition=] which contains the code point, computed design space point, and layout features.
-         Execute the [$Extend an Incremental Font Subset$] algorithm, stopping at step 6. If the entry list is not empty then the
-         incremental font does not fully support rendering this specific code point at this position in the text.
+  while i < len(shaping_unit):
+    if current_subset_def is None:
+      current_subset_def = SubsetDefinition()
+      current_start = i
 
-In some cases the per code point procedure may report a code point as supported when there is an optional layout feature and multi
-character substitution lookup which has not been added to the font yet. The check will confirm that the font has enough support to render
-the code point in isolation. If the client is correctly following the [$Extend an Incremental Font Subset$] algorithm with
-a subset definition formed according to [[#target-subset-definitions]] then the missing data will be loaded and this case will only
-occur temporarily while the relevant patch is loading. Once the missing patch arrives and has been applied the rendering of the affected
+    current_end = i
+    current_subset_def.add(shapping_unit_text[i].codepoint,
+                           shapping_unit_text[i].features,
+                           shapping_unit_text[i].design_space_point)
+
+    if not has_unapplied_patches(ift_font, current_subset_def):
+      i += 1
+      continue
+
+    if current_end > current_start:
+      supported_spans.append(Span(current_start, current_end - 1))
+      # i isn't incremented so the current code point can be checked on it's own
+      # in the next iteration.
+    else:
+      i += 1
+
+    current_subset_def = None
+    current_start = None
+    current_end = None
+
+  return supported_spans
+
+
+# Returns true if ift_font has at least one unapplied patch which matches
+# subset_def.
+def has_unapplied_patches(ift_font, subset_def):
+  # Implementation: execute the "Extend an Incremental Font Subset" algorithm
+  # stopping at step 6. If the entry list is not empty then return true.
+  # Otherwise returns false.
+</pre>
+
+Any text from the shaping unit which is not covered by one of the returned spans is not supported by the incremental font and should
+be rendered with a fallback font. Each span should be shaped in isolation (ie. each span becomes a new shaping unit).
+Because this method splits a shaping unit up, not all features of the original font, such as multi code point substitutions, may be
+present. If the client is correctly following the [$Extend an Incremental Font Subset$] algorithm with a subset definition formed
+according to [[#target-subset-definitions]] then the missing data will be loaded and this case will only occur temporarily while the
+relevant patch is loading. Once the missing patch arrives and has been applied the rendering of the affected
 code points may change as a result of the substitution.
 
-Note: The per code point check above should not be used to drive incremental font extension. Target subset definitions for full executions
-of [$Extend an Incremental Font Subset$] should follow the guidelines in [[#target-subset-definitions]]. Similarly, rendering should be
-done using shaping units and not at a code point by code point level.
+Note: The "supported_spans(...)" check above should not be used to drive incremental font extension. Target subset definitions for full
+executions of [$Extend an Incremental Font Subset$] should follow the guidelines in [[#target-subset-definitions]].
 
 <h3 algorithm id="fully-expanding-a-font">Fully Expanding a Font</h3>
 
@@ -2231,9 +2271,9 @@ beyond the scope of this document). It typically involves a reachability analysi
 relative to the font subset definition to see which portions can be reached by any possible content covered by the subset definition.
 Any reachable data is retained in the generated font subset, while any unreachable data may be removed.
 
-In the following example psuedo code a font subsetter is used to generate an IFT encoded font that utilizes only table keyed patches:
+In the following example pseudo code a font subsetter is used to generate an IFT encoded font that utilizes only table keyed patches:
 
-```
+<pre highlight="python">
 # Encode a font (full_font) into an incremental font that starts at base_subset_def
 # and can incrementally add any of subset_definitions. Returns the IFT encoded font
 # and set of associated patches.
@@ -2263,7 +2303,7 @@ encode_node(full_font, base_font, cur_def, subset_definitions):
     patches += (patch, patch_url)
   
   return base_font, patches
-```
+</pre>
 
 In this example implementation, if the union of the input base subset definition and the list of subset definitions fully covers the input
 full font, and the subsetter implementation used correctly retains all functionality then, the above implementation should meet the
