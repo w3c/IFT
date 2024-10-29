@@ -1012,6 +1012,18 @@ only be loaded by a user agent which supports incremental font transfer.</p>
 }
 </pre>
    </div>
+   <div class="example" id="example-04425b82">
+    <a class="self-link" href="#example-04425b82"></a> 
+<pre>@font-face {
+    font-family: "MyCoolWebFont";
+    src: url("MyCoolWebFont.otf") tech(incremental);
+    unicode-range: U+0000-00FF;
+}
+</pre>
+   </div>
+   <p>As shown in the second example, <a href="https://www.w3.org/TR/css-fonts-4/#unicode-range-desc">unicode-range</a> can be used in conjuction with an IFT font. The
+unicode ranges should be set to match the coverage of the fully extended font. This will allow clients to avoid trying to load the IFT font
+if the font does not support any code points which are needed.</p>
    <p class="note" role="note"><span class="marker">Note:</span> Each individual <code>@font-face</code> block may or may not opt-in to IFT. This is due to the
 variety of ways fonts are used on web pages. Authors have control over which fonts they want to use
 this technology with, and which they do not.</p>
