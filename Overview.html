@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="0e5deb2d0dbb4d56c92dc4d45716af1acbfa3e83" name="revision">
+  <meta content="7a93ad95e4bc9884148c933c3ce952aa21c15345" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1155,7 +1155,7 @@ that font can render in it’s current state. This is of particular importance w
 of the text to use fallback fonts for.</p>
    <p>During fallback processing a client would typically check the font’s <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table to determine which code points are
 supported; However, in an IFT font due to the way <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches work the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table may contain mappings
-for code points which do not yet have the corresponding glyph data loaded. As a result the client should not rely on the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table to determine code point presence. Instead the following procedure can be used by a client to check what
+for code points which do not yet have the corresponding glyph data loaded. As a result the client should not rely solely on the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table to determine code point presence. Instead the following procedure can be used by a client to check what
 parts of some content an incremental font can render:</p>
    <ul>
     <li data-md>
@@ -1197,7 +1197,8 @@ a subset definition formed according to <a href="#target-subset-definitions">§�
 occur temporarily while the relevant patch is loading. Once the missing patch arrives and has been applied the rendering of the affected
 code points may change as a result of the substitution.</p>
    <p class="note" role="note"><span class="marker">Note:</span> The per code point check above should not be used to drive incremental font extension. Target subset definitions for full executions
-of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset④">Extend an Incremental Font Subset</a> should follow the guidelines in <a href="#target-subset-definitions">§ 4.4 Target Subset Definition</a>.</p>
+of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset④">Extend an Incremental Font Subset</a> should follow the guidelines in <a href="#target-subset-definitions">§ 4.4 Target Subset Definition</a>. Similarly, rendering should be
+done using shaping units and not at a code point by code point level.</p>
    <h3 class="heading settled algorithm" data-algorithm="Fully Expanding a Font" data-level="4.6" id="fully-expanding-a-font"><span class="secno">4.6. </span><span class="content">Fully Expanding a Font</span><a class="self-link" href="#fully-expanding-a-font"></a></h3>
    <p>This sections defines an algorithm that can be used to transform an incremental font into a fully expanded non-incremental font. This
 process loads all available data provided by the incremental font and produces a single static font file that contains no further
