@@ -584,23 +584,21 @@ incremental font:
 # supported by and can be safely rendered with ift_font.
 #
 # shaping_unit is an array where each item has a code point, associated list of
-# features, and the design space point that code point is being rendered with.
+# layout features, and the design space point that code point is being rendered with.
 def supported_spans(shaping_unit, ift_font):
-  current_start = None
-  current_end = None
-  current_subset_def = None
-
+  current_start, current_end, current_subset_def = None
   supported_spans = []
 
-  while i < len(shaping_unit):
+  i = 0
+  while i < shaping_unit.length():
     if current_subset_def is None:
       current_subset_def = SubsetDefinition()
       current_start = i
 
     current_end = i
-    current_subset_def.add(shapping_unit_text[i].codepoint,
-                           shapping_unit_text[i].features,
-                           shapping_unit_text[i].design_space_point)
+    current_subset_def.add(shaping_unit.codepoint_at(i),
+                           shaping_unit.features_at(i),
+                           shaping_unit.design_space_point_at(i))
 
     if not has_unapplied_patches(ift_font, current_subset_def):
       i += 1
@@ -613,9 +611,7 @@ def supported_spans(shaping_unit, ift_font):
     else:
       i += 1
 
-    current_subset_def = None
-    current_start = None
-    current_end = None
+    current_start, current_end, current_subset_def = None
 
   return supported_spans
 
