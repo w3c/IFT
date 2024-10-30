@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="75d55d4f35818826858aa7bd5f693ec5785e04a1" name="revision">
+  <meta content="0d75a6c2ab28a5270ebf37ea59f9960ede1371e6" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1304,7 +1304,7 @@ incremental font:</p>
 <c- c1># shaping_unit is an array where each item has a code point, associated list of</c->
 <c- c1># layout features, and the design space point that code point is being rendered with.</c->
 <c- k>def</c-> <c- nf>supported_spans</c-><c- p>(</c-><c- n>shaping_unit</c-><c- p>,</c-> <c- n>ift_font</c-><c- p>):</c->
-  <c- n>current_start</c-><c- p>,</c-> <c- n>current_end</c-><c- p>,</c-> <c- n>current_subset_def</c-> <c- o>=</c-> <c- kc>None</c->
+  <c- n>current_start</c-> <c- o>=</c-> <c- n>current_end</c-> <c- o>=</c-> <c- n>current_subset_def</c-> <c- o>=</c-> <c- kc>None</c->
   <c- n>supported_spans</c-> <c- o>=</c-> <c- p>[]</c->
 
   <c- n>i</c-> <c- o>=</c-> <c- mi>0</c->
@@ -1329,7 +1329,7 @@ incremental font:</p>
     <c- k>else</c-><c- p>:</c->
       <c- n>i</c-> <c- o>+=</c-> <c- mi>1</c->
 
-    <c- n>current_start</c-><c- p>,</c-> <c- n>current_end</c-><c- p>,</c-> <c- n>current_subset_def</c-> <c- o>=</c-> <c- kc>None</c->
+    <c- n>current_start</c-> <c- o>=</c-> <c- n>current_end</c-> <c- o>=</c-> <c- n>current_subset_def</c-> <c- o>=</c-> <c- kc>None</c->
 
   <c- k>return</c-> <c- n>supported_spans</c->
 
@@ -2428,9 +2428,7 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
      <tr>
       <td>uint8
       <td>tableCount
-      <td> The number of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> the patch has data for. Must be in ascending sorted order and must not
-      contain any duplicate values. For sorting tag values are interpreted as a 4 byte big endian unsigned integer and sorted by the
-      integer value. 
+      <td> The number of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> the patch has data for. 
      <tr>
       <td>uint16/uint24
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphids">glyphIds</dfn>[glyphCount]
@@ -2439,7 +2437,9 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
      <tr>
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-tables">tables</dfn>[tableCount]
-      <td>An array of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> (by tag) included in the patch.
+      <td>An array of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> (by tag) included in the patch. Must be in ascending sorted
+      order and must not contain any duplicate values. For sorting tag values are interpreted as a 4 byte big endian
+      unsigned integer and sorted by the integer value.
      <tr>
       <td>Offset32
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphdataoffsets">glyphDataOffsets</dfn>[glyphCount * tableCount + 1]
