@@ -600,7 +600,7 @@ def supported_spans(shaping_unit, ift_font):
                            shaping_unit.features_at(i),
                            shaping_unit.design_space_point_at(i))
 
-    if not has_unapplied_patches(ift_font, current_subset_def):
+    if supports_subset_def(ift_font, current_subset_def):
       i += 1
       continue
 
@@ -616,12 +616,12 @@ def supported_spans(shaping_unit, ift_font):
   return supported_spans
 
 
-# Returns true if ift_font has at least one unapplied patch which matches
-# subset_def.
-def has_unapplied_patches(ift_font, subset_def):
-  # Implementation: execute the "Extend an Incremental Font Subset" algorithm
-  # stopping at step 6. If the entry list is not empty then return true.
-  # Otherwise returns false.
+# Returns true if ift_font has support for rendering content covered by subset_def.
+def supports_subset_def(ift_font, subset_def):
+  # Return true only if both of the following two checks are true:
+  # - Each code point in subset_def is mapped to a glyph id other than '0' by ift_font's cmap table.
+  # - After executing the "Extend an Incremental Font Subset" algorithm on ift_font with subset_def and stopping at step 6 the
+  #   entry list is empty.
 </pre>
 
 Any text from the shaping unit which is not covered by one of the returned spans is not supported by the incremental font and should
