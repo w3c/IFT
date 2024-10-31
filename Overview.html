@@ -1318,7 +1318,7 @@ incremental font:</p>
                            <c- n>shaping_unit</c-><c- o>.</c-><c- n>features_at</c-><c- p>(</c-><c- n>i</c-><c- p>),</c->
                            <c- n>shaping_unit</c-><c- o>.</c-><c- n>design_space_point_at</c-><c- p>(</c-><c- n>i</c-><c- p>))</c->
 
-    <c- k>if</c-> <c- ow>not</c-> <c- n>has_unapplied_patches</c-><c- p>(</c-><c- n>ift_font</c-><c- p>,</c-> <c- n>current_subset_def</c-><c- p>):</c->
+    <c- k>if</c-> <c- n>supports_subset_def</c-><c- p>(</c-><c- n>ift_font</c-><c- p>,</c-> <c- n>current_subset_def</c-><c- p>):</c->
       <c- n>i</c-> <c- o>+=</c-> <c- mi>1</c->
       <c- k>continue</c->
 
@@ -1334,12 +1334,12 @@ incremental font:</p>
   <c- k>return</c-> <c- n>supported_spans</c->
 
 
-<c- c1># Returns true if ift_font has at least one unapplied patch which matches</c->
-<c- c1># subset_def.</c->
-<c- k>def</c-> <c- nf>has_unapplied_patches</c-><c- p>(</c-><c- n>ift_font</c-><c- p>,</c-> <c- n>subset_def</c-><c- p>):</c->
-  <c- c1># Implementation: execute the "Extend an Incremental Font Subset" algorithm</c->
-  <c- c1># stopping at step 6. If the entry list is not empty then return true.</c->
-  <c- c1># Otherwise returns false.</c->
+<c- c1># Returns true if ift_font has support for rendering content covered by subset_def.</c->
+<c- k>def</c-> <c- nf>supports_subset_def</c-><c- p>(</c-><c- n>ift_font</c-><c- p>,</c-> <c- n>subset_def</c-><c- p>):</c->
+  <c- c1># Return true only if both of the following two checks are true:</c->
+  <c- c1># - Each code point in subset_def is mapped to a glyph id other than '0' by ift_font’s cmap table.</c->
+  <c- c1># - After executing the "Extend an Incremental Font Subset" algorithm on ift_font with subset_def and stopping at step 6 the</c->
+  <c- c1>#   entry list is empty.</c->
 </pre>
    <p>Any text from the shaping unit which is not covered by one of the returned spans is not supported by the incremental font and should
 be rendered with a fallback font. Each span should be shaped in isolation (ie. each span becomes a new shaping unit).
