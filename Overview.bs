@@ -500,6 +500,10 @@ be needed in later iterations.
 Note: if the only remaining intersecting entries are no invalidation entries the intersection check in step 5 does not need to be repeated on each
 iteration since no invalidation patches won't change the list of available patches upon application (other then to remove the just applied patch).
 
+<div class="example">
+An example of the execution of the extension algorithm can be found in [[#extension-example]].
+</div>
+
 <dfn abstract-op>Check entry intersection</dfn>
 
 The inputs to this algorithm are:
@@ -2733,3 +2737,225 @@ to be used by default in most shaper implementations. This list was assembled fr
 <!-- Edit feature-registry.csv to update this table. -->
 path: feature-registry.html
 </pre>
+
+
+<h2 id="extension-example">
+Appendix B: Extension Algorithm Example Execution</h2>
+
+This appendix provides an example of how a typical IFT font would be processed by the [[#extend-font-subset]] algorithm. In this example the IFT font
+contains a mix of both [[#table-keyed]] and [[#glyph-keyed]] patches.
+
+<b>Initial font</b>: contains the following IFT and IFTX patch mappings. Note: when features and design space sets are unspecified in a subset definition
+they are defaulted to an empty set.
+
+<table>
+  <tr><th>Table = "IFT "</th><th colspan="2">Compatibility ID = 0x0000_0000_0000_0001</th></tr>
+  <tr><th>Subset Definition(s)</th><th>URI</th><th>Format Number</th>
+  <tr>
+    <td>
+      ```
+      code points: { 'a', 'b', ..., 'z' }
+      ```
+    </td>
+    <td>//foo.bar/01.tk</td>
+    <td>
+      2, Table Keyed - Partial Invalidation
+    </td>
+  </tr>
+  <tr>
+    <td>
+      ```
+      code points: { 'A', 'B', ..., 'Z' }
+      ```
+    </td>
+    <td>//foo.bar/02.tk</td>
+    <td>
+      2, Table Keyed - Partial Invalidation
+    </td>
+  </tr>
+  <tr>
+    <td>
+      ```
+      code points: { '0', '1', ..., '9' }
+      ```
+    </td>
+    <td>//foo.bar/03.tk</td>
+    <td>
+      2, Table Keyed - Partial Invalidation
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      ```
+      code points: { 'a', 'b', ..., 'z',
+                     'A', 'B', ..., 'Z' }
+      ```
+    </td>
+    <td>//foo.bar/04.tk</td>
+    <td>
+      2, Table Keyed - Partial Invalidation
+    </td>
+  </tr>
+  <tr>
+    <td>
+      ```
+      code points: { 'a', 'b', ..., 'z',
+                     'A', 'B', ..., 'Z',
+                     '0', '1', ..., '9' }
+      ```
+    </td>
+    <td>//foo.bar/05.tk</td>
+    <td>
+      2, Table Keyed - Partial Invalidation
+    </td>
+  </tr>
+</table>
+<br/>
+<table>
+  <tr><th>Table = "IFTX"</th><th colspan="2">Compatibility ID = 0x0000_0000_0000_0002</th></tr>
+  <tr><th>Subset Definition(s)</th><th>URI</th><th>Format Number</th>
+  <tr>
+    <td>
+      ```
+      code points: { 'a', 'b', ..., 'm' }
+      ```
+    </td>
+    <td>//foo.bar/01.gk</td>
+    <td>
+      3, Glyph Keyed
+    </td>
+  </tr>
+  <tr>
+    <td>
+      ```
+      code points: { 'n', 'o', ..., 'z' }
+      ```
+    </td>
+    <td>//foo.bar/02.gk</td>
+    <td>
+      3, Glyph Keyed
+    </td>
+  </tr>
+  <tr>
+    <td>
+      ```
+      code points: { 'A', 'B', ..., 'M' }
+      ```
+    </td>
+    <td>//foo.bar/03.gk</td>
+    <td>
+      3, Glyph Keyed
+    </td>
+  </tr>
+  <tr>
+    <td>
+      ```
+      code points: { 'N', 'O', ..., 'Z' }
+      ```
+    </td>
+    <td>//foo.bar/04.gk</td>
+    <td>
+      3, Glyph Keyed
+    </td>
+  </tr>
+  <tr>
+    <td>
+      ```
+      code points: { '0', '1', ..., '9' }
+      ```
+    </td>
+    <td>//foo.bar/05.gk</td>
+    <td>
+      3, Glyph Keyed
+    </td>
+  </tr>
+</table>
+
+<b>Optimized Extension Example</b>
+
+Note: this example execution is described as it would be implemented in an optimized client which aims to reduce the number of round trips needing to be
+      made to extend the font for a target subset definition. This optimized execution is fully compliant with the extension algorithm but preloads some URIs
+      that are expected to be needed ahead of time to reduce round trips.
+
+Inputs:
+*  Initial font with the IFT and IFTX tables as defined above.
+*  Target subset definition: code points = {'f', 'P'}
+
+Iteration 1:
+
+*  Steps 1 through 6 - applying the [$Check entry intersection$] check to all entries, the following patch entries intersect:
+    * //foo.bar/01.tk
+    * //foo.bar/02.tk
+    * //foo.bar/04.tk
+    * //foo.bar/05.tk
+    * //foo.bar/01.gk
+    * //foo.bar/04.gk
+
+<!-- TODO: once we have a section describing criteria for making selections within an invalidating group reference that here -->
+*  Step 7 - one entry from that set must be picked. There a no full invalidation entries, so one partial invalidation entry (//foo.bar/*.tk) must be
+    selected. //foo.bar/04.tk is the most likely best choice, since it fully covers the target subset definition (minimizing round trips) and should be
+    smaller than //foo.bar/05.tk which contains additional support for '0' through '9' which are not currently requested.
+
+*  Step 8 - the selected patch, //foo.bar/04.tk, is fetched. Additionally as an optimization fetches are simultaneously started for the two glyph keyed
+    patches //foo.bar/01.gk and //foo.bar/04.gk. The table keyed patch //foo.bar/04.tk is partially invalidating which means the two glyph keyed patches
+    will be remain valid after the application of //foo.bar/04.tk. Thus the client can expect that the two glyph keyed patches will be required in future
+    iterations and preemptively begin the loads for those two patches.
+
+*  Step 9 - The fetched patch //foo.bar/04.tk is applied to the initial font. This patch updates all tables except for glyf and loca
+    to add support for code points 'a' through 'Z'. Additionally the mapping in the "IFT " table is updated to the following:
+
+    <table>
+      <tr><th>Table = "IFT "</th><th colspan="2">Compatibility ID = 0x0000_0000_0000_0006</th></tr>
+      <tr><th>Subset Definition(s)</th><th>URI</th><th>Format Number</th>
+      <tr>
+        <td>
+          ```
+          code points: { '0', '1', ..., '9' }
+          ```
+        </td>
+        <td>//foo.bar/08.tk</td>
+        <td>
+          2, Table Keyed - Partial Invalidation
+        </td>
+      </tr>
+    </table>
+
+    Note the following changes:
+    *  All entries that have data for 'a', ... 'z', and 'A', ..., 'Z' have been removed. Leaving just one entry for the remaining '0', ..., '9' code points.
+    *  The font binary has changed and thus the previously listed table keyed patches are no longer valid. As a result the compatibility ID has changed and
+        the URI for the remaining '0', ..., '9' entry has changed. The patch at the new URI, //foo.bar/08.tk, is compatible with the updated font.
+
+Iteration 2:
+
+*  Steps 2 through 6 - applying the [$Check entry intersection$] check to all entries, the following patch entries intersect:
+    * //foo.bar/01.gk
+    * //foo.bar/04.gk
+
+*  Step 7 - one entry from that set must be picked. Only no invalidation patches remain, the client is free to pick either one. In this case it selects
+    the first one //foo.bar/01.gk.
+
+*  Step 8 - the fetch for //foo.bar/01.gk was previously started during iteration 1.
+
+*  Step 9 - The fetched patch //foo.bar/01.gk is applied to the current font subset. This patch adds glyph data for code points 'a' through 'z'
+    to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/01.gk. The compatibility ID
+    and URIs for other entries are unchanged.
+
+Iteration 3:
+
+*  Steps 2 through 6 - applying the [$Check entry intersection$] check to all entries, the following patch entries intersect:
+    * //foo.bar/04.gk
+
+*  Step 7 - one entry remains, it is selected.
+
+*  Step 8 - the fetch for //foo.bar/04.gk was previously started during iteration 1.
+
+*  Step 9 - The fetched patch //foo.bar/04.gk is applied to the current font subset. This patch adds glyph data for code points 'A' through 'Z'
+    to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/04.gk. The compatibility ID
+    and URIs for other entries are unchanged.
+
+
+Iteration 4:
+
+*  Steps 2 through 6 - there are no remaining intersecting entries so the algorithm terminates. The font subset is returned and now ready to render any
+    content covered by the target subset definition.
