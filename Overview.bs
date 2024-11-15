@@ -443,12 +443,12 @@ The algorithm:
 7.  Pick one <var>entry</var> from <var>entry list</var> with the following procedure:
 
     *  If <var>entry list</var> contains one or more [=patch map entries=] which have a patch format that is [=Full Invalidation=]
-        then, select exactly one of the [=Full Invalidation=] entries in <var>entry list</var>. The criteria for selecting the single
-        entry is left up to the implementation to decide.
+        then, select exactly one of the [=Full Invalidation=] entries in <var>entry list</var>. Follow the criteria in
+        [[#invalidating-patch-selection]] to select the single entry.
 
     *  Otherwise if <var>entry list</var> contains one or more [=patch map entries=] which have a patch format that is
         [=Partial Invalidation=] then, select exactly one of the [=Partial Invalidation=] entries in <var>entry list</var>.
-        The criteria for selecting the single entry is left up to the implementation to decide.
+        Follow the criteria in [[#invalidating-patch-selection]] to select the single entry.
 
     *  Otherwise select exactly one of the [=No Invalidation=] entries in <var>entry list</var>.
         The criteria for selecting the single entry is left up to the implementation to decide.
@@ -691,6 +691,32 @@ the font, but should only use it for the rendering of code points, features, and
 If the error occurred during [$Load patch file$] then, the client may continue trying to extend the font subset
 if there are remaining patches available other than the one(s) that failed to load. In the case of all other errors the client
 must not attempt to further extend the font subset.
+
+Selecting Invalidating Patches {#invalidating-patch-selection}
+--------------------------------------------------------------
+
+During execution of the [$Extend an Incremental Font Subset$] algorithm in some cases it's necessary to select a single invalidating (full or partial)
+patch entry from a list of candidate entries. The selection criteria used has a direct impact on the total number of round trips that will be needed to
+perform the extension. Round trips are costly so for maximum performance patches should be selected in a way that minimizes the total number of needed
+round trips.
+
+The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 7
+of [$Extend an Incremental Font Subset$]:
+
+1.  For each candidate entry compute the set intersection between each subset definition in the entry and the target subset definition. Union
+     the resulting intersections together into a single subset definition.
+   
+2.  Find an entry whose intersection subset definition from step 1 is not a strict subset of any other intersection subset definition.
+
+3.  Locate any additional entries  that have the same intersection as the entry found in step 2. From the this set of entries (including the step 2 pick)
+     the final selection is the entry which is listed first in the patch map. For [[#patch-map-format-1]] this is the entry with the lowest entry index.
+     For [[#patch-map-format-2]] this is the entry that appears first in the [=Mapping Entries/entries=] array.
+
+
+Note: a fast and efficient way to find an entry which satisfies the criteria for step 2 is to sort the entries (descending) by the size of the code point
+set intersection, then the size of feature tag set intersection, and finally the size of the design space intersection. The first entry in this sorting is
+guaranteed to not be a strict subset of any other entries, since any strict super sets would have to be at least one item larger. This approach also has
+the added benefit that it selects the patch which will add the most data which the client is currently requesting.
 
 Target Subset Definition {#target-subset-definitions}
 -----------------------------------------------------
@@ -2383,6 +2409,14 @@ patches that add multiple segments at once (in addition to patches for single se
 A, B, C, and D. The patch table could list patches that add: A, B, C, D, A + B, A + C, A + D, B + C, B + D, and C + D. This would
 allow any two segments to be added in a single round trip. The downside to this approach is that it further increases the number of unique
 patches needed.
+
+
+<b>Entry order in encoded patch mappings</b>
+
+In [[#invalidating-patch-selection]] the client uses the order of an entry in the patch map to break ties when selecting which patches to load and apply.
+Clients are aiming to reduce total transfer sizes so when multiple entries are tied in intersection size it's generally in the client's interest to choose
+the patch which has the smallest total transfer size. As a result encoders should place entries in the patch map ordered from smallest to largest size in
+bytes. This will ensure clients that when clients follow [[#invalidating-patch-selection]] they bias towards smaller patches and maximize performance.
 
 <b>Managing the number of patches</b>
 
