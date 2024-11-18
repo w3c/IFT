@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="2030b01ade0050f8d4bd0ec62d4f29297a8d2eeb" name="revision">
+  <meta content="78bafa608f6bb264aa7b06d5c6eb915ffc2b7e93" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -3352,8 +3352,8 @@ they are defaulted to an empty set.</p>
    </table>
    <p><b>Optimized Extension Example</b></p>
    <p class="note" role="note"><span class="marker">Note:</span> this example execution is described as it would be implemented in an optimized client which aims to reduce the number of round trips needing to be
-      made to extend the font for a target subset definition. This optimized execution is fully compliant with the extension algorithm but preloads some URIs
-      that are expected to be needed ahead of time to reduce round trips.</p>
+      made to extend the font for a target subset definition. This optimized execution is fully compliant with the extension algorithm but speculatively
+      loads some URIs (the glyph keyed URIs) that are expected to be needed ahead of time to reduce round trips.</p>
    <p>Inputs:</p>
    <ul>
     <li data-md>
@@ -3381,8 +3381,19 @@ they are defaulted to an empty set.</p>
      </ul>
     <li data-md>
      <p>Step 7 - one entry from that set must be picked. There a no full invalidation entries, so one partial invalidation entry (//foo.bar/*.tk) must be
-selected. //foo.bar/04.tk is the most likely best choice, since it fully covers the target subset definition (minimizing round trips) and should be
-smaller than //foo.bar/05.tk which contains additional support for '0' through '9' which are not currently requested.</p>
+selected. Following <a href="#invalidating-patch-selection">§ 4.4 Selecting Invalidating Patches</a> the candidate entries have the following intersections with the target subset definition:</p>
+     <ul>
+      <li data-md>
+       <p>//foo.bar/01.tk - {'f'}</p>
+      <li data-md>
+       <p>//foo.bar/02.tk - {'P'}</p>
+      <li data-md>
+       <p>//foo.bar/04.tk - {'f', 'P'}</p>
+      <li data-md>
+       <p>//foo.bar/05.tk - {'f', 'P'}</p>
+     </ul>
+     <p>The intersections for //foo.bar/01.tk and //foo.bar/02.tk are both strict subsets of //foo.bar/04.tk and //foo.bar/05.tk, so they don’t meet selection
+criteria. That leaves either //foo.bar/04.tk or //foo.bar/05.tk. Since //foo.bar/04.tk is listed first in the patch map it is selected.</p>
     <li data-md>
      <p>Step 8 - the selected patch, //foo.bar/04.tk, is fetched. Additionally as an optimization fetches are simultaneously started for the two glyph keyed
 patches //foo.bar/01.gk and //foo.bar/04.gk. The table keyed patch //foo.bar/04.tk is partially invalidating which means the two glyph keyed patches
