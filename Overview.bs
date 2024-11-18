@@ -2875,8 +2875,8 @@ they are defaulted to an empty set.
 <b>Optimized Extension Example</b>
 
 Note: this example execution is described as it would be implemented in an optimized client which aims to reduce the number of round trips needing to be
-      made to extend the font for a target subset definition. This optimized execution is fully compliant with the extension algorithm but preloads some URIs
-      that are expected to be needed ahead of time to reduce round trips.
+      made to extend the font for a target subset definition. This optimized execution is fully compliant with the extension algorithm but speculatively
+      loads some URIs (the glyph keyed URIs) that are expected to be needed ahead of time to reduce round trips.
 
 Inputs:
 *  Initial font with the IFT and IFTX tables as defined above.
@@ -2892,10 +2892,16 @@ Iteration 1:
     * //foo.bar/01.gk
     * //foo.bar/04.gk
 
-<!-- TODO: once we have a section describing criteria for making selections within an invalidating group reference that here -->
 *  Step 7 - one entry from that set must be picked. There a no full invalidation entries, so one partial invalidation entry (//foo.bar/*.tk) must be
-    selected. //foo.bar/04.tk is the most likely best choice, since it fully covers the target subset definition (minimizing round trips) and should be
-    smaller than //foo.bar/05.tk which contains additional support for '0' through '9' which are not currently requested.
+    selected. Following [[#invalidating-patch-selection]] the candidate entries have the following intersections with the target subset definition:
+
+    *  //foo.bar/01.tk - {'f'}
+    *  //foo.bar/02.tk - {'P'}
+    *  //foo.bar/04.tk - {'f', 'P'}
+    *  //foo.bar/05.tk - {'f', 'P'}
+
+    The intersections for //foo.bar/01.tk and //foo.bar/02.tk are both strict subsets of //foo.bar/04.tk and //foo.bar/05.tk, so they don't meet selection
+    criteria. That leaves either //foo.bar/04.tk or //foo.bar/05.tk. Since //foo.bar/04.tk is listed first in the patch map it is selected.
 
 *  Step 8 - the selected patch, //foo.bar/04.tk, is fetched. Additionally as an optimization fetches are simultaneously started for the two glyph keyed
     patches //foo.bar/01.gk and //foo.bar/04.gk. The table keyed patch //foo.bar/04.tk is partially invalidating which means the two glyph keyed patches
