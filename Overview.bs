@@ -2875,8 +2875,9 @@ they are defaulted to an empty set.
 <b>Optimized Extension Example</b>
 
 Note: this example execution is described as it would be implemented in an optimized client which aims to reduce the number of round trips needing to be
-      made to extend the font for a target subset definition. This optimized execution is fully compliant with the extension algorithm but speculatively
-      loads some URIs (the glyph keyed URIs) that are expected to be needed ahead of time to reduce round trips.
+      made to extend the font for a target subset definition. This optimized execution is fully compliant with the extension algorithm but 
+      loads some URIs (the glyph keyed URIs) earlier than specified in the extension algorithm. This is allowed because these patches
+      will not be invalidated by the preceding table keyed patch.
 
 Inputs:
 *  Initial font with the IFT and IFTX tables as defined above.
@@ -2906,7 +2907,7 @@ Iteration 1:
 *  Step 8 - the selected patch, //foo.bar/04.tk, is fetched. Additionally as an optimization fetches are simultaneously started for the two glyph keyed
     patches //foo.bar/01.gk and //foo.bar/04.gk. The table keyed patch //foo.bar/04.tk is partially invalidating which means the two glyph keyed patches
     will be remain valid after the application of //foo.bar/04.tk. Thus the client can expect that the two glyph keyed patches will be required in future
-    iterations and preemptively begin the loads for those two patches.
+    iterations and begin the loads for those two patches at this time.
 
 *  Step 9 - The fetched patch //foo.bar/04.tk is applied to the initial font. This patch updates all tables except for glyf and loca
     to add support for code points 'a' through 'Z'. Additionally the mapping in the "IFT " table is updated to the following:
