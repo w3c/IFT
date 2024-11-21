@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="5f8b5d1e5aea9df85e89ab7beac6e3eae23212ee" name="revision">
+  <meta content="71f3c5e17296fa19c21ee4ea9e6b7212b685bce3" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1159,6 +1159,8 @@ tables are formatted as a <a href="#patch-map-table">§ 5.2 Patch Map Table</a
 either table is not valid, invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-errors" id="ref-for-abstract-opdef-handle-errors">Handle errors</a>. If <var>extended font subset</var> does not have an 'IFT ' table, then it is
 not an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑥">incremental font</a> and cannot be extended, return <var>extended font subset</var>.</p>
     <li data-md>
+     <p>If the compatibility ID in 'IFT ' is equal to the compatibility ID in 'IFTX' this is an error, invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-errors" id="ref-for-abstract-opdef-handle-errors①">Handle errors</a>.</p>
+    <li data-md>
      <p>For each of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
 invoking <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-1-patch-map" id="ref-for-abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</a> or <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map">Interpret Format 2 Patch Map</a>. Concatenate the returned entry lists into a single list, <var>entry list</var>.</p>
     <li data-md>
@@ -1190,14 +1192,14 @@ of this algorithm is limited to:</p>
       <li data-md>
        <p>At most 2000 patches of any type.</p>
      </ul>
-     <p>Can be loaded and applied during a single invocation of this algorithm. If either count has been exceeded this is an error invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-errors" id="ref-for-abstract-opdef-handle-errors①">Handle errors</a>.</p>
+     <p>Can be loaded and applied during a single invocation of this algorithm. If either count has been exceeded this is an error invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-errors" id="ref-for-abstract-opdef-handle-errors②">Handle errors</a>.</p>
     <li data-md>
      <p>Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from <a href="#font-patch-formats">§ 6 Font Patch Formats</a> to apply the <var>patch file</var> using the patch URI and the compatibility id from <var>entry</var> to <var>extended font subset</var>.</p>
     <li data-md>
      <p>Go to step 2.</p>
    </ol>
    <p class="note" role="note"><span class="marker">Note:</span> the algorithm here presents patch loads as being done one at a time; however, to improve performance client implementations are
-encouraged to pre-fetch patch files that will be applied in later iterations by the algorithm. The <a href="#font-patch-invalidations">invalidation categories</a> can be used to predict which intersecting patches from step 4 will remain be valid
+encouraged to pre-fetch patch files that will be applied in later iterations by the algorithm. The <a href="#font-patch-invalidations">invalidation categories</a> can be used to predict which intersecting patches from step 5 will remain be valid
 to be applied. For example: in a case where there are only "No Invalidation" intersecting patches the client could safely load all
 intersecting patches in parallel, since no patch application will invalidate any of the other intersecting patches.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-check-entry-intersection">Check entry intersection</dfn></p>
@@ -1393,7 +1395,7 @@ must not attempt to further extend the font subset.</p>
 patch entry from a list of candidate entries. The selection criteria used has a direct impact on the total number of round trips that will be needed to
 perform the extension. Round trips are costly so for maximum performance patches should be selected in a way that minimizes the total number of needed
 round trips.</p>
-   <p>The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 7
+   <p>The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 8
 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①">Extend an Incremental Font Subset</a>:</p>
    <ol>
     <li data-md>
@@ -1442,7 +1444,7 @@ shaping.</p>
 0 then the incremental font does not fully support rendering the shaping unit.</p>
       <li data-md>
        <p>Second, compute the corresponding <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑥">font subset definition</a> and execute the <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset③">Extend an Incremental Font Subset</a> algorithm,
-stopping at step 6. If the entry list is not empty then the incremental font does not fully support rendering the shaping unit.</p>
+stopping at step 7. If the entry list is not empty then the incremental font does not fully support rendering the shaping unit.</p>
      </ul>
     <li data-md>
      <p>Any shaping units that passed both checks can be rendered in their entirety with the font.</p>
@@ -1490,7 +1492,7 @@ incremental font:</p>
 <c- k>def</c-> <c- nf>supports_subset_def</c-><c- p>(</c-><c- n>ift_font</c-><c- p>,</c-> <c- n>subset_def</c-><c- p>):</c->
   <c- c1># Return true only if both of the following two checks are true:</c->
   <c- c1># - Each code point in subset_def is mapped to a glyph id other than '0' by ift_font’s cmap table.</c->
-  <c- c1># - After executing the "Extend an Incremental Font Subset" algorithm on ift_font with subset_def and stopping at step 6 the</c->
+  <c- c1># - After executing the "Extend an Incremental Font Subset" algorithm on ift_font with subset_def and stopping at step 7 the</c->
   <c- c1>#   entry list is empty.</c->
 </pre>
    <p>Any text from the shaping unit which is not covered by one of the returned spans is not supported by the incremental font and should
@@ -2695,7 +2697,7 @@ The <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-fon
      <p>Must meet all of the requirements in <a href="#font-format-extensions">§ 5 Extensions to the Font Format</a> and <a href="#font-patch-formats">§ 6 Font Patch Formats</a>.</p>
     <li data-md>
      <p>Must be consistent, that is: for any possible <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①⑧">font subset definition</a> the result of invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset⑧">Extend an Incremental Font Subset</a> with that subset definition and the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①①">incremental font</a> must always be the same regardless of the particular order
-of patch selection chosen in step 7 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset⑨">Extend an Incremental Font Subset</a>.</p>
+of patch selection chosen in step 8 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset⑨">Extend an Incremental Font Subset</a>.</p>
     <li data-md>
      <p>Must respect patch invalidation criteria. Any patch which is part of an IFT encoding when applied to a compatible <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a> must only make changes to the <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑦">patch map</a> compatibility IDs which are compliant with the <a href="#font-patch-invalidations">§ 4.1 Patch Invalidations</a> criteria
  for the invalidation mode declared by the associated <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①②">patch map entries</a>.</p>
@@ -3670,7 +3672,7 @@ let dfnPanelData = {
 "abstract-opdef-decoding-sparse-bit-set-treedata": {"dfnID":"abstract-opdef-decoding-sparse-bit-set-treedata","dfnText":"Decoding sparse bit set treeData","external":false,"refSections":[],"url":"#abstract-opdef-decoding-sparse-bit-set-treedata"},
 "abstract-opdef-extend-an-incremental-font-subset": {"dfnID":"abstract-opdef-extend-an-incremental-font-subset","dfnText":"Extend an Incremental Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460"}],"title":"4.4. Selecting Invalidating Patches"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2461"}],"title":"4.5. Target Subset Definition"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2462"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2463"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2464"}],"title":"4.6. Determining what Content a Font can Render"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2465"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2466"}],"title":"5.2. Patch Map Table"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2467"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2468"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460\u24ea"}],"title":"7. Encoding"}],"url":"#abstract-opdef-extend-an-incremental-font-subset"},
 "abstract-opdef-fully-expand-a-font-subset": {"dfnID":"abstract-opdef-fully-expand-a-font-subset","dfnText":"Fully Expand a Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset"}],"title":"2.1. Offline Usage"},{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2460"},{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2461"}],"title":"7. Encoding"}],"url":"#abstract-opdef-fully-expand-a-font-subset"},
-"abstract-opdef-handle-errors": {"dfnID":"abstract-opdef-handle-errors","dfnText":"Handle errors","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-handle-errors"},{"id":"ref-for-abstract-opdef-handle-errors\u2460"}],"title":"4.3. Incremental Font Extension Algorithm"}],"url":"#abstract-opdef-handle-errors"},
+"abstract-opdef-handle-errors": {"dfnID":"abstract-opdef-handle-errors","dfnText":"Handle errors","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-handle-errors"},{"id":"ref-for-abstract-opdef-handle-errors\u2460"},{"id":"ref-for-abstract-opdef-handle-errors\u2461"}],"title":"4.3. Incremental Font Extension Algorithm"}],"url":"#abstract-opdef-handle-errors"},
 "abstract-opdef-interpret-format-1-patch-map": {"dfnID":"abstract-opdef-interpret-format-1-patch-map","dfnText":"Interpret Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-1-patch-map"}],"title":"4.3. Incremental Font Extension Algorithm"}],"url":"#abstract-opdef-interpret-format-1-patch-map"},
 "abstract-opdef-interpret-format-2-patch-map": {"dfnID":"abstract-opdef-interpret-format-2-patch-map","dfnText":"Interpret Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map\u2460"},{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map\u2461"},{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map\u2462"}],"title":"5.2.2.2. Remove Entries from Format 2"}],"url":"#abstract-opdef-interpret-format-2-patch-map"},
 "abstract-opdef-interpret-format-2-patch-map-entry": {"dfnID":"abstract-opdef-interpret-format-2-patch-map-entry","dfnText":"Interpret Format 2 Patch Map Entry","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry\u2460"}],"title":"5.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-format-2-patch-map-entry\u2461"}],"title":"5.2.2.2. Remove Entries from Format 2"}],"url":"#abstract-opdef-interpret-format-2-patch-map-entry"},

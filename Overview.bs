@@ -426,21 +426,22 @@ The algorithm:
     either table is not valid, invoke [$Handle errors$]. If <var>extended font subset</var> does not have an 'IFT ' table, then it is
     not an [=incremental font=] and cannot be extended, return <var>extended font subset</var>.
 
-3.  For each of [[open-type/otff#table-directory|tables]] 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
+3.  If the compatibility ID in 'IFT ' is equal to the compatibility ID in 'IFTX' this is an error, invoke [$Handle errors$].
+
+4.  For each of [[open-type/otff#table-directory|tables]] 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
     invoking [$Interpret Format 1 Patch Map$] or [$Interpret Format 2 Patch Map$]. Concatenate the returned entry lists into a single list,
     <var>entry list</var>.
     
-
-4.  For each <var>entry</var> in <var>entry list</var> invoke [$Check entry intersection$] with <var>entry</var> and
+5.  For each <var>entry</var> in <var>entry list</var> invoke [$Check entry intersection$] with <var>entry</var> and
     <var>target subset definition</var> as inputs, if it returns false remove <var>entry</var>
     from <var>entry list</var>.
 
-5.  Remove any entries in <var>entry list</var> which have a patch URI which was loaded and applied previously during the execution
+6.  Remove any entries in <var>entry list</var> which have a patch URI which was loaded and applied previously during the execution
     of this algorithm.
 
-6.  If <var>entry list</var> is empty, then the extension operation is finished, return <var>extended font subset</var>.
+7.  If <var>entry list</var> is empty, then the extension operation is finished, return <var>extended font subset</var>.
 
-7.  Pick one <var>entry</var> from <var>entry list</var> with the following procedure:
+8.  Pick one <var>entry</var> from <var>entry list</var> with the following procedure:
 
     *  If <var>entry list</var> contains one or more [=patch map entries=] which have a patch format that is [=Full Invalidation=]
         then, select exactly one of the [=Full Invalidation=] entries in <var>entry list</var>. Follow the criteria in
@@ -453,7 +454,7 @@ The algorithm:
     *  Otherwise select exactly one of the [=No Invalidation=] entries in <var>entry list</var>.
         The criteria for selecting the single entry is left up to the implementation to decide.
 
-8.  Load <var>patch file</var> by invoking [$Load patch file$] with the <var>initial font subset URI</var> as the initial font URI and
+9.  Load <var>patch file</var> by invoking [$Load patch file$] with the <var>initial font subset URI</var> as the initial font URI and
     the <var>entry</var> patch URI as the patch URI. The total number of patches that a client can load and apply during a single execution
     of this algorithm is limited to:
 
@@ -464,15 +465,15 @@ The algorithm:
     Can be loaded and applied during a single invocation of this algorithm. If either count has been exceeded this is an error invoke
     [$Handle errors$].
 
-9.  Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from
-    [[#font-patch-formats]] to apply the <var>patch file</var> using the patch URI and the compatibility id from <var>entry</var> to
-    <var>extended font subset</var>.
+10.  Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from
+     [[#font-patch-formats]] to apply the <var>patch file</var> using the patch URI and the compatibility id from <var>entry</var> to
+     <var>extended font subset</var>.
 
-10. Go to step 2.
+11. Go to step 2.
 
 Note: the algorithm here presents patch loads as being done one at a time; however, to improve performance client implementations are
 encouraged to pre-fetch patch files that will be applied in later iterations by the algorithm. The
-[[#font-patch-invalidations|invalidation categories]] can be used to predict which intersecting patches from step 4 will remain be valid
+[[#font-patch-invalidations|invalidation categories]] can be used to predict which intersecting patches from step 5 will remain be valid
 to be applied. For example: in a case where there are only "No Invalidation" intersecting patches the client could safely load all
 intersecting patches in parallel, since no patch application will invalidate any of the other intersecting patches.
 
@@ -700,7 +701,7 @@ patch entry from a list of candidate entries. The selection criteria used has a 
 perform the extension. Round trips are costly so for maximum performance patches should be selected in a way that minimizes the total number of needed
 round trips.
 
-The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 7
+The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 8
 of [$Extend an Incremental Font Subset$]:
 
 1.  For each candidate entry compute the set intersection between each subset definition in the entry and the target subset definition. Union
@@ -755,7 +756,7 @@ parts of some content an incremental font can render:
         0 then the incremental font does not fully support rendering the shaping unit.
 
     * Second, compute the corresponding [=font subset definition=] and execute the [$Extend an Incremental Font Subset$] algorithm,
-        stopping at step 6. If the entry list is not empty then the incremental font does not fully support rendering the shaping unit.
+        stopping at step 7. If the entry list is not empty then the incremental font does not fully support rendering the shaping unit.
 
 * Any shaping units that passed both checks can be rendered in their entirety with the font.
 
@@ -804,7 +805,7 @@ def supported_spans(shaping_unit, ift_font):
 def supports_subset_def(ift_font, subset_def):
   # Return true only if both of the following two checks are true:
   # - Each code point in subset_def is mapped to a glyph id other than '0' by ift_font's cmap table.
-  # - After executing the "Extend an Incremental Font Subset" algorithm on ift_font with subset_def and stopping at step 6 the
+  # - After executing the "Extend an Incremental Font Subset" algorithm on ift_font with subset_def and stopping at step 7 the
   #   entry list is empty.
 </pre>
 
@@ -2294,7 +2295,7 @@ The [=incremental font=] and associated patches produced by a compliant encoder:
 
 2.  Must be consistent, that is: for any possible [=font subset definition=] the result of invoking [$Extend an Incremental Font Subset$] 
     with that subset definition and the [=incremental font=] must always be the same regardless of the particular order
-    of patch selection chosen in step 7 of [$Extend an Incremental Font Subset$].
+    of patch selection chosen in step 8 of [$Extend an Incremental Font Subset$].
 
 3.  Must respect patch invalidation criteria. Any patch which is part of an IFT encoding when applied to a compatible [=font subset=]
      must only make changes to the [=patch map=] compatibility IDs which are compliant with the [[#font-patch-invalidations]] criteria
