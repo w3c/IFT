@@ -989,7 +989,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Format 1 Patch Map">patchEncoding</dfn></td>
+    <td><dfn for="Format 1 Patch Map">patchFormat</dfn></td>
     <td>
       Specifies the format of the patches linked to by uriTemplate.
       Must be set to one of the format numbers from  the [[#font-patch-formats-summary]] table.
@@ -1159,7 +1159,7 @@ The algorithm:
     *  If the Unicode code point set is empty then, skip this <var>entry index</var>.
 
     *  Add an [=patch map entries|entry=] to <var>entry list</var> with one subset definition which contains only the Unicode code point
-        set and maps to the generated URI, the patch encoding specified by [=Format 1 Patch Map/patchEncoding=], and
+        set and maps to the generated URI, the patch format specified by [=Format 1 Patch Map/patchFormat=], and
         [=Format 1 Patch Map/compatibilityId=].
 
 3.  If [=Format 1 Patch Map/featureMapOffset=] is not null then, for each [=FeatureRecord=] and associated [=EntryMapRecord=] in
@@ -1197,8 +1197,8 @@ The algorithm:
 
     *  If the constructed set of Unicode code points is empty then, this [=EntryMapRecord=] is invalid skip it.
 
-    *  Add an [=patch map entries|entry=] to <var>entry list</var> which  maps to the generated URI, the patch encoding
-        specified by [=Format 1 Patch Map/patchEncoding=], and [=Format 1 Patch Map/compatibilityId=]; or if there is an existing
+    *  Add an [=patch map entries|entry=] to <var>entry list</var> which  maps to the generated URI, the patch format
+        specified by [=Format 1 Patch Map/patchFormat=], and [=Format 1 Patch Map/compatibilityId=]; or if there is an existing
         [=patch map entries|entry=] in <var>entry list</var> which has the same patch URI as the generated URI then
         instead modify the existing entry. Add the constructed set of Unicode code points and [=FeatureRecord/featureTag=] to the new or
         existing entry's single subset definition.
@@ -1264,7 +1264,7 @@ The algorithm:
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Format 2 Patch Map">defaultPatchEncoding</dfn></td>
+    <td><dfn for="Format 2 Patch Map">defaultPatchFormat</dfn></td>
     <td>
       Specifies the format of the patches linked to by uriTemplate (unless overridden by an entry).
       Must be set to one of the format numbers from the [[#font-patch-formats-summary]] table.
@@ -1405,10 +1405,10 @@ The algorithm:
 
   <tr>
     <td>uint8</td>
-    <td><dfn for="Mapping Entry">patchEncoding</dfn></td>
+    <td><dfn for="Mapping Entry">patchFormat</dfn></td>
     <td>
       Specifies the format of the patch linked to by this entry. Uses the ID numbers from the [[#font-patch-formats-summary]] table.
-      Overrides [=Format 2 Patch Map/defaultPatchEncoding=].
+      Overrides [=Format 2 Patch Map/defaultPatchFormat=].
       Only present if [=Mapping Entry/formatFlags=] bit 3 is set.
     </td>
   </tr>
@@ -1501,7 +1501,7 @@ The algorithm:
          the bytes from <var>patch map</var> starting from [=Format 2 Patch Map/entryIdStringData=][<var>current id string byte</var>]
          to the end of <var>patch map</var> if [=Format 2 Patch Map/entryIdStringData=] is non zero,
          <var>last entry id</var>,
-         [=Format 2 Patch Map/defaultPatchEncoding=], and
+         [=Format 2 Patch Map/defaultPatchFormat=], and
          [=Format 2 Patch Map/uriTemplate=].
 
      *  Set <var>last entry id</var> to the returned entry id.
@@ -1525,7 +1525,7 @@ The inputs to this algorithm are:
 
 * <var>last entry id</var>: the entry id of the entry preceding this one.
 
-* <var>default patch encoding</var>: the default patch encoding if one isn't specified.
+* <var>default patch format</var>: the default patch format if one isn't specified.
 
 * <var>uri template</var>: the URI template used to locate patches.
 
@@ -1549,7 +1549,7 @@ The algorithm:
 2.  If <var>id string bytes</var> is not present then, set <var>entry id</var> = <var>last entry id</var> + 1. Otherwise set
      <var>entry id</var> = <var>last entry id</var>.
 
-3.  Set the patch encoding of <var>entry</var> to <var>default patch encoding</var>.
+3.  Set the patch format of <var>entry</var> to <var>default patch format</var>.
 
 4.  Add a single [=font subset definition=] to <var>entry</var> with all sets initialized to be empty.
 
@@ -1586,9 +1586,9 @@ The algorithm:
     *  Otherwise if <var>id string bytes</var> is present then, read [=Mapping Entry/entryIdStringLength=] bytes from
         <var>id string bytes</var> and set <var>entry id</var> to the result.
 
-8.  If [=Mapping Entry/formatFlags=] bit 3 is set, then a patch encoding is present. Read the encoding specified by
-     [=Mapping Entry/patchEncoding=] from <var>entry bytes</var> and set the patch encoding of <var>entry</var> to the read value.
-     If [=Mapping Entry/patchEncoding=] is not one of the values in [[#font-patch-formats-summary]] then, this encoding is invalid
+8.  If [=Mapping Entry/formatFlags=] bit 3 is set, then a patch format is present. Read the format specified by
+     [=Mapping Entry/patchFormat=] from <var>entry bytes</var> and set the patch format of <var>entry</var> to the read value.
+     If [=Mapping Entry/patchFormat=] is not one of the values in [[#font-patch-formats-summary]] then, this encoding is invalid
      return an error.
 
 9.  If one or both of [=Mapping Entry/formatFlags=] bit 4 and bit 5 are set, then a code point list is present:
@@ -1988,7 +1988,7 @@ or remove tables in a [=font subset=].
   <tr>
     <td>Tag</td>
     <td>format</td>
-    <td>Identifies the encoding as table keyed, must be set to 'iftk'</td>
+    <td>Identifies the format as table keyed, must be set to 'iftk'</td>
   </tr>
   <tr>
     <td>uint32</td>
@@ -2125,7 +2125,7 @@ A glyph keyed patch contains a collection of data chunks that are each associate
   <tr>
     <td>Tag</td>
     <td>format</td>
-    <td>Identifies the encoding as glyph keyed, must be set to 'ifgk'</td>
+    <td>Identifies the format as glyph keyed, must be set to 'ifgk'</td>
   </tr>
   <tr>
     <td>uint32</td>
