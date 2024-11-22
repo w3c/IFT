@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="7ca403aa4a00ec5a141609c38bc4222058c52cb4" name="revision">
+  <meta content="15741d106ff3a0fd6547c72aee890b78babf0340" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1149,7 +1149,10 @@ know that the specific shaper which will be used may not make use of some featur
 opt to exclude those unused features from the subset definition.</p>
    <h3 class="heading settled algorithm" data-algorithm="Incremental Font Extension Algorithm" data-level="4.3" id="extend-font-subset"><span class="secno">4.3. </span><span class="content">Incremental Font Extension Algorithm</span><a class="self-link" href="#extend-font-subset"></a></h3>
    <p>The following algorithm is used by a client to extend an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font③">incremental</a> <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font subset</a> to cover additional
-code points, layout features and/or design space.</p>
+code points, layout features and/or design space. This algorithm incrementally selects and applies patches to the font one at a time, loading
+them as needed. As an important optimization to minimize network round trips it permits loads to be started for all patches that will eventually
+be needed. <a href="#font-patch-invalidations">§ 4.1 Patch Invalidations</a> is used to determine which patches loads can be started for. Any patches which match the target subset definition
+and will not be invalidated by the next patch to be applied according to <a href="#font-patch-invalidations">§ 4.1 Patch Invalidations</a> can be expected to be needed in future iterations.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-extend-an-incremental-font-subset">Extend an Incremental Font Subset</dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>

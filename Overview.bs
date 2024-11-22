@@ -419,7 +419,10 @@ opt to exclude those unused features from the subset definition.
 <h3 algorithm id="extend-font-subset">Incremental Font Extension Algorithm</h2>
 
 The following algorithm is used by a client to extend an [=incremental font|incremental=] [=font subset=] to cover additional
-code points, layout features and/or design space.
+code points, layout features and/or design space. This algorithm incrementally selects and applies patches to the font one at a time, loading
+them as needed. As an important optimization to minimize network round trips it permits loads to be started for all patches that will eventually
+be needed. [[#font-patch-invalidations]] is used to determine which patches loads can be started for. Any patches which match the target subset definition
+and will not be invalidated by the next patch to be applied according to [[#font-patch-invalidations]] can be expected to be needed in future iterations.
 
 <dfn abstract-op>Extend an Incremental Font Subset</dfn>
 
