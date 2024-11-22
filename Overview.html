@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="c2bf1c29bc0ddfb7ecf7382081365dbe4de446e5" name="revision">
+  <meta content="7ca403aa4a00ec5a141609c38bc4222058c52cb4" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1181,49 +1181,50 @@ not an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-
      <p>For each of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
 invoking <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-1-patch-map" id="ref-for-abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</a> or <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map">Interpret Format 2 Patch Map</a>. Concatenate the returned entry lists into a single list, <var>entry list</var>.</p>
     <li data-md>
-     <p>For each <var>entry</var> in <var>entry list</var> invoke <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection">Check entry intersection</a> with <var>entry</var> and <var>target subset definition</var> as inputs, if it returns false remove <var>entry</var> from <var>entry list</var>.</p>
-    <li data-md>
-     <p>Remove any entries in <var>entry list</var> which have a patch URI which was loaded and applied previously during the execution
-of this algorithm.</p>
+     <p>For each <var>entry</var> in <var>entry list</var> invoke <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection">Check entry intersection</a> with <var>entry</var> and <var>target subset definition</var> as inputs, if it returns false remove <var>entry</var> from <var>entry list</var>. Additionally remove
+any entries in <var>entry list</var> which have a patch URI which was loaded and applied previously during the execution of this algorithm.</p>
     <li data-md>
      <p>If <var>entry list</var> is empty, then the extension operation is finished, return <var>extended font subset</var>.</p>
     <li data-md>
-     <p>Pick one <var>entry</var> from <var>entry list</var> with the following procedure:</p>
+     <p>Group the entries from <var>entry list</var> into 3 lists based on the invalidation mode of the <a href="#font-patch-formats-summary">patch format</a> of each entry: <var>full invalidation entry list</var>, <var>partial invalidation entry list</var>, and <var>no invalidation entry list</var>.</p>
+    <li data-md>
+     <p>Pick one <var>entry</var> with the following procedure:</p>
      <ul>
       <li data-md>
-       <p>If <var>entry list</var> contains one or more <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①">patch map entries</a> which have a patch format that is <a data-link-type="dfn" href="#full-invalidation" id="ref-for-full-invalidation">Full Invalidation</a> then, select exactly one of the <a data-link-type="dfn" href="#full-invalidation" id="ref-for-full-invalidation①">Full Invalidation</a> entries in <var>entry list</var>. Follow the criteria in <a href="#invalidating-patch-selection">§ 4.4 Selecting Invalidating Patches</a> to select the single entry.</p>
+       <p>If <var>full invalidation entry list</var> is not empty then, select exactly one of the contained entries. Follow the criteria in <a href="#invalidating-patch-selection">§ 4.4 Selecting Invalidating Patches</a> to select the single entry.</p>
       <li data-md>
-       <p>Otherwise if <var>entry list</var> contains one or more <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries②">patch map entries</a> which have a patch format that is <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation">Partial Invalidation</a> then, select exactly one of the <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation①">Partial Invalidation</a> entries in <var>entry list</var>.
+       <p>Otherwise if <var>partial invalidation entry list</var> is not empty then, select exactly one of the contained entries.
 Follow the criteria in <a href="#invalidating-patch-selection">§ 4.4 Selecting Invalidating Patches</a> to select the single entry.</p>
       <li data-md>
-       <p>Otherwise select exactly one of the <a data-link-type="dfn" href="#no-invalidation" id="ref-for-no-invalidation">No Invalidation</a> entries in <var>entry list</var>.
+       <p>Otherwise select exactly one of the entries in <var>no invalidation entry list</var>.
 The criteria for selecting the single entry is left up to the implementation to decide.</p>
      </ul>
     <li data-md>
-     <p>Load <var>patch file</var> by invoking <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the <var>initial font subset URI</var> as the initial font URI and
-the <var>entry</var> patch URI as the patch URI. The total number of patches that a client can load and apply during a single execution
-of this algorithm is limited to:</p>
+     <p>Start a load of <var>patch file</var> (if not already previously started) by invoking <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the <var>initial font subset URI</var> as the initial font URI and the <var>entry</var> patch URI as the patch URI. Additionally the client may optionally start loads using the same
+procedure for any entries in <var>entry list</var> which will not be <a href="#font-patch-invalidations">invalidated</a> by <var>entry</var>. The total
+number of patches that a client can load and apply during a single execution of this algorithm is limited to:</p>
      <ul>
       <li data-md>
-       <p>At most 100 patches which are <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation②">Partial Invalidation</a> or <a data-link-type="dfn" href="#full-invalidation" id="ref-for-full-invalidation②">Full Invalidation</a>.</p>
+       <p>At most 100 patches which are <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation">Partial Invalidation</a> or <a data-link-type="dfn" href="#full-invalidation" id="ref-for-full-invalidation">Full Invalidation</a>.</p>
       <li data-md>
        <p>At most 2000 patches of any type.</p>
      </ul>
      <p>Can be loaded and applied during a single invocation of this algorithm. If either count has been exceeded this is an error invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-errors" id="ref-for-abstract-opdef-handle-errors②">Handle errors</a>.</p>
     <li data-md>
-     <p>Apply <var>patch file</var> using the appropriate application algorithm (matching the patches format in <var>entry</var>) from <a href="#font-patch-formats">§ 6 Font Patch Formats</a> to apply the <var>patch file</var> using the patch URI and the compatibility id from <var>entry</var> to <var>extended font subset</var>.</p>
+     <p>Once the load for <var>patch file</var> is finished, apply it using the appropriate application algorithm (matching the patches format in <var>entry</var>) from <a href="#font-patch-formats">§ 6 Font Patch Formats</a> to apply the <var>patch file</var> using the patch URI and the compatibility id from <var>entry</var> to <var>extended font subset</var>.</p>
     <li data-md>
      <p>Go to step 2.</p>
    </ol>
-   <p class="note" role="note"><span class="marker">Note:</span> the algorithm here presents patch loads as being done one at a time; however, to improve performance client implementations are
-encouraged to pre-fetch patch files that will be applied in later iterations by the algorithm. The <a href="#font-patch-invalidations">invalidation categories</a> can be used to predict which intersecting patches from step 5 will remain be valid
-to be applied. For example: in a case where there are only "No Invalidation" intersecting patches the client could safely load all
-intersecting patches in parallel, since no patch application will invalidate any of the other intersecting patches.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> in step 9 the client may optionally start loads for patches which are not invalidated by the currently selected entry. This is an important
+optimization which significantly improves performance by eliminating network round trips where possible by initiating loads for patches that will
+be needed in later iterations.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> if the only remaining intersecting entries are no invalidation entries the intersection check in step 5 does not need to be repeated on each
+iteration since no invalidation patches won’t change the list of available patches upon application (other then to remove the just applied patch).</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-check-entry-intersection">Check entry intersection</dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
     <li data-md>
-     <p><var>mapping entry</var>: a <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries③">patch map entry</a>.</p>
+     <p><var>mapping entry</var>: a <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①">patch map entry</a>.</p>
     <li data-md>
      <p><var>subset definition</var>: a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑤">font subset definition</a>.</p>
    </ul>
@@ -1461,7 +1462,7 @@ shaping.</p>
 0 then the incremental font does not fully support rendering the shaping unit.</p>
       <li data-md>
        <p>Second, compute the corresponding <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑥">font subset definition</a> and execute the <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset③">Extend an Incremental Font Subset</a> algorithm,
-stopping at step 7. If the entry list is not empty then the incremental font does not fully support rendering the shaping unit.</p>
+stopping at step 6. If the entry list is not empty then the incremental font does not fully support rendering the shaping unit.</p>
      </ul>
     <li data-md>
      <p>Any shaping units that passed both checks can be rendered in their entirety with the font.</p>
@@ -1509,7 +1510,7 @@ incremental font:</p>
 <c- k>def</c-> <c- nf>supports_subset_def</c-><c- p>(</c-><c- n>ift_font</c-><c- p>,</c-> <c- n>subset_def</c-><c- p>):</c->
   <c- c1># Return true only if both of the following two checks are true:</c->
   <c- c1># - Each code point in subset_def is mapped to a glyph id other than '0' by ift_font’s cmap table.</c->
-  <c- c1># - After executing the "Extend an Incremental Font Subset" algorithm on ift_font with subset_def and stopping at step 7 the</c->
+  <c- c1># - After executing the "Extend an Incremental Font Subset" algorithm on ift_font with subset_def and stopping at step 6 the</c->
   <c- c1>#   entry list is empty.</c->
 </pre>
    <p>Any text from the shaping unit which is not covered by one of the returned spans is not supported by the incremental font and should
@@ -1743,7 +1744,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
    </table>
    <p>An entry map record matches any entry indices that are greater than or equal to firstEntryIndex and less than or equal to  lastEntryIndex.</p>
    <h5 class="heading settled algorithm" data-algorithm="Interpreting Format 1" data-level="5.2.1.1" id="interpreting-patch-map-format-1"><span class="secno">5.2.1.1. </span><span class="content">Interpreting Format 1</span><a class="self-link" href="#interpreting-patch-map-format-1"></a></h5>
-   <p>This algorithm is used to convert a format 1 patch map into a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries④">patch map entries</a>.</p>
+   <p>This algorithm is used to convert a format 1 patch map into a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries②">patch map entries</a>.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
@@ -1755,7 +1756,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p><var>entry list</var>: a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑤">patch map entries</a>.</p>
+     <p><var>entry list</var>: a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries③">patch map entries</a>.</p>
    </ul>
    <p>The algorithm:</p>
    <ol>
@@ -1782,7 +1783,7 @@ Multiple code points may map to the same glyph id. All code points associated wi
       <li data-md>
        <p>If the Unicode code point set is empty then, skip this <var>entry index</var>.</p>
       <li data-md>
-       <p>Add an <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑥">entry</a> to <var>entry list</var> with one subset definition which contains only the Unicode code point
+       <p>Add an <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries④">entry</a> to <var>entry list</var> with one subset definition which contains only the Unicode code point
 set and maps to the generated URI, the patch format specified by <a data-link-type="dfn" href="#format-1-patch-map-patchformat" id="ref-for-format-1-patch-map-patchformat">patchFormat</a>, and <a data-link-type="dfn" href="#format-1-patch-map-compatibilityid" id="ref-for-format-1-patch-map-compatibilityid">compatibilityId</a>.</p>
      </ul>
     <li data-md>
@@ -1814,8 +1815,8 @@ associated code points as if it wasn’t skipped.</p>
       <li data-md>
        <p>If the constructed set of Unicode code points is empty then, this <a data-link-type="dfn" href="#entrymaprecord" id="ref-for-entrymaprecord⑧">EntryMapRecord</a> is invalid skip it.</p>
       <li data-md>
-       <p>Add an <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑦">entry</a> to <var>entry list</var> which  maps to the generated URI, the patch format
-specified by <a data-link-type="dfn" href="#format-1-patch-map-patchformat" id="ref-for-format-1-patch-map-patchformat①">patchFormat</a>, and <a data-link-type="dfn" href="#format-1-patch-map-compatibilityid" id="ref-for-format-1-patch-map-compatibilityid①">compatibilityId</a>; or if there is an existing <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑧">entry</a> in <var>entry list</var> which has the same patch URI as the generated URI then
+       <p>Add an <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑤">entry</a> to <var>entry list</var> which  maps to the generated URI, the patch format
+specified by <a data-link-type="dfn" href="#format-1-patch-map-patchformat" id="ref-for-format-1-patch-map-patchformat①">patchFormat</a>, and <a data-link-type="dfn" href="#format-1-patch-map-compatibilityid" id="ref-for-format-1-patch-map-compatibilityid①">compatibilityId</a>; or if there is an existing <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑥">entry</a> in <var>entry list</var> which has the same patch URI as the generated URI then
 instead modify the existing entry. Add the constructed set of Unicode code points and <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag③">featureTag</a> to the new or
 existing entry’s single subset definition.</p>
      </ul>
@@ -2006,7 +2007,7 @@ being requested.</p>
       <td> End (inclusive) of the segment. Must be greater than or equal to start. This value uses the user axis scale: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#coordinate-scales-and-normalization">OpenType Specification § otvaroverview#coordinate-scales-and-normalization</a>. 
    </table>
    <h5 class="heading settled algorithm" data-algorithm="Interpreting Format 2" data-level="5.2.2.1" id="interpreting-patch-map-format-2"><span class="secno">5.2.2.1. </span><span class="content">Interpreting Format 2</span><a class="self-link" href="#interpreting-patch-map-format-2"></a></h5>
-   <p>This algorithm is used to convert a format 2 <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑤">patch map</a> into a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑨">patch map entries</a>.</p>
+   <p>This algorithm is used to convert a format 2 <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑤">patch map</a> into a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑦">patch map entries</a>.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-interpret-format-2-patch-map">Interpret Format 2 Patch Map</dfn></p>
    <p>The inputs to this algorithm are:</p>
    <ul>
@@ -2016,7 +2017,7 @@ being requested.</p>
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p><var>entry list</var>: a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①⓪">patch map entries</a>.</p>
+     <p><var>entry list</var>: a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑧">patch map entries</a>.</p>
    </ul>
    <p>The algorithm:</p>
    <ol>
@@ -2064,7 +2065,7 @@ being requested.</p>
     <li data-md>
      <p><var>entry id</var>: the numeric or string id of this entry.</p>
     <li data-md>
-     <p><var>entry</var>: a single <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①①">entry</a>.</p>
+     <p><var>entry</var>: a single <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑨">entry</a>.</p>
     <li data-md>
      <p><var>consumed bytes</var>: the number of bytes used to encode the entry.</p>
     <li data-md>
@@ -2439,15 +2440,15 @@ encoding can make use of more than one patch format.</p>
      <tr>
       <td>1
       <td><a href="#table-keyed">§ 6.2 Table Keyed</a>
-      <td><a data-link-type="dfn" href="#full-invalidation" id="ref-for-full-invalidation③">Full Invalidation</a>
+      <td><a data-link-type="dfn" href="#full-invalidation" id="ref-for-full-invalidation①">Full Invalidation</a>
      <tr>
       <td>2
       <td><a href="#table-keyed">§ 6.2 Table Keyed</a>
-      <td><a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation③">Partial Invalidation</a>
+      <td><a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation①">Partial Invalidation</a>
      <tr>
       <td>3
       <td><a href="#glyph-keyed">§ 6.3 Glyph Keyed</a>
-      <td><a data-link-type="dfn" href="#no-invalidation" id="ref-for-no-invalidation①">No Invalidation</a>
+      <td><a data-link-type="dfn" href="#no-invalidation" id="ref-for-no-invalidation">No Invalidation</a>
    </table>
    <h3 class="heading settled" data-level="6.2" id="table-keyed"><span class="secno">6.2. </span><span class="content">Table Keyed</span><a class="self-link" href="#table-keyed"></a></h3>
    <p>A table keyed patch contains a collection of patches which are applied to the individual <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font tables</a> in the input font file. Each table patch is encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the corresponding table from the input font file as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. A table keyed encoded patch consists of a short header followed
@@ -2717,7 +2718,7 @@ The <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-fon
 of patch selection chosen in step 8 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset⑨">Extend an Incremental Font Subset</a>.</p>
     <li data-md>
      <p>Must respect patch invalidation criteria. Any patch which is part of an IFT encoding when applied to a compatible <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a> must only make changes to the <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑦">patch map</a> compatibility IDs which are compliant with the <a href="#font-patch-invalidations">§ 4.1 Patch Invalidations</a> criteria
- for the invalidation mode declared by the associated <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①②">patch map entries</a>.</p>
+ for the invalidation mode declared by the associated <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①⓪">patch map entries</a>.</p>
     <li data-md>
      <p>When an encoder is used to transform an existing font into an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①②">incremental font</a> the associated <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset①">fully expanded font</a> should be equivalent to the existing font. An equivalent fully expanded font
  should have all of the same <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> as the existing font (excluding the incremental IFT/IFTX
@@ -2755,9 +2756,9 @@ is based on the experience of building an encoder implementation during developm
 understanding (at the time of writing) of how to generate a high performance encoding which meets requirements 1 through 4 of <a href="#encoding">§ 7 Encoding</a> and thus preserves all functionality/behavior of the original font being encoded.</p>
    <p><b>About <a href="#table-keyed">§ 6.2 Table Keyed</a> patches</b></p>
    <p>A <a href="#table-keyed">§ 6.2 Table Keyed</a> patch can change the contents of some font tables and not others. Each patched table typically needs to be
-relative to a specific table content, but other tables can have different contents. Therefore as long as a <a href="#table-keyed">§ 6.2 Table Keyed</a> patch does not alter the tables containing glyph data it can be compatible with <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches and therefore be only <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation④">Partially Invalidating</a> (in that it will invalidate other <a href="#table-keyed">§ 6.2 Table Keyed</a> patches but not <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches). Additionally two sets of <a href="#table-keyed">§ 6.2 Table Keyed</a> patches can be independent of each other if they do not
+relative to a specific table content, but other tables can have different contents. Therefore as long as a <a href="#table-keyed">§ 6.2 Table Keyed</a> patch does not alter the tables containing glyph data it can be compatible with <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches and therefore be only <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation②">Partially Invalidating</a> (in that it will invalidate other <a href="#table-keyed">§ 6.2 Table Keyed</a> patches but not <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches). Additionally two sets of <a href="#table-keyed">§ 6.2 Table Keyed</a> patches can be independent of each other if they do not
 modify any of the same tables.  For example, one could use <a href="#table-keyed">§ 6.2 Table Keyed</a> patches for all
-content other than the glyph tables but then use another set of <a href="#table-keyed">§ 6.2 Table Keyed</a> patches for those tables rather than <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches, and each of these could in theory be <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation⑤">Partially Invalidating</a>—leaving them
+content other than the glyph tables but then use another set of <a href="#table-keyed">§ 6.2 Table Keyed</a> patches for those tables rather than <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches, and each of these could in theory be <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation③">Partially Invalidating</a>—leaving them
 mutually dependent but independent of one another.</p>
    <p>An application of a <a href="#table-keyed">§ 6.2 Table Keyed</a> patch will typically alter the IFT or IFTX table it was was listed in to add a new set
 of patches to further extend the font. This means that the total set of <a href="#table-keyed">§ 6.2 Table Keyed</a> patches forms a graph,
@@ -2766,12 +2767,12 @@ are typically downloaded and applied in series, which has implications for the p
    <p><b>About <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches</b></p>
    <p><a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches are quite distinct from the other patch types. First, <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches can only modify
 tables containing glyph outline data, and therefore an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑦">incremental font</a> that only uses <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> must include all
-other font table data in the initial font file. Second, <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches are <a data-link-type="dfn" href="#no-invalidation" id="ref-for-no-invalidation②">not Invalidating</a>,
+other font table data in the initial font file. Second, <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches are <a data-link-type="dfn" href="#no-invalidation" id="ref-for-no-invalidation①">not Invalidating</a>,
 and can therefore be downloaded and applied independently. This independence means multiple patches can be downloaded in parallel
 which can significantly reduce the number of round trips needed relative to the invalidating patch types.</p>
    <p><b>Choosing patch formats for an encoding</b></p>
    <p>All encodings must chose one or more patch types to use. <a href="#table-keyed">§ 6.2 Table Keyed</a> patches allow
-all types of data in the font to be patched, but because this type is at least <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation⑥">Partially Invalidating</a>,
+all types of data in the font to be patched, but because this type is at least <a data-link-type="dfn" href="#partial-invalidation" id="ref-for-partial-invalidation④">Partially Invalidating</a>,
 the total number of patches needed increases exponentially with the number of segments rather than linearly. <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches
 are limited to updating outline and variation delta data but the number needed scales linearly with number of segments.</p>
    <p>In addition to the number of patches, the encoder should also consider the number of network round trips that will be needed to
@@ -3734,7 +3735,7 @@ let dfnPanelData = {
 "format-2-patch-map-entryidstringdata": {"dfnID":"format-2-patch-map-entryidstringdata","dfnText":"entryIdStringData","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2460"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2461"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata\u2462"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2463"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2464"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entryidstringdata"},
 "format-2-patch-map-format": {"dfnID":"format-2-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-format"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-format"},
 "format-2-patch-map-uritemplate": {"dfnID":"format-2-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-uritemplate"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-uritemplate"},
-"full-invalidation": {"dfnID":"full-invalidation","dfnText":"Full Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-full-invalidation"},{"id":"ref-for-full-invalidation\u2460"},{"id":"ref-for-full-invalidation\u2461"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-full-invalidation\u2462"}],"title":"6.1. Formats Summary"}],"url":"#full-invalidation"},
+"full-invalidation": {"dfnID":"full-invalidation","dfnText":"Full Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-full-invalidation"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-full-invalidation\u2460"}],"title":"6.1. Formats Summary"}],"url":"#full-invalidation"},
 "glyph-closure": {"dfnID":"glyph-closure","dfnText":"glyph closure","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-closure"}],"title":"7.1. Encoding Considerations"}],"url":"#glyph-closure"},
 "glyph-keyed-patch": {"dfnID":"glyph-keyed-patch","dfnText":"Glyph keyed patch","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch"},
 "glyph-keyed-patch-brotlistream": {"dfnID":"glyph-keyed-patch-brotlistream","dfnText":"brotliStream","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch-brotlistream"}],"title":"6.3. Glyph Keyed"},{"refs":[{"id":"ref-for-glyph-keyed-patch-brotlistream\u2460"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch-brotlistream"},
@@ -3766,12 +3767,12 @@ let dfnPanelData = {
 "mapping-entry-featuretags": {"dfnID":"mapping-entry-featuretags","dfnText":"featureTags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-featuretags"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-featuretags"},
 "mapping-entry-formatflags": {"dfnID":"mapping-entry-formatflags","dfnText":"formatFlags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-formatflags"},{"id":"ref-for-mapping-entry-formatflags\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2467"},{"id":"ref-for-mapping-entry-formatflags\u2468"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u24ea"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2467"}],"title":"5.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u2468"}],"title":"5.2.2.2. Remove Entries from Format 2"}],"url":"#mapping-entry-formatflags"},
 "mapping-entry-patchformat": {"dfnID":"mapping-entry-patchformat","dfnText":"patchFormat","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-patchformat"},{"id":"ref-for-mapping-entry-patchformat\u2460"}],"title":"5.2.2.1. Interpreting Format 2"}],"url":"#mapping-entry-patchformat"},
-"no-invalidation": {"dfnID":"no-invalidation","dfnText":"No Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-no-invalidation"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-no-invalidation\u2460"}],"title":"6.1. Formats Summary"},{"refs":[{"id":"ref-for-no-invalidation\u2461"}],"title":"7.1. Encoding Considerations"}],"url":"#no-invalidation"},
-"partial-invalidation": {"dfnID":"partial-invalidation","dfnText":"Partial Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-partial-invalidation"},{"id":"ref-for-partial-invalidation\u2460"},{"id":"ref-for-partial-invalidation\u2461"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-partial-invalidation\u2462"}],"title":"6.1. Formats Summary"},{"refs":[{"id":"ref-for-partial-invalidation\u2463"},{"id":"ref-for-partial-invalidation\u2464"},{"id":"ref-for-partial-invalidation\u2465"}],"title":"7.1. Encoding Considerations"}],"url":"#partial-invalidation"},
+"no-invalidation": {"dfnID":"no-invalidation","dfnText":"No Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-no-invalidation"}],"title":"6.1. Formats Summary"},{"refs":[{"id":"ref-for-no-invalidation\u2460"}],"title":"7.1. Encoding Considerations"}],"url":"#no-invalidation"},
+"partial-invalidation": {"dfnID":"partial-invalidation","dfnText":"Partial Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-partial-invalidation"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-partial-invalidation\u2460"}],"title":"6.1. Formats Summary"},{"refs":[{"id":"ref-for-partial-invalidation\u2461"},{"id":"ref-for-partial-invalidation\u2462"},{"id":"ref-for-partial-invalidation\u2463"}],"title":"7.1. Encoding Considerations"}],"url":"#partial-invalidation"},
 "patch-application-algorithm": {"dfnID":"patch-application-algorithm","dfnText":"patch application algorithm","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-application-algorithm"}],"title":"6.2.1. Applying Table Keyed Patches"},{"refs":[{"id":"ref-for-patch-application-algorithm\u2460"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#patch-application-algorithm"},
 "patch-format": {"dfnID":"patch-format","dfnText":"patch format","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-format"},{"id":"ref-for-patch-format\u2460"}],"title":"3.2. Font Patch"}],"url":"#patch-format"},
 "patch-map": {"dfnID":"patch-map","dfnText":"patch map","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-map"}],"title":"3.3. Patch Map"},{"refs":[{"id":"ref-for-patch-map\u2460"},{"id":"ref-for-patch-map\u2461"}],"title":"4.4. Selecting Invalidating Patches"},{"refs":[{"id":"ref-for-patch-map\u2462"}],"title":"5. Extensions to the Font Format"},{"refs":[{"id":"ref-for-patch-map\u2463"}],"title":"5.2. Patch Map Table"},{"refs":[{"id":"ref-for-patch-map\u2464"},{"id":"ref-for-patch-map\u2465"}],"title":"5.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-patch-map\u2466"}],"title":"7. Encoding"}],"url":"#patch-map"},
-"patch-map-entries": {"dfnID":"patch-map-entries","dfnText":"patch map entries","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-map-entries"}],"title":"3.3. Patch Map"},{"refs":[{"id":"ref-for-patch-map-entries\u2460"},{"id":"ref-for-patch-map-entries\u2461"},{"id":"ref-for-patch-map-entries\u2462"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-patch-map-entries\u2463"},{"id":"ref-for-patch-map-entries\u2464"},{"id":"ref-for-patch-map-entries\u2465"},{"id":"ref-for-patch-map-entries\u2466"},{"id":"ref-for-patch-map-entries\u2467"}],"title":"5.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-patch-map-entries\u2468"},{"id":"ref-for-patch-map-entries\u2460\u24ea"},{"id":"ref-for-patch-map-entries\u2460\u2460"}],"title":"5.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-patch-map-entries\u2460\u2461"}],"title":"7. Encoding"}],"url":"#patch-map-entries"},
+"patch-map-entries": {"dfnID":"patch-map-entries","dfnText":"patch map entries","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-map-entries"}],"title":"3.3. Patch Map"},{"refs":[{"id":"ref-for-patch-map-entries\u2460"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-patch-map-entries\u2461"},{"id":"ref-for-patch-map-entries\u2462"},{"id":"ref-for-patch-map-entries\u2463"},{"id":"ref-for-patch-map-entries\u2464"},{"id":"ref-for-patch-map-entries\u2465"}],"title":"5.2.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-patch-map-entries\u2466"},{"id":"ref-for-patch-map-entries\u2467"},{"id":"ref-for-patch-map-entries\u2468"}],"title":"5.2.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-patch-map-entries\u2460\u24ea"}],"title":"7. Encoding"}],"url":"#patch-map-entries"},
 "sparse-bit-set": {"dfnID":"sparse-bit-set","dfnText":"Sparse Bit Set","external":false,"refSections":[{"refs":[{"id":"ref-for-sparse-bit-set"}],"title":"5.2.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-sparse-bit-set\u2460"}],"title":"5.2.2.3. Sparse Bit Set"}],"url":"#sparse-bit-set"},
 "table-keyed-patch": {"dfnID":"table-keyed-patch","dfnText":"Table keyed patch","external":false,"refSections":[{"refs":[{"id":"ref-for-table-keyed-patch"}],"title":"6.2.1. Applying Table Keyed Patches"}],"url":"#table-keyed-patch"},
 "table-keyed-patch-compatibilityid": {"dfnID":"table-keyed-patch-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-table-keyed-patch-compatibilityid"}],"title":"6.2.1. Applying Table Keyed Patches"}],"url":"#table-keyed-patch-compatibilityid"},
