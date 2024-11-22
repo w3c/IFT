@@ -240,7 +240,7 @@ only be loaded by a user agent which supports incremental font transfer.
 <pre>
 @font-face {
     font-family: "MyCoolWebFont";
-    src: url("MyCoolWebFont.otf") tech(incremental);
+    src: url("MyCoolWebFont-Incremental.otf") tech(incremental);
 }
 </pre>
 </div>
@@ -249,7 +249,7 @@ only be loaded by a user agent which supports incremental font transfer.
 <pre>
 @font-face {
     font-family: "MyCoolWebFont";
-    src: url("MyCoolWebFont.otf") tech(incremental);
+    src: url("MyCoolWebFont-Incremental.otf") tech(incremental);
     unicode-range: U+0000-00FF;
 }
 </pre>
@@ -258,6 +258,25 @@ only be loaded by a user agent which supports incremental font transfer.
 As shown in the second example, [[css-fonts-4#unicode-range-desc|unicode-range]] can be used in conjuction with an IFT font. The
 unicode ranges should be set to match the coverage of the fully extended font. This will allow clients to avoid trying to load the IFT font
 if the font does not support any code points which are needed.
+
+An alternative approach is to use the [[css-conditional-5|CSS supports mechanism]] which can make selections based on font tech:
+
+<div class=example>
+<pre>
+@when font-tech(incremental) {
+  @font-face {
+    font-family: "MyCoolWebFont";
+    src: url("MyCoolWebFont-Incremental.otf");
+  }
+}
+@else {
+  @font-face {
+    font-family: "MyCoolWebFont";
+    src: url("MyCoolWebFont.otf");
+  }
+}
+</pre>
+</div>
 
 Note: Each individual <code>@font-face</code> block may or may not opt-in to IFT. This is due to the
 variety of ways fonts are used on web pages. Authors have control over which fonts they want to use
