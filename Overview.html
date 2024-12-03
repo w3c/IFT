@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="4c5902ffe2738a3fadcfc83cec41f82df9dd604c" name="revision">
+  <meta content="4bba2910cf076dd602368b46ddeb45d74c0d748d" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -3381,7 +3381,7 @@ they are defaulted to an empty set.</p>
        <p>//foo.bar/04.gk</p>
      </ul>
     <li data-md>
-     <p>Step 7 - one entry from that set must be picked. There a no full invalidation entries, so one partial invalidation entry (//foo.bar/*.tk) must be
+     <p>Step 8 - one entry from that set must be picked. There a no full invalidation entries, so one partial invalidation entry (//foo.bar/*.tk) must be
 selected. Following <a href="#invalidating-patch-selection">§ 4.4 Selecting Invalidating Patches</a> the candidate entries have the following intersections with the target subset definition:</p>
      <ul>
       <li data-md>
@@ -3396,12 +3396,12 @@ selected. Following <a href="#invalidating-patch-selection">§ 4.4 Selecting I
      <p>The intersections for //foo.bar/01.tk and //foo.bar/02.tk are both strict subsets of //foo.bar/04.tk and //foo.bar/05.tk, so they don’t meet selection
 criteria. That leaves either //foo.bar/04.tk or //foo.bar/05.tk. Since //foo.bar/04.tk is listed first in the patch map it is selected.</p>
     <li data-md>
-     <p>Step 8 - the selected patch, //foo.bar/04.tk, is fetched. Additionally as an optimization fetches are simultaneously started for the two glyph keyed
+     <p>Step 9 - the selected patch, //foo.bar/04.tk, is fetched. Additionally as an optimization fetches are simultaneously started for the two glyph keyed
 patches //foo.bar/01.gk and //foo.bar/04.gk. The table keyed patch //foo.bar/04.tk is partially invalidating which means the two glyph keyed patches
 will be remain valid after the application of //foo.bar/04.tk. Thus the client can expect that the two glyph keyed patches will be required in future
 iterations and begin the loads for those two patches at this time.</p>
     <li data-md>
-     <p>Step 9 - The fetched patch //foo.bar/04.tk is applied to the initial font. This patch updates all tables except for glyf and loca
+     <p>Step 10 - The fetched patch //foo.bar/04.tk is applied to the initial font. This patch updates all tables except for glyf and loca
 to add support for code points 'a' through 'Z'. Additionally the mapping in the "IFT " table is updated to the following:</p>
      <table>
       <tbody>
@@ -3440,12 +3440,12 @@ entries intersect:</p>
        <p>//foo.bar/04.gk</p>
      </ul>
     <li data-md>
-     <p>Step 7 - one entry from that set must be picked. Only no invalidation patches remain, the client is free to pick either one. In this case it selects
+     <p>Step 8 - one entry from that set must be picked. Only no invalidation patches remain, the client is free to pick either one. In this case it selects
 the first one //foo.bar/01.gk.</p>
     <li data-md>
-     <p>Step 8 - the fetch for //foo.bar/01.gk was previously started during iteration 1.</p>
+     <p>Step 9 - the fetch for //foo.bar/01.gk was previously started during iteration 1.</p>
     <li data-md>
-     <p>Step 9 - The fetched patch //foo.bar/01.gk is applied to the current font subset. This patch adds glyph data for code points 'a' through 'm'
+     <p>Step 10 - The fetched patch //foo.bar/01.gk is applied to the current font subset. This patch adds glyph data for code points 'a' through 'm'
 to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/01.gk. The compatibility ID
 and URIs for other entries are unchanged.</p>
    </ul>
@@ -3459,11 +3459,11 @@ entries intersect:</p>
        <p>//foo.bar/04.gk</p>
      </ul>
     <li data-md>
-     <p>Step 7 - one entry remains, it is selected.</p>
+     <p>Step 8 - one entry remains, it is selected.</p>
     <li data-md>
-     <p>Step 8 - the fetch for //foo.bar/04.gk was previously started during iteration 1.</p>
+     <p>Step 9 - the fetch for //foo.bar/04.gk was previously started during iteration 1.</p>
     <li data-md>
-     <p>Step 9 - The fetched patch //foo.bar/04.gk is applied to the current font subset. This patch adds glyph data for code points 'N' through 'Z'
+     <p>Step 10 - The fetched patch //foo.bar/04.gk is applied to the current font subset. This patch adds glyph data for code points 'N' through 'Z'
 to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/04.gk. The compatibility ID
 and URIs for other entries are unchanged.</p>
    </ul>
