@@ -2893,7 +2893,7 @@ Iteration 1:
     * //foo.bar/01.gk
     * //foo.bar/04.gk
 
-*  Step 7 - one entry from that set must be picked. There a no full invalidation entries, so one partial invalidation entry (//foo.bar/*.tk) must be
+*  Step 8 - one entry from that set must be picked. There a no full invalidation entries, so one partial invalidation entry (//foo.bar/*.tk) must be
     selected. Following [[#invalidating-patch-selection]] the candidate entries have the following intersections with the target subset definition:
 
     *  //foo.bar/01.tk - {'f'}
@@ -2904,12 +2904,12 @@ Iteration 1:
     The intersections for //foo.bar/01.tk and //foo.bar/02.tk are both strict subsets of //foo.bar/04.tk and //foo.bar/05.tk, so they don't meet selection
     criteria. That leaves either //foo.bar/04.tk or //foo.bar/05.tk. Since //foo.bar/04.tk is listed first in the patch map it is selected.
 
-*  Step 8 - the selected patch, //foo.bar/04.tk, is fetched. Additionally as an optimization fetches are simultaneously started for the two glyph keyed
+*  Step 9 - the selected patch, //foo.bar/04.tk, is fetched. Additionally as an optimization fetches are simultaneously started for the two glyph keyed
     patches //foo.bar/01.gk and //foo.bar/04.gk. The table keyed patch //foo.bar/04.tk is partially invalidating which means the two glyph keyed patches
     will be remain valid after the application of //foo.bar/04.tk. Thus the client can expect that the two glyph keyed patches will be required in future
     iterations and begin the loads for those two patches at this time.
 
-*  Step 9 - The fetched patch //foo.bar/04.tk is applied to the initial font. This patch updates all tables except for glyf and loca
+*  Step 10 - The fetched patch //foo.bar/04.tk is applied to the initial font. This patch updates all tables except for glyf and loca
     to add support for code points 'a' through 'Z'. Additionally the mapping in the "IFT " table is updated to the following:
 
     <table>
@@ -2940,12 +2940,12 @@ Iteration 2:
     * //foo.bar/01.gk
     * //foo.bar/04.gk
 
-*  Step 7 - one entry from that set must be picked. Only no invalidation patches remain, the client is free to pick either one. In this case it selects
+*  Step 8 - one entry from that set must be picked. Only no invalidation patches remain, the client is free to pick either one. In this case it selects
     the first one //foo.bar/01.gk.
 
-*  Step 8 - the fetch for //foo.bar/01.gk was previously started during iteration 1.
+*  Step 9 - the fetch for //foo.bar/01.gk was previously started during iteration 1.
 
-*  Step 9 - The fetched patch //foo.bar/01.gk is applied to the current font subset. This patch adds glyph data for code points 'a' through 'm'
+*  Step 10 - The fetched patch //foo.bar/01.gk is applied to the current font subset. This patch adds glyph data for code points 'a' through 'm'
     to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/01.gk. The compatibility ID
     and URIs for other entries are unchanged.
 
@@ -2955,11 +2955,11 @@ Iteration 3:
     entries intersect:
     * //foo.bar/04.gk
 
-*  Step 7 - one entry remains, it is selected.
+*  Step 8 - one entry remains, it is selected.
 
-*  Step 8 - the fetch for //foo.bar/04.gk was previously started during iteration 1.
+*  Step 9 - the fetch for //foo.bar/04.gk was previously started during iteration 1.
 
-*  Step 9 - The fetched patch //foo.bar/04.gk is applied to the current font subset. This patch adds glyph data for code points 'N' through 'Z'
+*  Step 10 - The fetched patch //foo.bar/04.gk is applied to the current font subset. This patch adds glyph data for code points 'N' through 'Z'
     to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/04.gk. The compatibility ID
     and URIs for other entries are unchanged.
 
