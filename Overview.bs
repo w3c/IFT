@@ -1851,8 +1851,8 @@ A string ID is a sequence of bytes. Several variables are defined which are used
       The input id encoded as a [[rfc4648#section-7|base32hex]] string (using the digits 0-9, A-V) with padding
       omitted.  When the id is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
       but then all leading bytes that are equal to 0 are removed before encoding.  (For example, when the
-      integer is less than 256 only one byte is encoded.) When the input id is a string the raw bytes are
-      encoded as base32hex.
+      integer is less than 256 only one byte is encoded.) If the input id is 0 then one zero byte is encoded. When the input
+      id is a string the raw bytes are encoded as base32hex.
     </td>
   </tr>
   <tr>
@@ -1890,8 +1890,9 @@ A string ID is a sequence of bytes. Several variables are defined which are used
       (minus) and _ (underline)) with padding included. Because the padding character is '=', it must
       be URL-encoded as "%3D'.  When the id is an unsigned integer it must first be converted to a big
       endian 32 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding. 
-      (For example, when the integer is less than 256 only one byte is encoded.) When the input id is
-      a string its raw bytes are encoded as [[rfc4648#section-5|base64url]].
+      (For example, when the integer is less than 256 only one byte is encoded.) If the input id is 0 then one
+      zero byte is encoded. When the input id is a string its raw bytes are encoded as
+      [[rfc4648#section-5|base64url]].
     </td>
   </tr>
 </table>
@@ -1906,6 +1907,11 @@ Some example inputs and the corresponding expansions:
     <td>//foo.bar/{id}</td>
     <td>123</td>
     <td>//foo.bar/FC</td>
+  </tr>
+  <tr>
+    <td>//foo.bar/{id}</td>
+    <td>0</td>
+    <td>//foo.bar/00</td>
   </tr>
   <tr>
     <td>//foo.bar{/d1,d2,id}</td>
@@ -1936,6 +1942,11 @@ Some example inputs and the corresponding expansions:
     <td>//foo.bar{/id64}</td>
     <td>14,000,000</td>
     <td>//foo.bar/1Z-A</td>
+  </tr>
+  <tr>
+    <td>//foo.bar{/id64}</td>
+    <td>0</td>
+    <td>//foo.bar/AA%3D%3D</td>
   </tr>
   <tr>
     <td>//foo.bar{/id64}</td>
