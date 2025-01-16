@@ -1186,7 +1186,8 @@ The algorithm:
         [[open-type/cmap|cmap]] table of <var>font subset</var>. Ignore any glyph indices that are not mapped by [[open-type/cmap|cmap]].
         Multiple code points may map to the same glyph id. All code points associated with a glyph should be included.
 
-    *  Convert <var>entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
+    *  Convert <var>entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]]. If
+        the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
     *  If the Unicode code point set is empty then, skip this <var>entry index</var>.
 
@@ -1213,6 +1214,7 @@ The algorithm:
         [=EntryMapRecord/lastEntryIndex|EntryMapRecord::lastEntryIndex=] this [=EntryMapRecord=] is invalid, skip it.
 
     *  Convert <var>mapped entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
+        If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
     *  If the bit for <var>mapped entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this entry.
 
@@ -1264,6 +1266,7 @@ The algorithm:
         <var>entry index</var>.
 
     *  Convert <var>entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
+        If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
     *  If the generated URI is equal to <var>patch URI</var> then set the bit for <var>entry index</var> in
         [=Format 1 Patch Map/appliedEntriesBitMap=] to 1.
@@ -1641,8 +1644,8 @@ The algorithm:
 
 11. If <var>entry id</var> is negative or greater than 4,294,967,295 then, this encoding is invalid return an error.
 
-12. Convert <var>entry id</var> into a URI by applying <var>uri template</var> following [[#uri-templates]]. Set the patch uri of
-     <var>entry</var> to the generated URI.
+12. Convert <var>entry id</var> into a URI by applying <var>uri template</var> following [[#uri-templates]]. If the template expansion
+     results in an error (see: [[rfc6570#section-3]]) then, return an error. Set the patch uri of <var>entry</var> to the generated URI.
 
 13. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, [=Mapping Entry/entryIdStringLength=] as
      <var>consumed id string bytes</var>, and <var>ignored</var>.
