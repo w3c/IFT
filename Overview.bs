@@ -1905,65 +1905,77 @@ A string ID is a sequence of bytes. Several variables are defined which are used
 Some example inputs and the corresponding expansions:
 
 <table>
-  <tr><th>Template</th><th>Input ID</th><th>Expansion</th></tr>
+  <tr><th>Template</th><th>Input ID</th><th>ID Type</th><th>Expansion</th></tr>
   <tr>
     <td>//foo.bar/{id}</td>
     <td>123</td>
+    <td>Integer</td>
     <td>//foo.bar/FC</td>
   </tr>
   <tr>
     <td>//foo.bar/{id}</td>
     <td>0</td>
+    <td>Integer</td>
     <td>//foo.bar/00</td>
   </tr>
   <tr>
     <td>//foo.bar{/d1,d2,id}</td>
     <td>478</td>
+    <td>Integer</td>
     <td>//foo.bar/0/F/07F0</td>
   </tr>
   <tr>
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>123</td>
+    <td>Integer</td>
     <td>//foo.bar/C/F/_/FC</td>
   </tr>
   <tr>
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>baz</td>
+    <td>String</td>
     <td>//foo.bar/K/N/G/C9GNK</td>
   </tr>
   <tr>
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>z</td>
+    <td>String</td>
     <td>//foo.bar/8/F/_/F8</td>
   </tr>
   <tr>
     <td>//foo.bar{/d1,d2,d3,id}</td>
     <td>àbc</td>
+    <td>String</td>
     <td>//foo.bar/O/O/4/OEG64OO</td>
   </tr>
   <tr>
     <td>//foo.bar{/id64}</td>
     <td>14,000,000</td>
+    <td>Integer</td>
     <td>//foo.bar/1Z-A</td>
   </tr>
   <tr>
     <td>//foo.bar{/id64}</td>
     <td>0</td>
+    <td>Integer</td>
     <td>//foo.bar/AA%3D%3D</td>
   </tr>
   <tr>
     <td>//foo.bar{/id64}</td>
     <td>17,000,000</td>
+    <td>Integer</td>
     <td>//foo.bar/AQNmQA%3D%3D</td>
   </tr>
   <tr>
     <td>//foo.bar{/id64}</td>
     <td>àbc</td>
+    <td>String</td>
     <td>//foo.bar/w6BiYw%3D%3D</td>
   </tr>
   <tr>
     <td>//foo.bar/{+id64}</td>
     <td>àbcd</td>
+    <td>String</td>
     <td>//foo.bar/w6BiY2Q=</td>
   </tr>
 </table>
