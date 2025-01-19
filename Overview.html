@@ -3,11 +3,13 @@
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <title>Incremental Font Transfer</title>
-  <meta content="WD" name="w3c-status">
-  <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
+  <meta content="ED" name="w3c-status">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
+  <meta content="Bikeshed version ac5ea272d, updated Fri Dec 6 15:45:15 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="f98e816af36cb32fc50cdd947bedaff2b3745fbe" name="revision">
+  <meta content="6be69980674a9ff91ef3b7d88752b687809580df" name="revision">
   <meta content="dark light" name="color-scheme">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -712,47 +714,60 @@ D50 2deg illuminant, L in [0,100], a and b in [-128, 128]
 4 = lab(85,5,15)
 5 = lab(85,-10,-50)
 6 = lab(85,35,-15)
+
+For darkmode:
+0 = oklab(50%   0%  108%)
+1 = oklab(50% -51%   51%)
+2 = oklab(50% -64%  -20%)
+3 = oklab(50%   6%   19%)
+4 = oklab(50% -12%  -64%)
+5 = oklab(50%  44%  -19%)  
+6 = oklab(50% 102%   38%)
 */
+
 [data-algorithm] var { cursor: pointer; }
-var[data-var-color="0"] { background-color: #F4D200; box-shadow: 0 0 0 2px #F4D200; }
-var[data-var-color="1"] { background-color: #FF87A2; box-shadow: 0 0 0 2px #FF87A2; }
-var[data-var-color="2"] { background-color: #96E885; box-shadow: 0 0 0 2px #96E885; }
-var[data-var-color="3"] { background-color: #3EEED2; box-shadow: 0 0 0 2px #3EEED2; }
-var[data-var-color="4"] { background-color: #EACFB6; box-shadow: 0 0 0 2px #EACFB6; }
-var[data-var-color="5"] { background-color: #82DDFF; box-shadow: 0 0 0 2px #82DDFF; }
-var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
+var[data-var-color] { background-color: var(--var-bg); box-shadow: 0 0 0 2px var(--var-bg); }
+
+var[data-var-color] { --var-bg: #F4D200; }
+var[data-var-color="1"] { --var-bg: #FF87A2; }
+var[data-var-color="2"] { --var-bg: #96E885; }
+var[data-var-color="3"] { --var-bg: #3EEED2; }
+var[data-var-color="4"] { --var-bg: #EACFB6; }
+var[data-var-color="5"] { --var-bg: #82DDFF; }
+var[data-var-color="6"] { --var-vg: #FFBCF2; }
+
+@media (prefers-color-scheme: dark) {
+	var[data-var-color] { --var-bg: #bc1a00; }
+	var[data-var-color="1"] { --var-bg: #007f00; }
+	var[data-var-color="2"] { --var-bg: #008698; }
+	var[data-var-color="3"] { --var-bg: #7f5b2b; }
+	var[data-var-color="4"] { --var-bg: #004df3; }
+	var[data-var-color="5"] { --var-bg: #a1248a; }
+	var[data-var-color="6"] { --var-vg: #ff0000; }
+}
 </style>
-  <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-WD" rel="stylesheet">
-  <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#WD">W3C Working Draft</a>, <time class="dt-updated" datetime="2024-07-09">9 July 2024</time></p>
-   <details open>
-    <summary>More details about this document</summary>
-    <div data-fill-with="spec-metadata">
-     <dl>
-      <dt>This version:
-      <dd><a class="u-url" href="https://www.w3.org/TR/2024/WD-IFT-20240709/">https://www.w3.org/TR/2024/WD-IFT-20240709/</a>
-      <dt>Latest published version:
-      <dd><a href="https://www.w3.org/TR/IFT/">https://www.w3.org/TR/IFT/</a>
-      <dt>Editor's Draft:
-      <dd><a href="https://w3c.github.io/IFT/Overview.html">https://w3c.github.io/IFT/Overview.html</a>
-      <dt>History:
-      <dd><a class="u-url" href="https://www.w3.org/standards/history/IFT/">https://www.w3.org/standards/history/IFT/</a>
-      <dt>Feedback:
-      <dd><span><a href="mailto:public-webfonts-wg@w3.org?subject=%5BIFT%5D%20YOUR%20TOPIC%20HERE">public-webfonts-wg@w3.org</a> with subject line “<kbd>[IFT] <i data-lt>… message topic …</i></kbd>” (<a href="https://lists.w3.org/Archives/Public/public-webfonts-wg/" rel="discussion">archives</a>)</span>
-      <dd><a href="https://github.com/w3c/PFE/issues/">GitHub</a>
-      <dt class="editor">Editors:
-      <dd class="editor p-author h-card vcard" data-editor-id="1438"><a class="p-name fn u-url url" href="https://svgees.us/">Chris Lilley</a> (<span class="p-org org">W3C</span>)
-      <dd class="editor p-author h-card vcard" data-editor-id="73905"><a class="p-name fn u-email email" href="mailto:grieger@google.com">Garret Rieger</a> (<span class="p-org org">Google Inc.</span>)
-      <dd class="editor p-author h-card vcard" data-editor-id="137857"><a class="p-name fn u-email email" href="mailto:siterum@adobe.com">Skef Iterum</a> (<span class="p-org org">Adobe Inc.</span>)
-     </dl>
-    </div>
-   </details>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types/#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2025-01-18">18 January 2025</time></p>
+   <div data-fill-with="spec-metadata">
+    <dl>
+     <dt>This version:
+     <dd><a class="u-url" href="https://w3c.github.io/IFT/Overview.html">https://w3c.github.io/IFT/Overview.html</a>
+     <dt>Latest published version:
+     <dd><a href="https://www.w3.org/TR/IFT/">https://www.w3.org/TR/IFT/</a>
+     <dt>Feedback:
+     <dd><span><a href="mailto:public-webfonts-wg@w3.org?subject=%5BIFT%5D%20YOUR%20TOPIC%20HERE">public-webfonts-wg@w3.org</a> with subject line “<kbd>[IFT] <i data-lt>… message topic …</i></kbd>” (<a href="https://lists.w3.org/Archives/Public/public-webfonts-wg/" rel="discussion">archives</a>)</span>
+     <dd><a href="https://github.com/w3c/PFE/issues/">GitHub</a>
+     <dt class="editor">Editors:
+     <dd class="editor p-author h-card vcard" data-editor-id="1438"><a class="p-name fn u-url url" href="https://svgees.us/">Chris Lilley</a> (<span class="p-org org">W3C</span>)
+     <dd class="editor p-author h-card vcard" data-editor-id="73905"><a class="p-name fn u-email email" href="mailto:grieger@google.com">Garret Rieger</a> (<span class="p-org org">Google Inc.</span>)
+     <dd class="editor p-author h-card vcard" data-editor-id="137857"><a class="p-name fn u-email email" href="mailto:siterum@adobe.com">Skef Iterum</a> (<span class="p-org org">Adobe Inc.</span>)
+    </dl>
+   </div>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/policies/#copyright">Copyright</a> © 2024 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/policies/#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/policies/#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/copyright/software-license/" rel="license" title="W3C Software and Document License">permissive document license</a> rules apply. </p>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/policies/#copyright">Copyright</a> © 2025 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/policies/#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/policies/#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/copyright/software-license/" rel="license" title="W3C Software and Document License">permissive document license</a> rules apply. </p>
    <hr title="Separator for header">
   </div>
   <div class="p-summary" data-fill-with="abstract">
@@ -768,17 +783,12 @@ to complex scripts like Indic or Arabic.</p>
   </div>
   <h2 class="no-num no-toc no-ref heading settled" id="sotd"><span class="content">Status of this document</span></h2>
   <div data-fill-with="status">
-   <p> <em>This section describes the status of this document at the time of
-  its publication. A list of
-  current W3C publications and the latest revision of this technical report
-  can be found in the <a href="https://www.w3.org/TR/">W3C technical reports
-  index at https://www.w3.org/TR/.</a></em> </p>
-   <p> This document was produced by the <a href="https://www.w3.org/groups/wg/webfonts">Web Fonts Working Group</a> as a Working Draft using the <a href="https://www.w3.org/policies/process/20231103/#recs-and-notes">Recommendation
-      track</a>. This document is intended to become a W3C Recommendation. </p>
+   <p> This is a public copy of the editors’ draft.
+	It is provided for discussion only and may change at any moment.
+	Its publication here does not imply endorsement of its contents by W3C.
+	Don’t cite this document other than as work in progress. </p>
    <p> If you wish to make comments regarding this document, please <a href="https://github.com/w3c/PFE/issues/new">file an issue on the specification repository</a>. </p>
-   <p> Publication as a Working Draft does not imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. This is a draft document and may be updated, replaced or
-  obsoleted by other documents at any time. It is inappropriate to cite this
-  document as other than work in progress. </p>
+   <p> This document was produced by the <a href="https://www.w3.org/groups/wg/webfonts">Web Fonts Working Group</a> </p>
    <p> This document was produced by a group operating under
   the <a href="https://www.w3.org/policies/patent-policy/20200915/">W3C Patent Policy</a>.
   W3C maintains a <a href="https://www.w3.org/groups/wg/webfonts/ipr" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group;
@@ -1008,7 +1018,7 @@ implementation can help reduce the total number of requests being made. The eval
 this by testing the performance of a basic character frequency based <a href="https://www.w3.org/TR/PFE-evaluation/#codepredict">code point prediction</a> scheme and found it improved overall performance.</p>
    <h2 class="heading settled" data-level="2" id="opt-in"><span class="secno">2. </span><span class="content">Opt-In Mechanism</span><a class="self-link" href="#opt-in"></a></h2>
    <p>Web pages can choose to opt-in to incremental transfer for a font via the use of a CSS font tech
-keyword (<a href="https://www.w3.org/TR/css-fonts-4/#font-tech-definitions"><cite>CSS Fonts 4</cite> § 11.1 Font tech</a>) inside the ''@font-face'' block. The keyword <code>incremental</code> is used to indicate the referenced font contains IFT data and should
+keyword (<a href="https://drafts.csswg.org/css-fonts-4/#font-tech-definitions"><cite>CSS Fonts 4</cite> § 11.1 Font tech</a>) inside the ''@font-face'' block. The keyword <code>incremental</code> is used to indicate the referenced font contains IFT data and should
 only be loaded by a user agent which supports incremental font transfer.</p>
    <div class="example" id="example-e768eb0f">
     <a class="self-link" href="#example-e768eb0f"></a> 
@@ -1027,7 +1037,7 @@ only be loaded by a user agent which supports incremental font transfer.</p>
 }
 </pre>
    </div>
-   <p>As shown in the second example, <a href="https://www.w3.org/TR/css-fonts-4/#unicode-range-desc">unicode-range</a> can be used in conjuction with an IFT font. The
+   <p>As shown in the second example, <a href="https://drafts.csswg.org/css-fonts-4/#unicode-range-desc">unicode-range</a> can be used in conjuction with an IFT font. The
 unicode ranges should be set to match the coverage of the fully extended font. This will allow clients to avoid trying to load the IFT font
 if the font does not support any code points which are needed.</p>
    <p>An alternative approach is to use the <a data-link-type="biblio" href="#biblio-css-conditional-5" title="CSS Conditional Rules Module Level 5">CSS supports mechanism</a> which can make selections based on font tech:</p>
@@ -1406,7 +1416,7 @@ design space: {},
  produce the <var>target URI</var>.</p>
     <li data-md>
      <p>Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers, <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> should be used. When using <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> a request for patches should use the same CORS settings as the initial request for
- the IFT font. This means that for a font loaded via CSS the patch request would follow: <a href="https://www.w3.org/TR/css-fonts-4/#font-fetching-requirements"><cite>CSS Fonts 4</cite> § 4.8.2 Font fetching requirements</a>.</p>
+ the IFT font. This means that for a font loaded via CSS the patch request would follow: <a href="https://drafts.csswg.org/css-fonts-4/#font-fetching-requirements"><cite>CSS Fonts 4</cite> § 4.8.2 Font fetching requirements</a>.</p>
     <li data-md>
      <p>Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.</p>
    </ol>
@@ -1579,12 +1589,12 @@ file, the compressed font needs to be decoded before attempting to extend it.</p
    <p>For <a data-link-type="biblio" href="#biblio-woff2" title="WOFF File Format 2.0">[WOFF2]</a> special care must be taken. If an incremental font will be encoded by WOFF2 for transfer:</p>
    <ol>
     <li data-md>
-     <p>If the WOFF2 encoding will include a transformed glyf and loca table (<a href="https://www.w3.org/TR/WOFF2/#glyf_table_format"><cite>WOFF 2.0</cite> § 5.1 Transformed glyf table format</a>) then, the incremental
+     <p>If the WOFF2 encoding will include a transformed glyf and loca table (<a href="https://w3c.github.io/woff/woff2/#glyf_table_format"><cite>WOFF 2.0</cite> § 5.1 Transformed glyf table format</a>) then, the incremental
  font should not contain <a href="#table-keyed">§ 6.2 Table Keyed</a> patches which modify either the glyf or loca table. The WOFF2 format does not
  guarantee the specific bytes that result from decoding a transformed glyf and loca table. <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches may be used
  in conjunction with a transformed glyf and loca table.</p>
     <li data-md>
-     <p>The 'IFT ' and 'IFTX' tables can be processed and brotli encoded by a WOFF2 encoder following the standard process defined in <a href="https://www.w3.org/TR/WOFF2/#table_format"><cite>WOFF 2.0</cite> § 5 Compressed data format</a>.</p>
+     <p>The 'IFT ' and 'IFTX' tables can be processed and brotli encoded by a WOFF2 encoder following the standard process defined in <a href="https://w3c.github.io/woff/woff2/#table_format"><cite>WOFF 2.0</cite> § 5 Compressed data format</a>.</p>
    </ol>
    <h3 class="heading settled" data-level="5.2" id="patch-map-table"><span class="secno">5.2. </span><span class="content">Patch Map Table</span><a class="self-link" href="#patch-map-table"></a></h3>
    <p>A <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map④">patch map</a> is encoded in one of two formats:</p>
@@ -3035,28 +3045,28 @@ which is being read. It is unclear how feasible this attack is, or the computati
 characters being requested are very unusual.</p>
    <p>More specifically, a IFT font includes a collection of unicode code point groups and requests will be made for groups that intersect
 content being rendered. This provides information to the hosting server that at least one code point in a group was needed, but does not
-contain information on which specific code points within a group were needed. This is functionally quite similar to the existing <a href="https://www.w3.org/TR/css-fonts-4/#unicode-range-desc"><cite>CSS Fonts 4</cite> § 4.5 Character range: the unicode-range descriptor</a> and has the same privacy implications. Discussion of the privacy implication of unicode-range can be
+contain information on which specific code points within a group were needed. This is functionally quite similar to the existing <a href="https://drafts.csswg.org/css-fonts-4/#unicode-range-desc"><cite>CSS Fonts 4</cite> § 4.5 Character range: the unicode-range descriptor</a> and has the same privacy implications. Discussion of the privacy implication of unicode-range can be
 found in the CSS Fonts 4 specification:</p>
    <ul>
     <li data-md>
-     <p><a href="https://www.w3.org/TR/css-fonts-4/#sp201"><cite>CSS Fonts 4</cite> § 15.1 What information might this feature expose to Web sites or other parties, and for what purposes is that exposure necessary?</a>. For especially privacy-sensitive-contexts this recommends the user agent download all web fonts in a document.
+     <p><a href="https://drafts.csswg.org/css-fonts-4/#sp201"><cite>CSS Fonts 4</cite> § 15.1 What information might this feature expose to Web sites or other parties, and for what purposes is that exposure necessary?</a>. For especially privacy-sensitive-contexts this recommends the user agent download all web fonts in a document.
 For IFT fonts, utilizing <a href="#fully-expanding-a-font">§ 4.7 Fully Expanding a Font</a> will fetch the entire available IFT font without providing any information about
 the specific content present. Alternatively, in a privacy sensitive contexts a user agent could randomly select additional patches
 that are not required by the current content to provide obfuscation of what patches are actually needed.</p>
     <li data-md>
-     <p><a href="https://www.w3.org/TR/css-fonts-4/#sp208"><cite>CSS Fonts 4</cite> § 15.8 What data does this specification expose to an origin? Please also document what data is identical to data exposed by other features, in the same or different contexts.</a></p>
+     <p><a href="https://drafts.csswg.org/css-fonts-4/#sp208"><cite>CSS Fonts 4</cite> § 15.8 What data does this specification expose to an origin? Please also document what data is identical to data exposed by other features, in the same or different contexts.</a></p>
    </ul>
    <h3 class="heading settled" data-level="8.2" id="per-origin"><span class="secno">8.2. </span><span class="content">Per-origin restriction avoids fingerprinting</span><a class="self-link" href="#per-origin"></a></h3>
    <p>As required by <a data-link-type="biblio" href="#biblio-css-fonts-4" title="CSS Fonts Module Level 4">[css-fonts-4]</a>:</p>
    <p>"A Web Font must not be accessible in any other Document from the one which either is associated with
   the @font-face rule or owns the FontFaceSet. Other applications on the device must not be able to access
-  Web Fonts." - <a href="https://www.w3.org/TR/css-fonts-4/#web-fonts"><cite>CSS Fonts 4</cite> § 10.2 Web Fonts</a></p>
+  Web Fonts." - <a href="https://drafts.csswg.org/css-fonts-4/#web-fonts"><cite>CSS Fonts 4</cite> § 10.2 Web Fonts</a></p>
    <p>Since IFT fonts are treated the same as regular fonts in CSS (<a href="#opt-in">§ 2 Opt-In Mechanism</a>) these requirements apply and avoid information leaking across
   origins.</p>
    <p>Similar requirements apply to font palette values:</p>
    <p>"An author-defined font color palette must only be available to the documents that reference it. Using an author-defined color palette
   outside of the documents that reference it would constitute a security leak since the contents of one page would be able to
-  affect other pages, something an attacker could use as an attack vector." - <a href="https://www.w3.org/TR/css-fonts-4/#font-palette-values"><cite>CSS Fonts 4</cite> § 9.2 User-defined font color palettes: The @font-palette-values rule</a></p>
+  affect other pages, something an attacker could use as an attack vector." - <a href="https://drafts.csswg.org/css-fonts-4/#font-palette-values"><cite>CSS Fonts 4</cite> § 9.2 User-defined font color palettes: The @font-palette-values rule</a></p>
    <h2 class="heading settled" data-level="9" id="sec"><span class="secno">9. </span><span class="content">Security Considerations</span><a class="self-link" href="#sec"></a></h2>
    <p>One security concern is that IFT fonts could potentially generate a large number of network requests for patches. This could cause
 problems on the client or the service hosting the patches. The IFT specification contains a couple of mitigations to limit excessive
@@ -3093,202 +3103,379 @@ to be used by default in most shaper implementations. This list was assembled fr
     <tbody>
      <tr>
       <th>Tag
-      <th>Name
+      <th>Encoded As
+     <tr>
+      <td>aalt
+      <td>1
      <tr>
       <td>abvf
-      <td>Above-base Forms
+      <td>default
      <tr>
       <td>abvm
-      <td>Above-base Mark Positioning
+      <td>default
      <tr>
       <td>abvs
-      <td>Above-base Substitutions
+      <td>default
+     <tr>
+      <td>afrc
+      <td>2
      <tr>
       <td>akhn
-      <td>Akhand
+      <td>default
      <tr>
       <td>blwf
-      <td>Below-base Forms
+      <td>default
      <tr>
       <td>blwm
-      <td>Below-base Mark Positioning
+      <td>default
      <tr>
       <td>blws
-      <td>Below-base Substitutions
+      <td>default
      <tr>
       <td>calt
-      <td>Contextual Alternates
+      <td>default
+     <tr>
+      <td>case
+      <td>3
      <tr>
       <td>ccmp
-      <td>Glyph Composition / Decomposition
+      <td>default
      <tr>
       <td>cfar
-      <td>Conjunct Form After Ro
+      <td>default
      <tr>
       <td>chws
-      <td>Contextual Half-width Spacing
+      <td>default
      <tr>
       <td>cjct
-      <td>Conjunct Forms
+      <td>default
      <tr>
       <td>clig
-      <td>Contextual Ligatures
+      <td>default
+     <tr>
+      <td>cpct
+      <td>4
+     <tr>
+      <td>cpsp
+      <td>5
      <tr>
       <td>cswh
-      <td>Contextual Swash
+      <td>default
      <tr>
       <td>curs
-      <td>Cursive Positioning
+      <td>default
+     <tr>
+      <td>cv01-cv99
+      <td>6-104
+     <tr>
+      <td>c2pc
+      <td>105
+     <tr>
+      <td>c2sc
+      <td>106
      <tr>
       <td>dist
-      <td>Distances
+      <td>default
+     <tr>
+      <td>dlig
+      <td>107
      <tr>
       <td>dnom
-      <td>Denominators
+      <td>default
      <tr>
       <td>dtls
-      <td>Dotless Forms
+      <td>default
+     <tr>
+      <td>expt
+      <td>108
+     <tr>
+      <td>falt
+      <td>109
      <tr>
       <td>fin2
-      <td>Terminal Forms #2
+      <td>default
      <tr>
       <td>fin3
-      <td>Terminal Forms #3
+      <td>default
      <tr>
       <td>fina
-      <td>Terminal Forms
+      <td>default
      <tr>
       <td>flac
-      <td>Flattened accent forms
+      <td>default
      <tr>
       <td>frac
-      <td>Fractions
+      <td>default
+     <tr>
+      <td>fwid
+      <td>110
      <tr>
       <td>half
-      <td>Half Forms
+      <td>default
      <tr>
       <td>haln
-      <td>Halant Forms
+      <td>default
+     <tr>
+      <td>halt
+      <td>111
+     <tr>
+      <td>hist
+      <td>112
+     <tr>
+      <td>hkna
+      <td>113
+     <tr>
+      <td>hlig
+      <td>114
+     <tr>
+      <td>hngl
+      <td>115
+     <tr>
+      <td>hojo
+      <td>116
+     <tr>
+      <td>hwid
+      <td>117
      <tr>
       <td>init
-      <td>Initial Forms
+      <td>default
      <tr>
       <td>isol
-      <td>Isolated Forms
+      <td>default
+     <tr>
+      <td>ital
+      <td>118
      <tr>
       <td>jalt
-      <td>Justification Alternates
+      <td>default
+     <tr>
+      <td>jp78
+      <td>119
+     <tr>
+      <td>jp83
+      <td>120
+     <tr>
+      <td>jp90
+      <td>121
+     <tr>
+      <td>jp04
+      <td>122
      <tr>
       <td>kern
-      <td>Kerning
+      <td>default
+     <tr>
+      <td>lfbd
+      <td>123
      <tr>
       <td>liga
-      <td>Standard Ligatures
+      <td>default
      <tr>
       <td>ljmo
-      <td>Leading Jamo Forms
+      <td>default
+     <tr>
+      <td>lnum
+      <td>124
      <tr>
       <td>locl
-      <td>Localized Forms
+      <td>default
      <tr>
       <td>ltra
-      <td>Left-to-right alternates
+      <td>default
      <tr>
       <td>ltrm
-      <td>Left-to-right mirrored forms
+      <td>default
      <tr>
       <td>mark
-      <td>Mark Positioning
+      <td>default
      <tr>
       <td>med2
-      <td>Medial Forms #2
+      <td>default
      <tr>
       <td>medi
-      <td>Medial Forms
+      <td>default
+     <tr>
+      <td>mgrk
+      <td>125
      <tr>
       <td>mkmk
-      <td>Mark to Mark Positioning
+      <td>default
      <tr>
       <td>mset
-      <td>Mark Positioning via Substitution
+      <td>default
+     <tr>
+      <td>nalt
+      <td>126
+     <tr>
+      <td>nlck
+      <td>127
      <tr>
       <td>nukt
-      <td>Nukta Forms
+      <td>default
      <tr>
       <td>numr
-      <td>Numerators
+      <td>default
+     <tr>
+      <td>onum
+      <td>128
+     <tr>
+      <td>opbd
+      <td>129
+     <tr>
+      <td>ordn
+      <td>130
+     <tr>
+      <td>ornm
+      <td>131
+     <tr>
+      <td>palt
+      <td>132
+     <tr>
+      <td>pcap
+      <td>133
+     <tr>
+      <td>pkna
+      <td>134
+     <tr>
+      <td>pnum
+      <td>135
      <tr>
       <td>pref
-      <td>Pre-Base Forms
+      <td>default
      <tr>
       <td>pres
-      <td>Pre-base Substitutions
+      <td>default
      <tr>
       <td>pstf
-      <td>Post-base Forms
+      <td>default
      <tr>
       <td>psts
-      <td>Post-base Substitutions
+      <td>default
+     <tr>
+      <td>pwid
+      <td>136
+     <tr>
+      <td>qwid
+      <td>137
      <tr>
       <td>rand
-      <td>Randomize
+      <td>default
      <tr>
       <td>rclt
-      <td>Required Contextual Alternates
+      <td>default
      <tr>
       <td>rkrf
-      <td>Rakar Forms
+      <td>default
      <tr>
       <td>rlig
-      <td>Required Ligatures
+      <td>default
      <tr>
       <td>rphf
-      <td>Reph Forms
+      <td>default
+     <tr>
+      <td>rtbd
+      <td>138
      <tr>
       <td>rtla
-      <td>Right-to-left alternates
+      <td>default
      <tr>
       <td>rtlm
-      <td>Right-to-left mirrored forms
+      <td>default
+     <tr>
+      <td>ruby
+      <td>139
      <tr>
       <td>rvrn
-      <td>Required Variation Alternates
+      <td>default
+     <tr>
+      <td>salt
+      <td>140
+     <tr>
+      <td>sinf
+      <td>141
+     <tr>
+      <td>size
+      <td>142
+     <tr>
+      <td>smcp
+      <td>143
+     <tr>
+      <td>smpl
+      <td>144
+     <tr>
+      <td>ss01-ss20
+      <td>145-164
      <tr>
       <td>ssty
-      <td>Math script style alternates
+      <td>default
      <tr>
       <td>stch
-      <td>Stretching Glyph Decomposition
+      <td>default
+     <tr>
+      <td>subs
+      <td>165
+     <tr>
+      <td>sups
+      <td>166
+     <tr>
+      <td>swsh
+      <td>167
+     <tr>
+      <td>titl
+      <td>168
      <tr>
       <td>tjmo
-      <td>Trailing Jamo Forms
+      <td>default
+     <tr>
+      <td>tnam
+      <td>169
+     <tr>
+      <td>tnum
+      <td>170
+     <tr>
+      <td>trad
+      <td>171
+     <tr>
+      <td>twid
+      <td>172
+     <tr>
+      <td>unic
+      <td>173
      <tr>
       <td>valt
-      <td>Alternate Vertical Metrics
+      <td>default
      <tr>
       <td>vatu
-      <td>Vattu Variants
+      <td>default
      <tr>
       <td>vchw
-      <td>Vertical Contextual Half-width Spacing
+      <td>default
      <tr>
       <td>vert
-      <td>Vertical Writing
+      <td>default
+     <tr>
+      <td>vhal
+      <td>174
      <tr>
       <td>vjmo
-      <td>Vowel Jamo Forms
+      <td>default
+     <tr>
+      <td>vkna
+      <td>175
      <tr>
       <td>vkrn
-      <td>Vertical Kerning
+      <td>default
      <tr>
       <td>vpal
-      <td>Proportional Alternate Vertical Metrics
+      <td>default
      <tr>
       <td>vrt2
-      <td>Vertical Alternates and Rotation
+      <td>default
      <tr>
       <td>vrtr
-      <td>Vertical Alternates for Rotation
+      <td>default
+     <tr>
+      <td>zero
+      <td>176
    </table>
    <h2 class="heading settled" id="extension-example"><span class="content"> Appendix B: Extension Algorithm Example Execution</span><a class="self-link" href="#extension-example"></a></h2>
    <p>This appendix provides an example of how a typical IFT font would be processed by the <a href="#extend-font-subset">§ 4.3 Incremental Font Extension Algorithm</a> algorithm. In this example the IFT font
@@ -3691,7 +3878,7 @@ content covered by the target subset definition.</p>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
    <dt id="biblio-css-fonts-4">[CSS-FONTS-4]
-   <dd>Chris Lilley. <a href="https://www.w3.org/TR/css-fonts-4/"><cite>CSS Fonts Module Level 4</cite></a>. 1 February 2024. WD. URL: <a href="https://www.w3.org/TR/css-fonts-4/">https://www.w3.org/TR/css-fonts-4/</a>
+   <dd>Chris Lilley. <a href="https://drafts.csswg.org/css-fonts-4/"><cite>CSS Fonts Module Level 4</cite></a>. URL: <a href="https://drafts.csswg.org/css-fonts-4/">https://drafts.csswg.org/css-fonts-4/</a>
    <dt id="biblio-iso14496-22">[ISO14496-22]
    <dd><a href="https://www.iso.org/standard/87621.html"><cite>Information technology — Coding of audio-visual objects — Part 22: Open Font Format</cite></a>. Under development. URL: <a href="https://www.iso.org/standard/87621.html">https://www.iso.org/standard/87621.html</a>
    <dt id="biblio-open-type">[OPEN-TYPE]
@@ -3715,12 +3902,12 @@ content covered by the target subset definition.</p>
    <dt id="biblio-utf-8">[UTF-8]
    <dd>F. Yergeau. <a href="https://www.rfc-editor.org/rfc/rfc3629"><cite>UTF-8, a transformation format of ISO 10646</cite></a>. November 2003. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3629">https://www.rfc-editor.org/rfc/rfc3629</a>
    <dt id="biblio-woff2">[WOFF2]
-   <dd>Vladimir Levantovsky. <a href="https://www.w3.org/TR/WOFF2/"><cite>WOFF File Format 2.0</cite></a>. 8 August 2024. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
+   <dd>Vladimir Levantovsky. <a href="https://w3c.github.io/woff/woff2/"><cite>WOFF File Format 2.0</cite></a>. URL: <a href="https://w3c.github.io/woff/woff2/">https://w3c.github.io/woff/woff2/</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
    <dt id="biblio-css-conditional-5">[CSS-CONDITIONAL-5]
-   <dd>Chris Lilley; et al. <a href="https://www.w3.org/TR/css-conditional-5/"><cite>CSS Conditional Rules Module Level 5</cite></a>. 5 November 2024. WD. URL: <a href="https://www.w3.org/TR/css-conditional-5/">https://www.w3.org/TR/css-conditional-5/</a>
+   <dd>Chris Lilley; et al. <a href="https://drafts.csswg.org/css-conditional-5/"><cite>CSS Conditional Rules Module Level 5</cite></a>. URL: <a href="https://drafts.csswg.org/css-conditional-5/">https://drafts.csswg.org/css-conditional-5/</a>
    <dt id="biblio-enabling-typography">[ENABLING-TYPOGRAPHY]
    <dd>John Hudson. <a href="https://tiro.com/John/Enabling_Typography_(OTL).pdf"><cite>Enabling Typography: towards a general model of OpenType Layout</cite></a>. April 15th, 2014. Note. URL: <a href="https://tiro.com/John/Enabling_Typography_(OTL).pdf">https://tiro.com/John/Enabling_Typography_(OTL).pdf</a>
    <dt id="biblio-fetch">[FETCH]
@@ -4416,109 +4603,111 @@ function genLinkingSyntaxes(dfn) {
 "use strict";
 {
 let refsData = {
-"#abstract-opdef-check-entry-intersection": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Check entry intersection","type":"abstract-op","url":"#abstract-opdef-check-entry-intersection"},
-"#abstract-opdef-extend-an-incremental-font-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Extend an Incremental Font Subset","type":"abstract-op","url":"#abstract-opdef-extend-an-incremental-font-subset"},
-"#abstract-opdef-fully-expand-a-font-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Fully Expand a Font Subset","type":"abstract-op","url":"#abstract-opdef-fully-expand-a-font-subset"},
-"#abstract-opdef-handle-errors": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Handle errors","type":"abstract-op","url":"#abstract-opdef-handle-errors"},
-"#abstract-opdef-interpret-format-1-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-1-patch-map"},
-"#abstract-opdef-interpret-format-2-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map"},
-"#abstract-opdef-interpret-format-2-patch-map-entry": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map Entry","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map-entry"},
-"#abstract-opdef-load-patch-file": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Load patch file","type":"abstract-op","url":"#abstract-opdef-load-patch-file"},
-"#abstract-opdef-remove-entries-from-format-1-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Remove Entries from Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-remove-entries-from-format-1-patch-map"},
-"#abstract-opdef-remove-entries-from-format-2-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Remove Entries from Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-remove-entries-from-format-2-patch-map"},
-"#branch-factor-encoding": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"branch factor encoding","type":"dfn","url":"#branch-factor-encoding"},
-"#design-space-segment": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"design space segment","type":"dfn","url":"#design-space-segment"},
-"#design-space-segment-end": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"end","type":"dfn","url":"#design-space-segment-end"},
-"#design-space-segment-start": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"start","type":"dfn","url":"#design-space-segment-start"},
-"#design-space-segment-tag": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#design-space-segment-tag"},
-"#entrymaprecord": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecord","type":"dfn","url":"#entrymaprecord"},
-"#entrymaprecord-firstentryindex": {"export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstentryindex","type":"dfn","url":"#entrymaprecord-firstentryindex"},
-"#entrymaprecord-lastentryindex": {"export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"lastentryindex","type":"dfn","url":"#entrymaprecord-lastentryindex"},
-"#feature-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"feature map","type":"dfn","url":"#feature-map"},
-"#feature-map-entrymaprecords": {"export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecords","type":"dfn","url":"#feature-map-entrymaprecords"},
-"#feature-map-featurerecords": {"export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecords","type":"dfn","url":"#feature-map-featurerecords"},
-"#featurerecord": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecord","type":"dfn","url":"#featurerecord"},
-"#featurerecord-entrymapcount": {"export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymapcount","type":"dfn","url":"#featurerecord-entrymapcount"},
-"#featurerecord-featuretag": {"export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretag","type":"dfn","url":"#featurerecord-featuretag"},
-"#featurerecord-firstnewentryindex": {"export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstnewentryindex","type":"dfn","url":"#featurerecord-firstnewentryindex"},
-"#font-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font patch","type":"dfn","url":"#font-patch"},
-"#font-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset","type":"dfn","url":"#font-subset"},
-"#font-subset-definition": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset definition","type":"dfn","url":"#font-subset-definition"},
-"#format-1-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 1 patch map","type":"dfn","url":"#format-1-patch-map"},
-"#format-1-patch-map-appliedentriesbitmap": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"appliedentriesbitmap","type":"dfn","url":"#format-1-patch-map-appliedentriesbitmap"},
-"#format-1-patch-map-compatibilityid": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-1-patch-map-compatibilityid"},
-"#format-1-patch-map-featuremapoffset": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuremapoffset","type":"dfn","url":"#format-1-patch-map-featuremapoffset"},
-"#format-1-patch-map-format": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-1-patch-map-format"},
-"#format-1-patch-map-glyphcount": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#format-1-patch-map-glyphcount"},
-"#format-1-patch-map-maxentryindex": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxentryindex","type":"dfn","url":"#format-1-patch-map-maxentryindex"},
-"#format-1-patch-map-maxglyphmapentryindex": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxglyphmapentryindex","type":"dfn","url":"#format-1-patch-map-maxglyphmapentryindex"},
-"#format-1-patch-map-patchformat": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#format-1-patch-map-patchformat"},
-"#format-1-patch-map-uritemplate": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-1-patch-map-uritemplate"},
-"#format-2-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 2 patch map","type":"dfn","url":"#format-2-patch-map"},
-"#format-2-patch-map-compatibilityid": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-2-patch-map-compatibilityid"},
-"#format-2-patch-map-defaultpatchformat": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"defaultpatchformat","type":"dfn","url":"#format-2-patch-map-defaultpatchformat"},
-"#format-2-patch-map-entries": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#format-2-patch-map-entries"},
-"#format-2-patch-map-entrycount": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrycount","type":"dfn","url":"#format-2-patch-map-entrycount"},
-"#format-2-patch-map-entryidstringdata": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringdata","type":"dfn","url":"#format-2-patch-map-entryidstringdata"},
-"#format-2-patch-map-format": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-2-patch-map-format"},
-"#format-2-patch-map-uritemplate": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-2-patch-map-uritemplate"},
-"#full-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"full invalidation","type":"dfn","url":"#full-invalidation"},
-"#glyph-closure": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph closure","type":"dfn","url":"#glyph-closure"},
-"#glyph-keyed-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph keyed patch","type":"dfn","url":"#glyph-keyed-patch"},
-"#glyph-keyed-patch-brotlistream": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#glyph-keyed-patch-brotlistream"},
-"#glyph-keyed-patch-compatibilityid": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#glyph-keyed-patch-compatibilityid"},
-"#glyph-keyed-patch-flags": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#glyph-keyed-patch-flags"},
-"#glyph-keyed-patch-maxuncompressedlength": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#glyph-keyed-patch-maxuncompressedlength"},
-"#glyph-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph map","type":"dfn","url":"#glyph-map"},
-"#glyph-map-entryindex": {"export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryindex","type":"dfn","url":"#glyph-map-entryindex"},
-"#glyph-map-firstmappedglyph": {"export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstmappedglyph","type":"dfn","url":"#glyph-map-firstmappedglyph"},
-"#glyphpatches": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphpatches","type":"dfn","url":"#glyphpatches"},
-"#glyphpatches-glyphcount": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#glyphpatches-glyphcount"},
-"#glyphpatches-glyphdata": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdata","type":"dfn","url":"#glyphpatches-glyphdata"},
-"#glyphpatches-glyphdataoffsets": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdataoffsets","type":"dfn","url":"#glyphpatches-glyphdataoffsets"},
-"#glyphpatches-glyphids": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphids","type":"dfn","url":"#glyphpatches-glyphids"},
-"#glyphpatches-tables": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tables","type":"dfn","url":"#glyphpatches-tables"},
-"#incremental-font": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"incremental font","type":"dfn","url":"#incremental-font"},
-"#mapping-entries": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entries","type":"dfn","url":"#mapping-entries"},
-"#mapping-entries-entries": {"export":true,"for_":["Mapping Entries"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#mapping-entries-entries"},
-"#mapping-entry": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entry","type":"dfn","url":"#mapping-entry"},
-"#mapping-entry-bias": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"bias","type":"dfn","url":"#mapping-entry-bias"},
-"#mapping-entry-codepoints": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"codepoints","type":"dfn","url":"#mapping-entry-codepoints"},
-"#mapping-entry-copyindices": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"copyindices","type":"dfn","url":"#mapping-entry-copyindices"},
-"#mapping-entry-copymodeandcount": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"copymodeandcount","type":"dfn","url":"#mapping-entry-copymodeandcount"},
-"#mapping-entry-designspacecount": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacecount","type":"dfn","url":"#mapping-entry-designspacecount"},
-"#mapping-entry-designspacesegments": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacesegments","type":"dfn","url":"#mapping-entry-designspacesegments"},
-"#mapping-entry-entryiddelta": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryiddelta","type":"dfn","url":"#mapping-entry-entryiddelta"},
-"#mapping-entry-entryidstringlength": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringlength","type":"dfn","url":"#mapping-entry-entryidstringlength"},
-"#mapping-entry-featurecount": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurecount","type":"dfn","url":"#mapping-entry-featurecount"},
-"#mapping-entry-featuretags": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretags","type":"dfn","url":"#mapping-entry-featuretags"},
-"#mapping-entry-formatflags": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"formatflags","type":"dfn","url":"#mapping-entry-formatflags"},
-"#mapping-entry-patchformat": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#mapping-entry-patchformat"},
-"#no-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"no invalidation","type":"dfn","url":"#no-invalidation"},
-"#partial-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"partial invalidation","type":"dfn","url":"#partial-invalidation"},
-"#patch-application-algorithm": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch application algorithm","type":"dfn","url":"#patch-application-algorithm"},
-"#patch-format": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch format","type":"dfn","url":"#patch-format"},
-"#patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map","type":"dfn","url":"#patch-map"},
-"#patch-map-entries": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map entries","type":"dfn","url":"#patch-map-entries"},
-"#sparse-bit-set": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"sparse bit set","type":"dfn","url":"#sparse-bit-set"},
-"#table-keyed-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"table keyed patch","type":"dfn","url":"#table-keyed-patch"},
-"#table-keyed-patch-compatibilityid": {"export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#table-keyed-patch-compatibilityid"},
-"#table-keyed-patch-patches": {"export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patches","type":"dfn","url":"#table-keyed-patch-patches"},
-"#tablepatch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tablepatch","type":"dfn","url":"#tablepatch"},
-"#tablepatch-brotlistream": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#tablepatch-brotlistream"},
-"#tablepatch-flags": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#tablepatch-flags"},
-"#tablepatch-maxuncompressedlength": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#tablepatch-maxuncompressedlength"},
-"#tablepatch-tag": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#tablepatch-tag"},
+"#abstract-opdef-check-entry-intersection": {"displayText":"Check entry intersection","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Check entry intersection","type":"abstract-op","url":"#abstract-opdef-check-entry-intersection"},
+"#abstract-opdef-extend-an-incremental-font-subset": {"displayText":"Extend an Incremental Font Subset","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Extend an Incremental Font Subset","type":"abstract-op","url":"#abstract-opdef-extend-an-incremental-font-subset"},
+"#abstract-opdef-fully-expand-a-font-subset": {"displayText":"Fully Expand a Font Subset","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Fully Expand a Font Subset","type":"abstract-op","url":"#abstract-opdef-fully-expand-a-font-subset"},
+"#abstract-opdef-handle-errors": {"displayText":"Handle errors","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Handle errors","type":"abstract-op","url":"#abstract-opdef-handle-errors"},
+"#abstract-opdef-interpret-format-1-patch-map": {"displayText":"Interpret Format 1 Patch Map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-1-patch-map"},
+"#abstract-opdef-interpret-format-2-patch-map": {"displayText":"Interpret Format 2 Patch Map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map"},
+"#abstract-opdef-interpret-format-2-patch-map-entry": {"displayText":"Interpret Format 2 Patch Map Entry","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map Entry","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map-entry"},
+"#abstract-opdef-load-patch-file": {"displayText":"Load patch file","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Load patch file","type":"abstract-op","url":"#abstract-opdef-load-patch-file"},
+"#abstract-opdef-remove-entries-from-format-1-patch-map": {"displayText":"Remove Entries from Format 1 Patch Map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Remove Entries from Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-remove-entries-from-format-1-patch-map"},
+"#abstract-opdef-remove-entries-from-format-2-patch-map": {"displayText":"Remove Entries from Format 2 Patch Map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Remove Entries from Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-remove-entries-from-format-2-patch-map"},
+"#branch-factor-encoding": {"displayText":"branch factor encoding","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"branch factor encoding","type":"dfn","url":"#branch-factor-encoding"},
+"#design-space-segment": {"displayText":"design space segment","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"design space segment","type":"dfn","url":"#design-space-segment"},
+"#design-space-segment-end": {"displayText":"end","export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"end","type":"dfn","url":"#design-space-segment-end"},
+"#design-space-segment-start": {"displayText":"start","export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"start","type":"dfn","url":"#design-space-segment-start"},
+"#design-space-segment-tag": {"displayText":"tag","export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#design-space-segment-tag"},
+"#entrymaprecord": {"displayText":"entrymaprecord","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecord","type":"dfn","url":"#entrymaprecord"},
+"#entrymaprecord-firstentryindex": {"displayText":"firstentryindex","export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstentryindex","type":"dfn","url":"#entrymaprecord-firstentryindex"},
+"#entrymaprecord-lastentryindex": {"displayText":"lastentryindex","export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"lastentryindex","type":"dfn","url":"#entrymaprecord-lastentryindex"},
+"#feature-map": {"displayText":"feature map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"feature map","type":"dfn","url":"#feature-map"},
+"#feature-map-entrymaprecords": {"displayText":"entrymaprecords","export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecords","type":"dfn","url":"#feature-map-entrymaprecords"},
+"#feature-map-featurerecords": {"displayText":"featurerecords","export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecords","type":"dfn","url":"#feature-map-featurerecords"},
+"#featurerecord": {"displayText":"featurerecord","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecord","type":"dfn","url":"#featurerecord"},
+"#featurerecord-entrymapcount": {"displayText":"entrymapcount","export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymapcount","type":"dfn","url":"#featurerecord-entrymapcount"},
+"#featurerecord-featuretag": {"displayText":"featuretag","export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretag","type":"dfn","url":"#featurerecord-featuretag"},
+"#featurerecord-firstnewentryindex": {"displayText":"firstnewentryindex","export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstnewentryindex","type":"dfn","url":"#featurerecord-firstnewentryindex"},
+"#font-patch": {"displayText":"font patch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font patch","type":"dfn","url":"#font-patch"},
+"#font-subset": {"displayText":"font subset","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset","type":"dfn","url":"#font-subset"},
+"#font-subset-definition": {"displayText":"font subset definition","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset definition","type":"dfn","url":"#font-subset-definition"},
+"#format-1-patch-map": {"displayText":"format 1 patch map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 1 patch map","type":"dfn","url":"#format-1-patch-map"},
+"#format-1-patch-map-appliedentriesbitmap": {"displayText":"appliedentriesbitmap","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"appliedentriesbitmap","type":"dfn","url":"#format-1-patch-map-appliedentriesbitmap"},
+"#format-1-patch-map-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-1-patch-map-compatibilityid"},
+"#format-1-patch-map-featuremapoffset": {"displayText":"featuremapoffset","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuremapoffset","type":"dfn","url":"#format-1-patch-map-featuremapoffset"},
+"#format-1-patch-map-format": {"displayText":"format","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-1-patch-map-format"},
+"#format-1-patch-map-glyphcount": {"displayText":"glyphcount","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#format-1-patch-map-glyphcount"},
+"#format-1-patch-map-maxentryindex": {"displayText":"maxentryindex","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxentryindex","type":"dfn","url":"#format-1-patch-map-maxentryindex"},
+"#format-1-patch-map-maxglyphmapentryindex": {"displayText":"maxglyphmapentryindex","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxglyphmapentryindex","type":"dfn","url":"#format-1-patch-map-maxglyphmapentryindex"},
+"#format-1-patch-map-patchformat": {"displayText":"patchformat","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#format-1-patch-map-patchformat"},
+"#format-1-patch-map-uritemplate": {"displayText":"uritemplate","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-1-patch-map-uritemplate"},
+"#format-2-patch-map": {"displayText":"format 2 patch map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 2 patch map","type":"dfn","url":"#format-2-patch-map"},
+"#format-2-patch-map-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-2-patch-map-compatibilityid"},
+"#format-2-patch-map-defaultpatchformat": {"displayText":"defaultpatchformat","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"defaultpatchformat","type":"dfn","url":"#format-2-patch-map-defaultpatchformat"},
+"#format-2-patch-map-entries": {"displayText":"entries","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#format-2-patch-map-entries"},
+"#format-2-patch-map-entrycount": {"displayText":"entrycount","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrycount","type":"dfn","url":"#format-2-patch-map-entrycount"},
+"#format-2-patch-map-entryidstringdata": {"displayText":"entryidstringdata","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringdata","type":"dfn","url":"#format-2-patch-map-entryidstringdata"},
+"#format-2-patch-map-format": {"displayText":"format","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-2-patch-map-format"},
+"#format-2-patch-map-uritemplate": {"displayText":"uritemplate","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-2-patch-map-uritemplate"},
+"#full-invalidation": {"displayText":"full invalidation","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"full invalidation","type":"dfn","url":"#full-invalidation"},
+"#glyph-closure": {"displayText":"glyph closure","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph closure","type":"dfn","url":"#glyph-closure"},
+"#glyph-keyed-patch": {"displayText":"glyph keyed patch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph keyed patch","type":"dfn","url":"#glyph-keyed-patch"},
+"#glyph-keyed-patch-brotlistream": {"displayText":"brotlistream","export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#glyph-keyed-patch-brotlistream"},
+"#glyph-keyed-patch-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#glyph-keyed-patch-compatibilityid"},
+"#glyph-keyed-patch-flags": {"displayText":"flags","export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#glyph-keyed-patch-flags"},
+"#glyph-keyed-patch-maxuncompressedlength": {"displayText":"maxuncompressedlength","export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#glyph-keyed-patch-maxuncompressedlength"},
+"#glyph-map": {"displayText":"glyph map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph map","type":"dfn","url":"#glyph-map"},
+"#glyph-map-entryindex": {"displayText":"entryindex","export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryindex","type":"dfn","url":"#glyph-map-entryindex"},
+"#glyph-map-firstmappedglyph": {"displayText":"firstmappedglyph","export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstmappedglyph","type":"dfn","url":"#glyph-map-firstmappedglyph"},
+"#glyphpatches": {"displayText":"glyphpatches","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphpatches","type":"dfn","url":"#glyphpatches"},
+"#glyphpatches-glyphcount": {"displayText":"glyphcount","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#glyphpatches-glyphcount"},
+"#glyphpatches-glyphdata": {"displayText":"glyphdata","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdata","type":"dfn","url":"#glyphpatches-glyphdata"},
+"#glyphpatches-glyphdataoffsets": {"displayText":"glyphdataoffsets","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdataoffsets","type":"dfn","url":"#glyphpatches-glyphdataoffsets"},
+"#glyphpatches-glyphids": {"displayText":"glyphids","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphids","type":"dfn","url":"#glyphpatches-glyphids"},
+"#glyphpatches-tables": {"displayText":"tables","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tables","type":"dfn","url":"#glyphpatches-tables"},
+"#incremental-font": {"displayText":"incremental font","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"incremental font","type":"dfn","url":"#incremental-font"},
+"#mapping-entries": {"displayText":"mapping entries","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entries","type":"dfn","url":"#mapping-entries"},
+"#mapping-entries-entries": {"displayText":"entries","export":true,"for_":["Mapping Entries"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#mapping-entries-entries"},
+"#mapping-entry": {"displayText":"mapping entry","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entry","type":"dfn","url":"#mapping-entry"},
+"#mapping-entry-bias": {"displayText":"bias","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"bias","type":"dfn","url":"#mapping-entry-bias"},
+"#mapping-entry-codepoints": {"displayText":"codepoints","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"codepoints","type":"dfn","url":"#mapping-entry-codepoints"},
+"#mapping-entry-copyindices": {"displayText":"copyindices","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"copyindices","type":"dfn","url":"#mapping-entry-copyindices"},
+"#mapping-entry-copymodeandcount": {"displayText":"copymodeandcount","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"copymodeandcount","type":"dfn","url":"#mapping-entry-copymodeandcount"},
+"#mapping-entry-designspacecount": {"displayText":"designspacecount","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacecount","type":"dfn","url":"#mapping-entry-designspacecount"},
+"#mapping-entry-designspacesegments": {"displayText":"designspacesegments","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacesegments","type":"dfn","url":"#mapping-entry-designspacesegments"},
+"#mapping-entry-entryiddelta": {"displayText":"entryiddelta","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryiddelta","type":"dfn","url":"#mapping-entry-entryiddelta"},
+"#mapping-entry-entryidstringlength": {"displayText":"entryidstringlength","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringlength","type":"dfn","url":"#mapping-entry-entryidstringlength"},
+"#mapping-entry-featurecount": {"displayText":"featurecount","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurecount","type":"dfn","url":"#mapping-entry-featurecount"},
+"#mapping-entry-featuretags": {"displayText":"featuretags","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretags","type":"dfn","url":"#mapping-entry-featuretags"},
+"#mapping-entry-formatflags": {"displayText":"formatflags","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"formatflags","type":"dfn","url":"#mapping-entry-formatflags"},
+"#mapping-entry-patchformat": {"displayText":"patchformat","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#mapping-entry-patchformat"},
+"#no-invalidation": {"displayText":"no invalidation","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"no invalidation","type":"dfn","url":"#no-invalidation"},
+"#partial-invalidation": {"displayText":"partial invalidation","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"partial invalidation","type":"dfn","url":"#partial-invalidation"},
+"#patch-application-algorithm": {"displayText":"patch application algorithm","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch application algorithm","type":"dfn","url":"#patch-application-algorithm"},
+"#patch-format": {"displayText":"patch format","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch format","type":"dfn","url":"#patch-format"},
+"#patch-map": {"displayText":"patch map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map","type":"dfn","url":"#patch-map"},
+"#patch-map-entries": {"displayText":"patch map entries","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map entries","type":"dfn","url":"#patch-map-entries"},
+"#sparse-bit-set": {"displayText":"sparse bit set","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"sparse bit set","type":"dfn","url":"#sparse-bit-set"},
+"#table-keyed-patch": {"displayText":"table keyed patch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"table keyed patch","type":"dfn","url":"#table-keyed-patch"},
+"#table-keyed-patch-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#table-keyed-patch-compatibilityid"},
+"#table-keyed-patch-patches": {"displayText":"patches","export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patches","type":"dfn","url":"#table-keyed-patch-patches"},
+"#tablepatch": {"displayText":"tablepatch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tablepatch","type":"dfn","url":"#tablepatch"},
+"#tablepatch-brotlistream": {"displayText":"brotlistream","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#tablepatch-brotlistream"},
+"#tablepatch-flags": {"displayText":"flags","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#tablepatch-flags"},
+"#tablepatch-maxuncompressedlength": {"displayText":"maxuncompressedlength","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#tablepatch-maxuncompressedlength"},
+"#tablepatch-tag": {"displayText":"tag","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#tablepatch-tag"},
 };
 
 function mkRefHint(link, ref) {
     const linkText = link.textContent;
     let dfnTextElements = '';
-    if (ref.text != linkText) {
+    if (ref.displayText.toLowerCase() != linkText.toLowerCase()) {
+        // Give the original term if it's being displayed in a different way.
+        // But allow casing differences, they're insignificant.
         dfnTextElements =
             mk.li({},
                 mk.b({}, "Term: "),
-                mk.span({}, ref.text)
+                mk.span({}, ref.displayText)
             );
     }
     const forList = ref.for_;
