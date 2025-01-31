@@ -5,9 +5,9 @@
   <title>Incremental Font Transfer</title>
   <meta content="ED" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
-  <meta content="Bikeshed version ac5ea272d, updated Fri Dec 6 15:45:15 2024 -0800" name="generator">
+  <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="6be69980674a9ff91ef3b7d88752b687809580df" name="revision">
+  <meta content="69094a202d6402b4968a6d667b25e3fad4dcd3af" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -714,43 +714,21 @@ D50 2deg illuminant, L in [0,100], a and b in [-128, 128]
 4 = lab(85,5,15)
 5 = lab(85,-10,-50)
 6 = lab(85,35,-15)
-
-For darkmode:
-0 = oklab(50%   0%  108%)
-1 = oklab(50% -51%   51%)
-2 = oklab(50% -64%  -20%)
-3 = oklab(50%   6%   19%)
-4 = oklab(50% -12%  -64%)
-5 = oklab(50%  44%  -19%)  
-6 = oklab(50% 102%   38%)
 */
-
 [data-algorithm] var { cursor: pointer; }
-var[data-var-color] { background-color: var(--var-bg); box-shadow: 0 0 0 2px var(--var-bg); }
-
-var[data-var-color] { --var-bg: #F4D200; }
-var[data-var-color="1"] { --var-bg: #FF87A2; }
-var[data-var-color="2"] { --var-bg: #96E885; }
-var[data-var-color="3"] { --var-bg: #3EEED2; }
-var[data-var-color="4"] { --var-bg: #EACFB6; }
-var[data-var-color="5"] { --var-bg: #82DDFF; }
-var[data-var-color="6"] { --var-vg: #FFBCF2; }
-
-@media (prefers-color-scheme: dark) {
-	var[data-var-color] { --var-bg: #bc1a00; }
-	var[data-var-color="1"] { --var-bg: #007f00; }
-	var[data-var-color="2"] { --var-bg: #008698; }
-	var[data-var-color="3"] { --var-bg: #7f5b2b; }
-	var[data-var-color="4"] { --var-bg: #004df3; }
-	var[data-var-color="5"] { --var-bg: #a1248a; }
-	var[data-var-color="6"] { --var-vg: #ff0000; }
-}
+var[data-var-color="0"] { background-color: #F4D200; box-shadow: 0 0 0 2px #F4D200; }
+var[data-var-color="1"] { background-color: #FF87A2; box-shadow: 0 0 0 2px #FF87A2; }
+var[data-var-color="2"] { background-color: #96E885; box-shadow: 0 0 0 2px #96E885; }
+var[data-var-color="3"] { background-color: #3EEED2; box-shadow: 0 0 0 2px #3EEED2; }
+var[data-var-color="4"] { background-color: #EACFB6; box-shadow: 0 0 0 2px #EACFB6; }
+var[data-var-color="5"] { background-color: #82DDFF; box-shadow: 0 0 0 2px #82DDFF; }
+var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
 </style>
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types/#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2025-01-18">18 January 2025</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2025-01-31">31 January 2025</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -3081,11 +3059,17 @@ number of requests:</p>
  access control headers.</p>
    </ol>
    <h2 class="heading settled" data-level="10" id="changes"><span class="secno">10. </span><span class="content">Changes</span><a class="self-link" href="#changes"></a></h2>
-   <p>Since the <a href="https://www.w3.org/TR/2023/WD-IFT-20230530/">Working
-  Draft of 30 May 2023</a> (see <a href="https://github.com/w3c/IFT/commits/main/Overview.bs">commit history</a>):</p>
+   <p>Since the <a href="https://www.w3.org/TR/2024/WD-IFT-20240709/">Working
+  Draft of 09 July 2024</a> (see <a href="https://github.com/w3c/IFT/commits/main/Overview.bs">commit history</a>):</p>
    <ul>
-    <li>Complete rewrite of the specification. Separate 'Patch Subset' and 'Range Request' methods have been removed in favour
-      of a single unified approach.
+    <li>Modifications to format 1 and format 2 patch map encodings based on implementation work (eg. clarifications, error handling, and
+      fixes to oversights).
+    <li>Added section on caching of incremental fonts.
+    <li>Added guidance around default layout features.
+    <li>Removed the pure brotli patch format, remaining patch formats are now table keyed and glyph keyed.
+    <li>Add a procedure to check what content an IFT font can render.
+    <li>Explicit pre-fetching added to the extension algorithm.
+    <li>Appendix B added which contains extension algorithm example executions.
    </ul>
    <h2 class="heading settled" id="feature-tag-list"><span class="content"> Appendix A: Default Feature Tags</span><a class="self-link" href="#feature-tag-list"></a></h2>
    <p><em>This appendix is not normative.</em> It provides a list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a> which are considered
@@ -3103,379 +3087,202 @@ to be used by default in most shaper implementations. This list was assembled fr
     <tbody>
      <tr>
       <th>Tag
-      <th>Encoded As
-     <tr>
-      <td>aalt
-      <td>1
+      <th>Name
      <tr>
       <td>abvf
-      <td>default
+      <td>Above-base Forms
      <tr>
       <td>abvm
-      <td>default
+      <td>Above-base Mark Positioning
      <tr>
       <td>abvs
-      <td>default
-     <tr>
-      <td>afrc
-      <td>2
+      <td>Above-base Substitutions
      <tr>
       <td>akhn
-      <td>default
+      <td>Akhand
      <tr>
       <td>blwf
-      <td>default
+      <td>Below-base Forms
      <tr>
       <td>blwm
-      <td>default
+      <td>Below-base Mark Positioning
      <tr>
       <td>blws
-      <td>default
+      <td>Below-base Substitutions
      <tr>
       <td>calt
-      <td>default
-     <tr>
-      <td>case
-      <td>3
+      <td>Contextual Alternates
      <tr>
       <td>ccmp
-      <td>default
+      <td>Glyph Composition / Decomposition
      <tr>
       <td>cfar
-      <td>default
+      <td>Conjunct Form After Ro
      <tr>
       <td>chws
-      <td>default
+      <td>Contextual Half-width Spacing
      <tr>
       <td>cjct
-      <td>default
+      <td>Conjunct Forms
      <tr>
       <td>clig
-      <td>default
-     <tr>
-      <td>cpct
-      <td>4
-     <tr>
-      <td>cpsp
-      <td>5
+      <td>Contextual Ligatures
      <tr>
       <td>cswh
-      <td>default
+      <td>Contextual Swash
      <tr>
       <td>curs
-      <td>default
-     <tr>
-      <td>cv01-cv99
-      <td>6-104
-     <tr>
-      <td>c2pc
-      <td>105
-     <tr>
-      <td>c2sc
-      <td>106
+      <td>Cursive Positioning
      <tr>
       <td>dist
-      <td>default
-     <tr>
-      <td>dlig
-      <td>107
+      <td>Distances
      <tr>
       <td>dnom
-      <td>default
+      <td>Denominators
      <tr>
       <td>dtls
-      <td>default
-     <tr>
-      <td>expt
-      <td>108
-     <tr>
-      <td>falt
-      <td>109
+      <td>Dotless Forms
      <tr>
       <td>fin2
-      <td>default
+      <td>Terminal Forms #2
      <tr>
       <td>fin3
-      <td>default
+      <td>Terminal Forms #3
      <tr>
       <td>fina
-      <td>default
+      <td>Terminal Forms
      <tr>
       <td>flac
-      <td>default
+      <td>Flattened accent forms
      <tr>
       <td>frac
-      <td>default
-     <tr>
-      <td>fwid
-      <td>110
+      <td>Fractions
      <tr>
       <td>half
-      <td>default
+      <td>Half Forms
      <tr>
       <td>haln
-      <td>default
-     <tr>
-      <td>halt
-      <td>111
-     <tr>
-      <td>hist
-      <td>112
-     <tr>
-      <td>hkna
-      <td>113
-     <tr>
-      <td>hlig
-      <td>114
-     <tr>
-      <td>hngl
-      <td>115
-     <tr>
-      <td>hojo
-      <td>116
-     <tr>
-      <td>hwid
-      <td>117
+      <td>Halant Forms
      <tr>
       <td>init
-      <td>default
+      <td>Initial Forms
      <tr>
       <td>isol
-      <td>default
-     <tr>
-      <td>ital
-      <td>118
+      <td>Isolated Forms
      <tr>
       <td>jalt
-      <td>default
-     <tr>
-      <td>jp78
-      <td>119
-     <tr>
-      <td>jp83
-      <td>120
-     <tr>
-      <td>jp90
-      <td>121
-     <tr>
-      <td>jp04
-      <td>122
+      <td>Justification Alternates
      <tr>
       <td>kern
-      <td>default
-     <tr>
-      <td>lfbd
-      <td>123
+      <td>Kerning
      <tr>
       <td>liga
-      <td>default
+      <td>Standard Ligatures
      <tr>
       <td>ljmo
-      <td>default
-     <tr>
-      <td>lnum
-      <td>124
+      <td>Leading Jamo Forms
      <tr>
       <td>locl
-      <td>default
+      <td>Localized Forms
      <tr>
       <td>ltra
-      <td>default
+      <td>Left-to-right alternates
      <tr>
       <td>ltrm
-      <td>default
+      <td>Left-to-right mirrored forms
      <tr>
       <td>mark
-      <td>default
+      <td>Mark Positioning
      <tr>
       <td>med2
-      <td>default
+      <td>Medial Forms #2
      <tr>
       <td>medi
-      <td>default
-     <tr>
-      <td>mgrk
-      <td>125
+      <td>Medial Forms
      <tr>
       <td>mkmk
-      <td>default
+      <td>Mark to Mark Positioning
      <tr>
       <td>mset
-      <td>default
-     <tr>
-      <td>nalt
-      <td>126
-     <tr>
-      <td>nlck
-      <td>127
+      <td>Mark Positioning via Substitution
      <tr>
       <td>nukt
-      <td>default
+      <td>Nukta Forms
      <tr>
       <td>numr
-      <td>default
-     <tr>
-      <td>onum
-      <td>128
-     <tr>
-      <td>opbd
-      <td>129
-     <tr>
-      <td>ordn
-      <td>130
-     <tr>
-      <td>ornm
-      <td>131
-     <tr>
-      <td>palt
-      <td>132
-     <tr>
-      <td>pcap
-      <td>133
-     <tr>
-      <td>pkna
-      <td>134
-     <tr>
-      <td>pnum
-      <td>135
+      <td>Numerators
      <tr>
       <td>pref
-      <td>default
+      <td>Pre-Base Forms
      <tr>
       <td>pres
-      <td>default
+      <td>Pre-base Substitutions
      <tr>
       <td>pstf
-      <td>default
+      <td>Post-base Forms
      <tr>
       <td>psts
-      <td>default
-     <tr>
-      <td>pwid
-      <td>136
-     <tr>
-      <td>qwid
-      <td>137
+      <td>Post-base Substitutions
      <tr>
       <td>rand
-      <td>default
+      <td>Randomize
      <tr>
       <td>rclt
-      <td>default
+      <td>Required Contextual Alternates
      <tr>
       <td>rkrf
-      <td>default
+      <td>Rakar Forms
      <tr>
       <td>rlig
-      <td>default
+      <td>Required Ligatures
      <tr>
       <td>rphf
-      <td>default
-     <tr>
-      <td>rtbd
-      <td>138
+      <td>Reph Forms
      <tr>
       <td>rtla
-      <td>default
+      <td>Right-to-left alternates
      <tr>
       <td>rtlm
-      <td>default
-     <tr>
-      <td>ruby
-      <td>139
+      <td>Right-to-left mirrored forms
      <tr>
       <td>rvrn
-      <td>default
-     <tr>
-      <td>salt
-      <td>140
-     <tr>
-      <td>sinf
-      <td>141
-     <tr>
-      <td>size
-      <td>142
-     <tr>
-      <td>smcp
-      <td>143
-     <tr>
-      <td>smpl
-      <td>144
-     <tr>
-      <td>ss01-ss20
-      <td>145-164
+      <td>Required Variation Alternates
      <tr>
       <td>ssty
-      <td>default
+      <td>Math script style alternates
      <tr>
       <td>stch
-      <td>default
-     <tr>
-      <td>subs
-      <td>165
-     <tr>
-      <td>sups
-      <td>166
-     <tr>
-      <td>swsh
-      <td>167
-     <tr>
-      <td>titl
-      <td>168
+      <td>Stretching Glyph Decomposition
      <tr>
       <td>tjmo
-      <td>default
-     <tr>
-      <td>tnam
-      <td>169
-     <tr>
-      <td>tnum
-      <td>170
-     <tr>
-      <td>trad
-      <td>171
-     <tr>
-      <td>twid
-      <td>172
-     <tr>
-      <td>unic
-      <td>173
+      <td>Trailing Jamo Forms
      <tr>
       <td>valt
-      <td>default
+      <td>Alternate Vertical Metrics
      <tr>
       <td>vatu
-      <td>default
+      <td>Vattu Variants
      <tr>
       <td>vchw
-      <td>default
+      <td>Vertical Contextual Half-width Spacing
      <tr>
       <td>vert
-      <td>default
-     <tr>
-      <td>vhal
-      <td>174
+      <td>Vertical Writing
      <tr>
       <td>vjmo
-      <td>default
-     <tr>
-      <td>vkna
-      <td>175
+      <td>Vowel Jamo Forms
      <tr>
       <td>vkrn
-      <td>default
+      <td>Vertical Kerning
      <tr>
       <td>vpal
-      <td>default
+      <td>Proportional Alternate Vertical Metrics
      <tr>
       <td>vrt2
-      <td>default
+      <td>Vertical Alternates and Rotation
      <tr>
       <td>vrtr
-      <td>default
-     <tr>
-      <td>zero
-      <td>176
+      <td>Vertical Alternates for Rotation
    </table>
    <h2 class="heading settled" id="extension-example"><span class="content"> Appendix B: Extension Algorithm Example Execution</span><a class="self-link" href="#extension-example"></a></h2>
    <p>This appendix provides an example of how a typical IFT font would be processed by the <a href="#extend-font-subset">§ 4.3 Incremental Font Extension Algorithm</a> algorithm. In this example the IFT font
@@ -4603,111 +4410,109 @@ function genLinkingSyntaxes(dfn) {
 "use strict";
 {
 let refsData = {
-"#abstract-opdef-check-entry-intersection": {"displayText":"Check entry intersection","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Check entry intersection","type":"abstract-op","url":"#abstract-opdef-check-entry-intersection"},
-"#abstract-opdef-extend-an-incremental-font-subset": {"displayText":"Extend an Incremental Font Subset","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Extend an Incremental Font Subset","type":"abstract-op","url":"#abstract-opdef-extend-an-incremental-font-subset"},
-"#abstract-opdef-fully-expand-a-font-subset": {"displayText":"Fully Expand a Font Subset","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Fully Expand a Font Subset","type":"abstract-op","url":"#abstract-opdef-fully-expand-a-font-subset"},
-"#abstract-opdef-handle-errors": {"displayText":"Handle errors","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Handle errors","type":"abstract-op","url":"#abstract-opdef-handle-errors"},
-"#abstract-opdef-interpret-format-1-patch-map": {"displayText":"Interpret Format 1 Patch Map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-1-patch-map"},
-"#abstract-opdef-interpret-format-2-patch-map": {"displayText":"Interpret Format 2 Patch Map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map"},
-"#abstract-opdef-interpret-format-2-patch-map-entry": {"displayText":"Interpret Format 2 Patch Map Entry","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map Entry","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map-entry"},
-"#abstract-opdef-load-patch-file": {"displayText":"Load patch file","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Load patch file","type":"abstract-op","url":"#abstract-opdef-load-patch-file"},
-"#abstract-opdef-remove-entries-from-format-1-patch-map": {"displayText":"Remove Entries from Format 1 Patch Map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Remove Entries from Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-remove-entries-from-format-1-patch-map"},
-"#abstract-opdef-remove-entries-from-format-2-patch-map": {"displayText":"Remove Entries from Format 2 Patch Map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Remove Entries from Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-remove-entries-from-format-2-patch-map"},
-"#branch-factor-encoding": {"displayText":"branch factor encoding","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"branch factor encoding","type":"dfn","url":"#branch-factor-encoding"},
-"#design-space-segment": {"displayText":"design space segment","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"design space segment","type":"dfn","url":"#design-space-segment"},
-"#design-space-segment-end": {"displayText":"end","export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"end","type":"dfn","url":"#design-space-segment-end"},
-"#design-space-segment-start": {"displayText":"start","export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"start","type":"dfn","url":"#design-space-segment-start"},
-"#design-space-segment-tag": {"displayText":"tag","export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#design-space-segment-tag"},
-"#entrymaprecord": {"displayText":"entrymaprecord","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecord","type":"dfn","url":"#entrymaprecord"},
-"#entrymaprecord-firstentryindex": {"displayText":"firstentryindex","export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstentryindex","type":"dfn","url":"#entrymaprecord-firstentryindex"},
-"#entrymaprecord-lastentryindex": {"displayText":"lastentryindex","export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"lastentryindex","type":"dfn","url":"#entrymaprecord-lastentryindex"},
-"#feature-map": {"displayText":"feature map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"feature map","type":"dfn","url":"#feature-map"},
-"#feature-map-entrymaprecords": {"displayText":"entrymaprecords","export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecords","type":"dfn","url":"#feature-map-entrymaprecords"},
-"#feature-map-featurerecords": {"displayText":"featurerecords","export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecords","type":"dfn","url":"#feature-map-featurerecords"},
-"#featurerecord": {"displayText":"featurerecord","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecord","type":"dfn","url":"#featurerecord"},
-"#featurerecord-entrymapcount": {"displayText":"entrymapcount","export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymapcount","type":"dfn","url":"#featurerecord-entrymapcount"},
-"#featurerecord-featuretag": {"displayText":"featuretag","export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretag","type":"dfn","url":"#featurerecord-featuretag"},
-"#featurerecord-firstnewentryindex": {"displayText":"firstnewentryindex","export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstnewentryindex","type":"dfn","url":"#featurerecord-firstnewentryindex"},
-"#font-patch": {"displayText":"font patch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font patch","type":"dfn","url":"#font-patch"},
-"#font-subset": {"displayText":"font subset","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset","type":"dfn","url":"#font-subset"},
-"#font-subset-definition": {"displayText":"font subset definition","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset definition","type":"dfn","url":"#font-subset-definition"},
-"#format-1-patch-map": {"displayText":"format 1 patch map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 1 patch map","type":"dfn","url":"#format-1-patch-map"},
-"#format-1-patch-map-appliedentriesbitmap": {"displayText":"appliedentriesbitmap","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"appliedentriesbitmap","type":"dfn","url":"#format-1-patch-map-appliedentriesbitmap"},
-"#format-1-patch-map-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-1-patch-map-compatibilityid"},
-"#format-1-patch-map-featuremapoffset": {"displayText":"featuremapoffset","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuremapoffset","type":"dfn","url":"#format-1-patch-map-featuremapoffset"},
-"#format-1-patch-map-format": {"displayText":"format","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-1-patch-map-format"},
-"#format-1-patch-map-glyphcount": {"displayText":"glyphcount","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#format-1-patch-map-glyphcount"},
-"#format-1-patch-map-maxentryindex": {"displayText":"maxentryindex","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxentryindex","type":"dfn","url":"#format-1-patch-map-maxentryindex"},
-"#format-1-patch-map-maxglyphmapentryindex": {"displayText":"maxglyphmapentryindex","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxglyphmapentryindex","type":"dfn","url":"#format-1-patch-map-maxglyphmapentryindex"},
-"#format-1-patch-map-patchformat": {"displayText":"patchformat","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#format-1-patch-map-patchformat"},
-"#format-1-patch-map-uritemplate": {"displayText":"uritemplate","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-1-patch-map-uritemplate"},
-"#format-2-patch-map": {"displayText":"format 2 patch map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 2 patch map","type":"dfn","url":"#format-2-patch-map"},
-"#format-2-patch-map-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-2-patch-map-compatibilityid"},
-"#format-2-patch-map-defaultpatchformat": {"displayText":"defaultpatchformat","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"defaultpatchformat","type":"dfn","url":"#format-2-patch-map-defaultpatchformat"},
-"#format-2-patch-map-entries": {"displayText":"entries","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#format-2-patch-map-entries"},
-"#format-2-patch-map-entrycount": {"displayText":"entrycount","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrycount","type":"dfn","url":"#format-2-patch-map-entrycount"},
-"#format-2-patch-map-entryidstringdata": {"displayText":"entryidstringdata","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringdata","type":"dfn","url":"#format-2-patch-map-entryidstringdata"},
-"#format-2-patch-map-format": {"displayText":"format","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-2-patch-map-format"},
-"#format-2-patch-map-uritemplate": {"displayText":"uritemplate","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-2-patch-map-uritemplate"},
-"#full-invalidation": {"displayText":"full invalidation","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"full invalidation","type":"dfn","url":"#full-invalidation"},
-"#glyph-closure": {"displayText":"glyph closure","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph closure","type":"dfn","url":"#glyph-closure"},
-"#glyph-keyed-patch": {"displayText":"glyph keyed patch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph keyed patch","type":"dfn","url":"#glyph-keyed-patch"},
-"#glyph-keyed-patch-brotlistream": {"displayText":"brotlistream","export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#glyph-keyed-patch-brotlistream"},
-"#glyph-keyed-patch-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#glyph-keyed-patch-compatibilityid"},
-"#glyph-keyed-patch-flags": {"displayText":"flags","export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#glyph-keyed-patch-flags"},
-"#glyph-keyed-patch-maxuncompressedlength": {"displayText":"maxuncompressedlength","export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#glyph-keyed-patch-maxuncompressedlength"},
-"#glyph-map": {"displayText":"glyph map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph map","type":"dfn","url":"#glyph-map"},
-"#glyph-map-entryindex": {"displayText":"entryindex","export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryindex","type":"dfn","url":"#glyph-map-entryindex"},
-"#glyph-map-firstmappedglyph": {"displayText":"firstmappedglyph","export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstmappedglyph","type":"dfn","url":"#glyph-map-firstmappedglyph"},
-"#glyphpatches": {"displayText":"glyphpatches","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphpatches","type":"dfn","url":"#glyphpatches"},
-"#glyphpatches-glyphcount": {"displayText":"glyphcount","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#glyphpatches-glyphcount"},
-"#glyphpatches-glyphdata": {"displayText":"glyphdata","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdata","type":"dfn","url":"#glyphpatches-glyphdata"},
-"#glyphpatches-glyphdataoffsets": {"displayText":"glyphdataoffsets","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdataoffsets","type":"dfn","url":"#glyphpatches-glyphdataoffsets"},
-"#glyphpatches-glyphids": {"displayText":"glyphids","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphids","type":"dfn","url":"#glyphpatches-glyphids"},
-"#glyphpatches-tables": {"displayText":"tables","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tables","type":"dfn","url":"#glyphpatches-tables"},
-"#incremental-font": {"displayText":"incremental font","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"incremental font","type":"dfn","url":"#incremental-font"},
-"#mapping-entries": {"displayText":"mapping entries","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entries","type":"dfn","url":"#mapping-entries"},
-"#mapping-entries-entries": {"displayText":"entries","export":true,"for_":["Mapping Entries"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#mapping-entries-entries"},
-"#mapping-entry": {"displayText":"mapping entry","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entry","type":"dfn","url":"#mapping-entry"},
-"#mapping-entry-bias": {"displayText":"bias","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"bias","type":"dfn","url":"#mapping-entry-bias"},
-"#mapping-entry-codepoints": {"displayText":"codepoints","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"codepoints","type":"dfn","url":"#mapping-entry-codepoints"},
-"#mapping-entry-copyindices": {"displayText":"copyindices","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"copyindices","type":"dfn","url":"#mapping-entry-copyindices"},
-"#mapping-entry-copymodeandcount": {"displayText":"copymodeandcount","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"copymodeandcount","type":"dfn","url":"#mapping-entry-copymodeandcount"},
-"#mapping-entry-designspacecount": {"displayText":"designspacecount","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacecount","type":"dfn","url":"#mapping-entry-designspacecount"},
-"#mapping-entry-designspacesegments": {"displayText":"designspacesegments","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacesegments","type":"dfn","url":"#mapping-entry-designspacesegments"},
-"#mapping-entry-entryiddelta": {"displayText":"entryiddelta","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryiddelta","type":"dfn","url":"#mapping-entry-entryiddelta"},
-"#mapping-entry-entryidstringlength": {"displayText":"entryidstringlength","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringlength","type":"dfn","url":"#mapping-entry-entryidstringlength"},
-"#mapping-entry-featurecount": {"displayText":"featurecount","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurecount","type":"dfn","url":"#mapping-entry-featurecount"},
-"#mapping-entry-featuretags": {"displayText":"featuretags","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretags","type":"dfn","url":"#mapping-entry-featuretags"},
-"#mapping-entry-formatflags": {"displayText":"formatflags","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"formatflags","type":"dfn","url":"#mapping-entry-formatflags"},
-"#mapping-entry-patchformat": {"displayText":"patchformat","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#mapping-entry-patchformat"},
-"#no-invalidation": {"displayText":"no invalidation","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"no invalidation","type":"dfn","url":"#no-invalidation"},
-"#partial-invalidation": {"displayText":"partial invalidation","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"partial invalidation","type":"dfn","url":"#partial-invalidation"},
-"#patch-application-algorithm": {"displayText":"patch application algorithm","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch application algorithm","type":"dfn","url":"#patch-application-algorithm"},
-"#patch-format": {"displayText":"patch format","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch format","type":"dfn","url":"#patch-format"},
-"#patch-map": {"displayText":"patch map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map","type":"dfn","url":"#patch-map"},
-"#patch-map-entries": {"displayText":"patch map entries","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map entries","type":"dfn","url":"#patch-map-entries"},
-"#sparse-bit-set": {"displayText":"sparse bit set","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"sparse bit set","type":"dfn","url":"#sparse-bit-set"},
-"#table-keyed-patch": {"displayText":"table keyed patch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"table keyed patch","type":"dfn","url":"#table-keyed-patch"},
-"#table-keyed-patch-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#table-keyed-patch-compatibilityid"},
-"#table-keyed-patch-patches": {"displayText":"patches","export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patches","type":"dfn","url":"#table-keyed-patch-patches"},
-"#tablepatch": {"displayText":"tablepatch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tablepatch","type":"dfn","url":"#tablepatch"},
-"#tablepatch-brotlistream": {"displayText":"brotlistream","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#tablepatch-brotlistream"},
-"#tablepatch-flags": {"displayText":"flags","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#tablepatch-flags"},
-"#tablepatch-maxuncompressedlength": {"displayText":"maxuncompressedlength","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#tablepatch-maxuncompressedlength"},
-"#tablepatch-tag": {"displayText":"tag","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#tablepatch-tag"},
+"#abstract-opdef-check-entry-intersection": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Check entry intersection","type":"abstract-op","url":"#abstract-opdef-check-entry-intersection"},
+"#abstract-opdef-extend-an-incremental-font-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Extend an Incremental Font Subset","type":"abstract-op","url":"#abstract-opdef-extend-an-incremental-font-subset"},
+"#abstract-opdef-fully-expand-a-font-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Fully Expand a Font Subset","type":"abstract-op","url":"#abstract-opdef-fully-expand-a-font-subset"},
+"#abstract-opdef-handle-errors": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Handle errors","type":"abstract-op","url":"#abstract-opdef-handle-errors"},
+"#abstract-opdef-interpret-format-1-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-1-patch-map"},
+"#abstract-opdef-interpret-format-2-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map"},
+"#abstract-opdef-interpret-format-2-patch-map-entry": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map Entry","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map-entry"},
+"#abstract-opdef-load-patch-file": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Load patch file","type":"abstract-op","url":"#abstract-opdef-load-patch-file"},
+"#abstract-opdef-remove-entries-from-format-1-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Remove Entries from Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-remove-entries-from-format-1-patch-map"},
+"#abstract-opdef-remove-entries-from-format-2-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Remove Entries from Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-remove-entries-from-format-2-patch-map"},
+"#branch-factor-encoding": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"branch factor encoding","type":"dfn","url":"#branch-factor-encoding"},
+"#design-space-segment": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"design space segment","type":"dfn","url":"#design-space-segment"},
+"#design-space-segment-end": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"end","type":"dfn","url":"#design-space-segment-end"},
+"#design-space-segment-start": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"start","type":"dfn","url":"#design-space-segment-start"},
+"#design-space-segment-tag": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#design-space-segment-tag"},
+"#entrymaprecord": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecord","type":"dfn","url":"#entrymaprecord"},
+"#entrymaprecord-firstentryindex": {"export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstentryindex","type":"dfn","url":"#entrymaprecord-firstentryindex"},
+"#entrymaprecord-lastentryindex": {"export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"lastentryindex","type":"dfn","url":"#entrymaprecord-lastentryindex"},
+"#feature-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"feature map","type":"dfn","url":"#feature-map"},
+"#feature-map-entrymaprecords": {"export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecords","type":"dfn","url":"#feature-map-entrymaprecords"},
+"#feature-map-featurerecords": {"export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecords","type":"dfn","url":"#feature-map-featurerecords"},
+"#featurerecord": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecord","type":"dfn","url":"#featurerecord"},
+"#featurerecord-entrymapcount": {"export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymapcount","type":"dfn","url":"#featurerecord-entrymapcount"},
+"#featurerecord-featuretag": {"export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretag","type":"dfn","url":"#featurerecord-featuretag"},
+"#featurerecord-firstnewentryindex": {"export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstnewentryindex","type":"dfn","url":"#featurerecord-firstnewentryindex"},
+"#font-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font patch","type":"dfn","url":"#font-patch"},
+"#font-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset","type":"dfn","url":"#font-subset"},
+"#font-subset-definition": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset definition","type":"dfn","url":"#font-subset-definition"},
+"#format-1-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 1 patch map","type":"dfn","url":"#format-1-patch-map"},
+"#format-1-patch-map-appliedentriesbitmap": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"appliedentriesbitmap","type":"dfn","url":"#format-1-patch-map-appliedentriesbitmap"},
+"#format-1-patch-map-compatibilityid": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-1-patch-map-compatibilityid"},
+"#format-1-patch-map-featuremapoffset": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuremapoffset","type":"dfn","url":"#format-1-patch-map-featuremapoffset"},
+"#format-1-patch-map-format": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-1-patch-map-format"},
+"#format-1-patch-map-glyphcount": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#format-1-patch-map-glyphcount"},
+"#format-1-patch-map-maxentryindex": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxentryindex","type":"dfn","url":"#format-1-patch-map-maxentryindex"},
+"#format-1-patch-map-maxglyphmapentryindex": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxglyphmapentryindex","type":"dfn","url":"#format-1-patch-map-maxglyphmapentryindex"},
+"#format-1-patch-map-patchformat": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#format-1-patch-map-patchformat"},
+"#format-1-patch-map-uritemplate": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-1-patch-map-uritemplate"},
+"#format-2-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 2 patch map","type":"dfn","url":"#format-2-patch-map"},
+"#format-2-patch-map-compatibilityid": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-2-patch-map-compatibilityid"},
+"#format-2-patch-map-defaultpatchformat": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"defaultpatchformat","type":"dfn","url":"#format-2-patch-map-defaultpatchformat"},
+"#format-2-patch-map-entries": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#format-2-patch-map-entries"},
+"#format-2-patch-map-entrycount": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrycount","type":"dfn","url":"#format-2-patch-map-entrycount"},
+"#format-2-patch-map-entryidstringdata": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringdata","type":"dfn","url":"#format-2-patch-map-entryidstringdata"},
+"#format-2-patch-map-format": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-2-patch-map-format"},
+"#format-2-patch-map-uritemplate": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-2-patch-map-uritemplate"},
+"#full-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"full invalidation","type":"dfn","url":"#full-invalidation"},
+"#glyph-closure": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph closure","type":"dfn","url":"#glyph-closure"},
+"#glyph-keyed-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph keyed patch","type":"dfn","url":"#glyph-keyed-patch"},
+"#glyph-keyed-patch-brotlistream": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#glyph-keyed-patch-brotlistream"},
+"#glyph-keyed-patch-compatibilityid": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#glyph-keyed-patch-compatibilityid"},
+"#glyph-keyed-patch-flags": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#glyph-keyed-patch-flags"},
+"#glyph-keyed-patch-maxuncompressedlength": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#glyph-keyed-patch-maxuncompressedlength"},
+"#glyph-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph map","type":"dfn","url":"#glyph-map"},
+"#glyph-map-entryindex": {"export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryindex","type":"dfn","url":"#glyph-map-entryindex"},
+"#glyph-map-firstmappedglyph": {"export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstmappedglyph","type":"dfn","url":"#glyph-map-firstmappedglyph"},
+"#glyphpatches": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphpatches","type":"dfn","url":"#glyphpatches"},
+"#glyphpatches-glyphcount": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#glyphpatches-glyphcount"},
+"#glyphpatches-glyphdata": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdata","type":"dfn","url":"#glyphpatches-glyphdata"},
+"#glyphpatches-glyphdataoffsets": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdataoffsets","type":"dfn","url":"#glyphpatches-glyphdataoffsets"},
+"#glyphpatches-glyphids": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphids","type":"dfn","url":"#glyphpatches-glyphids"},
+"#glyphpatches-tables": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tables","type":"dfn","url":"#glyphpatches-tables"},
+"#incremental-font": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"incremental font","type":"dfn","url":"#incremental-font"},
+"#mapping-entries": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entries","type":"dfn","url":"#mapping-entries"},
+"#mapping-entries-entries": {"export":true,"for_":["Mapping Entries"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#mapping-entries-entries"},
+"#mapping-entry": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entry","type":"dfn","url":"#mapping-entry"},
+"#mapping-entry-bias": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"bias","type":"dfn","url":"#mapping-entry-bias"},
+"#mapping-entry-codepoints": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"codepoints","type":"dfn","url":"#mapping-entry-codepoints"},
+"#mapping-entry-copyindices": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"copyindices","type":"dfn","url":"#mapping-entry-copyindices"},
+"#mapping-entry-copymodeandcount": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"copymodeandcount","type":"dfn","url":"#mapping-entry-copymodeandcount"},
+"#mapping-entry-designspacecount": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacecount","type":"dfn","url":"#mapping-entry-designspacecount"},
+"#mapping-entry-designspacesegments": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacesegments","type":"dfn","url":"#mapping-entry-designspacesegments"},
+"#mapping-entry-entryiddelta": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryiddelta","type":"dfn","url":"#mapping-entry-entryiddelta"},
+"#mapping-entry-entryidstringlength": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringlength","type":"dfn","url":"#mapping-entry-entryidstringlength"},
+"#mapping-entry-featurecount": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurecount","type":"dfn","url":"#mapping-entry-featurecount"},
+"#mapping-entry-featuretags": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretags","type":"dfn","url":"#mapping-entry-featuretags"},
+"#mapping-entry-formatflags": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"formatflags","type":"dfn","url":"#mapping-entry-formatflags"},
+"#mapping-entry-patchformat": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#mapping-entry-patchformat"},
+"#no-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"no invalidation","type":"dfn","url":"#no-invalidation"},
+"#partial-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"partial invalidation","type":"dfn","url":"#partial-invalidation"},
+"#patch-application-algorithm": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch application algorithm","type":"dfn","url":"#patch-application-algorithm"},
+"#patch-format": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch format","type":"dfn","url":"#patch-format"},
+"#patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map","type":"dfn","url":"#patch-map"},
+"#patch-map-entries": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map entries","type":"dfn","url":"#patch-map-entries"},
+"#sparse-bit-set": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"sparse bit set","type":"dfn","url":"#sparse-bit-set"},
+"#table-keyed-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"table keyed patch","type":"dfn","url":"#table-keyed-patch"},
+"#table-keyed-patch-compatibilityid": {"export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#table-keyed-patch-compatibilityid"},
+"#table-keyed-patch-patches": {"export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patches","type":"dfn","url":"#table-keyed-patch-patches"},
+"#tablepatch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tablepatch","type":"dfn","url":"#tablepatch"},
+"#tablepatch-brotlistream": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#tablepatch-brotlistream"},
+"#tablepatch-flags": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#tablepatch-flags"},
+"#tablepatch-maxuncompressedlength": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#tablepatch-maxuncompressedlength"},
+"#tablepatch-tag": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#tablepatch-tag"},
 };
 
 function mkRefHint(link, ref) {
     const linkText = link.textContent;
     let dfnTextElements = '';
-    if (ref.displayText.toLowerCase() != linkText.toLowerCase()) {
-        // Give the original term if it's being displayed in a different way.
-        // But allow casing differences, they're insignificant.
+    if (ref.text != linkText) {
         dfnTextElements =
             mk.li({},
                 mk.b({}, "Term: "),
-                mk.span({}, ref.displayText)
+                mk.span({}, ref.text)
             );
     }
     const forList = ref.for_;
