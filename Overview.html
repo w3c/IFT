@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="f4577995ae19c1b0c727efad814e0507f4331dd9" name="revision">
+  <meta content="26c10f7ce2788870cc3aba7252cef5acc8efb222" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -868,7 +868,12 @@ to complex scripts like Indic or Arabic.</p>
     <li><a href="#sec"><span class="secno">9</span> <span class="content">Security Considerations</span></a>
     <li><a href="#changes"><span class="secno">10</span> <span class="content">Changes</span></a>
     <li><a href="#feature-tag-list"><span class="secno"></span> <span class="content"> Appendix A: Default Feature Tags</span></a>
-    <li><a href="#extension-example"><span class="secno"></span> <span class="content"> Appendix B: Extension Algorithm Example Execution</span></a>
+    <li>
+     <a href="#extension-example"><span class="secno"></span> <span class="content"> Appendix B: Extension Algorithm Example Execution</span></a>
+     <ol class="toc">
+      <li><a href="#appendix-b-example-1"><span class="secno"></span> <span class="content">Example 1: Table and Glyph Keyed Patches</span></a>
+      <li><a href="#appendix-b-example-2"><span class="secno"></span> <span class="content">Example 2: Glyph Keyed Patches with Child Entries</span></a>
+     </ol>
     <li>
      <a href="#w3c-conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
      <ol class="toc">
@@ -3012,8 +3017,7 @@ when loading the patches for two or more segments.  There are five main strategi
  modifier code point which triggers a glyph substitution when paired with many other code points. Given the large number of alternate
  glyphs it’s desirable to keep them in their own patches which are only loaded when both the modifier code point and appropriate base
  code point(s) are present. This can be achieved by using a <a href="#patch-map-format-2">Format 2 Patch Map</a> and multiple entry matching
- via <a data-link-type="dfn" href="#mapping-entry-childentryindices" id="ref-for-mapping-entry-childentryindices③">childEntryIndices</a>. For the entry one subset definition should contain the modifier code point and a
- second one has the base code point(s).</p>
+ via <a data-link-type="dfn" href="#mapping-entry-childentryindices" id="ref-for-mapping-entry-childentryindices③">childEntryIndices</a>. See <a href="#appendix-b-example-2">Example 2: Glyph Keyed Patches with Child Entries</a> for an example of how this can be set up.</p>
     <li data-md>
      <p>Alternatively, the glyph can be included in more than one of the patches that correspond to those segments at the cost of duplicating
  the glyph’s data into multiple patches.</p>
@@ -3332,8 +3336,9 @@ to be used by default in most shaper implementations. This list was assembled fr
       <td>Vertical Alternates for Rotation
    </table>
    <h2 class="heading settled" id="extension-example"><span class="content"> Appendix B: Extension Algorithm Example Execution</span><a class="self-link" href="#extension-example"></a></h2>
-   <p>This appendix provides an example of how a typical IFT font would be processed by the <a href="#extend-font-subset">§ 4.3 Incremental Font Extension Algorithm</a> algorithm. In this example the IFT font
-contains a mix of both <a href="#table-keyed">§ 6.2 Table Keyed</a> and <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches.</p>
+   <p>This appendix provides examples of how a typical IFT font would be processed by the <a href="#extend-font-subset">§ 4.3 Incremental Font Extension Algorithm</a> algorithm.</p>
+   <h3 class="heading settled" id="appendix-b-example-1"><span class="content">Example 1: Table and Glyph Keyed Patches</span><a class="self-link" href="#appendix-b-example-1"></a></h3>
+   <p>In this example the IFT font contains a mix of both <a href="#table-keyed">§ 6.2 Table Keyed</a> and <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches.</p>
    <p><b>Initial font</b>: contains the following IFT and IFTX patch mappings. Note: when features and design space sets are unspecified in a subset definition
 they are defaulted to an empty set.</p>
    <table>
@@ -3342,7 +3347,7 @@ they are defaulted to an empty set.</p>
       <th>Table = "IFT "
       <th colspan="2">Compatibility ID = 0x0000_0000_0000_0001
      <tr>
-      <th>Subset Definition(s)
+      <th>Subset Definition
       <th>URI
       <th>Format Number
      <tr>
@@ -3386,7 +3391,7 @@ they are defaulted to an empty set.</p>
       <th>Table = "IFTX"
       <th colspan="2">Compatibility ID = 0x0000_0000_0000_0002
      <tr>
-      <th>Subset Definition(s)
+      <th>Subset Definition
       <th>URI
       <th>Format Number
      <tr>
@@ -3479,7 +3484,7 @@ to add support for code points 'a' through 'Z'. Additionally the mapping in the 
         <th>Table = "IFT "
         <th colspan="2">Compatibility ID = 0x0000_0000_0000_0006
        <tr>
-        <th>Subset Definition(s)
+        <th>Subset Definition
         <th>URI
         <th>Format Number
        <tr>
@@ -3538,6 +3543,135 @@ to the glyf and loca tables. Additionally the mapping in the "IFTX" table is upd
 and URIs for other entries are unchanged.</p>
    </ul>
    <p>Iteration 4:</p>
+   <ul>
+    <li data-md>
+     <p>Steps 2 through 6 - there are no remaining intersecting entries so the algorithm terminates. The font subset is returned and now ready to render any
+content covered by the target subset definition.</p>
+   </ul>
+   <h3 class="heading settled" id="appendix-b-example-2"><span class="content">Example 2: Glyph Keyed Patches with Child Entries</span><a class="self-link" href="#appendix-b-example-2"></a></h3>
+   <p>In this example the IFT font contains a set of <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches which utilize child entries to correctly handle the inclusion of patches
+for <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#format-14-unicode-variation-sequences">UVS</a> substitutions. For each set of base glyphs there are a set of alternate glyphs
+which are substituted in via a variation selector. These are kept in a separate patch. The alternate glyph patches are configured (via child entries)
+to load only when the base glyphs and the variation selector are present simultaneously.</p>
+   <p><b>Initial font</b>: contains the following IFT  patch mapping. Note: when codepoint, features, design space, or child entry sets are unspecified in
+a subset definition they are defaulted to an empty set.</p>
+   <table>
+    <tbody>
+     <tr>
+      <th>Table = "IFT "
+      <th colspan="2">Compatibility ID = 0x0000_0000_0000_0001
+     <tr>
+      <th>Subset Definition
+      <th>URI
+      <th>Format Number
+      <th>Ignored?
+      <th>Notes
+     <tr>
+      <td>
+<pre>code points:
+  { 'a', 'b', ..., 'm' }
+</pre>
+      <td>//foo.bar/01.gk
+      <td> 3, Glyph Keyed 
+      <td>No
+      <td>
+     <tr>
+      <td>
+<pre>code points:
+  { 'n', 'o', ..., 'z' }
+</pre>
+      <td>//foo.bar/02.gk
+      <td> 3, Glyph Keyed 
+      <td>No
+      <td>
+     <tr>
+      <td>
+<pre>code points: { VS1 }
+</pre>
+      <td>N/A
+      <td> 3, Glyph Keyed 
+      <td>Yes
+     <tr>
+      <td>
+<pre>child entries: [0, 2],
+match mode: conjunctive
+</pre>
+      <td>//foo.bar/03.gk
+      <td> 3, Glyph Keyed 
+      <td>No
+      <td>Has alternate glyphs for {'a', ..., 'm'} that are activated by VS1
+     <tr>
+      <td>
+<pre>child entries: [1, 2],
+match mode: conjunctive
+</pre>
+      <td>//foo.bar/04.gk
+      <td> 3, Glyph Keyed 
+      <td>No
+      <td>Has alternate glyphs for {'n', ..., 'z'} that are activated by VS1
+   </table>
+   <p><b>Extension Example 1</b></p>
+   <p>Inputs:</p>
+   <ul>
+    <li data-md>
+     <p>Initial font with an IFT table as defined above.</p>
+    <li data-md>
+     <p>Target subset definition: code points = {'f'}</p>
+   </ul>
+   <p>Iteration 1:</p>
+   <ul>
+    <li data-md>
+     <p>Steps 1 through 6 - applying the <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection⑥">Check entry intersection</a> check to all entries in the initial font, the following patch entries intersect:</p>
+     <ul>
+      <li data-md>
+       <p>//foo.bar/01.gk</p>
+     </ul>
+    <li data-md>
+     <p>Step 8 through 10 - there is only one patch, //foo.bar/01.gk, is is selected, loaded, and applied.</p>
+   </ul>
+   <p>Iteration 2:</p>
+   <ul>
+    <li data-md>
+     <p>Steps 2 through 6 - there are no remaining intersecting entries so the algorithm terminates. The font subset is returned and now ready to render any
+content covered by the target subset definition.</p>
+   </ul>
+   <p><b>Extension Example 2</b></p>
+   <p>Inputs:</p>
+   <ul>
+    <li data-md>
+     <p>Initial font with an IFT table as defined above.</p>
+    <li data-md>
+     <p>Target subset definition: code points = {'f', VS1}</p>
+   </ul>
+   <p>Iteration 1:</p>
+   <ul>
+    <li data-md>
+     <p>Steps 1 through 6 - applying the <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection⑦">Check entry intersection</a> check to all entries in the initial font, the following patch entries intersect:</p>
+     <ul>
+      <li data-md>
+       <p>//foo.bar/01.gk</p>
+      <li data-md>
+       <p>//foo.bar/03.gk</p>
+     </ul>
+    <li data-md>
+     <p>Step 8 - one entry must be selected, in this case the client implementation is free to pick either. //foo.bar/01.gk is selected.</p>
+    <li data-md>
+     <p>Step 9 - since both intersecting entries are no invalidation both can be simultaneously loaded.</p>
+    <li data-md>
+     <p>Step 10 - //foo.bar/01.gk is applied to the font. The mapping table is updated to mark the entry for //foo.bar/01.gk as ignored.</p>
+   </ul>
+   <p>Iteration 2:</p>
+   <ul>
+    <li data-md>
+     <p>Steps 1 through 6 - applying the <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection⑧">Check entry intersection</a> check to all entries in the current font, the following patch entries intersect:</p>
+     <ul>
+      <li data-md>
+       <p>//foo.bar/03.gk</p>
+     </ul>
+    <li data-md>
+     <p>Step 8 through 10 - there is only one patch, //foo.bar/03.gk, is is selected, and applied (it was loaded during the previous iteration).</p>
+   </ul>
+   <p>Iteration 3:</p>
    <ul>
     <li data-md>
      <p>Steps 2 through 6 - there are no remaining intersecting entries so the algorithm terminates. The font subset is returned and now ready to render any
@@ -3975,7 +4109,7 @@ function parseHTML(markup) {
 let dfnPanelData = {
 "abstract-opdef-apply-glyph-keyed-patch": {"dfnID":"abstract-opdef-apply-glyph-keyed-patch","dfnText":"Apply glyph keyed patch","external":false,"refSections":[],"url":"#abstract-opdef-apply-glyph-keyed-patch"},
 "abstract-opdef-apply-table-keyed-patch": {"dfnID":"abstract-opdef-apply-table-keyed-patch","dfnText":"Apply table keyed patch","external":false,"refSections":[],"url":"#abstract-opdef-apply-table-keyed-patch"},
-"abstract-opdef-check-entry-intersection": {"dfnID":"abstract-opdef-check-entry-intersection","dfnText":"Check entry intersection","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2460"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2461"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2462"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2463"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2464"}],"title":"\nAppendix B: Extension Algorithm Example Execution"}],"url":"#abstract-opdef-check-entry-intersection"},
+"abstract-opdef-check-entry-intersection": {"dfnID":"abstract-opdef-check-entry-intersection","dfnText":"Check entry intersection","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2460"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2461"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2462"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2463"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2464"}],"title":"Example 1: Table and Glyph Keyed Patches"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2465"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2466"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2467"}],"title":"Example 2: Glyph Keyed Patches with Child Entries"}],"url":"#abstract-opdef-check-entry-intersection"},
 "abstract-opdef-decoding-sparse-bit-set-treedata": {"dfnID":"abstract-opdef-decoding-sparse-bit-set-treedata","dfnText":"Decoding sparse bit set treeData","external":false,"refSections":[],"url":"#abstract-opdef-decoding-sparse-bit-set-treedata"},
 "abstract-opdef-extend-an-incremental-font-subset": {"dfnID":"abstract-opdef-extend-an-incremental-font-subset","dfnText":"Extend an Incremental Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460"}],"title":"4.4. Selecting Invalidating Patches"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2461"}],"title":"4.5. Target Subset Definition"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2462"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2463"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2464"}],"title":"4.6. Determining what Content a Font can Render"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2465"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2466"}],"title":"5.2. Patch Map Table"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2467"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2468"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460\u24ea"}],"title":"7. Encoding"}],"url":"#abstract-opdef-extend-an-incremental-font-subset"},
 "abstract-opdef-fully-expand-a-font-subset": {"dfnID":"abstract-opdef-fully-expand-a-font-subset","dfnText":"Fully Expand a Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset"}],"title":"2.1. Offline Usage"},{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2460"},{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2461"}],"title":"7. Encoding"}],"url":"#abstract-opdef-fully-expand-a-font-subset"},
