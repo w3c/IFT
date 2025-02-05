@@ -342,19 +342,18 @@ Patch Map {#patch-map-dfn}
 A <dfn dfn>patch map</dfn> is an [[open-type/otff#table-directory|open type table]] which encodes a collection of mappings from
 [=font subset definition|font subset definitions=] to URIs which host [[#font-patch-formats|patches]] that extend the
 [=incremental font=]. A [=patch map=] table encodes a list of <dfn dfn>patch map entries</dfn>, where each entry has a key and value.
-The key is a [=font subset definition=], zero or more references to other entries and the value is a URI, the [[#font-patch-formats]]
-used by the data at the URI, and the [[#font-patch-invalidations|compatibility ID]] of the patch map table. More details of the format
-of patch maps can be found in [[#font-format-extensions]].
+The key of an entry defines the coverage of the entry, which is information on what subset definitions will match it. The value specifies
+information about the patch which should be applied when the entry is matched. [=patch map entries|Patch Map Entry=] summary:
 
-[=patch map entries|Patch Map Entry=] summary:
 <table>
   <tr><th>Key</th><th>Value</th></tr>
   <tr>
     <td>
-      * [=font subset definition=]
-      * Reference to zero or more other Patch Map Entries.
-      * Prior entry match mode, which can be either conjunctive or disjunctive.
-
+      * [=font subset definition=]: defines the basic coverage.
+      * References to zero or more child [=patch map entries|Patch Map Entry=]'s:<br/>
+         these child entries are used to extend the coverage.
+      * Child entry match mode, which can be either conjunctive or disjunctive.
+      
     </td>
     <td>
       * Patch URI
@@ -364,6 +363,8 @@ of patch maps can be found in [[#font-format-extensions]].
     </td>
   </tr>
 </table>
+
+More details of the format of patch maps can be found in [[#font-format-extensions]].
 
 Explanation of Data Types {#data-types}
 ---------------------------------------
@@ -544,11 +545,11 @@ The algorithm:
 
 2. If one or more sets checked in step 1 did not intersect, then return false for <var>intersects</var>.
 
-3. If there are no entry references in <var>mapping entry</var>, then return true for <var>intersects</var>.
+3. If there are no child entries in <var>mapping entry</var>, then return true for <var>intersects</var>.
 
-4. Invoke [$Check entry intersection$] for each prior entry referenced in <var>mapping entry</var> with <var>subset definition</var> as an input. If prior
-    entry match mode is conjunctive, then return true for <var>intersects</var> if all invocations return true. Otherwise return true if at least one
-    invocation returns true.
+4. Invoke [$Check entry intersection$] for each child entry referenced in <var>mapping entry</var> with <var>subset definition</var>
+    as an input. If child entry match mode is conjunctive, then return true for <var>intersects</var> only if all invocations return true.
+    Otherwise return true only if at least one invocation returns true.
 
 <div class=example>
 
@@ -562,7 +563,7 @@ The algorithm:
       feature tags: {},
       design space: {}
     },
-    prior entries: {},
+    child entries: {},
     match mode: disjunctive,
     ```
     </td>
@@ -583,7 +584,7 @@ The algorithm:
       feature tags: {},
       design space: {}
     },
-    prior entries: {},
+    child entries: {},
     match mode: disjunctive,
     ```
     </td>
@@ -603,7 +604,7 @@ The algorithm:
       feature tags: {},
       design space: {}
     },
-    prior entries: {},
+    child entries: {},
     match mode: disjunctive,
     ```
     </td>
@@ -623,7 +624,7 @@ The algorithm:
       feature tags: {},
       design space: {}
     },
-    prior entries: {},
+    child entries: {},
     match mode: disjunctive,
     ```
     </td>
@@ -644,14 +645,14 @@ The algorithm:
       feature tags: {},
       design space: {}
     },
-    prior entries: [
+    child entries: [
       {
         subset definition {
           code points: {1, 2, 3},
           feature tags: {},
           design space: {}
         },
-        prior entries: {},
+        child entries: {},
         match mode: disjunctive,
       },
       {
@@ -660,7 +661,7 @@ The algorithm:
           feature tags: {},
           design space: {}
         },
-        prior entries: {},
+        child entries: {},
         match mode: disjunctive,
       },
     ],
@@ -684,14 +685,14 @@ The algorithm:
       feature tags: {},
       design space: {}
     },
-    prior entries: [
+    child entries: [
       {
         subset definition {
           code points: {1, 2, 3},
           feature tags: {},
           design space: {}
         },
-        prior entries: {},
+        child entries: {},
         match mode: disjunctive,
       },
       {
@@ -700,7 +701,7 @@ The algorithm:
           feature tags: {},
           design space: {}
         },
-        prior entries: {},
+        child entries: {},
         match mode: disjunctive,
       },
     ],
@@ -769,8 +770,8 @@ round trips.
 The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 8
 of [$Extend an Incremental Font Subset$]:
 
-1.  For each candidate entry compute a total subset definition by unioning that entry's subset definition and the subset definition of any other entries
-     reachable via the graph of referenced prior entries.
+1.  For each candidate entry compute a total subset definition by unioning that entry's subset definition and the subset definition of all child entries
+     reachable via the graph of referenced child entries.
 
 2.  For each candidate entry compute the set intersection between the total subset definition and the target subset definition.
    
@@ -1437,20 +1438,20 @@ The algorithm:
 
   <tr>
     <td>uint8</td>
-    <td><dfn for="Mapping Entry">priorEntryMatchModeAndCount</dfn></td>
+    <td><dfn for="Mapping Entry">childEntryMatchModeAndCount</dfn></td>
     <td>
       This and the following field are used to add conditions to the intersection check for this entry that depend on whether prior entries intersect.
       The most significant bit is used to indicate the matching mode. If the bit is set the condition is conjunctive otherwise it is disjunctive. The
-      remaining 7 bits are interpreted as a unsigned integer and represent the number of entry indices in the priorEntryIndices list. This field is only
+      remaining 7 bits are interpreted as a unsigned integer and represent the number of entry indices in the childEntryIndices list. This field is only
       present if [=Mapping Entry/formatFlags=] bit 1 is set.
     </td>
   </tr>
   <tr>
     <td>uint24</td>
-    <td><dfn for="Mapping Entry">priorEntryIndices</dfn>[0b01111111 & priorEntryMatchModeAndCount]</td>
+    <td><dfn for="Mapping Entry">childEntryIndices</dfn>[0b01111111 & childEntryMatchModeAndCount]</td>
     <td>
       Each value is the index of an entry in [=Mapping Entries/entries=] array whose intersection will be checked to determine this entries intersection.
-      Only references entries that occurred prior to this [=Mapping Entry=] in [=Mapping Entries/entries=] and only present if
+      Only entries that occurred prior to this [=Mapping Entry=] in [=Mapping Entries/entries=] can be referenced. Only present if
       [=Mapping Entry/formatFlags=] bit 1 is set.
     </td>
   </tr>
@@ -1583,6 +1584,7 @@ The algorithm:
 
      *  If the returned value of ignored is false, then set the compatibility ID of the returned entry to
          [=Format 2 Patch Map/compatibilityId=] and add the  entry to <var>entry list</var>.
+         <!-- TODO XXXXX need to change ignored handling to work with the child entries mechanism. -->
 
 4.  Return <var>entry list</var>.
 
@@ -1641,15 +1643,15 @@ The algorithm:
 
 6.  If [=Mapping Entry/formatFlags=] bit 1 is set, then the copy indices list is present:
 
-    *  If the most significant bit of [=Mapping Entry/priorEntryMatchModeAndCount=] is set then set <var>entry</var>'s match mode to conjunctive,
+    *  If the most significant bit of [=Mapping Entry/childEntryMatchModeAndCount=] is set then set <var>entry</var>'s match mode to conjunctive,
          otherwise to disjunctive.
 
-    *  Read the prior entry indices list specified by [=Mapping Entry/priorEntryMatchModeAndCount=] and [=Mapping Entry/priorEntryIndices=] from
+    *  Read the child entry indices list specified by [=Mapping Entry/childEntryMatchModeAndCount=] and [=Mapping Entry/childEntryIndices=] from
          <var>entry bytes</var>.
 
-    *  The prior entry indices refer to previously loaded entries. 0 is the first [=Mapping Entry=] in <var>prior entry list</var>, 1 the second
-         and so on. For each value in [=Mapping Entry/priorEntryIndices=] locate the entry in <var>prior entry list</var> with a matching index.
-         Add a reference to that entry into </var>entry</var>. If a [=Mapping Entry/priorEntryIndices=] is greater than or equal to the length
+    *  The child entry indices refer to previously loaded entries. 0 is the first [=Mapping Entry=] in <var>prior entry list</var>, 1 the second
+         and so on. For each value in [=Mapping Entry/childEntryIndices=] locate the entry in <var>prior entry list</var> with a matching index.
+         Add a reference to that entry into </var>entry</var>. If a [=Mapping Entry/childEntryIndices=] is greater than or equal to the length
          of <var>prior entry list</var> then, this encoding is invalid return an error.
 
 7.  If [=Mapping Entry/formatFlags=] bit 2 is set, then an id delta or id string length is present:
@@ -2660,7 +2662,7 @@ when loading the patches for two or more segments.  There are five main strategi
      modifier code point which triggers a glyph substitution when paired with many other code points. Given the large number of alternate
      glyphs it's desirable to keep them in their own patches which are only loaded when both the modifier code point and appropriate base
      code point(s) are present. This can be achieved by using a [[#patch-map-format-2|Format 2 Patch Map]] and multiple entry matching
-     via [=Mapping Entry/priorEntryIndices=]. For the entry one subset definition should contain the modifier code point and a
+     via [=Mapping Entry/childEntryIndices=]. For the entry one subset definition should contain the modifier code point and a
      second one has the base code point(s).
 
 4.  Alternatively, the glyph can be included in more than one of the patches that correspond to those segments at the cost of duplicating
@@ -2815,6 +2817,8 @@ path: feature-registry.html
 
 <h2 id="extension-example">
 Appendix B: Extension Algorithm Example Execution</h2>
+
+<!-- TODO add an example that utilizes prior entry indices (such as UVS specific patches)  -->
 
 This appendix provides an example of how a typical IFT font would be processed by the [[#extend-font-subset]] algorithm. In this example the IFT font
 contains a mix of both [[#table-keyed]] and [[#glyph-keyed]] patches.
