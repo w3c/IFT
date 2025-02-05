@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="5b111dab0eb14bfd8b46e59e317ac2a6002d8b42" name="revision">
+  <meta content="f4577995ae19c1b0c727efad814e0507f4331dd9" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -2066,10 +2066,12 @@ being requested.</p>
      <p>If the <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata③">entryIdStringData</a> offset is 0 then initialize <var>last entry id</var> to 0. Otherwise initialize
  it to an empty byte string. Set <var>current byte</var> to 0, and <var>current id string byte</var> to 0.</p>
     <li data-md>
+     <p>Initialize <var>entry list</var> and <var>prior entry list</var> to empty lists.</p>
+    <li data-md>
      <p>Invoke <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map-entry" id="ref-for-abstract-opdef-interpret-format-2-patch-map-entry①">Interpret Format 2 Patch Map Entry</a>, <a data-link-type="dfn" href="#format-2-patch-map-entrycount" id="ref-for-format-2-patch-map-entrycount①">entryCount</a> times. For each invocation:</p>
      <ul>
       <li data-md>
-       <p>pass in <var>entry list</var>, the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entries" id="ref-for-format-2-patch-map-entries">entries</a>[<var>current byte</var>] to
+       <p>pass in <var>prior entry list</var>, the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entries" id="ref-for-format-2-patch-map-entries">entries</a>[<var>current byte</var>] to
  the end of <var>patch map</var>,
  the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata④">entryIdStringData</a>[<var>current id string byte</var>]
  to the end of <var>patch map</var> if <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata⑤">entryIdStringData</a> is non zero, <var>last entry id</var>, <a data-link-type="dfn" href="#format-2-patch-map-defaultpatchformat" id="ref-for-format-2-patch-map-defaultpatchformat①">defaultPatchFormat</a>, and <a data-link-type="dfn" href="#format-2-patch-map-uritemplate" id="ref-for-format-2-patch-map-uritemplate">uriTemplate</a>.</p>
@@ -2079,6 +2081,8 @@ being requested.</p>
        <p>Add the returned consumed byte count to <var>current byte</var>.</p>
       <li data-md>
        <p>Add the returned consumed id string byte count to <var>current id string byte</var>.</p>
+      <li data-md>
+       <p>Add the returned entry to <var>prior entry list</var>.</p>
       <li data-md>
        <p>If the returned value of ignored is false, then set the compatibility ID of the returned entry to <a data-link-type="dfn" href="#format-2-patch-map-compatibilityid" id="ref-for-format-2-patch-map-compatibilityid">compatibilityId</a> and add the  entry to <var>entry list</var>.</p>
      </ul>

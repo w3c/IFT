@@ -1566,9 +1566,11 @@ The algorithm:
 2.  If the [=Format 2 Patch Map/entryIdStringData=] offset is 0 then initialize <var>last entry id</var> to 0. Otherwise initialize
      it to an empty byte string. Set <var>current byte</var> to 0, and <var>current id string byte</var> to 0.
 
-3.  Invoke [$Interpret Format 2 Patch Map Entry$], [=Format 2 Patch Map/entryCount=] times. For each invocation:
+3.  Initialize <var>entry list</var> and <var>prior entry list</var> to empty lists.
 
-     *  pass in <var>entry list</var>, the bytes from <var>patch map</var> starting from [=Format 2 Patch Map/entries=][<var>current byte</var>] to
+4.  Invoke [$Interpret Format 2 Patch Map Entry$], [=Format 2 Patch Map/entryCount=] times. For each invocation:
+
+     *  pass in <var>prior entry list</var>, the bytes from <var>patch map</var> starting from [=Format 2 Patch Map/entries=][<var>current byte</var>] to
          the end of <var>patch map</var>,
          the bytes from <var>patch map</var> starting from [=Format 2 Patch Map/entryIdStringData=][<var>current id string byte</var>]
          to the end of <var>patch map</var> if [=Format 2 Patch Map/entryIdStringData=] is non zero,
@@ -1582,11 +1584,12 @@ The algorithm:
 
      *  Add the returned consumed id string byte count to <var>current id string byte</var>.
 
+     *  Add the returned entry to <var>prior entry list</var>.
+
      *  If the returned value of ignored is false, then set the compatibility ID of the returned entry to
          [=Format 2 Patch Map/compatibilityId=] and add the  entry to <var>entry list</var>.
-         <!-- TODO XXXXX need to change ignored handling to work with the child entries mechanism. -->
 
-4.  Return <var>entry list</var>.
+5.  Return <var>entry list</var>.
 
 <dfn abstract-op>Interpret Format 2 Patch Map Entry</dfn>
 
