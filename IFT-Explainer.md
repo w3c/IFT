@@ -69,6 +69,82 @@ Current subsetting does not address subsetting **design axes** (variable fonts).
 
 Changes to the Open Font Format or OpenType specifications are out of scope.
 
+## Incremental Font Transfer
+
+Web pages that wish to use an IFT font
+use the regular CSS [`@font-face`]() mechanism,
+and [opt-in](https://w3c.github.io/IFT/Overview.html#opt-in)
+with `tech(incremental)` or by using `font-tech(incremental)`
+inside an `@supports` rule.
+This allows the same CSS file to link to an IFT font
+and to some (larger, slower) fallback font.
+
+The link in the `src` descriptor points to an 
+[IFT font](https://w3c.github.io/IFT/Overview.html),
+which is a regular OpenType font
+containing only the data to correctly render some
+[subset](https://w3c.github.io/IFT/Overview.html#font-subset-dfn)
+of:
+
+- code points,
+- layout features
+- design-variation space
+
+This subset also contains [extra tables](https://w3c.github.io/IFT/Overview.html#font-format-extensions)
+which carry [patch maps](https://w3c.github.io/IFT/Overview.html#patch-map-dfn).
+which map subset definitions to **the link** of the relevant patch.
+Links are [stored in the font](https://w3c.github.io/IFT/Overview.html#uri-templates) 
+as RFC 6570 [URI Templates](https://www.rfc-editor.org/rfc/rfc6570).
+
+In contrast to static font subsets, 
+these links allow [**font patches**](https://w3c.github.io/IFT/Overview.html#font-patch-definitions)
+to be downloaded on demand
+and applied to the initially downloaded font,
+to support additional code points, layout features, or variation spaces.
+
+For example, an IFT font might support only Latin characters,
+with a single weight.
+But the font also provides URLs for patches
+that add a weight variation axis,
+or add small caps,
+or support Cyrillic characters.
+These would be downloaded and applied on demand,
+as content is encountered that needs them.
+
+This avoids the rendering breakage often encountered with  _shaping languages_
+such as Arabic and Indic languages,
+when multiple static subsets are used together.
+
+It also allows webfonts to be used for languages such as Chinese and Japanese,
+because glyphs for additional codepoints are only downloaded
+when they are actually needed.
+
+In this architecture, static hosting of files (IFT fonts, and patches) is easy,
+and **cache performance** is compatible
+with existing CDN infrastructure
+because patches are shared between users.
+It is also also more **privacy-preserving**
+(compared to other aproaches which were considered, see below).
+
+As a performance optimization, IFT allows patches for glyph-only data to be **independent**,
+Meaning they can be requested in parallel,
+which functionally is very similar to how unicode range webfont loading works.
+
+Thus, both **independent** (commutative) and **dependent** (non-commutative)
+patches are [supported](https://w3c.github.io/IFT/Overview.html#font-format-extensions).
+
+
+## Demo
+
+We have a [proof of concept demo](https://garretrieger.github.io/ift-demo/) of the new IFT approach.
+
+## Testing
+
+We will work on tests;
+the specification marks up each testable assertion.
+
+ - [IFT client test suite](https://github.com/w3c/ift-client-tests) ([not yet](https://github.com/w3c/IFT/issues/125))
+
 ## Considered alternatives
 
 A 2020 [Evaluation Report](https://www.w3.org/TR/PFE-evaluation/)
@@ -125,54 +201,6 @@ Work on Patch Subset was discontinued because, despite
 - Requiring an intelligent, dynamic server hindered widespread deployment
 - Very fine-grained subsetting [might be a privacy violation](https://www.w3.org/TR/2023/WD-IFT-20230530/#content-inference-from-character-set)
 - It required a custom protocol (and HTTP header) to communicate with the dynamic backend
-
-## Incremental Font Transfer
-
-The [current specification](https://w3c.github.io/IFT/Overview.html) 
-draws on the Patch Subset concept
-of patching a font to provide more data.
-However, instead of requiring custom patch generation for each user,
-the initial font has two new [_Patch Map_ tables](https://w3c.github.io/IFT/Overview.html#patch-map-dfn)
-which map each subset definition to **the link** of the relevant patch.
-Links are [stored in the font](https://w3c.github.io/IFT/Overview.html#uri-templates) 
-as RFC 6570 [URI Templates](https://www.rfc-editor.org/rfc/rfc6570).
-
-Thus, static hosting of files (base fonts, and patches) is easy,
-and cache performance is good
-because patches are shared between users.
-
-We incorporated a new idea to allow patches of glyph-only data to be **independent**.
-(This type of patch would have been too costly to compute dynamically, but they work well with this new framework of pre-computed patches.)  
-This also allows independent patches to be requested in parallel,
-which functionally is very similar to how unicode range webfont loading works.
-
-Thus, both **independent** (commutative) and **dependent** (non-commutative)
-patches are [supported](https://w3c.github.io/IFT/Overview.html#font-format-extensions).
-
-In addition, patches can add or extend design axes,
-to support variable fonts.
-
-It no longer requires any special HTTP headers,
-or a custom protocol to fetch patches.
-Requests are just normal HTTP GET requests,
-making it easier to deploy and compatible
-with existing CDN infrastructure.
-
-The main trade-off with this new approach is that
-the patches potentially become less granular,
-somewhat reducing peak efficiency,
-while also being more privacy-preserving.
-
-## Demo
-
-We have a [proof of concept demo](https://garretrieger.github.io/ift-demo/) of the new IFT approach.
-
-## Testing
-
-We will work on tests;
-the specification marks up each testable assertion.
-
- - [IFT client test suite](https://github.com/w3c/ift-client-tests) ([not yet](https://github.com/w3c/IFT/issues/125))
 
 ## Stakeholder Feedback / Opposition
 
