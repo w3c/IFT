@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="26c10f7ce2788870cc3aba7252cef5acc8efb222" name="revision">
+  <meta content="c4cc866818188c7bf910b5571522409433e28b8b" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -728,7 +728,7 @@ var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBC
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2025-02-05">5 February 2025</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2025-02-06">6 February 2025</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1087,7 +1087,7 @@ information about the patch which should be applied when the entry is matched. <
       <td>
        <ul>
         <li data-md>
-         <p><a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">font subset definition</a>: defines the basic coverage.</p>
+         <p><a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">font subset definition</a>: defines the base coverage.</p>
         <li data-md>
          <p>References to zero or more child <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①">Patch Map Entry</a>'s:<br> these child entries are used to extend the coverage.</p>
         <li data-md>
@@ -1269,146 +1269,101 @@ iteration since no invalidation patches won’t change the list of available pat
      <p>Invoke <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection①">Check entry intersection</a> for each child entry referenced in <var>mapping entry</var> with <var>subset definition</var> as an input. If child entry match mode is conjunctive, then return true for <var>intersects</var> only if all invocations return true.
 Otherwise return true only if at least one invocation returns true.</p>
    </ol>
-   <div class="example" id="example-74f82fb7">
-    <a class="self-link" href="#example-74f82fb7"></a> 
+   <div class="example" id="example-8269bfc5">
+    <a class="self-link" href="#example-8269bfc5"></a> 
+    <p>The table below represents a patch mapping and shows the expected result of an intersection check against various entries. In these examples
+when a set (ie. code points, feature tags, design space, child entries) is not specified it is assumed to be the empty set.</p>
     <table>
      <tbody>
       <tr>
+       <th>index
        <th>mapping entry
        <th>subset definition
        <th>intersects?
       <tr>
+       <td>0
        <td>
 <pre>subset definition {
   code points: {1, 2, 3},
-  feature tags: {},
-  design space: {}
 },
-child entries: {},
 match mode: disjunctive,
 </pre>
        <td>
 <pre>code points: {2},
-feature tags: {},
-design space: {},
 </pre>
        <td>true
       <tr>
+       <td>1
+       <td>
+<pre>subset definition {
+  code points: {4, 5, 6},
+},
+match mode: disjunctive,
+</pre>
+       <td>
+<pre>code points: {2},
+</pre>
+       <td>false
+      <tr>
+       <td>2
        <td>
 <pre>subset definition {
   code points: {1, 2, 3},
-  feature tags: {},
-  design space: {}
 },
-child entries: {},
+match mode: disjunctive,
+</pre>
+       <td>
+<pre>code points: {2},
+feature tags: {smcp},
+</pre>
+       <td>true
+      <tr>
+       <td>3
+       <td>
+<pre>subset definition: {
+  code points: {1, 2, 3},
+},
+match mode: disjunctive,
+</pre>
+       <td>
+<pre>feature tags: {smcp},
+</pre>
+       <td>false
+      <tr>
+       <td>4
+       <td>
+<pre>subset definition: {
+  code points: {1, 2, 3},
+},
+child entry indices: {1},
 match mode: disjunctive,
 </pre>
        <td>
 <pre>code points: {5},
-feature tags: {},
-design space: {},
 </pre>
        <td>false
       <tr>
-       <td>
-<pre>subset definition {
-  code points: {1, 2, 3},
-  feature tags: {},
-  design space: {}
-},
-child entries: {},
-match mode: disjunctive,
-</pre>
-       <td>
-<pre>code points: {2},
-feature tags: {smcp},
-design space: {},
-</pre>
-       <td>true
-      <tr>
+       <td>5
        <td>
 <pre>subset definition: {
-  code points: {1, 2, 3},
-  feature tags: {},
-  design space: {}
 },
-child entries: {},
-match mode: disjunctive,
-</pre>
-       <td>
-<pre>code points: {},
-feature tags: {smcp},
-design space: {},
-</pre>
-       <td>false
-      <tr>
-       <td>
-<pre>subset definition: {
-  code points: {},
-  feature tags: {},
-  design space: {}
-},
-child entries: [
-  {
-    subset definition {
-      code points: {1, 2, 3},
-      feature tags: {},
-      design space: {}
-    },
-    child entries: {},
-    match mode: disjunctive,
-  },
-  {
-    subset definition {
-      code points: {4, 5, 6},
-      feature tags: {},
-      design space: {}
-    },
-    child entries: {},
-    match mode: disjunctive,
-  },
-],
+child entry indices: {0, 1},
 match mode: conjunctive,
 </pre>
        <td>
 <pre>code points: {2},
-feature tags: {},
-design space: {},
 </pre>
        <td>false
       <tr>
+       <td>6
        <td>
 <pre>subset definition: {
-  code points: {},
-  feature tags: {},
-  design space: {}
 },
-child entries: [
-  {
-    subset definition {
-      code points: {1, 2, 3},
-      feature tags: {},
-      design space: {}
-    },
-    child entries: {},
-    match mode: disjunctive,
-  },
-  {
-    subset definition {
-      code points: {4, 5, 6},
-      feature tags: {},
-      design space: {}
-    },
-    child entries: {},
-    match mode: disjunctive,
-  },
-],
+child entry indices: {0, 1},
 match mode: conjunctive,
 </pre>
        <td>
 <pre>code points: {2, 6},
-feature tags: {},
-design space: {},
 </pre>
        <td>true
     </table>
@@ -1455,7 +1410,7 @@ round trips.</p>
 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①">Extend an Incremental Font Subset</a>:</p>
    <ol>
     <li data-md>
-     <p>For each candidate entry compute a total subset definition by unioning that entry’s subset definition and the subset definition of all child entries
+     <p>For each candidate entry: compute a total subset definition by unioning that entry’s subset definition and the subset definition of all child entries
  reachable via the graph of referenced child entries.</p>
     <li data-md>
      <p>For each candidate entry compute the set intersection between the total subset definition and the target subset definition.</p>
