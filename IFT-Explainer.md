@@ -81,8 +81,10 @@ and to some (larger, slower) fallback font.
 
 The link in the `src` descriptor points to an 
 [IFT font](https://w3c.github.io/IFT/Overview.html),
-which is a regular OpenType font
-containing only the data to correctly render some
+which is a regular OpenType font;
+this is commonlt encoded as WOFF2 for efficient transfer.
+
+It containins only the data needed to correctly render some
 [subset](https://w3c.github.io/IFT/Overview.html#font-subset-dfn)
 of:
 
@@ -111,7 +113,7 @@ or support Cyrillic characters.
 These would be downloaded and applied on demand,
 as content is encountered that needs them.
 
-This avoids the rendering breakage often encountered with  _shaping languages_
+This avoids the rendering breakage often encountered with  _complex writing script languages_
 such as Arabic and Indic languages,
 when multiple static subsets are used together.
 
@@ -124,7 +126,7 @@ and **cache performance** is compatible
 with existing CDN infrastructure
 because patches are shared between users.
 It is also also more **privacy-preserving**
-(compared to other aproaches which were considered, see below).
+(compared to other approaches which were considered, see below).
 
 As a performance optimization, IFT allows patches for glyph-only data to be **independent**,
 Meaning they can be requested in parallel,
