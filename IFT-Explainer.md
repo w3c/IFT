@@ -82,7 +82,7 @@ and to some (larger, slower) fallback font.
 The link in the `src` descriptor points to an 
 [IFT font](https://w3c.github.io/IFT/Overview.html),
 which is a regular OpenType font;
-this is commonlt encoded as WOFF2 for efficient transfer.
+this is commonly encoded as WOFF2 for efficient transfer.
 
 It containins only the data needed to correctly render some
 [subset](https://w3c.github.io/IFT/Overview.html#font-subset-dfn)
