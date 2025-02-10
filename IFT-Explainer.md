@@ -18,12 +18,12 @@
 - [Introduction](#introduction)
 - [Motivating Use Cases](#motivating-use-cases)
 - [Non-goals](#non-goals)
-- [Considered alternatives](#considered-alternatives)
-  - [Range Request](#range-request)
-  - [Patch Subset](#patch-subset)
 - [Incremental Font Transfer](#incremental-font-transfer)
 - [Demo](#demo)
 - [Testing](#testing)
+- [Considered alternatives](#considered-alternatives)
+  - [Range Request](#range-request)
+  - [Patch Subset](#patch-subset)
 - [Stakeholder Feedback / Opposition](#stakeholder-feedback--opposition)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
