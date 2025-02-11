@@ -206,7 +206,7 @@ Work on Patch Subset was discontinued because, despite
 
 ## Stakeholder Feedback / Opposition
 
-- Chromium : Positive
-- WebKit : No signals
-- Gecko : No signals
-- Font Vendors (Adobe, Apple, Dalton Maag, Google) : Positive
+- Chromium : Positive. [Implementation](https://github.com/googlefonts/fontations/tree/main/incremental-font-transfer)
+- WebKit : No signals. [Request for Position](https://github.com/WebKit/standards-positions/issues/461)
+- Gecko : No signals. [Request for Position](https://github.com/mozilla/standards-positions/issues/872)
+- Font Vendors (Adobe, Dalton Maag, Google) : Positive
