@@ -3,13 +3,11 @@
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <title>Incremental Font Transfer</title>
-  <meta content="ED" name="w3c-status">
-  <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
-  <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
+  <meta content="WD" name="w3c-status">
+  <meta content="Bikeshed version ac5ea272d, updated Fri Dec 6 15:45:15 2024 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="e2dca1dc0f12b17aeee7efd12dc8e3008016b195" name="revision">
+  <meta content="78512794fb4555ffa39ad9549dddca07126bfe89" name="revision">
   <meta content="dark light" name="color-scheme">
-  <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
 .conform:hover {background: #31668f; color: white}
 .conform:target {padding: 2px; border: 2px solid #AAA; background: #31668f; color: white }
@@ -714,36 +712,67 @@ D50 2deg illuminant, L in [0,100], a and b in [-128, 128]
 4 = lab(85,5,15)
 5 = lab(85,-10,-50)
 6 = lab(85,35,-15)
+
+For darkmode:
+0 = oklab(50%   0%  108%)
+1 = oklab(50% -51%   51%)
+2 = oklab(50% -64%  -20%)
+3 = oklab(50%   6%   19%)
+4 = oklab(50% -12%  -64%)
+5 = oklab(50%  44%  -19%)  
+6 = oklab(50% 102%   38%)
 */
+
 [data-algorithm] var { cursor: pointer; }
-var[data-var-color="0"] { background-color: #F4D200; box-shadow: 0 0 0 2px #F4D200; }
-var[data-var-color="1"] { background-color: #FF87A2; box-shadow: 0 0 0 2px #FF87A2; }
-var[data-var-color="2"] { background-color: #96E885; box-shadow: 0 0 0 2px #96E885; }
-var[data-var-color="3"] { background-color: #3EEED2; box-shadow: 0 0 0 2px #3EEED2; }
-var[data-var-color="4"] { background-color: #EACFB6; box-shadow: 0 0 0 2px #EACFB6; }
-var[data-var-color="5"] { background-color: #82DDFF; box-shadow: 0 0 0 2px #82DDFF; }
-var[data-var-color="6"] { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
+var[data-var-color] { background-color: var(--var-bg); box-shadow: 0 0 0 2px var(--var-bg); }
+
+var[data-var-color] { --var-bg: #F4D200; }
+var[data-var-color="1"] { --var-bg: #FF87A2; }
+var[data-var-color="2"] { --var-bg: #96E885; }
+var[data-var-color="3"] { --var-bg: #3EEED2; }
+var[data-var-color="4"] { --var-bg: #EACFB6; }
+var[data-var-color="5"] { --var-bg: #82DDFF; }
+var[data-var-color="6"] { --var-vg: #FFBCF2; }
+
+@media (prefers-color-scheme: dark) {
+	var[data-var-color] { --var-bg: #bc1a00; }
+	var[data-var-color="1"] { --var-bg: #007f00; }
+	var[data-var-color="2"] { --var-bg: #008698; }
+	var[data-var-color="3"] { --var-bg: #7f5b2b; }
+	var[data-var-color="4"] { --var-bg: #004df3; }
+	var[data-var-color="5"] { --var-bg: #a1248a; }
+	var[data-var-color="6"] { --var-vg: #ff0000; }
+}
 </style>
+  <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-WD" rel="stylesheet">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#ED">Editor’s Draft</a>, <time class="dt-updated" datetime="2025-02-07">7 February 2025</time></p>
-   <div data-fill-with="spec-metadata">
-    <dl>
-     <dt>This version:
-     <dd><a class="u-url" href="https://w3c.github.io/IFT/Overview.html">https://w3c.github.io/IFT/Overview.html</a>
-     <dt>Latest published version:
-     <dd><a href="https://www.w3.org/TR/IFT/">https://www.w3.org/TR/IFT/</a>
-     <dt>Feedback:
-     <dd><span><a href="mailto:public-webfonts-wg@w3.org?subject=%5BIFT%5D%20YOUR%20TOPIC%20HERE">public-webfonts-wg@w3.org</a> with subject line “<kbd>[IFT] <i data-lt>… message topic …</i></kbd>” (<a href="https://lists.w3.org/Archives/Public/public-webfonts-wg/" rel="discussion">archives</a>)</span>
-     <dd><a href="https://github.com/w3c/PFE/issues/">GitHub</a>
-     <dt class="editor">Editors:
-     <dd class="editor p-author h-card vcard" data-editor-id="1438"><a class="p-name fn u-url url" href="https://svgees.us/">Chris Lilley</a> (<span class="p-org org">W3C</span>)
-     <dd class="editor p-author h-card vcard" data-editor-id="73905"><a class="p-name fn u-email email" href="mailto:grieger@google.com">Garret Rieger</a> (<span class="p-org org">Google Inc.</span>)
-     <dd class="editor p-author h-card vcard" data-editor-id="137857"><a class="p-name fn u-email email" href="mailto:siterum@adobe.com">Skef Iterum</a> (<span class="p-org org">Adobe Inc.</span>)
-    </dl>
-   </div>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types/#WD">W3C Working Draft</a>, <time class="dt-updated" datetime="2025-02-20">20 February 2025</time></p>
+   <details open>
+    <summary>More details about this document</summary>
+    <div data-fill-with="spec-metadata">
+     <dl>
+      <dt>This version:
+      <dd><a class="u-url" href="https://www.w3.org/TR/2025/WD-IFT-20250220/">https://www.w3.org/TR/2025/WD-IFT-20250220/</a>
+      <dt>Latest published version:
+      <dd><a href="https://www.w3.org/TR/IFT/">https://www.w3.org/TR/IFT/</a>
+      <dt>Editor's Draft:
+      <dd><a href="https://w3c.github.io/IFT/Overview.html">https://w3c.github.io/IFT/Overview.html</a>
+      <dt>History:
+      <dd><a class="u-url" href="https://www.w3.org/standards/history/IFT/">https://www.w3.org/standards/history/IFT/</a>
+      <dt>Feedback:
+      <dd><span><a href="mailto:public-webfonts-wg@w3.org?subject=%5BIFT%5D%20YOUR%20TOPIC%20HERE">public-webfonts-wg@w3.org</a> with subject line “<kbd>[IFT] <i data-lt>… message topic …</i></kbd>” (<a href="https://lists.w3.org/Archives/Public/public-webfonts-wg/" rel="discussion">archives</a>)</span>
+      <dd><a href="https://github.com/w3c/PFE/issues/">GitHub</a>
+      <dt class="editor">Editors:
+      <dd class="editor p-author h-card vcard" data-editor-id="1438"><a class="p-name fn u-url url" href="https://svgees.us/">Chris Lilley</a> (<span class="p-org org">W3C</span>)
+      <dd class="editor p-author h-card vcard" data-editor-id="73905"><a class="p-name fn u-email email" href="mailto:grieger@google.com">Garret Rieger</a> (<span class="p-org org">Google Inc.</span>)
+      <dd class="editor p-author h-card vcard" data-editor-id="137857"><a class="p-name fn u-email email" href="mailto:siterum@adobe.com">Skef Iterum</a> (<span class="p-org org">Adobe Inc.</span>)
+     </dl>
+    </div>
+   </details>
    <div data-fill-with="warning"></div>
    <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/policies/#copyright">Copyright</a> © 2025 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/policies/#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/policies/#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/copyright/software-license/" rel="license" title="W3C Software and Document License">permissive document license</a> rules apply. </p>
    <hr title="Separator for header">
@@ -761,12 +790,17 @@ to complex scripts like Indic or Arabic.</p>
   </div>
   <h2 class="no-num no-toc no-ref heading settled" id="sotd"><span class="content">Status of this document</span></h2>
   <div data-fill-with="status">
-   <p> This is a public copy of the editors’ draft.
-	It is provided for discussion only and may change at any moment.
-	Its publication here does not imply endorsement of its contents by W3C.
-	Don’t cite this document other than as work in progress. </p>
+   <p> <em>This section describes the status of this document at the time of
+  its publication. A list of
+  current W3C publications and the latest revision of this technical report
+  can be found in the <a href="https://www.w3.org/TR/">W3C technical reports
+  index at https://www.w3.org/TR/.</a></em> </p>
+   <p> This document was produced by the <a href="https://www.w3.org/groups/wg/webfonts">Web Fonts Working Group</a> as a Working Draft using the <a href="https://www.w3.org/policies/process/20231103/#recs-and-notes">Recommendation
+      track</a>. This document is intended to become a W3C Recommendation. </p>
    <p> If you wish to make comments regarding this document, please <a href="https://github.com/w3c/PFE/issues/new">file an issue on the specification repository</a>. </p>
-   <p> This document was produced by the <a href="https://www.w3.org/groups/wg/webfonts">Web Fonts Working Group</a> </p>
+   <p> Publication as a Working Draft does not imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. This is a draft document and may be updated, replaced or
+  obsoleted by other documents at any time. It is inappropriate to cite this
+  document as other than work in progress. </p>
    <p> This document was produced by a group operating under
   the <a href="https://www.w3.org/policies/patent-policy/20200915/">W3C Patent Policy</a>.
   W3C maintains a <a href="https://www.w3.org/groups/wg/webfonts/ipr" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group;
@@ -910,7 +944,7 @@ example, even using WOFF 2 <a data-link-type="biblio" href="#biblio-woff2" title
 to this specification.</p>
    <h3 class="heading settled" data-level="1.2" id="overview"><span class="secno">1.2. </span><span class="content">Overview</span><a class="self-link" href="#overview"></a></h3>
    <p>An <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="incremental-font">incremental font</dfn> is a regular <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> font that is reformatted to include incremental functionality,
-partly in virtue of two additional <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a>. Using these new tables the font can be augmented
+partly in virtue of two additional <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a>. Using these new tables the font can be augmented
 (eg. to cover more code points) by loading and applying patches to it.</p>
    <p>The IFT technology has four main pieces:</p>
    <ul>
@@ -1001,7 +1035,7 @@ implementation can help reduce the total number of requests being made. The eval
 this by testing the performance of a basic character frequency based <a href="https://www.w3.org/TR/PFE-evaluation/#codepredict">code point prediction</a> scheme and found it improved overall performance.</p>
    <h2 class="heading settled" data-level="2" id="opt-in"><span class="secno">2. </span><span class="content">Opt-In Mechanism</span><a class="self-link" href="#opt-in"></a></h2>
    <p>Web pages can choose to opt-in to incremental transfer for a font via the use of a CSS font tech
-keyword (<a href="https://drafts.csswg.org/css-fonts-4/#font-tech-definitions"><cite>CSS Fonts 4</cite> § 11.1 Font tech</a>) inside the ''@font-face'' block. The keyword <code>incremental</code> is used to indicate the referenced font contains IFT data and should
+keyword (<a href="https://www.w3.org/TR/css-fonts-4/#font-tech-definitions"><cite>CSS Fonts 4</cite> § 11.1 Font tech</a>) inside the ''@font-face'' block. The keyword <code>incremental</code> is used to indicate the referenced font contains IFT data and should
 only be loaded by a user agent which supports incremental font transfer.</p>
    <div class="example" id="example-e768eb0f">
     <a class="self-link" href="#example-e768eb0f"></a> 
@@ -1020,7 +1054,7 @@ only be loaded by a user agent which supports incremental font transfer.</p>
 }
 </pre>
    </div>
-   <p>As shown in the second example, <a href="https://drafts.csswg.org/css-fonts-4/#unicode-range-desc">unicode-range</a> can be used in conjuction with an IFT font. The
+   <p>As shown in the second example, <a href="https://www.w3.org/TR/css-fonts-4/#unicode-range-desc">unicode-range</a> can be used in conjuction with an IFT font. The
 unicode ranges should be set to match the coverage of the fully extended font. This will allow clients to avoid trying to load the IFT font
 if the font does not support any code points which are needed.</p>
    <p>An alternative approach is to use the <a data-link-type="biblio" href="#biblio-css-conditional-5" title="CSS Conditional Rules Module Level 5">CSS supports mechanism</a> which can make selections based on font tech:</p>
@@ -1058,14 +1092,14 @@ needed to render a subset of:</p>
     <li data-md>
      <p>the code points,</p>
     <li data-md>
-     <p><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a>,</p>
+     <p><a href="https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a>,</p>
     <li data-md>
-     <p>and <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a>.</p>
+     <p>and <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a>.</p>
    </ul>
    <p>supported by the original font. When a subsetted font is used to render text using any combination of the subset
-code points, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a>, or <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a> it should render identically to the original font. This includes rendering with the use of any optional typographic
+code points, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a>, or <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a> it should render identically to the original font. This includes rendering with the use of any optional typographic
 features that a renderer may choose to use from the original font, such as hinting instructions. Design variation spaces
-are specified using the user-axis scales (<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#coordinate-scales-and-normalization">OpenType Specification § otvaroverview#coordinate-scales-and-normalization</a>).</p>
+are specified using the user-axis scales (<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otvaroverview#coordinate-scales-and-normalization">OpenType Specification § otvaroverview#coordinate-scales-and-normalization</a>).</p>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-subset-definition">font subset definition</dfn> describes the minimum data (code points, layout features,
 variation axis space) that a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset">font subset</a> should support.</p>
    <p class="note" role="note"><span class="marker">Note:</span> For convenience the remainder of this document links to the <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">[open-type]</a> specification which is a copy of <a data-link-type="biblio" href="#biblio-iso14496-22" title="Information technology — Coding of audio-visual objects — Part 22: Open Font Format">[iso14496-22]</a>.</p>
@@ -1075,7 +1109,7 @@ an existing <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset�
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-format">patch format</dfn> is a specified encoding of changes to be applied relative to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②">font subset</a>. A set of
 changes encoded according to the format is a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch">font patch</a>. Each <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format">patch format</a> has an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-application-algorithm">patch application algorithm</dfn> which takes a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③">font subset</a> and a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch①">font patch</a> encoded in the <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format①">patch format</a> as input and outputs an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a>.</p>
    <h3 class="heading settled" data-level="3.3" id="patch-map-dfn"><span class="secno">3.3. </span><span class="content">Patch Map</span><a class="self-link" href="#patch-map-dfn"></a></h3>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map">patch map</dfn> is an <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">open type table</a> which encodes a collection of mappings from <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">font subset definitions</a> to URIs which host <a href="#font-patch-formats">patches</a> that extend the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①">incremental font</a>. A <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map">patch map</a> table encodes a list of <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map-entries">patch map entries</dfn>, where each entry has a key and value.
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map">patch map</dfn> is an <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">open type table</a> which encodes a collection of mappings from <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">font subset definitions</a> to URIs which host <a href="#font-patch-formats">patches</a> that extend the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①">incremental font</a>. A <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map">patch map</a> table encodes a list of <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map-entries">patch map entries</dfn>, where each entry has a key and value.
 The key of an entry defines the coverage of the entry, which is information on what subset definitions will match it. The value specifies
 information about the patch which should be applied when the entry is matched. <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries">Patch Map Entry</a> summary:</p>
    <table>
@@ -1106,7 +1140,7 @@ information about the patch which should be applied when the entry is matched. <
    <p>More details of the format of patch maps can be found in <a href="#font-format-extensions">§ 5 Extensions to the Font Format</a>.</p>
    <h3 class="heading settled" data-level="3.4" id="data-types"><span class="secno">3.4. </span><span class="content">Explanation of Data Types</span><a class="self-link" href="#data-types"></a></h3>
    <p>Encoded data structures in the remainder of this specification are described in terms of the data types defined
-in <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types">OpenType Specification § otff#data-types</a>. As with the rest of OpenType, all fields use "big-endian" byte ordering.</p>
+in <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#data-types">OpenType Specification § otff#data-types</a>. As with the rest of OpenType, all fields use "big-endian" byte ordering.</p>
    <h2 class="heading settled" data-level="4" id="extending-font-subset"><span class="secno">4. </span><span class="content">Extending a Font Subset</span><a class="self-link" href="#extending-font-subset"></a></h2>
    <p>This section defines the algorithm that a client uses to extend an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font②">incremental</a> <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑤">font subset</a> to cover additional
 code points, layout features and/or design space. It is an iterative algorithm which, repeatedly:</p>
@@ -1142,7 +1176,7 @@ The compatibility ID of only the <a href="#patch-map-table">§ 5.2 Patch Map T
    </ul>
    <p>The invalidation mode of a specific patch is encoded in its format number, which can be found in <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a>.</p>
    <h3 class="heading settled" data-level="4.2" id="default-layout-features"><span class="secno">4.2. </span><span class="content">Default Layout Features</span><a class="self-link" href="#default-layout-features"></a></h3>
-   <p>Most text shapers have a set of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a> which are always enabled and thus always required in an
+   <p>Most text shapers have a set of <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a> which are always enabled and thus always required in an
 incrementally loaded font. <a href="#feature-tag-list">Appendix A: Default Feature Tags</a> collects a list of features that at the time of writing are known to be required
 by default in common shaper implementations. When forming a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition②">font subset definition</a> as input to the extension algorithm the client
 should typically include all features found in <a href="#feature-tag-list">Appendix A: Default Feature Tags</a> in the subset definition. However, in some cases the client might
@@ -1175,14 +1209,14 @@ font that <var>font subset</var> was derived from.</p>
     <li data-md>
      <p>Set <var>extended font subset</var> to <var>font subset</var>.</p>
     <li data-md>
-     <p>Load the 'IFT ' and 'IFTX' (if present) mapping <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> from <var>extended font subset</var>. Both
+     <p>Load the 'IFT ' and 'IFTX' (if present) mapping <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> from <var>extended font subset</var>. Both
 tables are formatted as a <a href="#patch-map-table">§ 5.2 Patch Map Table</a>. Check that they are valid according to the requirements in <a href="#patch-map-table">§ 5.2 Patch Map Table</a>. If
 either table is not valid, invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-errors" id="ref-for-abstract-opdef-handle-errors">Handle errors</a>. If <var>extended font subset</var> does not have an 'IFT ' table, then it is
 not an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑥">incremental font</a> and cannot be extended, return <var>extended font subset</var>.</p>
     <li data-md>
      <p>If the compatibility ID in 'IFT ' is equal to the compatibility ID in 'IFTX' this is an error, invoke <a data-link-type="abstract-op" href="#abstract-opdef-handle-errors" id="ref-for-abstract-opdef-handle-errors①">Handle errors</a>.</p>
     <li data-md>
-     <p>For each of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
+     <p>For each of <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
 invoking <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-1-patch-map" id="ref-for-abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</a> or <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map">Interpret Format 2 Patch Map</a>. Concatenate the returned entry lists into a single list, <var>entry list</var>.</p>
     <li data-md>
      <p>For each <var>entry</var> in <var>entry list</var> invoke <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection">Check entry intersection</a> with <var>entry</var> and <var>target subset definition</var> as inputs, if it returns false remove <var>entry</var> from <var>entry list</var>. Additionally remove
@@ -1390,7 +1424,7 @@ match mode: conjunctive,
  produce the <var>target URI</var>.</p>
     <li data-md>
      <p>Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers, <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> should be used. When using <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[fetch]</a> a request for patches should use the same CORS settings as the initial request for
- the IFT font. This means that for a font loaded via CSS the patch request would follow: <a href="https://drafts.csswg.org/css-fonts-4/#font-fetching-requirements"><cite>CSS Fonts 4</cite> § 4.8.2 Font fetching requirements</a>.</p>
+ the IFT font. This means that for a font loaded via CSS the patch request would follow: <a href="https://www.w3.org/TR/css-fonts-4/#font-fetching-requirements"><cite>CSS Fonts 4</cite> § 4.8.2 Font fetching requirements</a>.</p>
     <li data-md>
      <p>Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.</p>
    </ol>
@@ -1441,9 +1475,9 @@ renders the overall content as long as:</p>
    <p>Given some incremental font (whether the initial font or one that has been partially extended) a client may wish to know what content
 that font can render in it’s current state. This is of particular importance where the client is looking to determine which portions
 of the text to use fallback fonts for.</p>
-   <p>During fallback processing a client would typically check the font’s <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table to determine which code points are
-supported; However, in an IFT font due to the way <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches work the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table may contain mappings
-for code points which do not yet have the corresponding glyph data loaded. As a result the client should not rely solely on the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table to determine code point presence. Instead the following procedure can be used by a client to check what
+   <p>During fallback processing a client would typically check the font’s <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table to determine which code points are
+supported; However, in an IFT font due to the way <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches work the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table may contain mappings
+for code points which do not yet have the corresponding glyph data loaded. As a result the client should not rely solely on the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table to determine code point presence. Instead the following procedure can be used by a client to check what
 parts of some content an incremental font can render:</p>
    <ul>
     <li data-md>
@@ -1453,7 +1487,7 @@ shaping.</p>
      <p>For each shaping unit there are two checks:</p>
      <ul>
       <li data-md>
-       <p>First, if for any code point in the shaping unit there is not a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> entry for it, or the entry maps to glyph
+       <p>First, if for any code point in the shaping unit there is not a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> entry for it, or the entry maps to glyph
 0 then the incremental font does not fully support rendering the shaping unit.</p>
       <li data-md>
        <p>Second, compute the corresponding <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑤">font subset definition</a> and execute the <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset③">Extend an Incremental Font Subset</a> algorithm,
@@ -1545,7 +1579,7 @@ to the procedures in this section. So if an incremental font needs to be stored 
 store only the font binary produced by the most recent application of the extension algorithm. It is not necessary to retain the initial
 font or any versions produced by prior extensions.</p>
    <h2 class="heading settled" data-level="5" id="font-format-extensions"><span class="secno">5. </span><span class="content">Extensions to the Font Format</span><a class="self-link" href="#font-format-extensions"></a></h2>
-   <p>An <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑧">incremental font</a> follows the existing <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> format, but includes two new <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map③">patch maps</a>. All incremental fonts must contain the 'IFT ' table. The 'IFTX' table is optional. When both tables are
+   <p>An <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑧">incremental font</a> follows the existing <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> format, but includes two new <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map③">patch maps</a>. All incremental fonts must contain the 'IFT ' table. The 'IFTX' table is optional. When both tables are
 present, the mapping of the font as a whole is the union of the mappings of the two tables. The two new tables are used only in this
 specification and are not being added to the <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">Open-Type</a> specification.</p>
    <p class="note" role="note"><span class="marker">Note:</span> allowing the mapping to be split between two distinct tables allows an incremental font to more easily make use of multiple
@@ -1556,7 +1590,7 @@ patch types. For example all patches of one type can be specified in the 'IFT ' 
 these can be used to compress the initial font file used in an incremental font transfer encoding as long as:</p>
    <ol>
     <li data-md>
-     <p>The bytes of each <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> are unmodified by the process of encoding then decoding the font via the
+     <p>The bytes of each <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> are unmodified by the process of encoding then decoding the font via the
 compression format.</p>
     <li data-md>
      <p>Since the incremental font transfer extension algorithm (<a href="#extending-font-subset">§ 4 Extending a Font Subset</a>) operates specifically on the uncompressed font
@@ -1565,12 +1599,12 @@ file, the compressed font needs to be decoded before attempting to extend it.</p
    <p>For <a data-link-type="biblio" href="#biblio-woff2" title="WOFF File Format 2.0">[WOFF2]</a> special care must be taken. If an incremental font will be encoded by WOFF2 for transfer:</p>
    <ol>
     <li data-md>
-     <p>If the WOFF2 encoding will include a transformed glyf and loca table (<a href="https://w3c.github.io/woff/woff2/#glyf_table_format"><cite>WOFF 2.0</cite> § 5.1 Transformed glyf table format</a>) then, the incremental
+     <p>If the WOFF2 encoding will include a transformed glyf and loca table (<a href="https://www.w3.org/TR/WOFF2/#glyf_table_format"><cite>WOFF 2.0</cite> § 5.1 Transformed glyf table format</a>) then, the incremental
  font should not contain <a href="#table-keyed">§ 6.2 Table Keyed</a> patches which modify either the glyf or loca table. The WOFF2 format does not
  guarantee the specific bytes that result from decoding a transformed glyf and loca table. <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches may be used
  in conjunction with a transformed glyf and loca table.</p>
     <li data-md>
-     <p>The 'IFT ' and 'IFTX' tables can be processed and brotli encoded by a WOFF2 encoder following the standard process defined in <a href="https://w3c.github.io/woff/woff2/#table_format"><cite>WOFF 2.0</cite> § 5 Compressed data format</a>.</p>
+     <p>The 'IFT ' and 'IFTX' tables can be processed and brotli encoded by a WOFF2 encoder following the standard process defined in <a href="https://www.w3.org/TR/WOFF2/#table_format"><cite>WOFF 2.0</cite> § 5 Compressed data format</a>.</p>
    </ol>
    <h3 class="heading settled" data-level="5.2" id="patch-map-table"><span class="secno">5.2. </span><span class="content">Patch Map Table</span><a class="self-link" href="#patch-map-table"></a></h3>
    <p>A <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map④">patch map</a> is encoded in one of two formats:</p>
@@ -1621,7 +1655,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
       <td>
        Number of glyphs that mappings are provided for.
         Must match the number of glyphs in the the font file. 
-       <p class="note" role="note"><span class="marker">Note:</span> the number of glyphs in the font is encoded in the font file. At the time of writing, this value is listed in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a> table; however, future font format extensions may use alternate tables to encode the value for number of
+       <p class="note" role="note"><span class="marker">Note:</span> the number of glyphs in the font is encoded in the font file. At the time of writing, this value is listed in the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a> table; however, future font format extensions may use alternate tables to encode the value for number of
         glyphs.</p>
      <tr>
       <td>Offset32
@@ -1673,7 +1707,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
       are uint8 if <a data-link-type="dfn" href="#format-1-patch-map-maxentryindex" id="ref-for-format-1-patch-map-maxentryindex">maxEntryIndex</a> is less than 256, otherwise they are uint16. 
    </table>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="feature-map">Feature Map</dfn> encoding:</p>
-   <p>A feature map table associates combinations of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tags</a> and glyphs with an entry index.</p>
+   <p>A feature map table associates combinations of <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tags</a> and glyphs with an entry index.</p>
    <table>
     <tbody>
      <tr>
@@ -1687,7 +1721,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
      <tr>
       <td><a data-link-type="dfn" href="#featurerecord" id="ref-for-featurerecord">FeatureRecord</a>
       <td><dfn class="dfn-paneled" data-dfn-for="Feature Map" data-dfn-type="dfn" data-noexport id="feature-map-featurerecords">featureRecords</dfn>[featureCount]
-      <td> Provides mappings for a specific <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tag</a>. <a data-link-type="dfn" href="#feature-map-featurerecords" id="ref-for-feature-map-featurerecords">featureRecords</a> are sorted by <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag">featureTag</a> in ascending order with any feature tag occurring at most once. For sorting tag values are interpreted
+      <td> Provides mappings for a specific <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tag</a>. <a data-link-type="dfn" href="#feature-map-featurerecords" id="ref-for-feature-map-featurerecords">featureRecords</a> are sorted by <a data-link-type="dfn" href="#featurerecord-featuretag" id="ref-for-featurerecord-featuretag">featureTag</a> in ascending order with any feature tag occurring at most once. For sorting tag values are interpreted
       as a 4 byte big endian unsigned integer and sorted by the integer value. 
      <tr>
       <td><a data-link-type="dfn" href="#entrymaprecord" id="ref-for-entrymaprecord">EntryMapRecord</a>
@@ -1708,7 +1742,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
      <tr>
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="FeatureRecord" data-dfn-type="dfn" data-noexport id="featurerecord-featuretag">featureTag</dfn>
-      <td>The <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tag</a> this mapping is for.
+      <td>The <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tag</a> this mapping is for.
      <tr>
       <td>uint8/uint16
       <td><dfn class="dfn-paneled" data-dfn-for="FeatureRecord" data-dfn-type="dfn" data-noexport id="featurerecord-firstnewentryindex">firstNewEntryIndex</dfn>
@@ -1771,7 +1805,7 @@ index and do not build an entry for it.</p>
       <li data-md>
        <p>Collect the set of glyph indices that map to the <var>entry index</var>.</p>
       <li data-md>
-       <p>Convert the set of glyph indices to a set of Unicode code points using the code point to glyph mapping in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table of <var>font subset</var>. Ignore any glyph indices that are not mapped by <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a>.
+       <p>Convert the set of glyph indices to a set of Unicode code points using the code point to glyph mapping in the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table of <var>font subset</var>. Ignore any glyph indices that are not mapped by <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a>.
 Multiple code points may map to the same glyph id. All code points associated with a glyph should be included.</p>
       <li data-md>
        <p>Convert <var>entry index</var> into a URI by applying <a data-link-type="dfn" href="#format-1-patch-map-uritemplate" id="ref-for-format-1-patch-map-uritemplate">uriTemplate</a> following <a href="#uri-templates">§ 5.2.3 URI Templates</a>. If
@@ -1930,7 +1964,7 @@ If the template expansion results in an error (see: <a href="https://www.rfc-edi
      <tr>
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-featuretags">featureTags</dfn>[featureCount]
-      <td> List of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tags</a> in the entry’s <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑦">font subset definition</a>. Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①">formatFlags</a> bit 0 is set. 
+      <td> List of <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags#">feature tags</a> in the entry’s <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition⑦">font subset definition</a>. Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①">formatFlags</a> bit 0 is set. 
      <tr>
       <td>uint16
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-designspacecount">designSpaceCount</dfn>
@@ -1999,11 +2033,11 @@ being requested.</p>
      <tr>
       <td>Fixed
       <td><dfn class="dfn-paneled" data-dfn-for="Design Space Segment" data-dfn-type="dfn" data-noexport id="design-space-segment-start">start</dfn>
-      <td> Start (inclusive) of the segment. This value uses the user axis scale: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#coordinate-scales-and-normalization">OpenType Specification § otvaroverview#coordinate-scales-and-normalization</a>. 
+      <td> Start (inclusive) of the segment. This value uses the user axis scale: <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otvaroverview#coordinate-scales-and-normalization">OpenType Specification § otvaroverview#coordinate-scales-and-normalization</a>. 
      <tr>
       <td>Fixed
       <td><dfn class="dfn-paneled" data-dfn-for="Design Space Segment" data-dfn-type="dfn" data-noexport id="design-space-segment-end">end</dfn>
-      <td> End (inclusive) of the segment. Must be greater than or equal to start. This value uses the user axis scale: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otvaroverview#coordinate-scales-and-normalization">OpenType Specification § otvaroverview#coordinate-scales-and-normalization</a>. 
+      <td> End (inclusive) of the segment. Must be greater than or equal to start. This value uses the user axis scale: <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otvaroverview#coordinate-scales-and-normalization">OpenType Specification § otvaroverview#coordinate-scales-and-normalization</a>. 
    </table>
    <h5 class="heading settled algorithm" data-algorithm="Interpreting Format 2" data-level="5.2.2.1" id="interpreting-patch-map-format-2"><span class="secno">5.2.2.1. </span><span class="content">Interpreting Format 2</span><a class="self-link" href="#interpreting-patch-map-format-2"></a></h5>
    <p>This algorithm is used to convert a format 2 <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑤">patch map</a> into a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑧">patch map entries</a>.</p>
@@ -2480,7 +2514,7 @@ encoding can make use of more than one patch format.</p>
       <td><a data-link-type="dfn" href="#no-invalidation" id="ref-for-no-invalidation">No Invalidation</a>
    </table>
    <h3 class="heading settled" data-level="6.2" id="table-keyed"><span class="secno">6.2. </span><span class="content">Table Keyed</span><a class="self-link" href="#table-keyed"></a></h3>
-   <p>A table keyed patch contains a collection of patches which are applied to the individual <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font tables</a> in the input font file. Each table patch is encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the corresponding table from the input font file as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. A table keyed encoded patch consists of a short header followed
+   <p>A table keyed patch contains a collection of patches which are applied to the individual <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font tables</a> in the input font file. Each table patch is encoded with <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the corresponding table from the input font file as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. A table keyed encoded patch consists of a short header followed
 by one or more brotli encoded patches. In addition to patching tables, patches may also replace (existing table data is not used)
 or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①③">font subset</a>.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="table-keyed-patch">Table keyed patch</dfn> encoding:</p>
@@ -2523,7 +2557,7 @@ of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">Ta
      <tr>
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="TablePatch" data-dfn-type="dfn" data-noexport id="tablepatch-tag">tag</dfn>
-      <td>The tag that identifies the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a> this patch applies too.
+      <td>The tag that identifies the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a> this patch applies too.
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="TablePatch" data-dfn-type="dfn" data-noexport id="tablepatch-flags">flags</dfn>
@@ -2568,7 +2602,7 @@ If there is no match, or <var>base font subset</var> does not have either an 'IF
 has failed, return an error.</p>
     <li data-md>
      <p>In the following steps, adding a table to <var>extended font subset</var> consists of adding the table’s data to the font and
-inserting a new entry into the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table directory</a> according to the requirements of the open
+inserting a new entry into the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table directory</a> according to the requirements of the open
 type specification. That entry includes a checksum for the table data. When an existing table is copied unmodified, the client
 can re-use the checksum from the entry in the source font. Otherwise a new checksum will need to be computed.</p>
     <li data-md>
@@ -2582,21 +2616,21 @@ the <var>patch</var>.</p>
 this entry, then ignore this entry and continue the iteration to the next one. Entries are processed in same order as they
 are listed in the <a data-link-type="dfn" href="#table-keyed-patch-patches" id="ref-for-table-keyed-patch-patches⑤">patches</a> array.</p>
       <li data-md>
-       <p>If bit 1 of <a data-link-type="dfn" href="#tablepatch-flags" id="ref-for-tablepatch-flags">flags</a> is set, then do not copy or add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag①">tag</a>. Continue to the next entry.</p>
+       <p>If bit 1 of <a data-link-type="dfn" href="#tablepatch-flags" id="ref-for-tablepatch-flags">flags</a> is set, then do not copy or add a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag①">tag</a>. Continue to the next entry.</p>
       <li data-md>
        <p>If bit 0 (least significant bit) of <a data-link-type="dfn" href="#tablepatch-flags" id="ref-for-tablepatch-flags①">flags</a> is set, then decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream①">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a>. No shared dictionary is used. If the decoded data is larger than <a data-link-type="dfn" href="#tablepatch-maxuncompressedlength" id="ref-for-tablepatch-maxuncompressedlength">maxUncompressedLength</a> return an error. If there is any data in <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream②">brotliStream</a> which was not used by the decoding process return an error.
-Add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag②">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream③">brotliStream</a>. Continue to the next entry.</p>
+Add a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag②">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream③">brotliStream</a>. Continue to the next entry.</p>
       <li data-md>
-       <p>Otherwise, decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream④">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a> and using the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag③">tag</a> in <var>base font subset</var> as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. If no such table exists return an error. If the decoded data is
+       <p>Otherwise, decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream④">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10">Brotli Compressed Data Format § section-10</a> and using the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag③">tag</a> in <var>base font subset</var> as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-09#section-3.2">shared LZ77 dictionary</a>. If no such table exists return an error. If the decoded data is
 larger than <a data-link-type="dfn" href="#tablepatch-maxuncompressedlength" id="ref-for-tablepatch-maxuncompressedlength①">maxUncompressedLength</a> return an error. If there is any data in <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream⑤">brotliStream</a> which was
-not used by the decoding process return an error. Add a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag④">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream⑥">brotliStream</a>.</p>
+not used by the decoding process return an error. Add a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag④">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream⑥">brotliStream</a>.</p>
      </ul>
     <li data-md>
-     <p>For each <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> in <var>base font subset</var> which has a tag that was not found in any of
+     <p>For each <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> in <var>base font subset</var> which has a tag that was not found in any of
 the entries processed in step 5, add a copy of that table to <var>extended font subset</var>.</p>
    </ol>
    <h3 class="heading settled" data-level="6.3" id="glyph-keyed"><span class="secno">6.3. </span><span class="content">Glyph Keyed</span><a class="self-link" href="#glyph-keyed"></a></h3>
-   <p>A glyph keyed patch contains a collection of data chunks that are each associated with a glyph index and a <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a>. The encoded data replaces any existing data for that glyph index in the referenced <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Glyph keyed patches can encode data for <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>/<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, and <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> tables.</p>
+   <p>A glyph keyed patch contains a collection of data chunks that are each associated with a glyph index and a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a>. The encoded data replaces any existing data for that glyph index in the referenced <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Glyph keyed patches can encode data for <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>/<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, and <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> tables.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch">Glyph keyed patch</dfn> encoding:</p>
    <table>
     <tbody>
@@ -2643,7 +2677,7 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
      <tr>
       <td>uint8
       <td>tableCount
-      <td> The number of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> the patch has data for. 
+      <td> The number of <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> the patch has data for. 
      <tr>
       <td>uint16/uint24
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphids">glyphIds</dfn>[glyphCount]
@@ -2652,7 +2686,7 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
      <tr>
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-tables">tables</dfn>[tableCount]
-      <td>An array of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> (by tag) included in the patch. Must be in ascending sorted
+      <td>An array of <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> (by tag) included in the patch. Must be in ascending sorted
       order and must not contain any duplicate values. For sorting tag values are interpreted as a 4 byte big endian
       unsigned integer and sorted by the integer value.
      <tr>
@@ -2701,7 +2735,7 @@ failed, return an error.</p>
 decoded data is a <a data-link-type="dfn" href="#glyphpatches" id="ref-for-glyphpatches②">GlyphPatches</a> table. If the decoded data is larger than <a data-link-type="dfn" href="#glyph-keyed-patch-maxuncompressedlength" id="ref-for-glyph-keyed-patch-maxuncompressedlength">maxUncompressedLength</a> return an
 error</p>
     <li data-md>
-     <p>For each <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a> listed in <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables②">tables</a>, with index <code>i</code>:</p>
+     <p>For each <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a> listed in <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables②">tables</a>, with index <code>i</code>:</p>
      <ul>
       <li data-md>
        <p>Using the corresponding table in <var>base font subset</var>, synthesize
@@ -2713,10 +2747,10 @@ that glyph index.</p>
 offset to the associated glyph data is <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets①">glyphDataOffsets[i * glyphCount + j]</a>. The length
 of the associated glyph data is <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets②">glyphDataOffsets[i * glyphCount + j + 1]</a> minus <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets③">glyphDataOffsets[i * glyphCount + j]</a>.</p>
       <li data-md>
-       <p>The specific process for synthesizing the new table, depends on the specified format of the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Any non-glyph associated data should be copied from the table in <var>base font subset</var>. Tables of the type <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, or <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> are supported. Entries for tables
-of any other types must be ignored. When updating <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a> the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a> table must be updated as
+       <p>The specific process for synthesizing the new table, depends on the specified format of the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Any non-glyph associated data should be copied from the table in <var>base font subset</var>. Tables of the type <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, or <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> are supported. Entries for tables
+of any other types must be ignored. When updating <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a> the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a> table must be updated as
 well. No other tables in the font can be modified as a result of this step. Notably this means that a patch cannot add glyphs
-with indices beyond the numGlyphs specified in <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a>.</p>
+with indices beyond the numGlyphs specified in <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a>.</p>
       <li data-md>
        <p>If <var>base font subset</var> does not have a matching table, return an error.</p>
       <li data-md>
@@ -2727,11 +2761,11 @@ with indices beyond the numGlyphs specified in <a href="https://docs.microsoft.c
 format 1 patch map then, invoke <a data-link-type="abstract-op" href="#abstract-opdef-remove-entries-from-format-1-patch-map" id="ref-for-abstract-opdef-remove-entries-from-format-1-patch-map">Remove Entries from Format 1 Patch Map</a> with the patch map table and <var>patch uri</var> as an
 input. Otherwise if it is a format 2 patch map then, invoke <a data-link-type="abstract-op" href="#abstract-opdef-remove-entries-from-format-2-patch-map" id="ref-for-abstract-opdef-remove-entries-from-format-2-patch-map">Remove Entries from Format 2 Patch Map</a> with the patch map table and <var>patch uri</var> as an input. Copy the modified patch map table into <var>extended font subset</var>.</p>
     <li data-md>
-     <p>For each <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> in <var>base font subset</var> which has a tag that was not found in any of
+     <p>For each <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> in <var>base font subset</var> which has a tag that was not found in any of
 the entries processed in step 4 or 5, add a copy of that table to <var>extended font subset</var>.</p>
     <li data-md>
-     <p>If the contents of any <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a> was modified during the previous steps then,
-for each modified table: update the checksums in the <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">fonts table directory</a> to match the table’s
+     <p>If the contents of any <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a> was modified during the previous steps then,
+for each modified table: update the checksums in the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">fonts table directory</a> to match the table’s
 new contents.</p>
    </ol>
    <h2 class="heading settled" data-level="7" id="encoding"><span class="secno">7. </span><span class="content">Encoding</span><a class="self-link" href="#encoding"></a></h2>
@@ -2750,7 +2784,7 @@ of patch selection chosen in step 8 of <a data-link-type="abstract-op" href="#ab
  for the invalidation mode declared by the associated <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①①">patch map entries</a>.</p>
     <li data-md>
      <p>When an encoder is used to transform an existing font into an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①②">incremental font</a> the associated <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset①">fully expanded font</a> should be equivalent to the existing font. An equivalent fully expanded font
- should have all of the same <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> as the existing font (excluding the incremental IFT/IFTX
+ should have all of the same <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> as the existing font (excluding the incremental IFT/IFTX
  tables) and each of those tables should be functionally equivalent to the corresponding table in the existing font. Note: the fully
  expanded may not always be an exact binary match with the existing font.</p>
     <li data-md>
@@ -2874,7 +2908,7 @@ segment, and then those that are frequent only in Japanese and Chinese into anot
 are frequent in only one language can be handled in the usual way. This will result in less even segment sizes, but means that 
 loading high-frequency patches for any one of the languages will not pull in lower-frequency glyphs.</p>
    <p><b>Include default layout features</b></p>
-   <p><a href="#feature-tag-list">Appendix A: Default Feature Tags</a> collects a list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a> which are commonly used by default. Since the features
+   <p><a href="#feature-tag-list">Appendix A: Default Feature Tags</a> collects a list of <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a> which are commonly used by default. Since the features
 in this list will typically always be used by shapers, for best performance encoders should typically not make any of these features
 optional in the encoding of a font.</p>
    <p><b>Maintaining Functional Equivalence</b></p>
@@ -2968,7 +3002,7 @@ when loading the patches for two or more segments.  There are five main strategi
        <p>subset definition a union subset definition b → segment c</p>
      </ul>
     <li data-md>
-     <p>In some cases, such as with <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#format-14-unicode-variation-sequences">Unicode variation selectors</a>, there will be a
+     <p>In some cases, such as with <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#format-14-unicode-variation-sequences">Unicode variation selectors</a>, there will be a
  modifier code point which triggers a glyph substitution when paired with many other code points. Given the large number of alternate
  glyphs it’s desirable to keep them in their own patches which are only loaded when both the modifier code point and appropriate base
  code point(s) are present. This can be achieved by using a <a href="#patch-map-format-2">Format 2 Patch Map</a> and multiple entry matching
@@ -3029,28 +3063,28 @@ which is being read. It is unclear how feasible this attack is, or the computati
 characters being requested are very unusual.</p>
    <p>More specifically, a IFT font includes a collection of unicode code point groups and requests will be made for groups that intersect
 content being rendered. This provides information to the hosting server that at least one code point in a group was needed, but does not
-contain information on which specific code points within a group were needed. This is functionally quite similar to the existing <a href="https://drafts.csswg.org/css-fonts-4/#unicode-range-desc"><cite>CSS Fonts 4</cite> § 4.5 Character range: the unicode-range descriptor</a> and has the same privacy implications. Discussion of the privacy implication of unicode-range can be
+contain information on which specific code points within a group were needed. This is functionally quite similar to the existing <a href="https://www.w3.org/TR/css-fonts-4/#unicode-range-desc"><cite>CSS Fonts 4</cite> § 4.5 Character range: the unicode-range descriptor</a> and has the same privacy implications. Discussion of the privacy implication of unicode-range can be
 found in the CSS Fonts 4 specification:</p>
    <ul>
     <li data-md>
-     <p><a href="https://drafts.csswg.org/css-fonts-4/#sp201"><cite>CSS Fonts 4</cite> § 15.1 What information might this feature expose to Web sites or other parties, and for what purposes is that exposure necessary?</a>. For especially privacy-sensitive-contexts this recommends the user agent download all web fonts in a document.
+     <p><a href="https://www.w3.org/TR/css-fonts-4/#sp201"><cite>CSS Fonts 4</cite> § 15.1 What information might this feature expose to Web sites or other parties, and for what purposes is that exposure necessary?</a>. For especially privacy-sensitive-contexts this recommends the user agent download all web fonts in a document.
 For IFT fonts, utilizing <a href="#fully-expanding-a-font">§ 4.7 Fully Expanding a Font</a> will fetch the entire available IFT font without providing any information about
 the specific content present. Alternatively, in a privacy sensitive contexts a user agent could randomly select additional patches
 that are not required by the current content to provide obfuscation of what patches are actually needed.</p>
     <li data-md>
-     <p><a href="https://drafts.csswg.org/css-fonts-4/#sp208"><cite>CSS Fonts 4</cite> § 15.8 What data does this specification expose to an origin? Please also document what data is identical to data exposed by other features, in the same or different contexts.</a></p>
+     <p><a href="https://www.w3.org/TR/css-fonts-4/#sp208"><cite>CSS Fonts 4</cite> § 15.8 What data does this specification expose to an origin? Please also document what data is identical to data exposed by other features, in the same or different contexts.</a></p>
    </ul>
    <h3 class="heading settled" data-level="8.2" id="per-origin"><span class="secno">8.2. </span><span class="content">Per-origin restriction avoids fingerprinting</span><a class="self-link" href="#per-origin"></a></h3>
    <p>As required by <a data-link-type="biblio" href="#biblio-css-fonts-4" title="CSS Fonts Module Level 4">[css-fonts-4]</a>:</p>
    <p>"A Web Font must not be accessible in any other Document from the one which either is associated with
   the @font-face rule or owns the FontFaceSet. Other applications on the device must not be able to access
-  Web Fonts." - <a href="https://drafts.csswg.org/css-fonts-4/#web-fonts"><cite>CSS Fonts 4</cite> § 10.2 Web Fonts</a></p>
+  Web Fonts." - <a href="https://www.w3.org/TR/css-fonts-4/#web-fonts"><cite>CSS Fonts 4</cite> § 10.2 Web Fonts</a></p>
    <p>Since IFT fonts are treated the same as regular fonts in CSS (<a href="#opt-in">§ 2 Opt-In Mechanism</a>) these requirements apply and avoid information leaking across
   origins.</p>
    <p>Similar requirements apply to font palette values:</p>
    <p>"An author-defined font color palette must only be available to the documents that reference it. Using an author-defined color palette
   outside of the documents that reference it would constitute a security leak since the contents of one page would be able to
-  affect other pages, something an attacker could use as an attack vector." - <a href="https://drafts.csswg.org/css-fonts-4/#font-palette-values"><cite>CSS Fonts 4</cite> § 9.2 User-defined font color palettes: The @font-palette-values rule</a></p>
+  affect other pages, something an attacker could use as an attack vector." - <a href="https://www.w3.org/TR/css-fonts-4/#font-palette-values"><cite>CSS Fonts 4</cite> § 9.2 User-defined font color palettes: The @font-palette-values rule</a></p>
    <h2 class="heading settled" data-level="9" id="sec"><span class="secno">9. </span><span class="content">Security Considerations</span><a class="self-link" href="#sec"></a></h2>
    <p>One security concern is that IFT fonts could potentially generate a large number of network requests for patches. This could cause
 problems on the client or the service hosting the patches. The IFT specification contains a couple of mitigations to limit excessive
@@ -3068,6 +3102,10 @@ number of requests:</p>
    <p>Since the <a href="https://www.w3.org/TR/2024/WD-IFT-20240709/">Working
   Draft of 09 July 2024</a> (see <a href="https://github.com/w3c/IFT/commits/main/Overview.bs">commit history</a>):</p>
    <ul>
+    <li>Added an extension example to appendix B that utilizes child entries
+    <li>Keep prior entries separate from the filtered list for output in format 2 interpretation.
+    <li>Called the referenced entries in a mapping entry, child entries.
+    <li>Reworked the copy indices mechanism in terms of whether the referenced entries would intersect
     <li>Modifications to format 1 and format 2 patch map encodings based on implementation work (eg. clarifications, error handling, and
       fixes to oversights).
     <li>Added section on caching of incremental fonts.
@@ -3078,11 +3116,11 @@ number of requests:</p>
     <li>Appendix B added which contains extension algorithm example executions.
    </ul>
    <h2 class="heading settled" id="feature-tag-list"><span class="content"> Appendix A: Default Feature Tags</span><a class="self-link" href="#feature-tag-list"></a></h2>
-   <p><em>This appendix is not normative.</em> It provides a list of <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a> which are considered
+   <p><em>This appendix is not normative.</em> It provides a list of <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a> which are considered
 to be used by default in most shaper implementations. This list was assembled from:</p>
    <ul>
     <li data-md>
-     <p><a href="https://docs.microsoft.com/en-us/typography/opentype/spec/featurelist#">OpenType Layout Feature Registry</a></p>
+     <p><a href="https://learn.microsoft.com/en-us/typography/opentype/spec/featurelist#">OpenType Layout Feature Registry</a></p>
     <li data-md>
      <p>Features which are listed as "default on" in <a data-link-type="biblio" href="#biblio-enabling-typography" title="Enabling Typography: towards a general model of OpenType Layout">[enabling-typography]</a></p>
     <li data-md>
@@ -3093,202 +3131,379 @@ to be used by default in most shaper implementations. This list was assembled fr
     <tbody>
      <tr>
       <th>Tag
-      <th>Name
+      <th>Encoded As
+     <tr>
+      <td>aalt
+      <td>1
      <tr>
       <td>abvf
-      <td>Above-base Forms
+      <td>default
      <tr>
       <td>abvm
-      <td>Above-base Mark Positioning
+      <td>default
      <tr>
       <td>abvs
-      <td>Above-base Substitutions
+      <td>default
+     <tr>
+      <td>afrc
+      <td>2
      <tr>
       <td>akhn
-      <td>Akhand
+      <td>default
      <tr>
       <td>blwf
-      <td>Below-base Forms
+      <td>default
      <tr>
       <td>blwm
-      <td>Below-base Mark Positioning
+      <td>default
      <tr>
       <td>blws
-      <td>Below-base Substitutions
+      <td>default
      <tr>
       <td>calt
-      <td>Contextual Alternates
+      <td>default
+     <tr>
+      <td>case
+      <td>3
      <tr>
       <td>ccmp
-      <td>Glyph Composition / Decomposition
+      <td>default
      <tr>
       <td>cfar
-      <td>Conjunct Form After Ro
+      <td>default
      <tr>
       <td>chws
-      <td>Contextual Half-width Spacing
+      <td>default
      <tr>
       <td>cjct
-      <td>Conjunct Forms
+      <td>default
      <tr>
       <td>clig
-      <td>Contextual Ligatures
+      <td>default
+     <tr>
+      <td>cpct
+      <td>4
+     <tr>
+      <td>cpsp
+      <td>5
      <tr>
       <td>cswh
-      <td>Contextual Swash
+      <td>default
      <tr>
       <td>curs
-      <td>Cursive Positioning
+      <td>default
+     <tr>
+      <td>cv01-cv99
+      <td>6-104
+     <tr>
+      <td>c2pc
+      <td>105
+     <tr>
+      <td>c2sc
+      <td>106
      <tr>
       <td>dist
-      <td>Distances
+      <td>default
+     <tr>
+      <td>dlig
+      <td>107
      <tr>
       <td>dnom
-      <td>Denominators
+      <td>default
      <tr>
       <td>dtls
-      <td>Dotless Forms
+      <td>default
+     <tr>
+      <td>expt
+      <td>108
+     <tr>
+      <td>falt
+      <td>109
      <tr>
       <td>fin2
-      <td>Terminal Forms #2
+      <td>default
      <tr>
       <td>fin3
-      <td>Terminal Forms #3
+      <td>default
      <tr>
       <td>fina
-      <td>Terminal Forms
+      <td>default
      <tr>
       <td>flac
-      <td>Flattened accent forms
+      <td>default
      <tr>
       <td>frac
-      <td>Fractions
+      <td>default
+     <tr>
+      <td>fwid
+      <td>110
      <tr>
       <td>half
-      <td>Half Forms
+      <td>default
      <tr>
       <td>haln
-      <td>Halant Forms
+      <td>default
+     <tr>
+      <td>halt
+      <td>111
+     <tr>
+      <td>hist
+      <td>112
+     <tr>
+      <td>hkna
+      <td>113
+     <tr>
+      <td>hlig
+      <td>114
+     <tr>
+      <td>hngl
+      <td>115
+     <tr>
+      <td>hojo
+      <td>116
+     <tr>
+      <td>hwid
+      <td>117
      <tr>
       <td>init
-      <td>Initial Forms
+      <td>default
      <tr>
       <td>isol
-      <td>Isolated Forms
+      <td>default
+     <tr>
+      <td>ital
+      <td>118
      <tr>
       <td>jalt
-      <td>Justification Alternates
+      <td>default
+     <tr>
+      <td>jp78
+      <td>119
+     <tr>
+      <td>jp83
+      <td>120
+     <tr>
+      <td>jp90
+      <td>121
+     <tr>
+      <td>jp04
+      <td>122
      <tr>
       <td>kern
-      <td>Kerning
+      <td>default
+     <tr>
+      <td>lfbd
+      <td>123
      <tr>
       <td>liga
-      <td>Standard Ligatures
+      <td>default
      <tr>
       <td>ljmo
-      <td>Leading Jamo Forms
+      <td>default
+     <tr>
+      <td>lnum
+      <td>124
      <tr>
       <td>locl
-      <td>Localized Forms
+      <td>default
      <tr>
       <td>ltra
-      <td>Left-to-right alternates
+      <td>default
      <tr>
       <td>ltrm
-      <td>Left-to-right mirrored forms
+      <td>default
      <tr>
       <td>mark
-      <td>Mark Positioning
+      <td>default
      <tr>
       <td>med2
-      <td>Medial Forms #2
+      <td>default
      <tr>
       <td>medi
-      <td>Medial Forms
+      <td>default
+     <tr>
+      <td>mgrk
+      <td>125
      <tr>
       <td>mkmk
-      <td>Mark to Mark Positioning
+      <td>default
      <tr>
       <td>mset
-      <td>Mark Positioning via Substitution
+      <td>default
+     <tr>
+      <td>nalt
+      <td>126
+     <tr>
+      <td>nlck
+      <td>127
      <tr>
       <td>nukt
-      <td>Nukta Forms
+      <td>default
      <tr>
       <td>numr
-      <td>Numerators
+      <td>default
+     <tr>
+      <td>onum
+      <td>128
+     <tr>
+      <td>opbd
+      <td>129
+     <tr>
+      <td>ordn
+      <td>130
+     <tr>
+      <td>ornm
+      <td>131
+     <tr>
+      <td>palt
+      <td>132
+     <tr>
+      <td>pcap
+      <td>133
+     <tr>
+      <td>pkna
+      <td>134
+     <tr>
+      <td>pnum
+      <td>135
      <tr>
       <td>pref
-      <td>Pre-Base Forms
+      <td>default
      <tr>
       <td>pres
-      <td>Pre-base Substitutions
+      <td>default
      <tr>
       <td>pstf
-      <td>Post-base Forms
+      <td>default
      <tr>
       <td>psts
-      <td>Post-base Substitutions
+      <td>default
+     <tr>
+      <td>pwid
+      <td>136
+     <tr>
+      <td>qwid
+      <td>137
      <tr>
       <td>rand
-      <td>Randomize
+      <td>default
      <tr>
       <td>rclt
-      <td>Required Contextual Alternates
+      <td>default
      <tr>
       <td>rkrf
-      <td>Rakar Forms
+      <td>default
      <tr>
       <td>rlig
-      <td>Required Ligatures
+      <td>default
      <tr>
       <td>rphf
-      <td>Reph Forms
+      <td>default
+     <tr>
+      <td>rtbd
+      <td>138
      <tr>
       <td>rtla
-      <td>Right-to-left alternates
+      <td>default
      <tr>
       <td>rtlm
-      <td>Right-to-left mirrored forms
+      <td>default
+     <tr>
+      <td>ruby
+      <td>139
      <tr>
       <td>rvrn
-      <td>Required Variation Alternates
+      <td>default
+     <tr>
+      <td>salt
+      <td>140
+     <tr>
+      <td>sinf
+      <td>141
+     <tr>
+      <td>size
+      <td>142
+     <tr>
+      <td>smcp
+      <td>143
+     <tr>
+      <td>smpl
+      <td>144
+     <tr>
+      <td>ss01-ss20
+      <td>145-164
      <tr>
       <td>ssty
-      <td>Math script style alternates
+      <td>default
      <tr>
       <td>stch
-      <td>Stretching Glyph Decomposition
+      <td>default
+     <tr>
+      <td>subs
+      <td>165
+     <tr>
+      <td>sups
+      <td>166
+     <tr>
+      <td>swsh
+      <td>167
+     <tr>
+      <td>titl
+      <td>168
      <tr>
       <td>tjmo
-      <td>Trailing Jamo Forms
+      <td>default
+     <tr>
+      <td>tnam
+      <td>169
+     <tr>
+      <td>tnum
+      <td>170
+     <tr>
+      <td>trad
+      <td>171
+     <tr>
+      <td>twid
+      <td>172
+     <tr>
+      <td>unic
+      <td>173
      <tr>
       <td>valt
-      <td>Alternate Vertical Metrics
+      <td>default
      <tr>
       <td>vatu
-      <td>Vattu Variants
+      <td>default
      <tr>
       <td>vchw
-      <td>Vertical Contextual Half-width Spacing
+      <td>default
      <tr>
       <td>vert
-      <td>Vertical Writing
+      <td>default
+     <tr>
+      <td>vhal
+      <td>174
      <tr>
       <td>vjmo
-      <td>Vowel Jamo Forms
+      <td>default
+     <tr>
+      <td>vkna
+      <td>175
      <tr>
       <td>vkrn
-      <td>Vertical Kerning
+      <td>default
      <tr>
       <td>vpal
-      <td>Proportional Alternate Vertical Metrics
+      <td>default
      <tr>
       <td>vrt2
-      <td>Vertical Alternates and Rotation
+      <td>default
      <tr>
       <td>vrtr
-      <td>Vertical Alternates for Rotation
+      <td>default
+     <tr>
+      <td>zero
+      <td>176
    </table>
    <h2 class="heading settled" id="extension-example"><span class="content"> Appendix B: Extension Algorithm Example Execution</span><a class="self-link" href="#extension-example"></a></h2>
    <p>This appendix provides examples of how a typical IFT font would be processed by the <a href="#extend-font-subset">§ 4.3 Incremental Font Extension Algorithm</a> algorithm.</p>
@@ -3505,7 +3720,7 @@ content covered by the target subset definition.</p>
    </ul>
    <h3 class="heading settled" id="appendix-b-example-2"><span class="content">Example 2: Glyph Keyed Patches with Child Entries</span><a class="self-link" href="#appendix-b-example-2"></a></h3>
    <p>In this example the IFT font contains a set of <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches which utilize child entries to correctly handle the inclusion of patches
-for <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#format-14-unicode-variation-sequences">UVS</a> substitutions. For each set of base glyphs there are a set of alternate glyphs
+for <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#format-14-unicode-variation-sequences">UVS</a> substitutions. For each set of base glyphs there are a set of alternate glyphs
 which are substituted in via a variation selector. These are kept in a separate patch. The alternate glyph patches are configured (via child entries)
 to load only when the base glyphs and the variation selector are present simultaneously.</p>
    <p><b>Initial font</b>: contains the following IFT  patch mapping. Note: when codepoint, features, design space, or child entry sets are unspecified in
@@ -3821,11 +4036,11 @@ content covered by the target subset definition.</p>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
    <dt id="biblio-css-fonts-4">[CSS-FONTS-4]
-   <dd>Chris Lilley. <a href="https://drafts.csswg.org/css-fonts-4/"><cite>CSS Fonts Module Level 4</cite></a>. URL: <a href="https://drafts.csswg.org/css-fonts-4/">https://drafts.csswg.org/css-fonts-4/</a>
+   <dd>Chris Lilley. <a href="https://www.w3.org/TR/css-fonts-4/"><cite>CSS Fonts Module Level 4</cite></a>. 1 February 2024. WD. URL: <a href="https://www.w3.org/TR/css-fonts-4/">https://www.w3.org/TR/css-fonts-4/</a>
    <dt id="biblio-iso14496-22">[ISO14496-22]
    <dd><a href="https://www.iso.org/standard/87621.html"><cite>Information technology — Coding of audio-visual objects — Part 22: Open Font Format</cite></a>. Under development. URL: <a href="https://www.iso.org/standard/87621.html">https://www.iso.org/standard/87621.html</a>
    <dt id="biblio-open-type">[OPEN-TYPE]
-   <dd><a href="https://docs.microsoft.com/en-us/typography/opentype/spec"><cite>OpenType Specification</cite></a>. May 2024. Note. URL: <a href="https://docs.microsoft.com/en-us/typography/opentype/spec">https://docs.microsoft.com/en-us/typography/opentype/spec</a>
+   <dd><a href="https://learn.microsoft.com/en-us/typography/opentype/spec"><cite>OpenType Specification</cite></a>. May 2024. Note. URL: <a href="https://learn.microsoft.com/en-us/typography/opentype/spec">https://learn.microsoft.com/en-us/typography/opentype/spec</a>
    <dt id="biblio-pfe-report">[PFE-report]
    <dd>Chris Lilley. <a href="https://www.w3.org/TR/PFE-evaluation/"><cite>Progressive Font Enrichment: Evaluation Report</cite></a>. 15 October 2020. Note. URL: <a href="https://www.w3.org/TR/PFE-evaluation/">https://www.w3.org/TR/PFE-evaluation/</a>
    <dt id="biblio-rfc2119">[RFC2119]
@@ -3845,14 +4060,14 @@ content covered by the target subset definition.</p>
    <dt id="biblio-utf-8">[UTF-8]
    <dd>F. Yergeau. <a href="https://www.rfc-editor.org/rfc/rfc3629"><cite>UTF-8, a transformation format of ISO 10646</cite></a>. November 2003. Internet Standard. URL: <a href="https://www.rfc-editor.org/rfc/rfc3629">https://www.rfc-editor.org/rfc/rfc3629</a>
    <dt id="biblio-woff2">[WOFF2]
-   <dd>Vladimir Levantovsky. <a href="https://w3c.github.io/woff/woff2/"><cite>WOFF File Format 2.0</cite></a>. URL: <a href="https://w3c.github.io/woff/woff2/">https://w3c.github.io/woff/woff2/</a>
+   <dd>Vladimir Levantovsky. <a href="https://www.w3.org/TR/WOFF2/"><cite>WOFF File Format 2.0</cite></a>. 8 August 2024. REC. URL: <a href="https://www.w3.org/TR/WOFF2/">https://www.w3.org/TR/WOFF2/</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
    <dt id="biblio-css-conditional-5">[CSS-CONDITIONAL-5]
-   <dd>Chris Lilley; et al. <a href="https://drafts.csswg.org/css-conditional-5/"><cite>CSS Conditional Rules Module Level 5</cite></a>. URL: <a href="https://drafts.csswg.org/css-conditional-5/">https://drafts.csswg.org/css-conditional-5/</a>
+   <dd>Chris Lilley; et al. <a href="https://www.w3.org/TR/css-conditional-5/"><cite>CSS Conditional Rules Module Level 5</cite></a>. 5 November 2024. WD. URL: <a href="https://www.w3.org/TR/css-conditional-5/">https://www.w3.org/TR/css-conditional-5/</a>
    <dt id="biblio-enabling-typography">[ENABLING-TYPOGRAPHY]
-   <dd>John Hudson. <a href="https://tiro.com/John/Enabling_Typography_(OTL).pdf"><cite>Enabling Typography: towards a general model of OpenType Layout</cite></a>. April 15th, 2014. Note. URL: <a href="https://tiro.com/John/Enabling_Typography_(OTL).pdf">https://tiro.com/John/Enabling_Typography_(OTL).pdf</a>
+   <dd>John Hudson. <a href="https://www.tiro.com/articles/enabling-typography"><cite>Enabling Typography: towards a general model of OpenType Layout</cite></a>. April 15th, 2014. Note. URL: <a href="https://www.tiro.com/articles/enabling-typography">https://www.tiro.com/articles/enabling-typography</a>
    <dt id="biblio-fetch">[FETCH]
    <dd><a href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. 17 June 2024. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
    <dt id="biblio-rfc9113">[RFC9113]
@@ -4546,109 +4761,111 @@ function genLinkingSyntaxes(dfn) {
 "use strict";
 {
 let refsData = {
-"#abstract-opdef-check-entry-intersection": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Check entry intersection","type":"abstract-op","url":"#abstract-opdef-check-entry-intersection"},
-"#abstract-opdef-extend-an-incremental-font-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Extend an Incremental Font Subset","type":"abstract-op","url":"#abstract-opdef-extend-an-incremental-font-subset"},
-"#abstract-opdef-fully-expand-a-font-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Fully Expand a Font Subset","type":"abstract-op","url":"#abstract-opdef-fully-expand-a-font-subset"},
-"#abstract-opdef-handle-errors": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Handle errors","type":"abstract-op","url":"#abstract-opdef-handle-errors"},
-"#abstract-opdef-interpret-format-1-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-1-patch-map"},
-"#abstract-opdef-interpret-format-2-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map"},
-"#abstract-opdef-interpret-format-2-patch-map-entry": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map Entry","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map-entry"},
-"#abstract-opdef-load-patch-file": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Load patch file","type":"abstract-op","url":"#abstract-opdef-load-patch-file"},
-"#abstract-opdef-remove-entries-from-format-1-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Remove Entries from Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-remove-entries-from-format-1-patch-map"},
-"#abstract-opdef-remove-entries-from-format-2-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Remove Entries from Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-remove-entries-from-format-2-patch-map"},
-"#branch-factor-encoding": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"branch factor encoding","type":"dfn","url":"#branch-factor-encoding"},
-"#design-space-segment": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"design space segment","type":"dfn","url":"#design-space-segment"},
-"#design-space-segment-end": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"end","type":"dfn","url":"#design-space-segment-end"},
-"#design-space-segment-start": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"start","type":"dfn","url":"#design-space-segment-start"},
-"#design-space-segment-tag": {"export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#design-space-segment-tag"},
-"#entrymaprecord": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecord","type":"dfn","url":"#entrymaprecord"},
-"#entrymaprecord-firstentryindex": {"export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstentryindex","type":"dfn","url":"#entrymaprecord-firstentryindex"},
-"#entrymaprecord-lastentryindex": {"export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"lastentryindex","type":"dfn","url":"#entrymaprecord-lastentryindex"},
-"#feature-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"feature map","type":"dfn","url":"#feature-map"},
-"#feature-map-entrymaprecords": {"export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecords","type":"dfn","url":"#feature-map-entrymaprecords"},
-"#feature-map-featurerecords": {"export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecords","type":"dfn","url":"#feature-map-featurerecords"},
-"#featurerecord": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecord","type":"dfn","url":"#featurerecord"},
-"#featurerecord-entrymapcount": {"export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymapcount","type":"dfn","url":"#featurerecord-entrymapcount"},
-"#featurerecord-featuretag": {"export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretag","type":"dfn","url":"#featurerecord-featuretag"},
-"#featurerecord-firstnewentryindex": {"export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstnewentryindex","type":"dfn","url":"#featurerecord-firstnewentryindex"},
-"#font-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font patch","type":"dfn","url":"#font-patch"},
-"#font-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset","type":"dfn","url":"#font-subset"},
-"#font-subset-definition": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset definition","type":"dfn","url":"#font-subset-definition"},
-"#format-1-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 1 patch map","type":"dfn","url":"#format-1-patch-map"},
-"#format-1-patch-map-appliedentriesbitmap": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"appliedentriesbitmap","type":"dfn","url":"#format-1-patch-map-appliedentriesbitmap"},
-"#format-1-patch-map-compatibilityid": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-1-patch-map-compatibilityid"},
-"#format-1-patch-map-featuremapoffset": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuremapoffset","type":"dfn","url":"#format-1-patch-map-featuremapoffset"},
-"#format-1-patch-map-format": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-1-patch-map-format"},
-"#format-1-patch-map-glyphcount": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#format-1-patch-map-glyphcount"},
-"#format-1-patch-map-maxentryindex": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxentryindex","type":"dfn","url":"#format-1-patch-map-maxentryindex"},
-"#format-1-patch-map-maxglyphmapentryindex": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxglyphmapentryindex","type":"dfn","url":"#format-1-patch-map-maxglyphmapentryindex"},
-"#format-1-patch-map-patchformat": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#format-1-patch-map-patchformat"},
-"#format-1-patch-map-uritemplate": {"export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-1-patch-map-uritemplate"},
-"#format-2-patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 2 patch map","type":"dfn","url":"#format-2-patch-map"},
-"#format-2-patch-map-compatibilityid": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-2-patch-map-compatibilityid"},
-"#format-2-patch-map-defaultpatchformat": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"defaultpatchformat","type":"dfn","url":"#format-2-patch-map-defaultpatchformat"},
-"#format-2-patch-map-entries": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#format-2-patch-map-entries"},
-"#format-2-patch-map-entrycount": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrycount","type":"dfn","url":"#format-2-patch-map-entrycount"},
-"#format-2-patch-map-entryidstringdata": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringdata","type":"dfn","url":"#format-2-patch-map-entryidstringdata"},
-"#format-2-patch-map-format": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-2-patch-map-format"},
-"#format-2-patch-map-uritemplate": {"export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-2-patch-map-uritemplate"},
-"#full-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"full invalidation","type":"dfn","url":"#full-invalidation"},
-"#glyph-closure": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph closure","type":"dfn","url":"#glyph-closure"},
-"#glyph-keyed-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph keyed patch","type":"dfn","url":"#glyph-keyed-patch"},
-"#glyph-keyed-patch-brotlistream": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#glyph-keyed-patch-brotlistream"},
-"#glyph-keyed-patch-compatibilityid": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#glyph-keyed-patch-compatibilityid"},
-"#glyph-keyed-patch-flags": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#glyph-keyed-patch-flags"},
-"#glyph-keyed-patch-maxuncompressedlength": {"export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#glyph-keyed-patch-maxuncompressedlength"},
-"#glyph-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph map","type":"dfn","url":"#glyph-map"},
-"#glyph-map-entryindex": {"export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryindex","type":"dfn","url":"#glyph-map-entryindex"},
-"#glyph-map-firstmappedglyph": {"export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstmappedglyph","type":"dfn","url":"#glyph-map-firstmappedglyph"},
-"#glyphpatches": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphpatches","type":"dfn","url":"#glyphpatches"},
-"#glyphpatches-glyphcount": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#glyphpatches-glyphcount"},
-"#glyphpatches-glyphdata": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdata","type":"dfn","url":"#glyphpatches-glyphdata"},
-"#glyphpatches-glyphdataoffsets": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdataoffsets","type":"dfn","url":"#glyphpatches-glyphdataoffsets"},
-"#glyphpatches-glyphids": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphids","type":"dfn","url":"#glyphpatches-glyphids"},
-"#glyphpatches-tables": {"export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tables","type":"dfn","url":"#glyphpatches-tables"},
-"#incremental-font": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"incremental font","type":"dfn","url":"#incremental-font"},
-"#mapping-entries": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entries","type":"dfn","url":"#mapping-entries"},
-"#mapping-entries-entries": {"export":true,"for_":["Mapping Entries"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#mapping-entries-entries"},
-"#mapping-entry": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entry","type":"dfn","url":"#mapping-entry"},
-"#mapping-entry-bias": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"bias","type":"dfn","url":"#mapping-entry-bias"},
-"#mapping-entry-childentryindices": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"childentryindices","type":"dfn","url":"#mapping-entry-childentryindices"},
-"#mapping-entry-childentrymatchmodeandcount": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"childentrymatchmodeandcount","type":"dfn","url":"#mapping-entry-childentrymatchmodeandcount"},
-"#mapping-entry-codepoints": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"codepoints","type":"dfn","url":"#mapping-entry-codepoints"},
-"#mapping-entry-designspacecount": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacecount","type":"dfn","url":"#mapping-entry-designspacecount"},
-"#mapping-entry-designspacesegments": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacesegments","type":"dfn","url":"#mapping-entry-designspacesegments"},
-"#mapping-entry-entryiddelta": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryiddelta","type":"dfn","url":"#mapping-entry-entryiddelta"},
-"#mapping-entry-entryidstringlength": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringlength","type":"dfn","url":"#mapping-entry-entryidstringlength"},
-"#mapping-entry-featurecount": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurecount","type":"dfn","url":"#mapping-entry-featurecount"},
-"#mapping-entry-featuretags": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretags","type":"dfn","url":"#mapping-entry-featuretags"},
-"#mapping-entry-formatflags": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"formatflags","type":"dfn","url":"#mapping-entry-formatflags"},
-"#mapping-entry-patchformat": {"export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#mapping-entry-patchformat"},
-"#no-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"no invalidation","type":"dfn","url":"#no-invalidation"},
-"#partial-invalidation": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"partial invalidation","type":"dfn","url":"#partial-invalidation"},
-"#patch-application-algorithm": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch application algorithm","type":"dfn","url":"#patch-application-algorithm"},
-"#patch-format": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch format","type":"dfn","url":"#patch-format"},
-"#patch-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map","type":"dfn","url":"#patch-map"},
-"#patch-map-entries": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map entries","type":"dfn","url":"#patch-map-entries"},
-"#sparse-bit-set": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"sparse bit set","type":"dfn","url":"#sparse-bit-set"},
-"#table-keyed-patch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"table keyed patch","type":"dfn","url":"#table-keyed-patch"},
-"#table-keyed-patch-compatibilityid": {"export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#table-keyed-patch-compatibilityid"},
-"#table-keyed-patch-patches": {"export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patches","type":"dfn","url":"#table-keyed-patch-patches"},
-"#tablepatch": {"export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tablepatch","type":"dfn","url":"#tablepatch"},
-"#tablepatch-brotlistream": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#tablepatch-brotlistream"},
-"#tablepatch-flags": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#tablepatch-flags"},
-"#tablepatch-maxuncompressedlength": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#tablepatch-maxuncompressedlength"},
-"#tablepatch-tag": {"export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#tablepatch-tag"},
+"#abstract-opdef-check-entry-intersection": {"displayText":"Check entry intersection","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Check entry intersection","type":"abstract-op","url":"#abstract-opdef-check-entry-intersection"},
+"#abstract-opdef-extend-an-incremental-font-subset": {"displayText":"Extend an Incremental Font Subset","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Extend an Incremental Font Subset","type":"abstract-op","url":"#abstract-opdef-extend-an-incremental-font-subset"},
+"#abstract-opdef-fully-expand-a-font-subset": {"displayText":"Fully Expand a Font Subset","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Fully Expand a Font Subset","type":"abstract-op","url":"#abstract-opdef-fully-expand-a-font-subset"},
+"#abstract-opdef-handle-errors": {"displayText":"Handle errors","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Handle errors","type":"abstract-op","url":"#abstract-opdef-handle-errors"},
+"#abstract-opdef-interpret-format-1-patch-map": {"displayText":"Interpret Format 1 Patch Map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-1-patch-map"},
+"#abstract-opdef-interpret-format-2-patch-map": {"displayText":"Interpret Format 2 Patch Map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map"},
+"#abstract-opdef-interpret-format-2-patch-map-entry": {"displayText":"Interpret Format 2 Patch Map Entry","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Interpret Format 2 Patch Map Entry","type":"abstract-op","url":"#abstract-opdef-interpret-format-2-patch-map-entry"},
+"#abstract-opdef-load-patch-file": {"displayText":"Load patch file","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Load patch file","type":"abstract-op","url":"#abstract-opdef-load-patch-file"},
+"#abstract-opdef-remove-entries-from-format-1-patch-map": {"displayText":"Remove Entries from Format 1 Patch Map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Remove Entries from Format 1 Patch Map","type":"abstract-op","url":"#abstract-opdef-remove-entries-from-format-1-patch-map"},
+"#abstract-opdef-remove-entries-from-format-2-patch-map": {"displayText":"Remove Entries from Format 2 Patch Map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Remove Entries from Format 2 Patch Map","type":"abstract-op","url":"#abstract-opdef-remove-entries-from-format-2-patch-map"},
+"#branch-factor-encoding": {"displayText":"branch factor encoding","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"branch factor encoding","type":"dfn","url":"#branch-factor-encoding"},
+"#design-space-segment": {"displayText":"design space segment","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"design space segment","type":"dfn","url":"#design-space-segment"},
+"#design-space-segment-end": {"displayText":"end","export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"end","type":"dfn","url":"#design-space-segment-end"},
+"#design-space-segment-start": {"displayText":"start","export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"start","type":"dfn","url":"#design-space-segment-start"},
+"#design-space-segment-tag": {"displayText":"tag","export":true,"for_":["Design Space Segment"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#design-space-segment-tag"},
+"#entrymaprecord": {"displayText":"entrymaprecord","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecord","type":"dfn","url":"#entrymaprecord"},
+"#entrymaprecord-firstentryindex": {"displayText":"firstentryindex","export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstentryindex","type":"dfn","url":"#entrymaprecord-firstentryindex"},
+"#entrymaprecord-lastentryindex": {"displayText":"lastentryindex","export":true,"for_":["EntryMapRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"lastentryindex","type":"dfn","url":"#entrymaprecord-lastentryindex"},
+"#feature-map": {"displayText":"feature map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"feature map","type":"dfn","url":"#feature-map"},
+"#feature-map-entrymaprecords": {"displayText":"entrymaprecords","export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymaprecords","type":"dfn","url":"#feature-map-entrymaprecords"},
+"#feature-map-featurerecords": {"displayText":"featurerecords","export":true,"for_":["Feature Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecords","type":"dfn","url":"#feature-map-featurerecords"},
+"#featurerecord": {"displayText":"featurerecord","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurerecord","type":"dfn","url":"#featurerecord"},
+"#featurerecord-entrymapcount": {"displayText":"entrymapcount","export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrymapcount","type":"dfn","url":"#featurerecord-entrymapcount"},
+"#featurerecord-featuretag": {"displayText":"featuretag","export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretag","type":"dfn","url":"#featurerecord-featuretag"},
+"#featurerecord-firstnewentryindex": {"displayText":"firstnewentryindex","export":true,"for_":["FeatureRecord"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstnewentryindex","type":"dfn","url":"#featurerecord-firstnewentryindex"},
+"#font-patch": {"displayText":"font patch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font patch","type":"dfn","url":"#font-patch"},
+"#font-subset": {"displayText":"font subset","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset","type":"dfn","url":"#font-subset"},
+"#font-subset-definition": {"displayText":"font subset definition","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"font subset definition","type":"dfn","url":"#font-subset-definition"},
+"#format-1-patch-map": {"displayText":"format 1 patch map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 1 patch map","type":"dfn","url":"#format-1-patch-map"},
+"#format-1-patch-map-appliedentriesbitmap": {"displayText":"appliedentriesbitmap","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"appliedentriesbitmap","type":"dfn","url":"#format-1-patch-map-appliedentriesbitmap"},
+"#format-1-patch-map-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-1-patch-map-compatibilityid"},
+"#format-1-patch-map-featuremapoffset": {"displayText":"featuremapoffset","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuremapoffset","type":"dfn","url":"#format-1-patch-map-featuremapoffset"},
+"#format-1-patch-map-format": {"displayText":"format","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-1-patch-map-format"},
+"#format-1-patch-map-glyphcount": {"displayText":"glyphcount","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#format-1-patch-map-glyphcount"},
+"#format-1-patch-map-maxentryindex": {"displayText":"maxentryindex","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxentryindex","type":"dfn","url":"#format-1-patch-map-maxentryindex"},
+"#format-1-patch-map-maxglyphmapentryindex": {"displayText":"maxglyphmapentryindex","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxglyphmapentryindex","type":"dfn","url":"#format-1-patch-map-maxglyphmapentryindex"},
+"#format-1-patch-map-patchformat": {"displayText":"patchformat","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#format-1-patch-map-patchformat"},
+"#format-1-patch-map-uritemplate": {"displayText":"uritemplate","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-1-patch-map-uritemplate"},
+"#format-2-patch-map": {"displayText":"format 2 patch map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 2 patch map","type":"dfn","url":"#format-2-patch-map"},
+"#format-2-patch-map-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-2-patch-map-compatibilityid"},
+"#format-2-patch-map-defaultpatchformat": {"displayText":"defaultpatchformat","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"defaultpatchformat","type":"dfn","url":"#format-2-patch-map-defaultpatchformat"},
+"#format-2-patch-map-entries": {"displayText":"entries","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#format-2-patch-map-entries"},
+"#format-2-patch-map-entrycount": {"displayText":"entrycount","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrycount","type":"dfn","url":"#format-2-patch-map-entrycount"},
+"#format-2-patch-map-entryidstringdata": {"displayText":"entryidstringdata","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringdata","type":"dfn","url":"#format-2-patch-map-entryidstringdata"},
+"#format-2-patch-map-format": {"displayText":"format","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-2-patch-map-format"},
+"#format-2-patch-map-uritemplate": {"displayText":"uritemplate","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-2-patch-map-uritemplate"},
+"#full-invalidation": {"displayText":"full invalidation","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"full invalidation","type":"dfn","url":"#full-invalidation"},
+"#glyph-closure": {"displayText":"glyph closure","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph closure","type":"dfn","url":"#glyph-closure"},
+"#glyph-keyed-patch": {"displayText":"glyph keyed patch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph keyed patch","type":"dfn","url":"#glyph-keyed-patch"},
+"#glyph-keyed-patch-brotlistream": {"displayText":"brotlistream","export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#glyph-keyed-patch-brotlistream"},
+"#glyph-keyed-patch-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#glyph-keyed-patch-compatibilityid"},
+"#glyph-keyed-patch-flags": {"displayText":"flags","export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#glyph-keyed-patch-flags"},
+"#glyph-keyed-patch-maxuncompressedlength": {"displayText":"maxuncompressedlength","export":true,"for_":["Glyph keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#glyph-keyed-patch-maxuncompressedlength"},
+"#glyph-map": {"displayText":"glyph map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph map","type":"dfn","url":"#glyph-map"},
+"#glyph-map-entryindex": {"displayText":"entryindex","export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryindex","type":"dfn","url":"#glyph-map-entryindex"},
+"#glyph-map-firstmappedglyph": {"displayText":"firstmappedglyph","export":true,"for_":["Glyph Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"firstmappedglyph","type":"dfn","url":"#glyph-map-firstmappedglyph"},
+"#glyphpatches": {"displayText":"glyphpatches","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphpatches","type":"dfn","url":"#glyphpatches"},
+"#glyphpatches-glyphcount": {"displayText":"glyphcount","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#glyphpatches-glyphcount"},
+"#glyphpatches-glyphdata": {"displayText":"glyphdata","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdata","type":"dfn","url":"#glyphpatches-glyphdata"},
+"#glyphpatches-glyphdataoffsets": {"displayText":"glyphdataoffsets","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphdataoffsets","type":"dfn","url":"#glyphpatches-glyphdataoffsets"},
+"#glyphpatches-glyphids": {"displayText":"glyphids","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphids","type":"dfn","url":"#glyphpatches-glyphids"},
+"#glyphpatches-tables": {"displayText":"tables","export":true,"for_":["GlyphPatches"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tables","type":"dfn","url":"#glyphpatches-tables"},
+"#incremental-font": {"displayText":"incremental font","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"incremental font","type":"dfn","url":"#incremental-font"},
+"#mapping-entries": {"displayText":"mapping entries","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entries","type":"dfn","url":"#mapping-entries"},
+"#mapping-entries-entries": {"displayText":"entries","export":true,"for_":["Mapping Entries"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#mapping-entries-entries"},
+"#mapping-entry": {"displayText":"mapping entry","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"mapping entry","type":"dfn","url":"#mapping-entry"},
+"#mapping-entry-bias": {"displayText":"bias","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"bias","type":"dfn","url":"#mapping-entry-bias"},
+"#mapping-entry-childentryindices": {"displayText":"childentryindices","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"childentryindices","type":"dfn","url":"#mapping-entry-childentryindices"},
+"#mapping-entry-childentrymatchmodeandcount": {"displayText":"childentrymatchmodeandcount","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"childentrymatchmodeandcount","type":"dfn","url":"#mapping-entry-childentrymatchmodeandcount"},
+"#mapping-entry-codepoints": {"displayText":"codepoints","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"codepoints","type":"dfn","url":"#mapping-entry-codepoints"},
+"#mapping-entry-designspacecount": {"displayText":"designspacecount","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacecount","type":"dfn","url":"#mapping-entry-designspacecount"},
+"#mapping-entry-designspacesegments": {"displayText":"designspacesegments","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"designspacesegments","type":"dfn","url":"#mapping-entry-designspacesegments"},
+"#mapping-entry-entryiddelta": {"displayText":"entryiddelta","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryiddelta","type":"dfn","url":"#mapping-entry-entryiddelta"},
+"#mapping-entry-entryidstringlength": {"displayText":"entryidstringlength","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringlength","type":"dfn","url":"#mapping-entry-entryidstringlength"},
+"#mapping-entry-featurecount": {"displayText":"featurecount","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featurecount","type":"dfn","url":"#mapping-entry-featurecount"},
+"#mapping-entry-featuretags": {"displayText":"featuretags","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuretags","type":"dfn","url":"#mapping-entry-featuretags"},
+"#mapping-entry-formatflags": {"displayText":"formatflags","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"formatflags","type":"dfn","url":"#mapping-entry-formatflags"},
+"#mapping-entry-patchformat": {"displayText":"patchformat","export":true,"for_":["Mapping Entry"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#mapping-entry-patchformat"},
+"#no-invalidation": {"displayText":"no invalidation","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"no invalidation","type":"dfn","url":"#no-invalidation"},
+"#partial-invalidation": {"displayText":"partial invalidation","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"partial invalidation","type":"dfn","url":"#partial-invalidation"},
+"#patch-application-algorithm": {"displayText":"patch application algorithm","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch application algorithm","type":"dfn","url":"#patch-application-algorithm"},
+"#patch-format": {"displayText":"patch format","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch format","type":"dfn","url":"#patch-format"},
+"#patch-map": {"displayText":"patch map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map","type":"dfn","url":"#patch-map"},
+"#patch-map-entries": {"displayText":"patch map entries","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map entries","type":"dfn","url":"#patch-map-entries"},
+"#sparse-bit-set": {"displayText":"sparse bit set","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"sparse bit set","type":"dfn","url":"#sparse-bit-set"},
+"#table-keyed-patch": {"displayText":"table keyed patch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"table keyed patch","type":"dfn","url":"#table-keyed-patch"},
+"#table-keyed-patch-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#table-keyed-patch-compatibilityid"},
+"#table-keyed-patch-patches": {"displayText":"patches","export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patches","type":"dfn","url":"#table-keyed-patch-patches"},
+"#tablepatch": {"displayText":"tablepatch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tablepatch","type":"dfn","url":"#tablepatch"},
+"#tablepatch-brotlistream": {"displayText":"brotlistream","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"brotlistream","type":"dfn","url":"#tablepatch-brotlistream"},
+"#tablepatch-flags": {"displayText":"flags","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#tablepatch-flags"},
+"#tablepatch-maxuncompressedlength": {"displayText":"maxuncompressedlength","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#tablepatch-maxuncompressedlength"},
+"#tablepatch-tag": {"displayText":"tag","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#tablepatch-tag"},
 };
 
 function mkRefHint(link, ref) {
     const linkText = link.textContent;
     let dfnTextElements = '';
-    if (ref.text != linkText) {
+    if (ref.displayText.toLowerCase() != linkText.toLowerCase()) {
+        // Give the original term if it's being displayed in a different way.
+        // But allow casing differences, they're insignificant.
         dfnTextElements =
             mk.li({},
                 mk.b({}, "Term: "),
-                mk.span({}, ref.text)
+                mk.span({}, ref.displayText)
             );
     }
     const forList = ref.for_;
