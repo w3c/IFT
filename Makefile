@@ -7,4 +7,4 @@ feature-registry.html: feature-registry.csv registry_to_html.py
 	python3 registry_to_html.py > feature-registry.html
 
 clean:
-	rm Overview.html RangeRequest.html feature-registry.html
+	rm -f Overview.html feature-registry.html

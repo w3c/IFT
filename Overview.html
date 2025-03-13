@@ -4,9 +4,9 @@
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <title>Incremental Font Transfer</title>
   <meta content="WD" name="w3c-status">
-  <meta content="Bikeshed version ac5ea272d, updated Fri Dec 6 15:45:15 2024 -0800" name="generator">
+  <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="78512794fb4555ffa39ad9549dddca07126bfe89" name="revision">
+  <meta content="f081fdaaaa339aab2046b8d11ca288da7c5464da" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1123,7 +1123,7 @@ information about the patch which should be applied when the entry is matched. <
         <li data-md>
          <p><a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①">font subset definition</a>: defines the base coverage.</p>
         <li data-md>
-         <p>References to zero or more child <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①">Patch Map Entry</a>'s:<br> these child entries are used to extend the coverage.</p>
+         <p>References to zero or more child <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①">Patch Map Entry</a>’s:<br> these child entries are used to extend the coverage.</p>
         <li data-md>
          <p>Child entry match mode, which can be either conjunctive or disjunctive.</p>
        </ul>
@@ -1942,7 +1942,7 @@ If the template expansion results in an error (see: <a href="https://www.rfc-edi
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entries" data-dfn-type="dfn" data-noexport id="mapping-entries-entries">entries</dfn>[variable]
-      <td>Byte array containing the encoded bytes of <a data-link-type="dfn" href="#format-2-patch-map-entrycount" id="ref-for-format-2-patch-map-entrycount">entryCount</a> <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry">Mapping Entry</a>'s. Each entry has a variable
+      <td>Byte array containing the encoded bytes of <a data-link-type="dfn" href="#format-2-patch-map-entrycount" id="ref-for-format-2-patch-map-entrycount">entryCount</a> <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry">Mapping Entry</a>’s. Each entry has a variable
         length, which is determined following <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map-entry" id="ref-for-abstract-opdef-interpret-format-2-patch-map-entry">Interpret Format 2 Patch Map Entry</a>.
    </table>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="mapping-entry">Mapping Entry</dfn> encoding:</p>
@@ -2146,7 +2146,7 @@ by <a data-link-type="dfn" href="#design-space-segment-tag" id="ref-for-design-s
       <li data-md>
        <p>The child entry indices refer to previously loaded entries. 0 is the first <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry④">Mapping Entry</a> in <var>prior entry list</var>, 1 the second
  and so on. For each value in <a data-link-type="dfn" href="#mapping-entry-childentryindices" id="ref-for-mapping-entry-childentryindices①">childEntryIndices</a> locate the entry in <var>prior entry list</var> with a matching index.
- Add a reference to that entry into entry. If a <a data-link-type="dfn" href="#mapping-entry-childentryindices" id="ref-for-mapping-entry-childentryindices②">childEntryIndices</a> is greater than or equal to the length
+ Add a reference to that entry into <var>entry</var>. If a <a data-link-type="dfn" href="#mapping-entry-childentryindices" id="ref-for-mapping-entry-childentryindices②">childEntryIndices</a> is greater than or equal to the length
  of <var>prior entry list</var> then, this encoding is invalid return an error.</p>
      </ul>
     <li data-md>
@@ -2240,7 +2240,7 @@ ignored.</p>
       <th>Bit 1
       <th>Bit 0
       <th>Branch Factor (B)
-      <th>Maximum Height (H) 
+      <th>Maximum Height (H)
      <tr>
       <td>0
       <td>0
@@ -2595,7 +2595,7 @@ features, and/or design-variation space.</p>
      <p>Initialize <var>extended font subset</var> to be an empty font with no tables.</p>
     <li data-md>
      <p>Check that the <var>patch</var> is valid according to the requirements in <a href="#table-keyed">§ 6.2 Table Keyed</a> (requirements are marked with a
-"must") and all <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch②">TablePatch</a>'s are contained within <var>patch</var>. Otherwise, return an error</p>
+"must") and all <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch②">TablePatch</a>’s are contained within <var>patch</var>. Otherwise, return an error</p>
     <li data-md>
      <p>Check that the <a data-link-type="dfn" href="#table-keyed-patch-compatibilityid" id="ref-for-table-keyed-patch-compatibilityid">compatibilityId</a> field in <var>patch</var> is equal to <var>compatibility id</var>.
 If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application
@@ -3131,379 +3131,202 @@ to be used by default in most shaper implementations. This list was assembled fr
     <tbody>
      <tr>
       <th>Tag
-      <th>Encoded As
-     <tr>
-      <td>aalt
-      <td>1
+      <th>Name
      <tr>
       <td>abvf
-      <td>default
+      <td>Above-base Forms
      <tr>
       <td>abvm
-      <td>default
+      <td>Above-base Mark Positioning
      <tr>
       <td>abvs
-      <td>default
-     <tr>
-      <td>afrc
-      <td>2
+      <td>Above-base Substitutions
      <tr>
       <td>akhn
-      <td>default
+      <td>Akhand
      <tr>
       <td>blwf
-      <td>default
+      <td>Below-base Forms
      <tr>
       <td>blwm
-      <td>default
+      <td>Below-base Mark Positioning
      <tr>
       <td>blws
-      <td>default
+      <td>Below-base Substitutions
      <tr>
       <td>calt
-      <td>default
-     <tr>
-      <td>case
-      <td>3
+      <td>Contextual Alternates
      <tr>
       <td>ccmp
-      <td>default
+      <td>Glyph Composition / Decomposition
      <tr>
       <td>cfar
-      <td>default
+      <td>Conjunct Form After Ro
      <tr>
       <td>chws
-      <td>default
+      <td>Contextual Half-width Spacing
      <tr>
       <td>cjct
-      <td>default
+      <td>Conjunct Forms
      <tr>
       <td>clig
-      <td>default
-     <tr>
-      <td>cpct
-      <td>4
-     <tr>
-      <td>cpsp
-      <td>5
+      <td>Contextual Ligatures
      <tr>
       <td>cswh
-      <td>default
+      <td>Contextual Swash
      <tr>
       <td>curs
-      <td>default
-     <tr>
-      <td>cv01-cv99
-      <td>6-104
-     <tr>
-      <td>c2pc
-      <td>105
-     <tr>
-      <td>c2sc
-      <td>106
+      <td>Cursive Positioning
      <tr>
       <td>dist
-      <td>default
-     <tr>
-      <td>dlig
-      <td>107
+      <td>Distances
      <tr>
       <td>dnom
-      <td>default
+      <td>Denominators
      <tr>
       <td>dtls
-      <td>default
-     <tr>
-      <td>expt
-      <td>108
-     <tr>
-      <td>falt
-      <td>109
+      <td>Dotless Forms
      <tr>
       <td>fin2
-      <td>default
+      <td>Terminal Forms #2
      <tr>
       <td>fin3
-      <td>default
+      <td>Terminal Forms #3
      <tr>
       <td>fina
-      <td>default
+      <td>Terminal Forms
      <tr>
       <td>flac
-      <td>default
+      <td>Flattened accent forms
      <tr>
       <td>frac
-      <td>default
-     <tr>
-      <td>fwid
-      <td>110
+      <td>Fractions
      <tr>
       <td>half
-      <td>default
+      <td>Half Forms
      <tr>
       <td>haln
-      <td>default
-     <tr>
-      <td>halt
-      <td>111
-     <tr>
-      <td>hist
-      <td>112
-     <tr>
-      <td>hkna
-      <td>113
-     <tr>
-      <td>hlig
-      <td>114
-     <tr>
-      <td>hngl
-      <td>115
-     <tr>
-      <td>hojo
-      <td>116
-     <tr>
-      <td>hwid
-      <td>117
+      <td>Halant Forms
      <tr>
       <td>init
-      <td>default
+      <td>Initial Forms
      <tr>
       <td>isol
-      <td>default
-     <tr>
-      <td>ital
-      <td>118
+      <td>Isolated Forms
      <tr>
       <td>jalt
-      <td>default
-     <tr>
-      <td>jp78
-      <td>119
-     <tr>
-      <td>jp83
-      <td>120
-     <tr>
-      <td>jp90
-      <td>121
-     <tr>
-      <td>jp04
-      <td>122
+      <td>Justification Alternates
      <tr>
       <td>kern
-      <td>default
-     <tr>
-      <td>lfbd
-      <td>123
+      <td>Kerning
      <tr>
       <td>liga
-      <td>default
+      <td>Standard Ligatures
      <tr>
       <td>ljmo
-      <td>default
-     <tr>
-      <td>lnum
-      <td>124
+      <td>Leading Jamo Forms
      <tr>
       <td>locl
-      <td>default
+      <td>Localized Forms
      <tr>
       <td>ltra
-      <td>default
+      <td>Left-to-right alternates
      <tr>
       <td>ltrm
-      <td>default
+      <td>Left-to-right mirrored forms
      <tr>
       <td>mark
-      <td>default
+      <td>Mark Positioning
      <tr>
       <td>med2
-      <td>default
+      <td>Medial Forms #2
      <tr>
       <td>medi
-      <td>default
-     <tr>
-      <td>mgrk
-      <td>125
+      <td>Medial Forms
      <tr>
       <td>mkmk
-      <td>default
+      <td>Mark to Mark Positioning
      <tr>
       <td>mset
-      <td>default
-     <tr>
-      <td>nalt
-      <td>126
-     <tr>
-      <td>nlck
-      <td>127
+      <td>Mark Positioning via Substitution
      <tr>
       <td>nukt
-      <td>default
+      <td>Nukta Forms
      <tr>
       <td>numr
-      <td>default
-     <tr>
-      <td>onum
-      <td>128
-     <tr>
-      <td>opbd
-      <td>129
-     <tr>
-      <td>ordn
-      <td>130
-     <tr>
-      <td>ornm
-      <td>131
-     <tr>
-      <td>palt
-      <td>132
-     <tr>
-      <td>pcap
-      <td>133
-     <tr>
-      <td>pkna
-      <td>134
-     <tr>
-      <td>pnum
-      <td>135
+      <td>Numerators
      <tr>
       <td>pref
-      <td>default
+      <td>Pre-Base Forms
      <tr>
       <td>pres
-      <td>default
+      <td>Pre-base Substitutions
      <tr>
       <td>pstf
-      <td>default
+      <td>Post-base Forms
      <tr>
       <td>psts
-      <td>default
-     <tr>
-      <td>pwid
-      <td>136
-     <tr>
-      <td>qwid
-      <td>137
+      <td>Post-base Substitutions
      <tr>
       <td>rand
-      <td>default
+      <td>Randomize
      <tr>
       <td>rclt
-      <td>default
+      <td>Required Contextual Alternates
      <tr>
       <td>rkrf
-      <td>default
+      <td>Rakar Forms
      <tr>
       <td>rlig
-      <td>default
+      <td>Required Ligatures
      <tr>
       <td>rphf
-      <td>default
-     <tr>
-      <td>rtbd
-      <td>138
+      <td>Reph Forms
      <tr>
       <td>rtla
-      <td>default
+      <td>Right-to-left alternates
      <tr>
       <td>rtlm
-      <td>default
-     <tr>
-      <td>ruby
-      <td>139
+      <td>Right-to-left mirrored forms
      <tr>
       <td>rvrn
-      <td>default
-     <tr>
-      <td>salt
-      <td>140
-     <tr>
-      <td>sinf
-      <td>141
-     <tr>
-      <td>size
-      <td>142
-     <tr>
-      <td>smcp
-      <td>143
-     <tr>
-      <td>smpl
-      <td>144
-     <tr>
-      <td>ss01-ss20
-      <td>145-164
+      <td>Required Variation Alternates
      <tr>
       <td>ssty
-      <td>default
+      <td>Math script style alternates
      <tr>
       <td>stch
-      <td>default
-     <tr>
-      <td>subs
-      <td>165
-     <tr>
-      <td>sups
-      <td>166
-     <tr>
-      <td>swsh
-      <td>167
-     <tr>
-      <td>titl
-      <td>168
+      <td>Stretching Glyph Decomposition
      <tr>
       <td>tjmo
-      <td>default
-     <tr>
-      <td>tnam
-      <td>169
-     <tr>
-      <td>tnum
-      <td>170
-     <tr>
-      <td>trad
-      <td>171
-     <tr>
-      <td>twid
-      <td>172
-     <tr>
-      <td>unic
-      <td>173
+      <td>Trailing Jamo Forms
      <tr>
       <td>valt
-      <td>default
+      <td>Alternate Vertical Metrics
      <tr>
       <td>vatu
-      <td>default
+      <td>Vattu Variants
      <tr>
       <td>vchw
-      <td>default
+      <td>Vertical Contextual Half-width Spacing
      <tr>
       <td>vert
-      <td>default
-     <tr>
-      <td>vhal
-      <td>174
+      <td>Vertical Writing
      <tr>
       <td>vjmo
-      <td>default
-     <tr>
-      <td>vkna
-      <td>175
+      <td>Vowel Jamo Forms
      <tr>
       <td>vkrn
-      <td>default
+      <td>Vertical Kerning
      <tr>
       <td>vpal
-      <td>default
+      <td>Proportional Alternate Vertical Metrics
      <tr>
       <td>vrt2
-      <td>default
+      <td>Vertical Alternates and Rotation
      <tr>
       <td>vrtr
-      <td>default
-     <tr>
-      <td>zero
-      <td>176
+      <td>Vertical Alternates for Rotation
    </table>
    <h2 class="heading settled" id="extension-example"><span class="content"> Appendix B: Extension Algorithm Example Execution</span><a class="self-link" href="#extension-example"></a></h2>
    <p>This appendix provides examples of how a typical IFT font would be processed by the <a href="#extend-font-subset">§ 4.3 Incremental Font Extension Algorithm</a> algorithm.</p>
@@ -4935,7 +4758,12 @@ function hideRefHint(refHint) {
 function showRefHint(link) {
     if(link.classList.contains("dfn-link")) return;
     const url = link.getAttribute("href");
-    const ref = refsData[url];
+    const refHintKey = link.getAttribute("data-refhint-key");
+    let key = url;
+    if(refHintKey) {
+        key = refHintKey + "_" + url;
+    }
+    const ref = refsData[key];
     if(!ref) return;
 
     hideAllRefHints(); // Only display one at this time.
