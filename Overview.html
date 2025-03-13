@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="1f572eaaa54a42581b9f4ddfb539dc2cdb90a54a" name="revision">
+  <meta content="3746c44c40887e3d9e2683d9a366fd9e831db3b6" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1110,9 +1110,12 @@ an existing <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset�
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-format">patch format</dfn> is a specified encoding of changes to be applied relative to a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②">font subset</a>. A set of
 changes encoded according to the format is a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch">font patch</a>. Each <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format">patch format</a> has an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-application-algorithm">patch application algorithm</dfn> which takes a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset③">font subset</a> and a <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch①">font patch</a> encoded in the <a data-link-type="dfn" href="#patch-format" id="ref-for-patch-format①">patch format</a> as input and outputs an extended <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset④">font subset</a>.</p>
    <h3 class="heading settled" data-level="3.3" id="patch-map-dfn"><span class="secno">3.3. </span><span class="content">Patch Map</span><a class="self-link" href="#patch-map-dfn"></a></h3>
-   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map">patch map</dfn> is an <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">open type table</a> which encodes a collection of mappings from <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">font subset definitions</a> to URIs which host <a href="#font-patch-formats">patches</a> that extend the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①">incremental font</a>. A <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map">patch map</a> table encodes a list of <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map-entries">patch map entries</dfn>, where each entry has a key and value.
-The key of an entry defines the coverage of the entry, which is information on what subset definitions will match it. The value specifies
-information about the patch which should be applied when the entry is matched. <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries">Patch Map Entry</a> summary:</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map">patch map</dfn> is an <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">open type table</a> which encodes a collection of
+mappings from <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition">font subset definitions</a> to URIs which host <a href="#font-patch-formats">patches</a> that
+extend the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①">incremental font</a>. A <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map">patch map</a> table encodes a list of <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="patch-map-entries">patch map entries</dfn>, where each
+entry has a key and value.  The key of an entry defines the coverage of the entry, which is information on what subset
+definitions will match it. The value specifies information about the patches which should be applied when the entry is
+matched. <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries">Patch Map Entry</a> summary:</p>
    <table>
     <tbody>
      <tr>
@@ -1131,7 +1134,7 @@ information about the patch which should be applied when the entry is matched. <
       <td>
        <ul>
         <li data-md>
-         <p>Patch URI</p>
+         <p>One or more Patch URIs</p>
         <li data-md>
          <p><a href="#font-patch-formats">Patch Format</a></p>
         <li data-md>
@@ -2007,14 +2010,20 @@ If the template expansion results in an error (see: <a href="https://www.rfc-edi
       Only entries that occurred prior to this <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry①">Mapping Entry</a> in <a data-link-type="dfn" href="#mapping-entries-entries" id="ref-for-mapping-entries-entries②">entries</a> can be referenced. Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑤">formatFlags</a> bit 1 is set. 
      <tr>
       <td>int24
-      <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-entryiddelta">entryIdDelta</dfn>
-      <td> Signed delta which is used to calculate the id for this entry. The id for this entry is the entry id of the previous <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry②">Mapping Entry</a> + 1 + entryIdDelta. Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑥">formatFlags</a> bit 2 is set and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata">entryIdStringData</a> is null (0). If not present delta is assumed to be 0. 
+      <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-entryiddelta">entryIdDelta</dfn>[variable]
+      <td> List of signed deltas which calculate the IDs of the URIs for this entry. If present, has at least one delta. If the least
+      significant bit of a delta is set, then one more delta follows. This repeats until a delta with the least significant bit
+      cleared is encountered. The entry id for each delta the last calculated entry id + 1 + (entryIdDelta / 2). Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑥">formatFlags</a> bit 2 is set and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata">entryIdStringData</a> is null (0).
+      If not present and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata①">entryIdStringData</a> is null (0), then there is one id for this entry and and the
+      delta is assumed to be 0. 
      <tr>
-      <td>uint16
-      <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-entryidstringlength">entryIdStringLength</dfn>
-      <td> The number of bytes that the id string for this entry occupies in the <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata①">entryIdStringData</a> data block.
-      Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑦">formatFlags</a> bit 2 is set and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata②">entryIdStringData</a> is not null (0). If not
-      present the length is assumed to be 0. 
+      <td>uint24
+      <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-entryidstringlength">entryIdStringLength</dfn>[variable]
+      <td> The number of bytes that each id string for this entry occupies in the <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata②">entryIdStringData</a> data block.  If the most significant bit of a length value is set, then another length value follows. This repeats
+      until a length value with the most significant bit cleared is encountered. The actual length value is stored in
+      the least significant 23 bits of each value. Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑦">formatFlags</a> bit 2 is set and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata③">entryIdStringData</a> is not null (0). If present has at least one length value. If not present
+      and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata④">entryIdStringData</a> is not null (0), then the there is one id string for this entry and
+      its length is zero. 
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-patchformat">patchFormat</dfn>
@@ -2077,7 +2086,7 @@ being requested.</p>
     <li data-md>
      <p>Check that the <var>patch map</var> has <a data-link-type="dfn" href="#format-2-patch-map-format" id="ref-for-format-2-patch-map-format">format</a> equal to 2 and is valid according to the requirements in <a href="#patch-map-format-2">§ 5.3.2 Patch Map Table: Format 2</a> (requirements are marked with a "must"). If it is not return an error.</p>
     <li data-md>
-     <p>If the <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata③">entryIdStringData</a> offset is 0 then initialize <var>last entry id</var> to 0. Otherwise initialize
+     <p>If the <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata⑤">entryIdStringData</a> offset is 0 then initialize <var>last entry id</var> to 0. Otherwise initialize
  it to an empty byte string. Set <var>current byte</var> to 0, and <var>current id string byte</var> to 0.</p>
     <li data-md>
      <p>Initialize <var>entry list</var> and <var>prior entry list</var> to empty lists.</p>
@@ -2087,8 +2096,8 @@ being requested.</p>
       <li data-md>
        <p>pass in <var>prior entry list</var>, the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entries" id="ref-for-format-2-patch-map-entries">entries</a>[<var>current byte</var>] to
  the end of <var>patch map</var>,
- the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata④">entryIdStringData</a>[<var>current id string byte</var>]
- to the end of <var>patch map</var> if <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata⑤">entryIdStringData</a> is non zero, <var>last entry id</var>, <a data-link-type="dfn" href="#format-2-patch-map-defaultpatchformat" id="ref-for-format-2-patch-map-defaultpatchformat①">defaultPatchFormat</a>, and <a data-link-type="dfn" href="#format-2-patch-map-uritemplate" id="ref-for-format-2-patch-map-uritemplate">uriTemplate</a>.</p>
+ the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata⑥">entryIdStringData</a>[<var>current id string byte</var>]
+ to the end of <var>patch map</var> if <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata⑦">entryIdStringData</a> is non zero, <var>last entry id</var>, <a data-link-type="dfn" href="#format-2-patch-map-defaultpatchformat" id="ref-for-format-2-patch-map-defaultpatchformat①">defaultPatchFormat</a>, and <a data-link-type="dfn" href="#format-2-patch-map-uritemplate" id="ref-for-format-2-patch-map-uritemplate">uriTemplate</a>.</p>
       <li data-md>
        <p>Set <var>last entry id</var> to the returned entry id.</p>
       <li data-md>
@@ -2109,7 +2118,7 @@ being requested.</p>
     <li data-md>
      <p><var>prior entry list</var>: a list of entries prior to this one.</p>
     <li data-md>
-     <p><var>entry bytes</var>: a byte array that contains an encoded <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry③">Mapping Entry</a>.</p>
+     <p><var>entry bytes</var>: a byte array that contains an encoded <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry②">Mapping Entry</a>.</p>
     <li data-md>
      <p><var>id string bytes</var> (optional): a byte array the contains entry ID strings.</p>
     <li data-md>
@@ -2164,7 +2173,7 @@ by <a data-link-type="dfn" href="#design-space-segment-tag" id="ref-for-design-s
       <li data-md>
        <p>Read the child entry indices list specified by <a data-link-type="dfn" href="#mapping-entry-childentrymatchmodeandcount" id="ref-for-mapping-entry-childentrymatchmodeandcount①">childEntryMatchModeAndCount</a> and <a data-link-type="dfn" href="#mapping-entry-childentryindices" id="ref-for-mapping-entry-childentryindices">childEntryIndices</a> from <var>entry bytes</var>.</p>
       <li data-md>
-       <p>The child entry indices refer to previously loaded entries. 0 is the first <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry④">Mapping Entry</a> in <var>prior entry list</var>, 1 the second
+       <p>The child entry indices refer to previously loaded entries. 0 is the first <a data-link-type="dfn" href="#mapping-entry" id="ref-for-mapping-entry③">Mapping Entry</a> in <var>prior entry list</var>, 1 the second
  and so on. For each value in <a data-link-type="dfn" href="#mapping-entry-childentryindices" id="ref-for-mapping-entry-childentryindices①">childEntryIndices</a> locate the entry in <var>prior entry list</var> with a matching index.
  Add a reference to that entry into <var>entry</var>. If a <a data-link-type="dfn" href="#mapping-entry-childentryindices" id="ref-for-mapping-entry-childentryindices②">childEntryIndices</a> is greater than or equal to the length
  of <var>prior entry list</var> then, this encoding is invalid return an error.</p>
@@ -4170,7 +4179,7 @@ let dfnPanelData = {
 "format-2-patch-map-defaultpatchformat": {"dfnID":"format-2-patch-map-defaultpatchformat","dfnText":"defaultPatchFormat","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchformat"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchformat\u2460"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-defaultpatchformat"},
 "format-2-patch-map-entries": {"dfnID":"format-2-patch-map-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entries"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entries"},
 "format-2-patch-map-entrycount": {"dfnID":"format-2-patch-map-entrycount","dfnText":"entryCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entrycount"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entrycount\u2460"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entrycount"},
-"format-2-patch-map-entryidstringdata": {"dfnID":"format-2-patch-map-entryidstringdata","dfnText":"entryIdStringData","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2460"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2461"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata\u2462"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2463"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2464"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entryidstringdata"},
+"format-2-patch-map-entryidstringdata": {"dfnID":"format-2-patch-map-entryidstringdata","dfnText":"entryIdStringData","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2460"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2461"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2462"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2463"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata\u2464"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2465"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2466"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entryidstringdata"},
 "format-2-patch-map-format": {"dfnID":"format-2-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-format"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-format"},
 "format-2-patch-map-uritemplate": {"dfnID":"format-2-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-uritemplate"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-uritemplate"},
 "full-invalidation": {"dfnID":"full-invalidation","dfnText":"Full Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-full-invalidation"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-full-invalidation\u2460"}],"title":"6.1. Formats Summary"}],"url":"#full-invalidation"},
@@ -4192,7 +4201,7 @@ let dfnPanelData = {
 "incremental-font": {"dfnID":"incremental-font","dfnText":"incremental font","external":false,"refSections":[{"refs":[{"id":"ref-for-incremental-font"}],"title":"1.2. Overview"},{"refs":[{"id":"ref-for-incremental-font\u2460"}],"title":"3.3. Patch Map"},{"refs":[{"id":"ref-for-incremental-font\u2461"}],"title":"4. Extending a Font Subset"},{"refs":[{"id":"ref-for-incremental-font\u2462"},{"id":"ref-for-incremental-font\u2463"},{"id":"ref-for-incremental-font\u2464"},{"id":"ref-for-incremental-font\u2465"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-incremental-font\u2466"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-incremental-font\u2467"}],"title":"5. Extensions to the Font Format"},{"refs":[{"id":"ref-for-incremental-font\u2468"},{"id":"ref-for-incremental-font\u2460\u24ea"},{"id":"ref-for-incremental-font\u2460\u2460"},{"id":"ref-for-incremental-font\u2460\u2461"},{"id":"ref-for-incremental-font\u2460\u2462"},{"id":"ref-for-incremental-font\u2460\u2463"},{"id":"ref-for-incremental-font\u2460\u2464"}],"title":"7. Encoding"},{"refs":[{"id":"ref-for-incremental-font\u2460\u2465"},{"id":"ref-for-incremental-font\u2460\u2466"},{"id":"ref-for-incremental-font\u2460\u2467"},{"id":"ref-for-incremental-font\u2460\u2468"},{"id":"ref-for-incremental-font\u2461\u24ea"}],"title":"7.1. Encoding Considerations"}],"url":"#incremental-font"},
 "mapping-entries": {"dfnID":"mapping-entries","dfnText":"Mapping Entries","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entries"}],"title":"5.3.2. Patch Map Table: Format 2"}],"url":"#mapping-entries"},
 "mapping-entries-entries": {"dfnID":"mapping-entries-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entries-entries"}],"title":"4.4. Selecting Invalidating Patches"},{"refs":[{"id":"ref-for-mapping-entries-entries\u2460"},{"id":"ref-for-mapping-entries-entries\u2461"}],"title":"5.3.2. Patch Map Table: Format 2"}],"url":"#mapping-entries-entries"},
-"mapping-entry": {"dfnID":"mapping-entry","dfnText":"Mapping Entry","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry"},{"id":"ref-for-mapping-entry\u2460"},{"id":"ref-for-mapping-entry\u2461"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry\u2462"},{"id":"ref-for-mapping-entry\u2463"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#mapping-entry"},
+"mapping-entry": {"dfnID":"mapping-entry","dfnText":"Mapping Entry","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry"},{"id":"ref-for-mapping-entry\u2460"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry\u2461"},{"id":"ref-for-mapping-entry\u2462"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#mapping-entry"},
 "mapping-entry-bias": {"dfnID":"mapping-entry-bias","dfnText":"bias","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-bias"},{"id":"ref-for-mapping-entry-bias\u2460"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#mapping-entry-bias"},
 "mapping-entry-childentryindices": {"dfnID":"mapping-entry-childentryindices","dfnText":"childEntryIndices","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-childentryindices"},{"id":"ref-for-mapping-entry-childentryindices\u2460"},{"id":"ref-for-mapping-entry-childentryindices\u2461"}],"title":"5.3.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-mapping-entry-childentryindices\u2462"}],"title":"7.1. Encoding Considerations"}],"url":"#mapping-entry-childentryindices"},
 "mapping-entry-childentrymatchmodeandcount": {"dfnID":"mapping-entry-childentrymatchmodeandcount","dfnText":"childEntryMatchModeAndCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-childentrymatchmodeandcount"},{"id":"ref-for-mapping-entry-childentrymatchmodeandcount\u2460"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#mapping-entry-childentrymatchmodeandcount"},

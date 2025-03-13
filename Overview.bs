@@ -340,11 +340,12 @@ changes encoded according to the format is a [=font patch=]. Each [=patch format
 Patch Map {#patch-map-dfn}
 --------------------------
 
-A <dfn dfn>patch map</dfn> is an [[open-type/otff#table-directory|open type table]] which encodes a collection of mappings from
-[=font subset definition|font subset definitions=] to URIs which host [[#font-patch-formats|patches]] that extend the
-[=incremental font=]. A [=patch map=] table encodes a list of <dfn dfn>patch map entries</dfn>, where each entry has a key and value.
-The key of an entry defines the coverage of the entry, which is information on what subset definitions will match it. The value specifies
-information about the patch which should be applied when the entry is matched. [=patch map entries|Patch Map Entry=] summary:
+A <dfn dfn>patch map</dfn> is an [[open-type/otff#table-directory|open type table]] which encodes a collection of
+mappings from [=font subset definition|font subset definitions=] to URIs which host [[#font-patch-formats|patches]] that
+extend the [=incremental font=]. A [=patch map=] table encodes a list of <dfn dfn>patch map entries</dfn>, where each
+entry has a key and value.  The key of an entry defines the coverage of the entry, which is information on what subset
+definitions will match it. The value specifies information about the patches which should be applied when the entry is
+matched. [=patch map entries|Patch Map Entry=] summary:
 
 <table>
   <tr><th>Key</th><th>Value</th></tr>
@@ -357,7 +358,7 @@ information about the patch which should be applied when the entry is matched. [
       
     </td>
     <td>
-      * Patch URI
+      * One or more Patch URIs
       * [[#font-patch-formats|Patch Format]]
       * [[#font-patch-invalidations|compatibility ID]]
       
@@ -1445,20 +1446,27 @@ The algorithm:
 
   <tr>
     <td>int24</td>
-    <td><dfn for="Mapping Entry">entryIdDelta</dfn></td>
+    <td><dfn for="Mapping Entry">entryIdDelta</dfn>[variable]</td>
     <td>
-      Signed delta which is used to calculate the id for this entry. The id for this entry is the entry id of the previous
-      [=Mapping Entry=] + 1 + entryIdDelta. Only present if [=Mapping Entry/formatFlags=] bit 2 is set and
-      [=Format 2 Patch Map/entryIdStringData=] is null (0). If not present delta is assumed to be 0.
+      List of signed deltas which calculate the IDs of the URIs for this entry. If present, has at least one delta. If the least
+      significant bit of a delta is set, then one more delta follows. This repeats until a delta with the least significant bit
+      cleared is encountered. The entry id for each delta the last calculated entry id + 1 + (entryIdDelta / 2). Only present if
+      [=Mapping Entry/formatFlags=] bit 2 is set and [=Format 2 Patch Map/entryIdStringData=] is null (0).
+      If not present and [=Format 2 Patch Map/entryIdStringData=] is null (0), then there is one id for this entry and and the
+      delta is assumed to be 0.
     </td>
   </tr>
   <tr>
-    <td>uint16</td>
-    <td><dfn for="Mapping Entry">entryIdStringLength</dfn></td>
+    <td>uint24</td>
+    <td><dfn for="Mapping Entry">entryIdStringLength</dfn>[variable]</td>
     <td>
-      The number of bytes that the id string for this entry occupies in the [=Format 2 Patch Map/entryIdStringData=] data block.
-      Only present if [=Mapping Entry/formatFlags=] bit 2 is set and [=Format 2 Patch Map/entryIdStringData=] is not null (0). If not
-      present the length is assumed to be 0.
+      The number of bytes that each id string for this entry occupies in the [=Format 2 Patch Map/entryIdStringData=]
+      data block.  If the most significant bit of a length value is set, then another length value follows. This repeats
+      until a length value with the most significant bit cleared is encountered. The actual length value is stored in
+      the least significant 23 bits of each value. Only present if [=Mapping Entry/formatFlags=] bit 2 is set and
+      [=Format 2 Patch Map/entryIdStringData=] is not null (0). If present has at least one length value. If not present
+      and [=Format 2 Patch Map/entryIdStringData=] is not null (0), then the there is one id string for this entry and
+      its length is zero.
     </td>
   </tr>
 
