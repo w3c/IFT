@@ -429,8 +429,14 @@ opt to exclude those unused features from the subset definition.
 The following algorithm is used by a client to extend an [=incremental font|incremental=] [=font subset=] to cover additional
 code points, layout features and/or design space. This algorithm incrementally selects and applies patches to the font one at a time, loading
 them as needed. As an important optimization to minimize network round trips it permits loads to be started for all patches that will eventually
-be needed. [[#font-patch-invalidations]] is used to determine which patches loads can be started for. Any patches which match the target subset definition
-and will not be invalidated by the next patch to be applied according to [[#font-patch-invalidations]] can be expected to be needed in future iterations.
+be needed. These come in two forms:
+
+*  First, [=patch map|patch mapping entries=] may list more than one URI, where each URI after the first is to be preloaded because it
+    will be needed in future iterations.
+
+*  Second, [[#font-patch-invalidations]] is used to determine which patches loads can be started for. Any patches which match the target subset
+    definition and will not be invalidated by the next patch to be applied according to [[#font-patch-invalidations]] can be expected to be
+    needed in future iterations.
 
 <dfn abstract-op>Extend an Incremental Font Subset</dfn>
 
@@ -483,9 +489,11 @@ The algorithm:
         The criteria for selecting the single entry is left up to the implementation to decide.
 
 9.  Start a load of <var>patch file</var> (if not already previously started) by invoking [$Load patch file$] with the <var>initial font subset URI</var>
-    as the initial font URI and the <var>entry</var> patch URI as the patch URI. Additionally the client may optionally start loads using the same
-    procedure for any entries in <var>entry list</var> which will not be [[#font-patch-invalidations|invalidated]] by <var>entry</var>. The total
-    number of patches that a client can load and apply during a single execution of this algorithm is limited to:
+    as the initial font URI and the first patch URI in <var>entry</var> as the patch URI. If there are any other URIs in <var>entry</var>, then initiate
+    loads for those using the same procedure. These are preloads and the results may be used during future iterations of this algorithm.
+    Additionally the client may optionally start loads using the same procedure for any entries in <var>entry list</var> which will not be
+    [[#font-patch-invalidations|invalidated]] by <var>entry</var>. The total number of patches that a client can load and apply during a single execution
+    of this algorithm is limited to:
 
     * At most 100 patches which are [=Partial Invalidation=] or [=Full Invalidation=].
 
