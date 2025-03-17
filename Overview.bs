@@ -743,14 +743,18 @@ round trips.
 The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 8
 of [$Extend an Incremental Font Subset$]:
 
-1.  For each candidate entry: compute a total subset definition by unioning that entry's subset definition and the subset definition of all child entries
+1.  If one or more candidate entries have previously had their associated patch file preloaded by step 9 of [$Extend an Incremental Font Subset$],
+    then in the following steps only consider candidate entries whose patch file is already loaded or is currently being loaded. Otherwise consider all
+    candidate entries.
+
+2.  For each candidate entry: compute a total subset definition by unioning that entry's subset definition and the subset definition of all child entries
      reachable via the graph of referenced child entries.
 
-2.  For each candidate entry: compute the set intersection between the total subset definition and the target subset definition.
+3.  For each candidate entry: compute the set intersection between the total subset definition and the target subset definition.
    
-3.  Find an entry whose intersection from step 2 is not a strict subset of any other intersection.
+4.  Find an entry whose intersection from step 2 is not a strict subset of any other intersection.
 
-4.  Locate any additional entries that are in the same [=patch map=] and have the same intersection as the entry found in step 3. From the this set of
+5.  Locate any additional entries that are in the same [=patch map=] and have the same intersection as the entry found in step 3. From the this set of
      entries (including the step 3 pick) the final selection is the entry which is listed first in the [=patch map=]. For [[#patch-map-format-1]] this is the
      entry with the lowest entry index. For [[#patch-map-format-2]] this is the entry that appears first in the [=Mapping Entries/entries=] array.
 
