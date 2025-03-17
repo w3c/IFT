@@ -1450,7 +1450,7 @@ The algorithm:
     <td>
       List of signed deltas which calculate the IDs of the URIs for this entry. If present, has at least one delta. If the least
       significant bit of a delta is set, then one more delta follows. This repeats until a delta with the least significant bit
-      cleared is encountered. The entry id for each delta the last calculated entry id + 1 + (entryIdDelta / 2). Only present if
+      cleared is encountered. The entry id for each delta the last calculated entry id + 1 + floor(entryIdDelta / 2). Only present if
       [=Mapping Entry/formatFlags=] bit 2 is set and [=Format 2 Patch Map/entryIdStringData=] is null (0).
       If not present and [=Format 2 Patch Map/entryIdStringData=] is null (0), then there is one id for this entry and and the
       delta is assumed to be 0.
@@ -1619,7 +1619,7 @@ The algorithm:
 1.  For the all steps whenever data is loaded from <var>entry bytes</var> increment <var>consumed bytes</var> with the
      number of bytes read.
 
-2.  If <var>id string bytes</var> is not present then, set <var>entry id</var> = <var>last entry id</var> + 1. Otherwise set
+2.  If <var>id string bytes</var> is not present then, set <var>entry id</var> = <var>last entry id</var>. Otherwise set
      <var>entry id</var> = <var>last entry id</var>.
 
 3.  Set the patch format of <var>entry</var> to <var>default patch format</var>.
@@ -1639,7 +1639,7 @@ The algorithm:
         by [=Design Space Segment/tag=]. If any segment has a [=Design Space Segment/start=] which is greater than
         [=Design Space Segment/end=] then, this encoding is invalid return an error.
 
-6.  If [=Mapping Entry/formatFlags=] bit 1 is set, then the copy indices list is present:
+7.  If [=Mapping Entry/formatFlags=] bit 1 is set, then the copy indices list is present:
 
     *  If the most significant bit of [=Mapping Entry/childEntryMatchModeAndCount=] is set then set <var>entry</var>'s match mode to conjunctive,
          otherwise to disjunctive.
@@ -1652,20 +1652,42 @@ The algorithm:
          Add a reference to that entry into <var>entry</var>. If a [=Mapping Entry/childEntryIndices=] is greater than or equal to the length
          of <var>prior entry list</var> then, this encoding is invalid return an error.
 
-7.  If [=Mapping Entry/formatFlags=] bit 2 is set, then an id delta or id string length is present:
+8.  If [=Mapping Entry/formatFlags=] bit 2 is set, then id deltas or id string lengths are present:
 
-    *  If <var>id string bytes</var> is not present then, read the id delta specified by [=Mapping Entry/entryIdDelta=]
-        from <var>entry bytes</var> and add the delta to <var>entry id</var>.
+    *  If <var>id string bytes</var> is not present, then:
 
-    *  Otherwise if <var>id string bytes</var> is present then, read [=Mapping Entry/entryIdStringLength=] bytes from
-        <var>id string bytes</var> and set <var>entry id</var> to the result.
+         *  Read the next [=Mapping Entry/entryIdDelta=] value.
 
-8.  If [=Mapping Entry/formatFlags=] bit 3 is set, then a patch format is present. Read the format specified by
+         *  Set <var>entry id</var> to <code><var>entry id</var> + 1 + floor(delta value / 2)</code>.
+             If <var>entry id</var> is negative or greater than 4,294,967,295 then, this encoding is invalid return an error.
+
+         *  Convert <var>entry id</var> into a URI by applying <var>uri template</var> following [[#uri-templates]].
+             If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
+
+         *  Add the generated patch URI to <var>entry</var>.
+
+         *  If the least significant bit of the read delta value is set, then repeat step 8.
+
+    *  Otherwise if <var>id string bytes</var> is present, then:
+
+         *  Read the next [=Mapping Entry/entryIdStringLength=] value.
+
+         *  Interpret the least significant 23 bits as an unsigned integer and read that many bytes from <var>id string bytes</var>.
+             Set <var>entry id</var> to the result.
+
+         *  Convert <var>entry id</var> into a URI by applying <var>uri template</var> following [[#uri-templates]].
+             If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
+
+         *  Add the generated patch URI to <var>entry</var>.
+
+         *  If the most significant bit of the read length value is set, then repeat step 8.
+
+9.  If [=Mapping Entry/formatFlags=] bit 3 is set, then a patch format is present. Read the format specified by
      [=Mapping Entry/patchFormat=] from <var>entry bytes</var> and set the patch format of <var>entry</var> to the read value.
      If [=Mapping Entry/patchFormat=] is not one of the values in [[#font-patch-formats-summary]] then, this encoding is invalid
      return an error.
 
-9.  If one or both of [=Mapping Entry/formatFlags=] bit 4 and bit 5 are set, then a code point list is present:
+10.  If one or both of [=Mapping Entry/formatFlags=] bit 4 and bit 5 are set, then a code point list is present:
 
     *  If [=Mapping Entry/formatFlags=] bit 4 is 0 and bit 5 is 1, then read the 2 byte (uint16) [=Mapping Entry/bias=] value
         from <var>entry bytes</var>.
@@ -1679,14 +1701,9 @@ The algorithm:
         Add the resulting code point set to the first [=font subset definition=] in <var>entry</var>. If the sparse bit set decoding
         failed then, this encoding is invalid return an error.
 
-10. If [=Mapping Entry/formatFlags=] bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.
+11. If [=Mapping Entry/formatFlags=] bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.
 
-11. If <var>entry id</var> is negative or greater than 4,294,967,295 then, this encoding is invalid return an error.
-
-12. Convert <var>entry id</var> into a URI by applying <var>uri template</var> following [[#uri-templates]]. If the template expansion
-     results in an error (see: [[rfc6570#section-3]]) then, return an error. Set the patch uri of <var>entry</var> to the generated URI.
-
-13. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, [=Mapping Entry/entryIdStringLength=] as
+12. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, [=Mapping Entry/entryIdStringLength=] as
      <var>consumed id string bytes</var>, and <var>ignored</var>.
 
 <h5 algorithm id="remove-entries-format-2">Remove Entries from Format 2</h5>
@@ -1705,8 +1722,9 @@ The inputs to this algorithm are:
 This algorithm is a modified version of [$Interpret Format 2 Patch Map$], invoke [$Interpret Format 2 Patch Map$] with <var>patch map</var>
 as an input but with the following changes:
 
-*  After step 11 of [$Interpret Format 2 Patch Map Entry$]: compare the URI generated in step 11 to <var>patch URI</var> if they
-    are equal then, set bit 6 of  [=Mapping Entry/formatFlags=] to 1.
+*  During step 8 of [$Interpret Format 2 Patch Map Entry$]: compare the URI generated for only the first delta/length value to
+    <var>patch URI</var> if they are equal then, set bit 6 of  [=Mapping Entry/formatFlags=] to 1. Stop the interpretation process
+    at this point.
 
 *  The return value of [$Interpret Format 2 Patch Map$] is not used.
 
