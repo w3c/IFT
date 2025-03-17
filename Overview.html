@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="3746c44c40887e3d9e2683d9a366fd9e831db3b6" name="revision">
+  <meta content="0c58d154b3555bbcbd02a447d5f38be5be50fea1" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -2013,7 +2013,7 @@ If the template expansion results in an error (see: <a href="https://www.rfc-edi
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-entryiddelta">entryIdDelta</dfn>[variable]
       <td> List of signed deltas which calculate the IDs of the URIs for this entry. If present, has at least one delta. If the least
       significant bit of a delta is set, then one more delta follows. This repeats until a delta with the least significant bit
-      cleared is encountered. The entry id for each delta the last calculated entry id + 1 + (entryIdDelta / 2). Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑥">formatFlags</a> bit 2 is set and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata">entryIdStringData</a> is null (0).
+      cleared is encountered. The entry id for each delta the last calculated entry id + 1 + floor(entryIdDelta / 2). Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑥">formatFlags</a> bit 2 is set and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata">entryIdStringData</a> is null (0).
       If not present and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata①">entryIdStringData</a> is null (0), then there is one id for this entry and and the
       delta is assumed to be 0. 
      <tr>
@@ -2147,7 +2147,7 @@ being requested.</p>
      <p>For the all steps whenever data is loaded from <var>entry bytes</var> increment <var>consumed bytes</var> with the
  number of bytes read.</p>
     <li data-md>
-     <p>If <var>id string bytes</var> is not present then, set <var>entry id</var> = <var>last entry id</var> + 1. Otherwise set <var>entry id</var> = <var>last entry id</var>.</p>
+     <p>If <var>id string bytes</var> is not present then, set <var>entry id</var> = <var>last entry id</var>. Otherwise set <var>entry id</var> = <var>last entry id</var>.</p>
     <li data-md>
      <p>Set the patch format of <var>entry</var> to <var>default patch format</var>.</p>
     <li data-md>
@@ -2179,12 +2179,40 @@ by <a data-link-type="dfn" href="#design-space-segment-tag" id="ref-for-design-s
  of <var>prior entry list</var> then, this encoding is invalid return an error.</p>
      </ul>
     <li data-md>
-     <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①③">formatFlags</a> bit 2 is set, then an id delta or id string length is present:</p>
+     <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①③">formatFlags</a> bit 2 is set, then id deltas or id string lengths are present:</p>
      <ul>
       <li data-md>
-       <p>If <var>id string bytes</var> is not present then, read the id delta specified by <a data-link-type="dfn" href="#mapping-entry-entryiddelta" id="ref-for-mapping-entry-entryiddelta①">entryIdDelta</a> from <var>entry bytes</var> and add the delta to <var>entry id</var>.</p>
+       <p>If <var>id string bytes</var> is not present, then:</p>
+       <ul>
+        <li data-md>
+         <p>Read the next <a data-link-type="dfn" href="#mapping-entry-entryiddelta" id="ref-for-mapping-entry-entryiddelta①">entryIdDelta</a> value.</p>
+        <li data-md>
+         <p>Set <var>entry id</var> to <code><var>entry id</var> + 1 + floor(delta value / 2)</code>.
+ If <var>entry id</var> is negative or greater than 4,294,967,295 then, this encoding is invalid return an error.</p>
+        <li data-md>
+         <p>Convert <var>entry id</var> into a URI by applying <var>uri template</var> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
+ If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
+        <li data-md>
+         <p>Add the generated patch URI to <var>entry</var>.</p>
+        <li data-md>
+         <p>If the least significant bit of the read delta value is set, then repeat step 8.</p>
+       </ul>
       <li data-md>
-       <p>Otherwise if <var>id string bytes</var> is present then, read <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength">entryIdStringLength</a> bytes from <var>id string bytes</var> and set <var>entry id</var> to the result.</p>
+       <p>Otherwise if <var>id string bytes</var> is present, then:</p>
+       <ul>
+        <li data-md>
+         <p>Read the next <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength">entryIdStringLength</a> value.</p>
+        <li data-md>
+         <p>Interpret the least significant 23 bits as an unsigned integer and read that many bytes from <var>id string bytes</var>.
+ Set <var>entry id</var> to the result.</p>
+        <li data-md>
+         <p>Convert <var>entry id</var> into a URI by applying <var>uri template</var> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
+ If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
+        <li data-md>
+         <p>Add the generated patch URI to <var>entry</var>.</p>
+        <li data-md>
+         <p>If the most significant bit of the read length value is set, then repeat step 8.</p>
+       </ul>
      </ul>
     <li data-md>
      <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①④">formatFlags</a> bit 3 is set, then a patch format is present. Read the format specified by <a data-link-type="dfn" href="#mapping-entry-patchformat" id="ref-for-mapping-entry-patchformat">patchFormat</a> from <var>entry bytes</var> and set the patch format of <var>entry</var> to the read value.
@@ -2209,11 +2237,6 @@ failed then, this encoding is invalid return an error.</p>
     <li data-md>
      <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑧">formatFlags</a> bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.</p>
     <li data-md>
-     <p>If <var>entry id</var> is negative or greater than 4,294,967,295 then, this encoding is invalid return an error.</p>
-    <li data-md>
-     <p>Convert <var>entry id</var> into a URI by applying <var>uri template</var> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>. If the template expansion
- results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error. Set the patch uri of <var>entry</var> to the generated URI.</p>
-    <li data-md>
      <p>Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength①">entryIdStringLength</a> as <var>consumed id string bytes</var>, and <var>ignored</var>.</p>
    </ol>
    <h5 class="heading settled algorithm" data-algorithm="Remove Entries from Format 2" data-level="5.3.2.2" id="remove-entries-format-2"><span class="secno">5.3.2.2. </span><span class="content">Remove Entries from Format 2</span><a class="self-link" href="#remove-entries-format-2"></a></h5>
@@ -2230,8 +2253,8 @@ change the number of bytes.</p>
    <p>This algorithm is a modified version of <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map①">Interpret Format 2 Patch Map</a>, invoke <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map②">Interpret Format 2 Patch Map</a> with <var>patch map</var> as an input but with the following changes:</p>
    <ul>
     <li data-md>
-     <p>After step 11 of <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map-entry" id="ref-for-abstract-opdef-interpret-format-2-patch-map-entry②">Interpret Format 2 Patch Map Entry</a>: compare the URI generated in step 11 to <var>patch URI</var> if they
-are equal then, set bit 6 of <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑨">formatFlags</a> to 1.</p>
+     <p>During step 8 of <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map-entry" id="ref-for-abstract-opdef-interpret-format-2-patch-map-entry②">Interpret Format 2 Patch Map Entry</a>: compare the URI generated for only the first delta/length value to <var>patch URI</var> if they are equal then, set bit 6 of <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑨">formatFlags</a> to 1. Stop the interpretation process
+at this point.</p>
     <li data-md>
      <p>The return value of <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map③">Interpret Format 2 Patch Map</a> is not used.</p>
    </ul>
