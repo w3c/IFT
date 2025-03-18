@@ -66,15 +66,6 @@ spec:fetch; type:dfn; for:/; text:response
     "date": "May 2024"
   },
 
-  "fetch": {
-    "href": "https://fetch.spec.whatwg.org/",
-    "authors": [],
-    "status": "Living Standard",
-    "publisher": "What WG",
-    "title": "Fetch Standard",
-    "date": "17 June 2024"
-  },
-
   "enabling-typography": {
     "href": "https://www.tiro.com/articles/enabling-typography",
     "authors": ["John Hudson"],
@@ -287,7 +278,8 @@ variety of ways fonts are used on web pages. Authors have control over which fon
 this technology with, and which they do not.
 
 Note: the IFT tech keyword can be used in conjunction with other font tech specifiers to perform
-font feature selection. For example a <code>@font-face</code> could include two URIs one with
+
+font feature selection. For example a <code>@font-face</code> could include two URLs one with
 <code>tech(incremental, color-COLRv1)</code> and the other with
 <code>tech(incremental, color-COLRv0)</code>.
 
@@ -341,7 +333,7 @@ Patch Map {#patch-map-dfn}
 --------------------------
 
 A <dfn dfn>patch map</dfn> is an [[open-type/otff#table-directory|open type table]] which encodes a collection of
-mappings from [=font subset definition|font subset definitions=] to URIs which host [[#font-patch-formats|patches]] that
+mappings from [=font subset definition|font subset definitions=] to URLs which host [[#font-patch-formats|patches]] that
 extend the [=incremental font=]. A [=patch map=] table encodes a list of <dfn dfn>patch map entries</dfn>, where each
 entry has a key and value.  The key of an entry defines the coverage of the entry, which is information on what subset
 definitions will match it. The value specifies information about the patches which should be applied when the entry is
@@ -358,7 +350,7 @@ matched. [=patch map entries|Patch Map Entry=] summary:
       
     </td>
     <td>
-      * One or more Patch URIs
+      * One or more Patch  [[whatwg-url|URL]] strings
       * [[#font-patch-formats|Patch Format]]
       * [[#font-patch-invalidations|compatibility ID]]
       
@@ -444,7 +436,7 @@ The inputs to this algorithm are:
 
 *  <var>font subset</var>: an [=incremental font|incremental=] [=font subset=].
 
-*  <var>initial font subset URI</var>: an [[rfc3986#section-4.3|absolute URI]] which identifies the location of the initial incremental
+*  <var>initial font URL</var>: a [[whatwg-url#concept-url|URL]] which identifies the location of the initial incremental
     font that <var>font subset</var> was derived from.
 
 *  <var>target subset definition</var>: the [=font subset definition=] that the client wants to extend <var>font subset</var> to cover.
@@ -470,7 +462,7 @@ The algorithm:
     
 5.  For each <var>entry</var> in <var>entry list</var> invoke [$Check entry intersection$] with <var>entry</var> and
     <var>target subset definition</var> as inputs, if it returns false remove <var>entry</var> from <var>entry list</var>. Additionally remove
-    any entries in <var>entry list</var> which have a patch URI which was loaded and applied previously during the execution of this algorithm.
+    any entries in <var>entry list</var> which have a patch URL string which was loaded and applied previously during the execution of this algorithm.
 
 6.  If <var>entry list</var> is empty, then the extension operation is finished, return <var>extended font subset</var>.
 
@@ -488,9 +480,9 @@ The algorithm:
     *  Otherwise select exactly one of the entries in <var>no invalidation entry list</var>.
         The criteria for selecting the single entry is left up to the implementation to decide.
 
-9.  Start a load of <var>patch file</var> (if not already previously started) by invoking [$Load patch file$] with the <var>initial font subset URI</var>
-    as the initial font URI and the first patch URI in <var>entry</var> as the patch URI. If there are any other URIs in <var>entry</var>, then initiate
-    loads for those using the same procedure. These may be used during future iterations of this algorithm.
+9.  Start a load of <var>patch file</var> (if not already previously started) by invoking [$Load patch file$] with the <var>initial font URL</var>
+    as the initial font URL and the first patch URL string in <var>entry</var> as the patch URL string. If there are any other URL strings in
+    <var>entry</var>, then initiate loads for those using the same procedure. These may be used during future iterations of this algorithm.
     Additionally the client may optionally start loads using the same procedure for any entries in <var>entry list</var> which will not be
     [[#font-patch-invalidations|invalidated]] by <var>entry</var>. The total number of patches that a client can load and apply during a single execution
     of this algorithm is limited to:
@@ -503,7 +495,7 @@ The algorithm:
     [$Handle errors$].
 
 10.  Once the load for <var>patch file</var> is finished, apply it using the appropriate application algorithm (matching the patches format in
-     <var>entry</var>) from [[#font-patch-formats]] to apply the <var>patch file</var> using the patch URI and the compatibility id from
+     <var>entry</var>) from [[#font-patch-formats]] to apply the <var>patch file</var> using the patch URL string and the compatibility id from
      <var>entry</var> to <var>extended font subset</var>.
 
 11. Go to step 2.
@@ -700,23 +692,24 @@ when a set (ie. code points, feature tags, design space, child entries) is not s
 
 The inputs to this algorithm are:
 
-*   <var>Patch URI</var>: A [[rfc3986#section-4.1|URI Reference]] identifying the patch file to load. As a URI reference this may be a
-     relative path.
+*   <var>patch URL string</var>: A [[whatwg-url|URL]] string ([[!UTF-8]] encoded) identifying the patch file to load. It  may be a
+     [[whatwg-url#relative-url-string|relative]] URL.
 
-*   <var>Initial Font URI</var>: An [[rfc3986#section-4.3|absolute URI]] which identifies the initial incremental font that the
-     patch URI was derived from.
+*  <var>initial font URL</var>: a [[whatwg-url#concept-url|URL]] which identifies the location of the initial incremental
+    font that <var>font subset</var> was derived from.
 
 The algorithm outputs:
 
-*   <var>patch file</var>: the content (bytes) identified by <var>Patch URI</var>.
+*   <var>patch file</var>: the content (bytes) identified by <var>patch URL string</var>.
 
 The algorithm:
 
-1.  Perform [[rfc3986#section-5|reference resolution]] on <var>Patch URI</var> using <var>Initial Font URI</var> as the base URI to
-     produce the <var>target URI</var>.
+1.  Parse <var>patch URL string</var> into a [[whatwg-url#concept-url|URL Record]] using [[whatwg-url#url-parsing]].
+     <var>initial font URL</var> is the [[whatwg-url#concept-base-url|base URL]] and encoding is UTF-8. Store the result
+     in <var>target URL</var>.
 
-2.  Retrieve the contents of <var>target URI</var> using the fetching capabilities of the implementing user agent. For web browsers,
-     [[fetch]] should be used. When using [[fetch]] a request for patches should use the same CORS settings as the initial request for
+2.  Retrieve the contents of <var>target URL</var> using the fetching capabilities of the implementing user agent. For web browsers,
+     [[FETCH]] should be used. When using [[FETCH]] a request for patches should use the same CORS settings as the initial request for
      the IFT font. This means that for a font loaded via CSS the patch request would follow: [[css-fonts-4#font-fetching-requirements]].
 
 3.  Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.
@@ -964,7 +957,7 @@ Patch Map Table {#patch-map-table}
 
 A [=patch map=] is encoded in one of two formats:
 
-*  Format 1: a limited, but more compact encoding. It encodes a one-to-one mapping from glyph id to patch URIs. It does
+*  Format 1: a limited, but more compact encoding. It encodes a one-to-one mapping from glyph id to patch URL strings. It does
     not support [=font subset definitions=] with design space or entries with overlapping subset definitions.
 
 *  Format 2: can encode arbitrary mappings including ones with design space or overlapping subset definitions. However, it
@@ -1042,16 +1035,16 @@ the encoded bytes at the start of every iteration to pick up any changes made in
   </tr>
   <tr>
     <td>uint16</td>
-    <td>uriTemplateLength</td>
+    <td>urlTemplateLength</td>
     <td>
-      Length of the uriTemplate string.
+      Length of the urlTemplate string.
     </td>
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Format 1 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
+    <td><dfn for="Format 1 Patch Map">urlTemplate</dfn>[urlTemplateLength]</td>
     <td>
-      A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URIs associated with each entry.
+      A [[!UTF-8]] encoded string. Contains a [[#url-templates]] which is used to produce URL strings associated with each entry.
       Must be a valid [[!UTF-8]] sequence.
     </td>
   </tr>
@@ -1059,7 +1052,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <td>uint8</td>
     <td><dfn for="Format 1 Patch Map">patchFormat</dfn></td>
     <td>
-      Specifies the format of the patches linked to by uriTemplate.
+      Specifies the format of the patches linked to by urlTemplate.
       Must be set to one of the format numbers from  the [[#font-patch-formats-summary]] table.
     </td>
   </tr>
@@ -1222,13 +1215,13 @@ The algorithm:
         [[open-type/cmap|cmap]] table of <var>font subset</var>. Ignore any glyph indices that are not mapped by [[open-type/cmap|cmap]].
         Multiple code points may map to the same glyph id. All code points associated with a glyph should be included.
 
-    *  Convert <var>entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]]. If
+    *  Convert <var>entry index</var> into a URL string by applying [=Format 1 Patch Map/urlTemplate=] following [[#url-templates]]. If
         the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
     *  If the Unicode code point set is empty then, skip this <var>entry index</var>.
 
     *  Add an [=patch map entries|entry=] to <var>entry list</var> with a subset definition which contains only the Unicode code point
-        set and maps to the generated URI, the patch format specified by [=Format 1 Patch Map/patchFormat=], and
+        set and maps to the generated URL string, the patch format specified by [=Format 1 Patch Map/patchFormat=], and
         [=Format 1 Patch Map/compatibilityId=].
 
 3.  If [=Format 1 Patch Map/featureMapOffset=] is not null then, for each [=FeatureRecord=] and associated [=EntryMapRecord=] in
@@ -1249,7 +1242,7 @@ The algorithm:
     *  If [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=] is greater than
         [=EntryMapRecord/lastEntryIndex|EntryMapRecord::lastEntryIndex=] this [=EntryMapRecord=] is invalid, skip it.
 
-    *  Convert <var>mapped entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
+    *  Convert <var>mapped entry index</var> into a URL string by applying [=Format 1 Patch Map/urlTemplate=] following [[#url-templates]].
         If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
     *  If the bit for <var>mapped entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this entry.
@@ -1267,9 +1260,9 @@ The algorithm:
 
     *  If the constructed set of Unicode code points is empty then, this [=EntryMapRecord=] is invalid skip it.
 
-    *  Add an [=patch map entries|entry=] to <var>entry list</var> which  maps to the generated URI, the patch format
+    *  Add an [=patch map entries|entry=] to <var>entry list</var> which  maps to the generated URL string, the patch format
         specified by [=Format 1 Patch Map/patchFormat=], and [=Format 1 Patch Map/compatibilityId=]; or if there is an existing
-        [=patch map entries|entry=] in <var>entry list</var> which has the same patch URI as the generated URI then
+        [=patch map entries|entry=] in <var>entry list</var> which has the same patch URL string as the generated URL string then
         instead modify the existing entry. Add the constructed set of Unicode code points and [=FeatureRecord/featureTag=] to the new or
         existing entry's subset definition.
 
@@ -1289,7 +1282,7 @@ The inputs to this algorithm are:
 
 * <var>patch map</var>: a [=Format 1 Patch Map=] encoded patch map. May be modified by this procedure.
 
-* <var>patch URI</var>: URI for a patch which identifies the entries to be removed.
+* <var>patch URL string</var>: URL string for a patch which identifies the entries to be removed.
 
 The algorithm:
 
@@ -1301,10 +1294,10 @@ The algorithm:
     *  If the bit for <var>entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
         <var>entry index</var>.
 
-    *  Convert <var>entry index</var> into a URI by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
+    *  Convert <var>entry index</var> into a URL string by applying [=Format 1 Patch Map/urlTemplate=] following [[#url-templates]].
         If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
-    *  If the generated URI is equal to <var>patch URI</var> then set the bit for <var>entry index</var> in
+    *  If the generated URL string is equal to <var>patch URL string</var> then set the bit for <var>entry index</var> in
         [=Format 1 Patch Map/appliedEntriesBitMap=] to 1.
 
 ### Patch Map Table: Format 2 ### {#patch-map-format-2}
@@ -1337,7 +1330,7 @@ The algorithm:
     <td>uint8</td>
     <td><dfn for="Format 2 Patch Map">defaultPatchFormat</dfn></td>
     <td>
-      Specifies the format of the patches linked to by uriTemplate (unless overridden by an entry).
+      Specifies the format of the patches linked to by urlTemplate (unless overridden by an entry).
       Must be set to one of the format numbers from the [[#font-patch-formats-summary]] table.
     </td>
   </tr>
@@ -1361,16 +1354,16 @@ The algorithm:
   </tr>
   <tr>
     <td>uint16</td>
-    <td>uriTemplateLength</td>
+    <td>urlTemplateLength</td>
     <td>
-      Length of the uriTemplate string.
+      Length of the urlTemplate string.
     </td>
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Format 2 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
+    <td><dfn for="Format 2 Patch Map">urlTemplate</dfn>[urlTemplateLength]</td>
     <td>
-      A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URIs associated with each entry.
+      A [[!UTF-8]] encoded string. Contains a [[#url-templates]] which is used to produce URL strings associated with each entry.
       Must be a valid [[!UTF-8]] sequence.
     </td>
   </tr>
@@ -1583,7 +1576,7 @@ The algorithm:
          to the end of <var>patch map</var> if [=Format 2 Patch Map/entryIdStringData=] is non zero,
          <var>last entry id</var>,
          [=Format 2 Patch Map/defaultPatchFormat=], and
-         [=Format 2 Patch Map/uriTemplate=].
+         [=Format 2 Patch Map/urlTemplate=].
 
      *  Set <var>last entry id</var> to the returned entry id.
 
@@ -1612,7 +1605,7 @@ The inputs to this algorithm are:
 
 * <var>default patch format</var>: the default patch format if one isn't specified.
 
-* <var>uri template</var>: the URI template used to locate patches.
+* <var>url template</var>: the URL template used to locate patches.
 
 The algorithm outputs:
 
@@ -1673,10 +1666,10 @@ The algorithm:
          *  Set <var>entry id</var> to <code><var>entry id</var> + 1 + floor(delta value / 2)</code>.
              If <var>entry id</var> is negative or greater than 4,294,967,295 then, this encoding is invalid return an error.
 
-         *  Convert <var>entry id</var> into a URI by applying <var>uri template</var> following [[#uri-templates]].
+         *  Convert <var>entry id</var> into a URL string by applying <var>url template</var> following [[#url-templates]].
              If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
-         *  Add the generated patch URI to <var>entry</var>.
+         *  Add the generated patch URL string to <var>entry</var>.
 
          *  If the least significant bit of the read delta value is set, then repeat step 8.
 
@@ -1687,10 +1680,10 @@ The algorithm:
          *  Interpret the least significant 23 bits as an unsigned integer and read that many bytes from <var>id string bytes</var>.
              Set <var>entry id</var> to the result.
 
-         *  Convert <var>entry id</var> into a URI by applying <var>uri template</var> following [[#uri-templates]].
+         *  Convert <var>entry id</var> into a URL string by applying <var>url template</var> following [[#url-templates]].
              If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
-         *  Add the generated patch URI to <var>entry</var>.
+         *  Add the generated patch URL string to <var>entry</var>.
 
          *  If the most significant bit of the read length value is set, then repeat step 8.
 
@@ -1729,13 +1722,13 @@ The inputs to this algorithm are:
 
 * <var>patch map</var>: a [=Format 2 Patch Map=] encoded patch map. May be modified by this procedure.
 
-* <var>patch URI</var>: URI for a patch which identifies the entries to be removed.
+* <var>patch URL string</var>: URL string for a patch which identifies the entries to be removed.
 
 This algorithm is a modified version of [$Interpret Format 2 Patch Map$], invoke [$Interpret Format 2 Patch Map$] with <var>patch map</var>
 as an input but with the following changes:
 
-*  During step 8 of [$Interpret Format 2 Patch Map Entry$]: compare the URI generated for only the first delta/length value to
-    <var>patch URI</var> if they are equal then, set bit 6 of  [=Mapping Entry/formatFlags=] to 1. Stop the interpretation process
+*  During step 8 of [$Interpret Format 2 Patch Map Entry$]: compare the URL string generated for only the first delta/length value to
+    <var>patch URL string</var> if they are equal then, set bit 6 of  [=Mapping Entry/formatFlags=] to 1. Stop the interpretation process
     at this point.
 
 *  The return value of [$Interpret Format 2 Patch Map$] is not used.
@@ -1910,10 +1903,13 @@ to give the smallest encodings for most unicode code point sets typically encoun
   ```
 </div>
 
-### URI Templates ### {#uri-templates}
+### URL Templates ### {#url-templates}
 
-URI templates [[!rfc6570]] are used to convert numeric or string IDs into URIs where patch files are located.
-A string ID is a sequence of bytes. Several variables are defined which are used to produce the expansion of the template:
+<!-- TODO(garretrieger): restrict this to only level 1 and update the examples as needed -->
+
+URL templates [[!rfc6570]] are used to convert numeric or string IDs into URL strings where patch files are located.
+A string ID is a sequence of bytes. The output of template expansion is a [[!UTF-8]] encoded string. Several variables
+are defined which are used to produce the expansion of the template:
 
 <table>
   <tr><th>Variable</th><th>Value</th></tr>
@@ -2349,7 +2345,7 @@ The inputs to this algorithm are:
 
 * <var>patch</var>: a [=glyph keyed patch=] to be applied to <var>base font subset</var>.
 
-* <var>patch uri</var>: the URI where the patch data is located.
+* <var>patch URL string</var>: the URL string where the patch data is located.
 
 * <var>compatibility id</var>: The compatibility ID from the 'IFT ' or 'IFTX' table of <var>base font subset</var> which listed this patch.
 
@@ -2402,9 +2398,9 @@ The algorithm:
     *  Insert the synthesized table into <var>extended font subset</var>.
 
 5. Locate the [[#patch-map-table]] which has the same [=Glyph keyed patch/compatibilityId=] as <var>compatibility id</var>. If it is a
-    format 1 patch map then, invoke [$Remove Entries from Format 1 Patch Map$] with the patch map table and <var>patch uri</var> as an
+    format 1 patch map then, invoke [$Remove Entries from Format 1 Patch Map$] with the patch map table and <var>patch URL string</var> as an
     input. Otherwise if it is a format 2 patch map then, invoke [$Remove Entries from Format 2 Patch Map$] with the patch map table and
-    <var>patch uri</var> as an input. Copy the modified patch map table into <var>extended font subset</var>.
+    <var>patch URL string</var> as an input. Copy the modified patch map table into <var>extended font subset</var>.
 
 6. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
     the entries processed in step 4 or 5, add a copy of that table to <var>extended font subset</var>.
@@ -2802,10 +2798,10 @@ One security concern is that IFT fonts could potentially generate a large number
 problems on the client or the service hosting the patches. The IFT specification contains a couple of mitigations to limit excessive
 number of requests:
 
-1.  [[#extending-font-subset]]: disallows re-requesting the same URI multiple times and has limits on the total number of requests
+1.  [[#extending-font-subset]]: disallows re-requesting the same URL multiple times and has limits on the total number of requests
      that can be issued during the extension process.
 
-2.  [$Load patch file$]: specifies the use of [[fetch]] in implementing web browsers and matches the CORS settings for the initial
+2.  [$Load patch file$]: specifies the use of [[FETCH]] in implementing web browsers and matches the CORS settings for the initial
      font load. As a result cross-origin requests for patch files are disallowed unless the hosting service opts in via the appropriate
      access control headers.
 
@@ -2866,7 +2862,7 @@ they are defaulted to an empty set.
 
 <table>
   <tr><th>Table = "IFT "</th><th colspan="2">Compatibility ID = 0x0000_0000_0000_0001</th></tr>
-  <tr><th>Subset Definition</th><th>URI</th><th>Format Number</th>
+  <tr><th>Subset Definition</th><th>URL</th><th>Format Number</th>
   <tr>
     <td>
       ```
@@ -2930,7 +2926,7 @@ they are defaulted to an empty set.
 <br/>
 <table>
   <tr><th>Table = "IFTX"</th><th colspan="2">Compatibility ID = 0x0000_0000_0000_0002</th></tr>
-  <tr><th>Subset Definition</th><th>URI</th><th>Format Number</th>
+  <tr><th>Subset Definition</th><th>URL</th><th>Format Number</th>
   <tr>
     <td>
       ```
@@ -2992,7 +2988,7 @@ they are defaulted to an empty set.
 
 Note: this example execution is described as it would be implemented in an optimized client which aims to reduce the number of round trips needing to be
       made to extend the font for a target subset definition. This optimized execution is fully compliant with the extension algorithm but 
-      loads some URIs (the glyph keyed URIs) earlier than specified in the extension algorithm. This is allowed because these patches
+      loads some URLs (the glyph keyed URLs) earlier than specified in the extension algorithm. This is allowed because these patches
       will not be invalidated by the preceding table keyed patch.
 
 Inputs:
@@ -3030,7 +3026,7 @@ Iteration 1:
 
     <table>
       <tr><th>Table = "IFT "</th><th colspan="2">Compatibility ID = 0x0000_0000_0000_0006</th></tr>
-      <tr><th>Subset Definition</th><th>URI</th><th>Format Number</th>
+      <tr><th>Subset Definition</th><th>URL</th><th>Format Number</th>
       <tr>
         <td>
           ```
@@ -3047,7 +3043,7 @@ Iteration 1:
     Note the following changes:
     *  All entries that have data for 'a', ... 'z', and 'A', ..., 'Z' have been removed. Leaving just one entry for the remaining '0', ..., '9' code points.
     *  The font binary has changed and thus the previously listed table keyed patches are no longer valid. As a result the compatibility ID has changed and
-        the URI for the remaining '0', ..., '9' entry has changed. The patch at the new URI, //foo.bar/08.tk, is compatible with the updated font.
+        the URL for the remaining '0', ..., '9' entry has changed. The patch at the new URL, //foo.bar/08.tk, is compatible with the updated font.
 
 Iteration 2:
 
@@ -3063,7 +3059,7 @@ Iteration 2:
 
 *  Step 10 - The fetched patch //foo.bar/01.gk is applied to the current font subset. This patch adds glyph data for code points 'a' through 'm'
     to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/01.gk. The compatibility ID
-    and URIs for other entries are unchanged.
+    and URLs for other entries are unchanged.
 
 Iteration 3:
 
@@ -3077,7 +3073,7 @@ Iteration 3:
 
 *  Step 10 - The fetched patch //foo.bar/04.gk is applied to the current font subset. This patch adds glyph data for code points 'N' through 'Z'
     to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/04.gk. The compatibility ID
-    and URIs for other entries are unchanged.
+    and URLs for other entries are unchanged.
 
 
 Iteration 4:
@@ -3099,7 +3095,7 @@ a subset definition they are defaulted to an empty set.
 
 <table>
   <tr><th>Table = "IFT "</th><th colspan="2">Compatibility ID = 0x0000_0000_0000_0001</th></tr>
-  <tr><th>Subset Definition</th><th>URI</th><th>Format Number</th><th>Ignored?</th><th>Notes</th>
+  <tr><th>Subset Definition</th><th>URL</th><th>Format Number</th><th>Ignored?</th><th>Notes</th>
   <tr>
     <td>
       ```
