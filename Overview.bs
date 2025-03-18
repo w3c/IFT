@@ -278,7 +278,6 @@ variety of ways fonts are used on web pages. Authors have control over which fon
 this technology with, and which they do not.
 
 Note: the IFT tech keyword can be used in conjunction with other font tech specifiers to perform
-
 font feature selection. For example a <code>@font-face</code> could include two URLs one with
 <code>tech(incremental, color-COLRv1)</code> and the other with
 <code>tech(incremental, color-COLRv0)</code>.
@@ -1905,11 +1904,16 @@ to give the smallest encodings for most unicode code point sets typically encoun
 
 ### URL Templates ### {#url-templates}
 
-<!-- TODO(garretrieger): restrict this to only level 1 and update the examples as needed -->
-
 URL templates [[!rfc6570]] are used to convert numeric or string IDs into URL strings where patch files are located.
-A string ID is a sequence of bytes. The output of template expansion is a [[!UTF-8]] encoded string. Several variables
-are defined which are used to produce the expansion of the template:
+A string ID is a sequence of bytes. The output of template expansion is a [[!UTF-8]] encoded string.
+
+To limit the complexity of the template expansion implementation, URL templates in IFT are restricted to only
+[[rfc6570#section-1.2|Level 1]] substitution expressions. If during expansion unsupported operators (level 2 and above)
+or an expression which doesn't match template grammar is encountered ([[rfc6570#section-3]]), then template expansion must
+result in an error. Additionally, for consistency when producing percent encodings as part of template expansion
+([[rfc6570#section-3.1]]) IFT implementations must only use uppercase letters.
+
+Several variables are defined which are used to produce the expansion of the template:
 
 <table>
   <tr><th>Variable</th><th>Value</th></tr>
@@ -1965,6 +1969,10 @@ are defined which are used to produce the expansion of the template:
   </tr>
 </table>
 
+Note: since there is a small fixed set of variables and only level one expression are supported for expansion, implementations
+may want to consider a custom optimized template expansion implementation instead of relying on a general purpose implementation
+of [[!rfc6570]].
+
 <div class="example">
 
 Some example inputs and the corresponding expansions:
@@ -1984,64 +1992,58 @@ Some example inputs and the corresponding expansions:
     <td>//foo.bar/00</td>
   </tr>
   <tr>
-    <td>//foo.bar{/d1,d2,id}</td>
+    <td>//foo.bar/{d1}/{d2}/{id}</td>
     <td>478</td>
     <td>Integer</td>
     <td>//foo.bar/0/F/07F0</td>
   </tr>
   <tr>
-    <td>//foo.bar{/d1,d2,d3,id}</td>
+    <td>//foo.bar/{d1}/{d2}/{d3}/{id}</td>
     <td>123</td>
     <td>Integer</td>
     <td>//foo.bar/C/F/_/FC</td>
   </tr>
   <tr>
-    <td>//foo.bar{/d1,d2,d3,id}</td>
+    <td>//foo.bar/{d1}/{d2}/{d3}/{id}</td>
     <td>baz</td>
     <td>String</td>
     <td>//foo.bar/K/N/G/C9GNK</td>
   </tr>
   <tr>
-    <td>//foo.bar{/d1,d2,d3,id}</td>
+    <td>//foo.bar/{d1}/{d2}/{d3}/{id}</td>
     <td>z</td>
     <td>String</td>
     <td>//foo.bar/8/F/_/F8</td>
   </tr>
   <tr>
-    <td>//foo.bar{/d1,d2,d3,id}</td>
+    <td>//foo.bar/{d1}/{d2}/{d3}/{id}</td>
     <td>àbc</td>
     <td>String</td>
     <td>//foo.bar/O/O/4/OEG64OO</td>
   </tr>
   <tr>
-    <td>//foo.bar{/id64}</td>
+    <td>//foo.bar/{id64}</td>
     <td>14,000,000</td>
     <td>Integer</td>
     <td>//foo.bar/1Z-A</td>
   </tr>
   <tr>
-    <td>//foo.bar{/id64}</td>
+    <td>//foo.bar/{id64}</td>
     <td>0</td>
     <td>Integer</td>
     <td>//foo.bar/AA%3D%3D</td>
   </tr>
   <tr>
-    <td>//foo.bar{/id64}</td>
+    <td>//foo.bar/{id64}</td>
     <td>17,000,000</td>
     <td>Integer</td>
     <td>//foo.bar/AQNmQA%3D%3D</td>
   </tr>
   <tr>
-    <td>//foo.bar{/id64}</td>
+    <td>//foo.bar/{id64}</td>
     <td>àbc</td>
     <td>String</td>
     <td>//foo.bar/w6BiYw%3D%3D</td>
-  </tr>
-  <tr>
-    <td>//foo.bar/{+id64}</td>
-    <td>àbcd</td>
-    <td>String</td>
-    <td>//foo.bar/w6BiY2Q=</td>
   </tr>
 </table>
 
