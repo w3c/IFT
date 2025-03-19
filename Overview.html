@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="40d37ef0c77a3237c934fcca91c1b3620910e9bc" name="revision">
+  <meta content="1f572eaaa54a42581b9f4ddfb539dc2cdb90a54a" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -2771,6 +2771,10 @@ of the associated glyph data is <a data-link-type="dfn" href="#glyphpatches-glyp
 of any other types must be ignored. When updating <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a> the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a> table must be updated as
 well. No other tables in the font can be modified as a result of this step. Notably this means that a patch cannot add glyphs
 with indices beyond the numGlyphs specified in <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a>.</p>
+       <p><a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a>, and <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a> have variable sized offsets to per glyph data. If
+necessary when synthesizing a new table the offset sizes can be increased as needed. For <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>/<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a> offset sizes cannot be changed because the offset size is specified in the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/head#">head</a> table. If during synthesis an offset
+is generated which exceeds the maximum possible offset value (after increasing offset size if possible), then patch application has
+failed. Return an error.</p>
       <li data-md>
        <p>If <var>base font subset</var> does not have a matching table, return an error.</p>
       <li data-md>
