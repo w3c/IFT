@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="66cdbe0c9dcac7df8c519e597d96134b023e200d" name="revision">
+  <meta content="24413daf1394553b49ad6bb0b941b4bc68e20049" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -871,7 +871,7 @@ to complex scripts like Indic or Arabic.</p>
           <li><a href="#remove-entries-format-2"><span class="secno">5.3.2.2</span> <span class="content">Remove Entries from Format 2</span></a>
           <li><a href="#sparse-bit-set-decoding"><span class="secno">5.3.2.3</span> <span class="content">Sparse Bit Set</span></a>
          </ol>
-        <li><a href="#url-templates"><span class="secno">5.3.3</span> <span class="content">URL Templates</span></a>
+        <li><a href="#uri-templates"><span class="secno">5.3.3</span> <span class="content">URI Templates</span></a>
        </ol>
      </ol>
     <li>
@@ -1711,7 +1711,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-urltemplate">urlTemplate</dfn>[urlTemplateLength]
-      <td> A <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string. Contains a <a href="#url-templates">§ 5.3.3 URL Templates</a> which is used to produce URL strings associated with each entry.
+      <td> A <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string. Contains a <a href="#uri-templates">§ 5.3.3 URI Templates</a> which is used to produce URL strings associated with each entry.
       Must be a valid <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> sequence. 
      <tr>
       <td>uint8
@@ -1842,7 +1842,7 @@ index and do not build an entry for it.</p>
        <p>Convert the set of glyph indices to a set of Unicode code points using the code point to glyph mapping in the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table of <var>font subset</var>. Ignore any glyph indices that are not mapped by <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a>.
 Multiple code points may map to the same glyph id. All code points associated with a glyph should be included.</p>
       <li data-md>
-       <p>Convert <var>entry index</var> into a URL string by applying <a data-link-type="dfn" href="#format-1-patch-map-urltemplate" id="ref-for-format-1-patch-map-urltemplate">urlTemplate</a> following <a href="#url-templates">§ 5.3.3 URL Templates</a>. If
+       <p>Convert <var>entry index</var> into a URL string by applying <a data-link-type="dfn" href="#format-1-patch-map-urltemplate" id="ref-for-format-1-patch-map-urltemplate">urlTemplate</a> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>. If
 the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
       <li data-md>
        <p>If the Unicode code point set is empty then, skip this <var>entry index</var>.</p>
@@ -1863,7 +1863,7 @@ skipped. For ordering, tag values are interpreted as a 4 byte big endian unsigne
       <li data-md>
        <p>If <a data-link-type="dfn" href="#entrymaprecord-firstentryindex" id="ref-for-entrymaprecord-firstentryindex">EntryMapRecord::firstEntryIndex</a> is greater than <a data-link-type="dfn" href="#entrymaprecord-lastentryindex" id="ref-for-entrymaprecord-lastentryindex">EntryMapRecord::lastEntryIndex</a> this <a data-link-type="dfn" href="#entrymaprecord" id="ref-for-entrymaprecord⑥">EntryMapRecord</a> is invalid, skip it.</p>
       <li data-md>
-       <p>Convert <var>mapped entry index</var> into a URL string by applying <a data-link-type="dfn" href="#format-1-patch-map-urltemplate" id="ref-for-format-1-patch-map-urltemplate①">urlTemplate</a> following <a href="#url-templates">§ 5.3.3 URL Templates</a>.
+       <p>Convert <var>mapped entry index</var> into a URL string by applying <a data-link-type="dfn" href="#format-1-patch-map-urltemplate" id="ref-for-format-1-patch-map-urltemplate①">urlTemplate</a> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
 If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
       <li data-md>
        <p>If the bit for <var>mapped entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap①">appliedEntriesBitMap</a> is set to 1, skip this entry.</p>
@@ -1911,7 +1911,7 @@ change the number of bytes.</p>
       <li data-md>
        <p>If the bit for <var>entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap③">appliedEntriesBitMap</a> is set to 1, skip this <var>entry index</var>.</p>
       <li data-md>
-       <p>Convert <var>entry index</var> into a URL string by applying <a data-link-type="dfn" href="#format-1-patch-map-urltemplate" id="ref-for-format-1-patch-map-urltemplate②">urlTemplate</a> following <a href="#url-templates">§ 5.3.3 URL Templates</a>.
+       <p>Convert <var>entry index</var> into a URL string by applying <a data-link-type="dfn" href="#format-1-patch-map-urltemplate" id="ref-for-format-1-patch-map-urltemplate②">urlTemplate</a> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
 If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
       <li data-md>
        <p>If the generated URL string is equal to <var>patch URL string</var> then set the bit for <var>entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap④">appliedEntriesBitMap</a> to 1.</p>
@@ -1963,7 +1963,7 @@ If the template expansion results in an error (see: <a href="https://www.rfc-edi
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-urltemplate">urlTemplate</dfn>[urlTemplateLength]
-      <td> A <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string. Contains a <a href="#url-templates">§ 5.3.3 URL Templates</a> which is used to produce URL strings associated with each entry.
+      <td> A <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string. Contains a <a href="#uri-templates">§ 5.3.3 URI Templates</a> which is used to produce URL strings associated with each entry.
       Must be a valid <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> sequence. 
    </table>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="mapping-entries">Mapping Entries</dfn> encoding:</p>
@@ -2137,7 +2137,7 @@ being requested.</p>
     <li data-md>
      <p><var>default patch format</var>: the default patch format if one isn’t specified.</p>
     <li data-md>
-     <p><var>url template</var>: the URL template used to locate patches.</p>
+     <p><var>uri template</var>: the URI template used to locate patches.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -2201,7 +2201,7 @@ by <a data-link-type="dfn" href="#design-space-segment-tag" id="ref-for-design-s
          <p>Set <var>entry id</var> to <code><var>entry id</var> + 1 + floor(delta value / 2)</code>.
  If <var>entry id</var> is negative or greater than 4,294,967,295 then, this encoding is invalid return an error.</p>
         <li data-md>
-         <p>Convert <var>entry id</var> into a URL string by applying <var>url template</var> following <a href="#url-templates">§ 5.3.3 URL Templates</a>.
+         <p>Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
  If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
         <li data-md>
          <p>Add the generated patch URL string to <var>entry</var>.</p>
@@ -2217,7 +2217,7 @@ by <a data-link-type="dfn" href="#design-space-segment-tag" id="ref-for-design-s
          <p>Interpret the least significant 23 bits as an unsigned integer and read that many bytes from <var>id string bytes</var>.
  Set <var>entry id</var> to the result.</p>
         <li data-md>
-         <p>Convert <var>entry id</var> into a URL string by applying <var>url template</var> following <a href="#url-templates">§ 5.3.3 URL Templates</a>.
+         <p>Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
  If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
         <li data-md>
          <p>Add the generated patch URL string to <var>entry</var>.</p>
@@ -2431,10 +2431,10 @@ byte string:
 ]
 </pre>
    </div>
-   <h4 class="heading settled" data-level="5.3.3" id="url-templates"><span class="secno">5.3.3. </span><span class="content">URL Templates</span><a class="self-link" href="#url-templates"></a></h4>
-   <p>URL templates <a data-link-type="biblio" href="#biblio-rfc6570" title="URI Template">[rfc6570]</a> are used to convert numeric or string IDs into URL strings where patch files are located.
+   <h4 class="heading settled" data-level="5.3.3" id="uri-templates"><span class="secno">5.3.3. </span><span class="content">URI Templates</span><a class="self-link" href="#uri-templates"></a></h4>
+   <p>URI templates <a data-link-type="biblio" href="#biblio-rfc6570" title="URI Template">[rfc6570]</a> are used to convert numeric or string IDs into URL strings where patch files are located.
 A string ID is a sequence of bytes. The output of template expansion is a <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string.</p>
-   <p>To limit the complexity of the template expansion implementation, URL templates in IFT are restricted to only <a href="https://www.rfc-editor.org/rfc/rfc6570#section-1.2">Level 1</a> substitution expressions. If during expansion unsupported operators (level 2 and above)
+   <p>To limit the complexity of the template expansion implementation, URI templates in IFT are restricted to only <a href="https://www.rfc-editor.org/rfc/rfc6570#section-1.2">Level 1</a> substitution expressions. If during expansion unsupported operators (level 2 and above)
 or an expression which doesn’t match template grammar is encountered (<a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>), then template expansion must
 result in an error. Additionally, for consistency when producing percent encodings as part of template expansion
 (<a href="https://www.rfc-editor.org/rfc/rfc6570#section-3.1">URI Template § section-3.1</a>) IFT implementations must only use uppercase letters.</p>
@@ -3109,7 +3109,7 @@ patch mapping prior to receiving all of the font data and potentially initiate r
 in any order in the patch file. So for the same reasons encoders should consider placing updates to the mapping tables plus any
 additional tables needed to decode the mapping tables as early as possible in the patch file.</p>
    <p><b>Choosing the input ID encoding</b></p>
-   <p>The specification supports two encodings for embedding patch IDs in the URL template. The first is <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a>,
+   <p>The specification supports two encodings for embedding patch IDs in the URI template. The first is <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a>,
 which is a good match for pre-generated patches that will typically be stored in a filesystem. Base32hex encoding only uses the
 letters 0-9 and A-V, which are safe letters for a file name in every commonly used filesystem, with no risk of collisions due to
 case-insensitivity. Because the string is embedded without padding this format cannot be reliably decoded, so it may be a poor

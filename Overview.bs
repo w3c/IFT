@@ -1043,7 +1043,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <td>uint8</td>
     <td><dfn for="Format 1 Patch Map">urlTemplate</dfn>[urlTemplateLength]</td>
     <td>
-      A [[!UTF-8]] encoded string. Contains a [[#url-templates]] which is used to produce URL strings associated with each entry.
+      A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URL strings associated with each entry.
       Must be a valid [[!UTF-8]] sequence.
     </td>
   </tr>
@@ -1214,7 +1214,7 @@ The algorithm:
         [[open-type/cmap|cmap]] table of <var>font subset</var>. Ignore any glyph indices that are not mapped by [[open-type/cmap|cmap]].
         Multiple code points may map to the same glyph id. All code points associated with a glyph should be included.
 
-    *  Convert <var>entry index</var> into a URL string by applying [=Format 1 Patch Map/urlTemplate=] following [[#url-templates]]. If
+    *  Convert <var>entry index</var> into a URL string by applying [=Format 1 Patch Map/urlTemplate=] following [[#uri-templates]]. If
         the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
     *  If the Unicode code point set is empty then, skip this <var>entry index</var>.
@@ -1241,7 +1241,7 @@ The algorithm:
     *  If [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=] is greater than
         [=EntryMapRecord/lastEntryIndex|EntryMapRecord::lastEntryIndex=] this [=EntryMapRecord=] is invalid, skip it.
 
-    *  Convert <var>mapped entry index</var> into a URL string by applying [=Format 1 Patch Map/urlTemplate=] following [[#url-templates]].
+    *  Convert <var>mapped entry index</var> into a URL string by applying [=Format 1 Patch Map/urlTemplate=] following [[#uri-templates]].
         If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
     *  If the bit for <var>mapped entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this entry.
@@ -1293,7 +1293,7 @@ The algorithm:
     *  If the bit for <var>entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
         <var>entry index</var>.
 
-    *  Convert <var>entry index</var> into a URL string by applying [=Format 1 Patch Map/urlTemplate=] following [[#url-templates]].
+    *  Convert <var>entry index</var> into a URL string by applying [=Format 1 Patch Map/urlTemplate=] following [[#uri-templates]].
         If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
     *  If the generated URL string is equal to <var>patch URL string</var> then set the bit for <var>entry index</var> in
@@ -1362,7 +1362,7 @@ The algorithm:
     <td>uint8</td>
     <td><dfn for="Format 2 Patch Map">urlTemplate</dfn>[urlTemplateLength]</td>
     <td>
-      A [[!UTF-8]] encoded string. Contains a [[#url-templates]] which is used to produce URL strings associated with each entry.
+      A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URL strings associated with each entry.
       Must be a valid [[!UTF-8]] sequence.
     </td>
   </tr>
@@ -1604,7 +1604,7 @@ The inputs to this algorithm are:
 
 * <var>default patch format</var>: the default patch format if one isn't specified.
 
-* <var>url template</var>: the URL template used to locate patches.
+* <var>uri template</var>: the URI template used to locate patches.
 
 The algorithm outputs:
 
@@ -1665,7 +1665,7 @@ The algorithm:
          *  Set <var>entry id</var> to <code><var>entry id</var> + 1 + floor(delta value / 2)</code>.
              If <var>entry id</var> is negative or greater than 4,294,967,295 then, this encoding is invalid return an error.
 
-         *  Convert <var>entry id</var> into a URL string by applying <var>url template</var> following [[#url-templates]].
+         *  Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following [[#uri-templates]].
              If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
          *  Add the generated patch URL string to <var>entry</var>.
@@ -1679,7 +1679,7 @@ The algorithm:
          *  Interpret the least significant 23 bits as an unsigned integer and read that many bytes from <var>id string bytes</var>.
              Set <var>entry id</var> to the result.
 
-         *  Convert <var>entry id</var> into a URL string by applying <var>url template</var> following [[#url-templates]].
+         *  Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following [[#uri-templates]].
              If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
          *  Add the generated patch URL string to <var>entry</var>.
@@ -1902,12 +1902,12 @@ to give the smallest encodings for most unicode code point sets typically encoun
   ```
 </div>
 
-### URL Templates ### {#url-templates}
+### URI Templates ### {#uri-templates}
 
-URL templates [[!rfc6570]] are used to convert numeric or string IDs into URL strings where patch files are located.
+URI templates [[!rfc6570]] are used to convert numeric or string IDs into URL strings where patch files are located.
 A string ID is a sequence of bytes. The output of template expansion is a [[!UTF-8]] encoded string.
 
-To limit the complexity of the template expansion implementation, URL templates in IFT are restricted to only
+To limit the complexity of the template expansion implementation, URI templates in IFT are restricted to only
 [[rfc6570#section-1.2|Level 1]] substitution expressions. If during expansion unsupported operators (level 2 and above)
 or an expression which doesn't match template grammar is encountered ([[rfc6570#section-3]]), then template expansion must
 result in an error. Additionally, for consistency when producing percent encodings as part of template expansion
@@ -2735,7 +2735,7 @@ additional tables needed to decode the mapping tables as early as possible in th
 
 <b>Choosing the input ID encoding</b>
 
-The specification supports two encodings for embedding patch IDs in the URL template. The first is [[rfc4648#section-7|base32hex]],
+The specification supports two encodings for embedding patch IDs in the URI template. The first is [[rfc4648#section-7|base32hex]],
 which is a good match for pre-generated patches that will typically be stored in a filesystem. Base32hex encoding only uses the
 letters 0-9 and A-V, which are safe letters for a file name in every commonly used filesystem, with no risk of collisions due to
 case-insensitivity. Because the string is embedded without padding this format cannot be reliably decoded, so it may be a poor
