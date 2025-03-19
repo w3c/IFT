@@ -923,6 +923,29 @@ For [[WOFF2]] special care must be taken. If an incremental font will be encoded
 2. The 'IFT ' and 'IFTX' tables can be processed and brotli encoded by a WOFF2 encoder following the standard process defined in
     [[WOFF2#table_format]].
 
+
+CFF and CFF2 Incremental Fonts {#cff}
+-------------------------------------
+
+For incremental fonts that contain glyph outlines stored in a [[open-type/cff|CFF]] or [[open-type/cff2|CFF2]] table there are some
+additional restrictions:
+
+* CFF and CFF2 tables in an incremental font must have the CharStrings INDEX data structure be last element of the
+    table (followed only by 0 padding to a four-byte word boundary).
+
+* CFF and CFF2 tables in an incremental font must not have any other data elements that overlap the CharStrings INDEX data
+    structure.
+
+These two requirements allow for the glyph keyed patch application implementation on CFF and CFF2 tables to be significantly
+simplified. They allow glyph data to be inserted into CFF/CFF2 tables without changing the offsets to any other data elements
+encoded in the CFF/CFF2 table.
+
+CFF or CFF2 subroutinization is compatible with the incremental font transfer. However, naive subroutinization will tend
+to reduce patch size while increasing the size of the initial file. Also, WOFF2 has often been shown to compress a
+non-subroutinized font more effectively than its subroutinized equivalent (at the cost of a significantly larger
+uncompressed file).  Therefore, it is recommended that subroutinzation either be avoided, used moderately, or customized
+to the specific needs of IFT.
+
 Patch Map Table {#patch-map-table}
 ----------------------------------
 
