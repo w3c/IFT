@@ -431,7 +431,7 @@ code points, layout features and/or design space. This algorithm incrementally s
 them as needed. As an important optimization to minimize network round trips it permits loads to be started for all patches that will eventually
 be needed. These come in two forms:
 
-*  First, [=patch map|patch mapping entries=] may list more than one URI, where each URI after the first is to be preloaded because it
+*  First, [=patch map|patch mapping entries=] may list more than one URI, where each URI after the first should also be loaded because they
     will be needed in future iterations.
 
 *  Second, [[#font-patch-invalidations]] is used to determine which patches loads can be started for. Any patches which match the target subset
@@ -490,7 +490,7 @@ The algorithm:
 
 9.  Start a load of <var>patch file</var> (if not already previously started) by invoking [$Load patch file$] with the <var>initial font subset URI</var>
     as the initial font URI and the first patch URI in <var>entry</var> as the patch URI. If there are any other URIs in <var>entry</var>, then initiate
-    loads for those using the same procedure. These are preloads and the results may be used during future iterations of this algorithm.
+    loads for those using the same procedure. These may be used during future iterations of this algorithm.
     Additionally the client may optionally start loads using the same procedure for any entries in <var>entry list</var> which will not be
     [[#font-patch-invalidations|invalidated]] by <var>entry</var>. The total number of patches that a client can load and apply during a single execution
     of this algorithm is limited to:
@@ -743,7 +743,7 @@ round trips.
 The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 8
 of [$Extend an Incremental Font Subset$]:
 
-1.  If one or more candidate entries have previously had their associated patch file preloaded by step 9 of [$Extend an Incremental Font Subset$],
+1.  If one or more candidate entries have previously had their associated patch file loaded by step 9 of [$Extend an Incremental Font Subset$],
     then in the following steps only consider candidate entries whose patch file is already loaded or is currently being loaded. Otherwise consider all
     candidate entries.
 
@@ -1462,9 +1462,9 @@ The algorithm:
     <td>
       List of signed deltas which calculate the IDs of the URIs for this entry. If present, has at least one delta. If the least
       significant bit of a delta is set, then one more delta follows. This repeats until a delta with the least significant bit
-      cleared is encountered. The entry id for each delta the last calculated entry id + 1 + floor(entryIdDelta / 2). Only present if
+      cleared is encountered. The entry id for each delta is the last calculated entry id + 1 + floor(entryIdDelta / 2). Only present if
       [=Mapping Entry/formatFlags=] bit 2 is set and [=Format 2 Patch Map/entryIdStringData=] is null (0).
-      If not present and [=Format 2 Patch Map/entryIdStringData=] is null (0), then there is one id for this entry and and the
+      If not present and [=Format 2 Patch Map/entryIdStringData=] is null (0), then there is one id for this entry and the
       delta is assumed to be 0.
     </td>
   </tr>
