@@ -2353,11 +2353,15 @@ The algorithm:
         well. No other tables in the font can be modified as a result of this step. Notably this means that a patch cannot add glyphs
         with indices beyond the numGlyphs specified in [[open-type/maxp|maxp]].
 
+        [[open-type/cff|CFF]], [[open-type/cff2|CFF2]], and [[open-type/gvar|gvar]] have variable sized offsets to per glyph data. If
+        necessary when synthesizing a new table the offset sizes can be increased as needed. For [[open-type/glyf|glyf]]/[[open-type/loca|loca]]
+        offset sizes cannot be changed because the offset size is specified in the [[open-type/head|head]] table. If during synthesis an offset
+        is generated which exceeds the maximum possible offset value (after increasing offset size if possible), then patch application has
+        failed. Return an error.
+
     *  If <var>base font subset</var> does not have a matching table, return an error.
 
     *  Insert the synthesized table into <var>extended font subset</var>.
-
-
 
 5. Locate the [[#patch-map-table]] which has the same [=Glyph keyed patch/compatibilityId=] as <var>compatibility id</var>. If it is a
     format 1 patch map then, invoke [$Remove Entries from Format 1 Patch Map$] with the patch map table and <var>patch uri</var> as an
