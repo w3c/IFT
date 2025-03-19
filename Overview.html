@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="5c88ae44d439b835868cfddf951503fe2cb0f0ed" name="revision">
+  <meta content="8108f4b43a3fa6f7c3d6fd95a598a294822a4055" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1193,7 +1193,7 @@ them as needed. As an important optimization to minimize network round trips it 
 be needed. These come in two forms:</p>
    <ul>
     <li data-md>
-     <p>First, <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map①">patch mapping entries</a> may list more than one URI, where each URI after the first is to be preloaded because it
+     <p>First, <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map①">patch mapping entries</a> may list more than one URI, where each URI after the first should also be loaded because they
 will be needed in future iterations.</p>
     <li data-md>
      <p>Second, <a href="#font-patch-invalidations">§ 4.1 Patch Invalidations</a> is used to determine which patches loads can be started for. Any patches which match the target subset
@@ -1251,7 +1251,7 @@ The criteria for selecting the single entry is left up to the implementation to 
      </ul>
     <li data-md>
      <p>Start a load of <var>patch file</var> (if not already previously started) by invoking <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the <var>initial font subset URI</var> as the initial font URI and the first patch URI in <var>entry</var> as the patch URI. If there are any other URIs in <var>entry</var>, then initiate
-loads for those using the same procedure. These are preloads and the results may be used during future iterations of this algorithm.
+loads for those using the same procedure. These may be used during future iterations of this algorithm.
 Additionally the client may optionally start loads using the same procedure for any entries in <var>entry list</var> which will not be <a href="#font-patch-invalidations">invalidated</a> by <var>entry</var>. The total number of patches that a client can load and apply during a single execution
 of this algorithm is limited to:</p>
      <ul>
@@ -1457,7 +1457,7 @@ round trips.</p>
 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①">Extend an Incremental Font Subset</a>:</p>
    <ol>
     <li data-md>
-     <p>If one or more candidate entries have previously had their associated patch file preloaded by step 9 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset②">Extend an Incremental Font Subset</a>,
+     <p>If one or more candidate entries have previously had their associated patch file loaded by step 9 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset②">Extend an Incremental Font Subset</a>,
 then in the following steps only consider candidate entries whose patch file is already loaded or is currently being loaded. Otherwise consider all
 candidate entries.</p>
     <li data-md>
@@ -2026,8 +2026,8 @@ If the template expansion results in an error (see: <a href="https://www.rfc-edi
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-entryiddelta">entryIdDelta</dfn>[variable]
       <td> List of signed deltas which calculate the IDs of the URIs for this entry. If present, has at least one delta. If the least
       significant bit of a delta is set, then one more delta follows. This repeats until a delta with the least significant bit
-      cleared is encountered. The entry id for each delta the last calculated entry id + 1 + floor(entryIdDelta / 2). Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑥">formatFlags</a> bit 2 is set and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata">entryIdStringData</a> is null (0).
-      If not present and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata①">entryIdStringData</a> is null (0), then there is one id for this entry and and the
+      cleared is encountered. The entry id for each delta is the last calculated entry id + 1 + floor(entryIdDelta / 2). Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑥">formatFlags</a> bit 2 is set and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata">entryIdStringData</a> is null (0).
+      If not present and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata①">entryIdStringData</a> is null (0), then there is one id for this entry and the
       delta is assumed to be 0. 
      <tr>
       <td>uint24
