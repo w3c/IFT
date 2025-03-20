@@ -422,8 +422,8 @@ code points, layout features and/or design space. This algorithm incrementally s
 them as needed. As an important optimization to minimize network round trips it permits loads to be started for all patches that will eventually
 be needed. These come in two forms:
 
-*  First, [=patch map|patch mapping entries=] may list more than one URI, where each URI after the first should also be loaded because they
-    will be needed in future iterations.
+*  First, [=patch map|patch mapping entries=] may list more than one URL string, where each URL string after the first should also be loaded
+    because they will be needed in future iterations.
 
 *  Second, [[#font-patch-invalidations]] is used to determine which patches loads can be started for. Any patches which match the target subset
     definition and will not be invalidated by the next patch to be applied according to [[#font-patch-invalidations]] can be expected to be
@@ -1034,14 +1034,14 @@ the encoded bytes at the start of every iteration to pick up any changes made in
   </tr>
   <tr>
     <td>uint16</td>
-    <td>urlTemplateLength</td>
+    <td>uriTemplateLength</td>
     <td>
-      Length of the urlTemplate string.
+      Length of the uriTemplate string.
     </td>
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Format 1 Patch Map">urlTemplate</dfn>[urlTemplateLength]</td>
+    <td><dfn for="Format 1 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
     <td>
       A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URL strings associated with each entry.
       Must be a valid [[!UTF-8]] sequence.
@@ -1051,7 +1051,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <td>uint8</td>
     <td><dfn for="Format 1 Patch Map">patchFormat</dfn></td>
     <td>
-      Specifies the format of the patches linked to by urlTemplate.
+      Specifies the format of the patches linked to by uriTemplate.
       Must be set to one of the format numbers from  the [[#font-patch-formats-summary]] table.
     </td>
   </tr>
@@ -1214,7 +1214,7 @@ The algorithm:
         [[open-type/cmap|cmap]] table of <var>font subset</var>. Ignore any glyph indices that are not mapped by [[open-type/cmap|cmap]].
         Multiple code points may map to the same glyph id. All code points associated with a glyph should be included.
 
-    *  Convert <var>entry index</var> into a URL string by applying [=Format 1 Patch Map/urlTemplate=] following [[#uri-templates]]. If
+    *  Convert <var>entry index</var> into a URL string by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]]. If
         the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
     *  If the Unicode code point set is empty then, skip this <var>entry index</var>.
@@ -1241,7 +1241,7 @@ The algorithm:
     *  If [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=] is greater than
         [=EntryMapRecord/lastEntryIndex|EntryMapRecord::lastEntryIndex=] this [=EntryMapRecord=] is invalid, skip it.
 
-    *  Convert <var>mapped entry index</var> into a URL string by applying [=Format 1 Patch Map/urlTemplate=] following [[#uri-templates]].
+    *  Convert <var>mapped entry index</var> into a URL string by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
         If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
     *  If the bit for <var>mapped entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this entry.
@@ -1293,7 +1293,7 @@ The algorithm:
     *  If the bit for <var>entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
         <var>entry index</var>.
 
-    *  Convert <var>entry index</var> into a URL string by applying [=Format 1 Patch Map/urlTemplate=] following [[#uri-templates]].
+    *  Convert <var>entry index</var> into a URL string by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
         If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
 
     *  If the generated URL string is equal to <var>patch URL string</var> then set the bit for <var>entry index</var> in
@@ -1329,7 +1329,7 @@ The algorithm:
     <td>uint8</td>
     <td><dfn for="Format 2 Patch Map">defaultPatchFormat</dfn></td>
     <td>
-      Specifies the format of the patches linked to by urlTemplate (unless overridden by an entry).
+      Specifies the format of the patches linked to by uriTemplate (unless overridden by an entry).
       Must be set to one of the format numbers from the [[#font-patch-formats-summary]] table.
     </td>
   </tr>
@@ -1353,14 +1353,14 @@ The algorithm:
   </tr>
   <tr>
     <td>uint16</td>
-    <td>urlTemplateLength</td>
+    <td>uriTemplateLength</td>
     <td>
-      Length of the urlTemplate string.
+      Length of the uriTemplate string.
     </td>
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Format 2 Patch Map">urlTemplate</dfn>[urlTemplateLength]</td>
+    <td><dfn for="Format 2 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
     <td>
       A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URL strings associated with each entry.
       Must be a valid [[!UTF-8]] sequence.
@@ -1452,7 +1452,7 @@ The algorithm:
     <td>int24</td>
     <td><dfn for="Mapping Entry">entryIdDelta</dfn>[variable]</td>
     <td>
-      List of signed deltas which calculate the IDs of the URIs for this entry. If present, has at least one delta. If the least
+      List of signed deltas which calculate the IDs of the URL strings for this entry. If present, has at least one delta. If the least
       significant bit of a delta is set, then one more delta follows. This repeats until a delta with the least significant bit
       cleared is encountered. The entry id for each delta is the last calculated entry id + 1 + floor(entryIdDelta / 2). Only present if
       [=Mapping Entry/formatFlags=] bit 2 is set and [=Format 2 Patch Map/entryIdStringData=] is null (0).
@@ -1575,7 +1575,7 @@ The algorithm:
          to the end of <var>patch map</var> if [=Format 2 Patch Map/entryIdStringData=] is non zero,
          <var>last entry id</var>,
          [=Format 2 Patch Map/defaultPatchFormat=], and
-         [=Format 2 Patch Map/urlTemplate=].
+         [=Format 2 Patch Map/uriTemplate=].
 
      *  Set <var>last entry id</var> to the returned entry id.
 
