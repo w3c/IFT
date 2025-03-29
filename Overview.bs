@@ -941,9 +941,15 @@ additional restrictions:
 * CFF and CFF2 tables in an incremental font must not have any other data elements that overlap the CharStrings INDEX data
     structure.
 
-These two requirements allow for the glyph keyed patch application implementation on CFF and CFF2 tables to be significantly
+* The 'IFT ' [=patch map=] table must contain an offset
+    ([=Format 1 Patch Map/cffCharStringsOffset=], [=Format 1 Patch Map/cff2CharStringsOffset=]
+    [=Format 2 Patch Map/cffCharStringsOffset=], or [=Format 2 Patch Map/cff2CharStringsOffset=])
+    to the start of the CharStrings INDEX data for the CFF and/or CFF2 table. 
+
+These three requirements allow for the glyph keyed patch application implementation on CFF and CFF2 tables to be significantly
 simplified. They allow glyph data to be inserted into CFF/CFF2 tables without changing the offsets to any other data elements
-encoded in the CFF/CFF2 table.
+encoded in the CFF/CFF2 table. The stored CFF/CFF2 offsets allow the client to locate the CharStrings INDEX without needing to
+parse any other parts of the CFF/CFF2 table.
 
 CFF or CFF2 subroutinization is compatible with the incremental font transfer. However, naive subroutinization will tend
 to reduce patch size while increasing the size of the initial file. Also, WOFF2 has often been shown to compress a
@@ -1053,6 +1059,24 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <td>
       Specifies the format of the patches linked to by uriTemplate.
       Must be set to one of the format numbers from  the [[#font-patch-formats-summary]] table.
+    </td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Format 1 Patch Map">cffCharStringsOffset</dfn></td>
+    <td>
+      Only present in an 'IFT ' table (never in 'IFTX') when the font also contains a [[open-type/CFF|CFF]] table.
+      Gives the offset from the start of the [[open-type/CFF|CFF]] table to the CharStrings INDEX data structure of the
+      [[open-type/CFF|CFF]] table.
+    </td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Format 1 Patch Map">cff2CharStringsOffset</dfn></td>
+    <td>
+      Only present in an 'IFT ' table (never in 'IFTX') when the font also contains a [[open-type/CFF2|CFF2]] table.
+      Gives the offset from the start of the [[open-type/CFF|CFF2]] table to the CharStrings INDEX data structure of the
+      [[open-type/CFF2|CFF2]] table.
     </td>
   </tr>
 </table>
@@ -1366,6 +1390,25 @@ The algorithm:
       Must be a valid [[!UTF-8]] sequence.
     </td>
   </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Format 2 Patch Map">cffCharStringsOffset</dfn></td>
+    <td>
+      Only present in an 'IFT ' table (never in 'IFTX') when the font also contains a [[open-type/CFF|CFF]] table.
+      Gives the offset from the start of the [[open-type/CFF|CFF]] table to the CharStrings INDEX data structure of the
+      [[open-type/CFF|CFF]] table.
+    </td>
+  </tr>
+  <tr>
+    <td>uint32</td>
+    <td><dfn for="Format 2 Patch Map">cff2CharStringsOffset</dfn></td>
+    <td>
+      Only present in an 'IFT ' table (never in 'IFTX') when the font also contains a [[open-type/CFF2|CFF2]] table.
+      Gives the offset from the start of the [[open-type/CFF|CFF2]] table to the CharStrings INDEX data structure of the
+      [[open-type/CFF2|CFF2]] table.
+    </td>
+  </tr>
+
 </table>
 
 <dfn>Mapping Entries</dfn> encoding:
