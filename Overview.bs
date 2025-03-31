@@ -951,6 +951,9 @@ simplified. They allow glyph data to be inserted into CFF/CFF2 tables without ch
 encoded in the CFF/CFF2 table. The stored CFF/CFF2 offsets allow the client to locate the CharStrings INDEX without needing to
 parse any other parts of the CFF/CFF2 table.
 
+Note: that in some cases a CFF or CFF2 table may be added or changed by a table keyed patch. In these cases the patch
+will need to also add or update the charstrings offset to reflect the new or changed contents.
+
 CFF or CFF2 subroutinization is compatible with the incremental font transfer. However, naive subroutinization will tend
 to reduce patch size while increasing the size of the initial file. Also, WOFF2 has often been shown to compress a
 non-subroutinized font more effectively than its subroutinized equivalent (at the cost of a significantly larger
