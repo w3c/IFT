@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="af20875480cf8993bff352a924de66ddf41cb7aa" name="revision">
+  <meta content="16dd8d63842c9a70ad289d06e10bc32a7f146400" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1640,6 +1640,8 @@ to the start of the CharStrings INDEX data for the CFF and/or CFF2 table.</p>
 simplified. They allow glyph data to be inserted into CFF/CFF2 tables without changing the offsets to any other data elements
 encoded in the CFF/CFF2 table. The stored CFF/CFF2 offsets allow the client to locate the CharStrings INDEX without needing to
 parse any other parts of the CFF/CFF2 table.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> that in some cases a CFF or CFF2 table may be added or changed by a table keyed patch. In these cases the patch
+will need to also add or update the charstrings offset to reflect the new or changed contents.</p>
    <p>CFF or CFF2 subroutinization is compatible with the incremental font transfer. However, naive subroutinization will tend
 to reduce patch size while increasing the size of the initial file. Also, WOFF2 has often been shown to compress a
 non-subroutinized font more effectively than its subroutinized equivalent (at the cost of a significantly larger
