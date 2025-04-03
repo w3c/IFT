@@ -990,10 +990,19 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <td>Set to 1, identifies this as format 1.</td>
   </tr>
   <tr>
-    <td>uint32</td>
+    <td>uint24</td>
     <td>reserved</td>
     <td>Not used, set to 0.</td>
   </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Format 1 Patch Map">flags</dfn></td>
+    <td>Flags to signal the presence of optional fields.
+        If bit 0 (least significant bit) is set, then [=Format 1 Patch Map/cffCharStringsOffset=] will be present.
+        If bit 1 (least significant bit) is set, then [=Format 1 Patch Map/cff2CharStringsOffset=] will be present.
+    </td>
+  </tr>
+
   <tr>
     <td>uint32</td>
     <td><dfn for="Format 1 Patch Map">compatibilityId</dfn>[4]</td>
@@ -1068,7 +1077,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <td>uint32</td>
     <td><dfn for="Format 1 Patch Map">cffCharStringsOffset</dfn></td>
     <td>
-      Only present in an 'IFT ' table (never in 'IFTX') when the font also contains a [[open-type/CFF|CFF]] table.
+      Only present if bit 0 (least significant) of [=Format 1 Patch Map/flags=] is set.
       Gives the offset from the start of the [[open-type/CFF|CFF]] table to the CharStrings INDEX data structure of the
       [[open-type/CFF|CFF]] table.
     </td>
@@ -1077,7 +1086,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <td>uint32</td>
     <td><dfn for="Format 1 Patch Map">cff2CharStringsOffset</dfn></td>
     <td>
-      Only present in an 'IFT ' table (never in 'IFTX') when the font also contains a [[open-type/CFF2|CFF2]] table.
+      Only present if bit 1 of [=Format 1 Patch Map/flags=] is set.
       Gives the offset from the start of the [[open-type/CFF|CFF2]] table to the CharStrings INDEX data structure of the
       [[open-type/CFF2|CFF2]] table.
     </td>
@@ -1340,9 +1349,17 @@ The algorithm:
     <td>Set to 2, identifies this as format 2.</td>
   </tr>
   <tr>
-    <td>uint32</td>
+    <td>uint24</td>
     <td>reserved</td>
     <td>Not used, set to 0.</td>
+  </tr>
+  <tr>
+    <td>uint8</td>
+    <td><dfn for="Format 2 Patch Map">flags</dfn></td>
+    <td>Flags to signal the presence of optional fields.
+        If bit 0 (least significant bit) is set, then [=Format 2 Patch Map/cffCharStringsOffset=] will be present.
+        If bit 1 (least significant bit) is set, then [=Format 2 Patch Map/cff2CharStringsOffset=] will be present.
+    </td>
   </tr>
   <tr>
     <td>uint32</td>
@@ -1397,7 +1414,7 @@ The algorithm:
     <td>uint32</td>
     <td><dfn for="Format 2 Patch Map">cffCharStringsOffset</dfn></td>
     <td>
-      Only present in an 'IFT ' table (never in 'IFTX') when the font also contains a [[open-type/CFF|CFF]] table.
+      Only present if bit 0 (least significant) of [=Format 2 Patch Map/flags=] is set.
       Gives the offset from the start of the [[open-type/CFF|CFF]] table to the CharStrings INDEX data structure of the
       [[open-type/CFF|CFF]] table.
     </td>
@@ -1406,12 +1423,11 @@ The algorithm:
     <td>uint32</td>
     <td><dfn for="Format 2 Patch Map">cff2CharStringsOffset</dfn></td>
     <td>
-      Only present in an 'IFT ' table (never in 'IFTX') when the font also contains a [[open-type/CFF2|CFF2]] table.
+      Only present if bit 1 of [=Format 2 Patch Map/flags=] is set.
       Gives the offset from the start of the [[open-type/CFF|CFF2]] table to the CharStrings INDEX data structure of the
       [[open-type/CFF2|CFF2]] table.
     </td>
   </tr>
-
 </table>
 
 <dfn>Mapping Entries</dfn> encoding:
