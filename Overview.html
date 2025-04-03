@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="16dd8d63842c9a70ad289d06e10bc32a7f146400" name="revision">
+  <meta content="cef27ab3b9e788971e39e03f9e208c8fd877788f" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1674,9 +1674,15 @@ the encoded bytes at the start of every iteration to pick up any changes made in
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-format">format</dfn>
       <td>Set to 1, identifies this as format 1.
      <tr>
-      <td>uint32
+      <td>uint24
       <td>reserved
       <td>Not used, set to 0.
+     <tr>
+      <td>uint8
+      <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-flags">flags</dfn>
+      <td>Flags to signal the presence of optional fields.
+        If bit 0 (least significant bit) is set, then <a data-link-type="dfn" href="#format-1-patch-map-cffcharstringsoffset" id="ref-for-format-1-patch-map-cffcharstringsoffset①">cffCharStringsOffset</a> will be present.
+        If bit 1 (least significant bit) is set, then <a data-link-type="dfn" href="#format-1-patch-map-cff2charstringsoffset" id="ref-for-format-1-patch-map-cff2charstringsoffset①">cff2CharStringsOffset</a> will be present. 
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-compatibilityid">compatibilityId</dfn>[4]
@@ -1728,12 +1734,12 @@ the encoded bytes at the start of every iteration to pick up any changes made in
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-cffcharstringsoffset">cffCharStringsOffset</dfn>
-      <td> Only present in an 'IFT ' table (never in 'IFTX') when the font also contains a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/CFF#">CFF</a> table.
+      <td> Only present if bit 0 (least significant) of <a data-link-type="dfn" href="#format-1-patch-map-flags" id="ref-for-format-1-patch-map-flags">flags</a> is set.
       Gives the offset from the start of the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/CFF#">CFF</a> table to the CharStrings INDEX data structure of the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/CFF#">CFF</a> table. 
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-cff2charstringsoffset">cff2CharStringsOffset</dfn>
-      <td> Only present in an 'IFT ' table (never in 'IFTX') when the font also contains a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/CFF2#">CFF2</a> table.
+      <td> Only present if bit 1 of <a data-link-type="dfn" href="#format-1-patch-map-flags" id="ref-for-format-1-patch-map-flags①">flags</a> is set.
       Gives the offset from the start of the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/CFF#">CFF2</a> table to the CharStrings INDEX data structure of the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/CFF2#">CFF2</a> table. 
    </table>
    <p class="note" role="note"><span class="marker">Note:</span> <a data-link-type="dfn" href="#format-1-patch-map-glyphcount" id="ref-for-format-1-patch-map-glyphcount">glyphCount</a> is designed to be compatible with the
@@ -1947,9 +1953,15 @@ If the template expansion results in an error (see: <a href="https://www.rfc-edi
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-format">format</dfn>
       <td>Set to 2, identifies this as format 2.
      <tr>
-      <td>uint32
+      <td>uint24
       <td>reserved
       <td>Not used, set to 0.
+     <tr>
+      <td>uint8
+      <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-flags">flags</dfn>
+      <td>Flags to signal the presence of optional fields.
+        If bit 0 (least significant bit) is set, then <a data-link-type="dfn" href="#format-2-patch-map-cffcharstringsoffset" id="ref-for-format-2-patch-map-cffcharstringsoffset①">cffCharStringsOffset</a> will be present.
+        If bit 1 (least significant bit) is set, then <a data-link-type="dfn" href="#format-2-patch-map-cff2charstringsoffset" id="ref-for-format-2-patch-map-cff2charstringsoffset①">cff2CharStringsOffset</a> will be present. 
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-compatibilityid">compatibilityId</dfn>[4]
@@ -1985,12 +1997,12 @@ If the template expansion results in an error (see: <a href="https://www.rfc-edi
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-cffcharstringsoffset">cffCharStringsOffset</dfn>
-      <td> Only present in an 'IFT ' table (never in 'IFTX') when the font also contains a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/CFF#">CFF</a> table.
+      <td> Only present if bit 0 (least significant) of <a data-link-type="dfn" href="#format-2-patch-map-flags" id="ref-for-format-2-patch-map-flags">flags</a> is set.
       Gives the offset from the start of the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/CFF#">CFF</a> table to the CharStrings INDEX data structure of the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/CFF#">CFF</a> table. 
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-cff2charstringsoffset">cff2CharStringsOffset</dfn>
-      <td> Only present in an 'IFT ' table (never in 'IFTX') when the font also contains a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/CFF2#">CFF2</a> table.
+      <td> Only present if bit 1 of <a data-link-type="dfn" href="#format-2-patch-map-flags" id="ref-for-format-2-patch-map-flags①">flags</a> is set.
       Gives the offset from the start of the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/CFF#">CFF2</a> table to the CharStrings INDEX data structure of the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/CFF2#">CFF2</a> table. 
    </table>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="mapping-entries">Mapping Entries</dfn> encoding:</p>
@@ -3884,6 +3896,8 @@ content covered by the target subset definition.</p>
    <li>
     flags
     <ul>
+     <li><a href="#format-1-patch-map-flags">dfn for Format 1 Patch Map</a><span>, in § 5.3.1</span>
+     <li><a href="#format-2-patch-map-flags">dfn for Format 2 Patch Map</a><span>, in § 5.3.2</span>
      <li><a href="#glyph-keyed-patch-flags">dfn for Glyph keyed patch</a><span>, in § 6.3</span>
      <li><a href="#tablepatch-flags">dfn for TablePatch</a><span>, in § 6.2</span>
     </ul>
@@ -4242,10 +4256,11 @@ let dfnPanelData = {
 "font-subset-definition": {"dfnID":"font-subset-definition","dfnText":"font subset definition","external":false,"refSections":[{"refs":[{"id":"ref-for-font-subset-definition"},{"id":"ref-for-font-subset-definition\u2460"}],"title":"3.3. Patch Map"},{"refs":[{"id":"ref-for-font-subset-definition\u2461"}],"title":"4.2. Default Layout Features"},{"refs":[{"id":"ref-for-font-subset-definition\u2462"},{"id":"ref-for-font-subset-definition\u2463"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-font-subset-definition\u2464"}],"title":"4.6. Determining what Content a Font can Render"},{"refs":[{"id":"ref-for-font-subset-definition\u2465"}],"title":"5.3. Patch Map Table"},{"refs":[{"id":"ref-for-font-subset-definition\u2466"},{"id":"ref-for-font-subset-definition\u2467"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-font-subset-definition\u2468"},{"id":"ref-for-font-subset-definition\u2460\u24ea"},{"id":"ref-for-font-subset-definition\u2460\u2460"},{"id":"ref-for-font-subset-definition\u2460\u2461"}],"title":"5.3.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-font-subset-definition\u2460\u2462"}],"title":"7. Encoding"},{"refs":[{"id":"ref-for-font-subset-definition\u2460\u2463"},{"id":"ref-for-font-subset-definition\u2460\u2464"},{"id":"ref-for-font-subset-definition\u2460\u2465"},{"id":"ref-for-font-subset-definition\u2460\u2466"},{"id":"ref-for-font-subset-definition\u2460\u2467"},{"id":"ref-for-font-subset-definition\u2460\u2468"}],"title":"7.1. Encoding Considerations"}],"url":"#font-subset-definition"},
 "format-1-patch-map": {"dfnID":"format-1-patch-map","dfnText":"Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map"}],"title":"5.3.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map\u2460"}],"title":"5.3.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map"},
 "format-1-patch-map-appliedentriesbitmap": {"dfnID":"format-1-patch-map-appliedentriesbitmap","dfnText":"appliedEntriesBitMap","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2460"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2461"}],"title":"5.3.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2462"},{"id":"ref-for-format-1-patch-map-appliedentriesbitmap\u2463"}],"title":"5.3.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-appliedentriesbitmap"},
-"format-1-patch-map-cff2charstringsoffset": {"dfnID":"format-1-patch-map-cff2charstringsoffset","dfnText":"cff2CharStringsOffset","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-cff2charstringsoffset"}],"title":"5.2. CFF and CFF2 Incremental Fonts"}],"url":"#format-1-patch-map-cff2charstringsoffset"},
-"format-1-patch-map-cffcharstringsoffset": {"dfnID":"format-1-patch-map-cffcharstringsoffset","dfnText":"cffCharStringsOffset","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-cffcharstringsoffset"}],"title":"5.2. CFF and CFF2 Incremental Fonts"}],"url":"#format-1-patch-map-cffcharstringsoffset"},
+"format-1-patch-map-cff2charstringsoffset": {"dfnID":"format-1-patch-map-cff2charstringsoffset","dfnText":"cff2CharStringsOffset","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-cff2charstringsoffset"}],"title":"5.2. CFF and CFF2 Incremental Fonts"},{"refs":[{"id":"ref-for-format-1-patch-map-cff2charstringsoffset\u2460"}],"title":"5.3.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-cff2charstringsoffset"},
+"format-1-patch-map-cffcharstringsoffset": {"dfnID":"format-1-patch-map-cffcharstringsoffset","dfnText":"cffCharStringsOffset","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-cffcharstringsoffset"}],"title":"5.2. CFF and CFF2 Incremental Fonts"},{"refs":[{"id":"ref-for-format-1-patch-map-cffcharstringsoffset\u2460"}],"title":"5.3.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-cffcharstringsoffset"},
 "format-1-patch-map-compatibilityid": {"dfnID":"format-1-patch-map-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-compatibilityid"},{"id":"ref-for-format-1-patch-map-compatibilityid\u2460"}],"title":"5.3.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-compatibilityid"},
 "format-1-patch-map-featuremapoffset": {"dfnID":"format-1-patch-map-featuremapoffset","dfnText":"featureMapOffset","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-featuremapoffset"}],"title":"5.3.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-featuremapoffset"},
+"format-1-patch-map-flags": {"dfnID":"format-1-patch-map-flags","dfnText":"flags","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-flags"},{"id":"ref-for-format-1-patch-map-flags\u2460"}],"title":"5.3.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-flags"},
 "format-1-patch-map-format": {"dfnID":"format-1-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-format"}],"title":"5.3.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-format\u2460"}],"title":"5.3.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-format"},
 "format-1-patch-map-glyphcount": {"dfnID":"format-1-patch-map-glyphcount","dfnText":"glyphCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-glyphcount"},{"id":"ref-for-format-1-patch-map-glyphcount\u2460"}],"title":"5.3.1. Patch Map Table: Format 1"}],"url":"#format-1-patch-map-glyphcount"},
 "format-1-patch-map-maxentryindex": {"dfnID":"format-1-patch-map-maxentryindex","dfnText":"maxEntryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-maxentryindex"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2460"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2461"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2462"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2463"}],"title":"5.3.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-maxentryindex\u2464"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2465"}],"title":"5.3.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-maxentryindex"},
@@ -4253,13 +4268,14 @@ let dfnPanelData = {
 "format-1-patch-map-patchformat": {"dfnID":"format-1-patch-map-patchformat","dfnText":"patchFormat","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-patchformat"},{"id":"ref-for-format-1-patch-map-patchformat\u2460"}],"title":"5.3.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-patchformat"},
 "format-1-patch-map-uritemplate": {"dfnID":"format-1-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate"},{"id":"ref-for-format-1-patch-map-uritemplate\u2460"}],"title":"5.3.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate\u2461"}],"title":"5.3.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-uritemplate"},
 "format-2-patch-map": {"dfnID":"format-2-patch-map","dfnText":"Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map"}],"title":"5.3.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map\u2460"}],"title":"5.3.2.2. Remove Entries from Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map\u2461"}],"title":"5.3.2.3. Sparse Bit Set"}],"url":"#format-2-patch-map"},
-"format-2-patch-map-cff2charstringsoffset": {"dfnID":"format-2-patch-map-cff2charstringsoffset","dfnText":"cff2CharStringsOffset","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-cff2charstringsoffset"}],"title":"5.2. CFF and CFF2 Incremental Fonts"}],"url":"#format-2-patch-map-cff2charstringsoffset"},
-"format-2-patch-map-cffcharstringsoffset": {"dfnID":"format-2-patch-map-cffcharstringsoffset","dfnText":"cffCharStringsOffset","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-cffcharstringsoffset"}],"title":"5.2. CFF and CFF2 Incremental Fonts"}],"url":"#format-2-patch-map-cffcharstringsoffset"},
+"format-2-patch-map-cff2charstringsoffset": {"dfnID":"format-2-patch-map-cff2charstringsoffset","dfnText":"cff2CharStringsOffset","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-cff2charstringsoffset"}],"title":"5.2. CFF and CFF2 Incremental Fonts"},{"refs":[{"id":"ref-for-format-2-patch-map-cff2charstringsoffset\u2460"}],"title":"5.3.2. Patch Map Table: Format 2"}],"url":"#format-2-patch-map-cff2charstringsoffset"},
+"format-2-patch-map-cffcharstringsoffset": {"dfnID":"format-2-patch-map-cffcharstringsoffset","dfnText":"cffCharStringsOffset","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-cffcharstringsoffset"}],"title":"5.2. CFF and CFF2 Incremental Fonts"},{"refs":[{"id":"ref-for-format-2-patch-map-cffcharstringsoffset\u2460"}],"title":"5.3.2. Patch Map Table: Format 2"}],"url":"#format-2-patch-map-cffcharstringsoffset"},
 "format-2-patch-map-compatibilityid": {"dfnID":"format-2-patch-map-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-compatibilityid"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-compatibilityid"},
 "format-2-patch-map-defaultpatchformat": {"dfnID":"format-2-patch-map-defaultpatchformat","dfnText":"defaultPatchFormat","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchformat"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-defaultpatchformat\u2460"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-defaultpatchformat"},
 "format-2-patch-map-entries": {"dfnID":"format-2-patch-map-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entries"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entries"},
 "format-2-patch-map-entrycount": {"dfnID":"format-2-patch-map-entrycount","dfnText":"entryCount","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entrycount"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entrycount\u2460"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entrycount"},
 "format-2-patch-map-entryidstringdata": {"dfnID":"format-2-patch-map-entryidstringdata","dfnText":"entryIdStringData","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2460"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2461"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2462"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2463"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata\u2464"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2465"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2466"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entryidstringdata"},
+"format-2-patch-map-flags": {"dfnID":"format-2-patch-map-flags","dfnText":"flags","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-flags"},{"id":"ref-for-format-2-patch-map-flags\u2460"}],"title":"5.3.2. Patch Map Table: Format 2"}],"url":"#format-2-patch-map-flags"},
 "format-2-patch-map-format": {"dfnID":"format-2-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-format"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-format"},
 "format-2-patch-map-uritemplate": {"dfnID":"format-2-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-uritemplate"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-uritemplate"},
 "full-invalidation": {"dfnID":"full-invalidation","dfnText":"Full Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-full-invalidation"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-full-invalidation\u2460"}],"title":"6.1. Formats Summary"}],"url":"#full-invalidation"},
@@ -4731,6 +4747,7 @@ let refsData = {
 "#format-1-patch-map-cffcharstringsoffset": {"displayText":"cffcharstringsoffset","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"cffcharstringsoffset","type":"dfn","url":"#format-1-patch-map-cffcharstringsoffset"},
 "#format-1-patch-map-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#format-1-patch-map-compatibilityid"},
 "#format-1-patch-map-featuremapoffset": {"displayText":"featuremapoffset","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"featuremapoffset","type":"dfn","url":"#format-1-patch-map-featuremapoffset"},
+"#format-1-patch-map-flags": {"displayText":"flags","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#format-1-patch-map-flags"},
 "#format-1-patch-map-format": {"displayText":"format","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-1-patch-map-format"},
 "#format-1-patch-map-glyphcount": {"displayText":"glyphcount","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyphcount","type":"dfn","url":"#format-1-patch-map-glyphcount"},
 "#format-1-patch-map-maxentryindex": {"displayText":"maxentryindex","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxentryindex","type":"dfn","url":"#format-1-patch-map-maxentryindex"},
@@ -4745,6 +4762,7 @@ let refsData = {
 "#format-2-patch-map-entries": {"displayText":"entries","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entries","type":"dfn","url":"#format-2-patch-map-entries"},
 "#format-2-patch-map-entrycount": {"displayText":"entrycount","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entrycount","type":"dfn","url":"#format-2-patch-map-entrycount"},
 "#format-2-patch-map-entryidstringdata": {"displayText":"entryidstringdata","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringdata","type":"dfn","url":"#format-2-patch-map-entryidstringdata"},
+"#format-2-patch-map-flags": {"displayText":"flags","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#format-2-patch-map-flags"},
 "#format-2-patch-map-format": {"displayText":"format","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-2-patch-map-format"},
 "#format-2-patch-map-uritemplate": {"displayText":"uritemplate","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-2-patch-map-uritemplate"},
 "#full-invalidation": {"displayText":"full invalidation","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"full invalidation","type":"dfn","url":"#full-invalidation"},
