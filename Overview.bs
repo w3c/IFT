@@ -1534,8 +1534,8 @@ The algorithm:
       until a length value with the most significant bit cleared is encountered. The actual length value is stored in
       the least significant 23 bits of each value. Only present if [=Mapping Entry/formatFlags=] bit 2 is set and
       [=Format 2 Patch Map/entryIdStringData=] is not null (0). If present has at least one length value. If not present
-      and [=Format 2 Patch Map/entryIdStringData=] is not null (0), then the there is one id string for this entry and
-      its length is zero.
+      and [=Format 2 Patch Map/entryIdStringData=] is not null (0), then the there is one id string which is set to the last
+      id string from the previous entry or an empty string for the first entry.
     </td>
   </tr>
 
@@ -1665,7 +1665,7 @@ The inputs to this algorithm are:
 
 * <var>id string bytes</var> (optional): a byte array the contains entry ID strings.
 
-* <var>last entry id</var>: the entry id of the entry preceding this one.
+* <var>last entry id</var>: the last generated entry id.
 
 * <var>default patch format</var>: the default patch format if one isn't specified.
 
@@ -1673,7 +1673,7 @@ The inputs to this algorithm are:
 
 The algorithm outputs:
 
-* <var>entry id</var>: the numeric or string id of this entry.
+* <var>entry id</var>: the last generated numeric or string id of this entry.
 
 * <var>entry</var>: a single [=patch map entries|entry=].
 
@@ -1688,8 +1688,7 @@ The algorithm:
 1.  For the all steps whenever data is loaded from <var>entry bytes</var> increment <var>consumed bytes</var> with the
      number of bytes read.
 
-2.  If <var>id string bytes</var> is not present then, set <var>entry id</var> = <var>last entry id</var>. Otherwise set
-     <var>entry id</var> = <var>last entry id</var>.
+2.  Set <var>entry id</var> = <var>last entry id</var>, <var>consumed id string bytes</var> = 0.
 
 3.  Set the patch format of <var>entry</var> to <var>default patch format</var>.
 
@@ -1742,7 +1741,7 @@ The algorithm:
          *  Read the next [=Mapping Entry/entryIdStringLength=] value.
 
          *  Interpret the least significant 23 bits as an unsigned integer and read that many bytes from <var>id string bytes</var>.
-             Set <var>entry id</var> to the result.
+             Set <var>entry id</var> to the result. Increment <var>consumed id string bytes</var> by the number of bytes read.
 
          *  Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following [[#uri-templates]].
              If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
@@ -1751,12 +1750,30 @@ The algorithm:
 
          *  If the most significant bit of the read length value is set, then repeat step 8.
 
-9.  If [=Mapping Entry/formatFlags=] bit 3 is set, then a patch format is present. Read the format specified by
+9.  If [=Mapping Entry/formatFlags=] bit 2 is not set:
+
+    *  If <var>id string bytes</var> is not present, then:
+
+         *  Set <var>entry id</var> to <var>entry id</var> + 1.
+
+         *  Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following [[#uri-templates]].
+             If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
+
+         *  Add the generated patch URL string to <var>entry</var>.
+
+    *  Otherwise if <var>id string bytes</var> is present, then:
+
+         *  Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following [[#uri-templates]].
+             If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
+
+         *  Add the generated patch URL string to <var>entry</var>.
+
+10.  If [=Mapping Entry/formatFlags=] bit 3 is set, then a patch format is present. Read the format specified by
      [=Mapping Entry/patchFormat=] from <var>entry bytes</var> and set the patch format of <var>entry</var> to the read value.
      If [=Mapping Entry/patchFormat=] is not one of the values in [[#font-patch-formats-summary]] then, this encoding is invalid
      return an error.
 
-10.  If one or both of [=Mapping Entry/formatFlags=] bit 4 and bit 5 are set, then a code point list is present:
+11.  If one or both of [=Mapping Entry/formatFlags=] bit 4 and bit 5 are set, then a code point list is present:
 
     *  If [=Mapping Entry/formatFlags=] bit 4 is 0 and bit 5 is 1, then read the 2 byte (uint16) [=Mapping Entry/bias=] value
         from <var>entry bytes</var>.
@@ -1770,9 +1787,9 @@ The algorithm:
         Add the resulting code point set to the first [=font subset definition=] in <var>entry</var>. If the sparse bit set decoding
         failed then, this encoding is invalid return an error.
 
-11. If [=Mapping Entry/formatFlags=] bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.
+12. If [=Mapping Entry/formatFlags=] bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.
 
-12. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, [=Mapping Entry/entryIdStringLength=] as
+13. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>,
      <var>consumed id string bytes</var>, and <var>ignored</var>.
 
 <h5 algorithm id="remove-entries-format-2">Remove Entries from Format 2</h5>
@@ -1791,7 +1808,7 @@ The inputs to this algorithm are:
 This algorithm is a modified version of [$Interpret Format 2 Patch Map$], invoke [$Interpret Format 2 Patch Map$] with <var>patch map</var>
 as an input but with the following changes:
 
-*  During step 8 of [$Interpret Format 2 Patch Map Entry$]: compare the URL string generated for only the first delta/length value to
+*  During step 8 and 9 of [$Interpret Format 2 Patch Map Entry$]: compare the URL string generated for only the first delta/length value to
     <var>patch URL string</var> if they are equal then, set bit 6 of  [=Mapping Entry/formatFlags=] to 1. Stop the interpretation process
     at this point.
 

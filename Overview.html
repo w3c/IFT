@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="ca92138bcf39e5dfdf08e58f91539502075bf9ed" name="revision">
+  <meta content="bb993d35a562e7e8d642c54750d8b1ad20aa2b9f" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1621,8 +1621,9 @@ file, the compressed font needs to be decoded before attempting to extend it.</p
     <li data-md>
      <p>The 'IFT ' and 'IFTX' tables can be processed and brotli encoded by a WOFF2 encoder following the standard process defined in <a href="https://www.w3.org/TR/WOFF2/#table_format"><cite>WOFF 2.0</cite> § 5 Compressed data format</a>.</p>
    </ol>
-   <p class="note" role="note"><span class="marker">Note:</span> since WOFF2 outperforms WOFF even with glyf/loca transformations disabled it is generally recommended that IFT fonts are WOFF2 compressed
-(with glyf/loca transformations disabled when the font used table keyed patches) prior to serving.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Given that WOFF2 compression outperforms WOFF even with glyf/loca transformations disabled it is generally recommended
+that IFT fonts are compressed using WOFF2, with glyf/loca transformations disabled when the encoding updates those tables using
+table-keyed patches.</p>
    <h3 class="heading settled" data-level="5.2" id="cff"><span class="secno">5.2. </span><span class="content">CFF and CFF2 Incremental Fonts</span><a class="self-link" href="#cff"></a></h3>
    <p>For incremental fonts that contain glyph outlines stored in a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a> or <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> table there are some
 additional restrictions:</p>
@@ -2074,8 +2075,8 @@ If the template expansion results in an error (see: <a href="https://www.rfc-edi
       <td> The number of bytes that each id string for this entry occupies in the <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata②">entryIdStringData</a> data block.  If the most significant bit of a length value is set, then another length value follows. This repeats
       until a length value with the most significant bit cleared is encountered. The actual length value is stored in
       the least significant 23 bits of each value. Only present if <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags⑦">formatFlags</a> bit 2 is set and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata③">entryIdStringData</a> is not null (0). If present has at least one length value. If not present
-      and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata④">entryIdStringData</a> is not null (0), then the there is one id string for this entry and
-      its length is zero. 
+      and <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata④">entryIdStringData</a> is not null (0), then the there is one id string which is set to the last
+      id string from the previous entry or an empty string for the first entry. 
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Mapping Entry" data-dfn-type="dfn" data-noexport id="mapping-entry-patchformat">patchFormat</dfn>
@@ -2174,7 +2175,7 @@ being requested.</p>
     <li data-md>
      <p><var>id string bytes</var> (optional): a byte array the contains entry ID strings.</p>
     <li data-md>
-     <p><var>last entry id</var>: the entry id of the entry preceding this one.</p>
+     <p><var>last entry id</var>: the last generated entry id.</p>
     <li data-md>
      <p><var>default patch format</var>: the default patch format if one isn’t specified.</p>
     <li data-md>
@@ -2183,7 +2184,7 @@ being requested.</p>
    <p>The algorithm outputs:</p>
    <ul>
     <li data-md>
-     <p><var>entry id</var>: the numeric or string id of this entry.</p>
+     <p><var>entry id</var>: the last generated numeric or string id of this entry.</p>
     <li data-md>
      <p><var>entry</var>: a single <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①⓪">entry</a>.</p>
     <li data-md>
@@ -2199,7 +2200,7 @@ being requested.</p>
      <p>For the all steps whenever data is loaded from <var>entry bytes</var> increment <var>consumed bytes</var> with the
  number of bytes read.</p>
     <li data-md>
-     <p>If <var>id string bytes</var> is not present then, set <var>entry id</var> = <var>last entry id</var>. Otherwise set <var>entry id</var> = <var>last entry id</var>.</p>
+     <p>Set <var>entry id</var> = <var>last entry id</var>, <var>consumed id string bytes</var> = 0.</p>
     <li data-md>
      <p>Set the patch format of <var>entry</var> to <var>default patch format</var>.</p>
     <li data-md>
@@ -2256,7 +2257,7 @@ by <a data-link-type="dfn" href="#design-space-segment-tag" id="ref-for-design-s
          <p>Read the next <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength">entryIdStringLength</a> value.</p>
         <li data-md>
          <p>Interpret the least significant 23 bits as an unsigned integer and read that many bytes from <var>id string bytes</var>.
- Set <var>entry id</var> to the result.</p>
+ Set <var>entry id</var> to the result. Increment <var>consumed id string bytes</var> by the number of bytes read.</p>
         <li data-md>
          <p>Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
  If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
@@ -2267,17 +2268,41 @@ by <a data-link-type="dfn" href="#design-space-segment-tag" id="ref-for-design-s
        </ul>
      </ul>
     <li data-md>
-     <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①④">formatFlags</a> bit 3 is set, then a patch format is present. Read the format specified by <a data-link-type="dfn" href="#mapping-entry-patchformat" id="ref-for-mapping-entry-patchformat">patchFormat</a> from <var>entry bytes</var> and set the patch format of <var>entry</var> to the read value.
+     <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①④">formatFlags</a> bit 2 is not set:</p>
+     <ul>
+      <li data-md>
+       <p>If <var>id string bytes</var> is not present, then:</p>
+       <ul>
+        <li data-md>
+         <p>Set <var>entry id</var> to <var>entry id</var> + 1.</p>
+        <li data-md>
+         <p>Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
+ If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
+        <li data-md>
+         <p>Add the generated patch URL string to <var>entry</var>.</p>
+       </ul>
+      <li data-md>
+       <p>Otherwise if <var>id string bytes</var> is present, then:</p>
+       <ul>
+        <li data-md>
+         <p>Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
+ If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
+        <li data-md>
+         <p>Add the generated patch URL string to <var>entry</var>.</p>
+       </ul>
+     </ul>
+    <li data-md>
+     <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑤">formatFlags</a> bit 3 is set, then a patch format is present. Read the format specified by <a data-link-type="dfn" href="#mapping-entry-patchformat" id="ref-for-mapping-entry-patchformat">patchFormat</a> from <var>entry bytes</var> and set the patch format of <var>entry</var> to the read value.
  If <a data-link-type="dfn" href="#mapping-entry-patchformat" id="ref-for-mapping-entry-patchformat①">patchFormat</a> is not one of the values in <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> then, this encoding is invalid
  return an error.</p>
     <li data-md>
-     <p>If one or both of <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑤">formatFlags</a> bit 4 and bit 5 are set, then a code point list is present:</p>
+     <p>If one or both of <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑥">formatFlags</a> bit 4 and bit 5 are set, then a code point list is present:</p>
      <ul>
       <li data-md>
-       <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑥">formatFlags</a> bit 4 is 0 and bit 5 is 1, then read the 2 byte (uint16) <a data-link-type="dfn" href="#mapping-entry-bias" id="ref-for-mapping-entry-bias">bias</a> value
+       <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑦">formatFlags</a> bit 4 is 0 and bit 5 is 1, then read the 2 byte (uint16) <a data-link-type="dfn" href="#mapping-entry-bias" id="ref-for-mapping-entry-bias">bias</a> value
 from <var>entry bytes</var>.</p>
       <li data-md>
-       <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑦">formatFlags</a> bit 4 is 1 and bit 5 is 1, then read the 3 byte (uint24) <a data-link-type="dfn" href="#mapping-entry-bias" id="ref-for-mapping-entry-bias①">bias</a> value
+       <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑧">formatFlags</a> bit 4 is 1 and bit 5 is 1, then read the 3 byte (uint24) <a data-link-type="dfn" href="#mapping-entry-bias" id="ref-for-mapping-entry-bias①">bias</a> value
 from <var>entry bytes</var>.</p>
       <li data-md>
        <p>Otherwise the bias is 0.</p>
@@ -2287,9 +2312,9 @@ Add the resulting code point set to the first <a data-link-type="dfn" href="#fon
 failed then, this encoding is invalid return an error.</p>
      </ul>
     <li data-md>
-     <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑧">formatFlags</a> bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.</p>
+     <p>If <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑨">formatFlags</a> bit 6 is set, then set <var>ignored</var> to true. Otherwise <var>ignored</var> is false.</p>
     <li data-md>
-     <p>Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, <a data-link-type="dfn" href="#mapping-entry-entryidstringlength" id="ref-for-mapping-entry-entryidstringlength①">entryIdStringLength</a> as <var>consumed id string bytes</var>, and <var>ignored</var>.</p>
+     <p>Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>, <var>consumed id string bytes</var>, and <var>ignored</var>.</p>
    </ol>
    <h5 class="heading settled algorithm" data-algorithm="Remove Entries from Format 2" data-level="5.3.2.2" id="remove-entries-format-2"><span class="secno">5.3.2.2. </span><span class="content">Remove Entries from Format 2</span><a class="self-link" href="#remove-entries-format-2"></a></h5>
    <p>This algorithm is used to remove entries from a format 2 patch map. This removal modifies the bytes of the patch map but does not
@@ -2305,7 +2330,7 @@ change the number of bytes.</p>
    <p>This algorithm is a modified version of <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map①">Interpret Format 2 Patch Map</a>, invoke <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map②">Interpret Format 2 Patch Map</a> with <var>patch map</var> as an input but with the following changes:</p>
    <ul>
     <li data-md>
-     <p>During step 8 of <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map-entry" id="ref-for-abstract-opdef-interpret-format-2-patch-map-entry②">Interpret Format 2 Patch Map Entry</a>: compare the URL string generated for only the first delta/length value to <var>patch URL string</var> if they are equal then, set bit 6 of <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags①⑨">formatFlags</a> to 1. Stop the interpretation process
+     <p>During step 8 and 9 of <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map-entry" id="ref-for-abstract-opdef-interpret-format-2-patch-map-entry②">Interpret Format 2 Patch Map Entry</a>: compare the URL string generated for only the first delta/length value to <var>patch URL string</var> if they are equal then, set bit 6 of <a data-link-type="dfn" href="#mapping-entry-formatflags" id="ref-for-mapping-entry-formatflags②⓪">formatFlags</a> to 1. Stop the interpretation process
 at this point.</p>
     <li data-md>
      <p>The return value of <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map③">Interpret Format 2 Patch Map</a> is not used.</p>
@@ -4307,10 +4332,10 @@ let dfnPanelData = {
 "mapping-entry-designspacecount": {"dfnID":"mapping-entry-designspacecount","dfnText":"designSpaceCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-designspacecount"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#mapping-entry-designspacecount"},
 "mapping-entry-designspacesegments": {"dfnID":"mapping-entry-designspacesegments","dfnText":"designSpaceSegments","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-designspacesegments"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#mapping-entry-designspacesegments"},
 "mapping-entry-entryiddelta": {"dfnID":"mapping-entry-entryiddelta","dfnText":"entryIdDelta","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-entryiddelta"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-entryiddelta\u2460"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#mapping-entry-entryiddelta"},
-"mapping-entry-entryidstringlength": {"dfnID":"mapping-entry-entryidstringlength","dfnText":"entryIdStringLength","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-entryidstringlength"},{"id":"ref-for-mapping-entry-entryidstringlength\u2460"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#mapping-entry-entryidstringlength"},
+"mapping-entry-entryidstringlength": {"dfnID":"mapping-entry-entryidstringlength","dfnText":"entryIdStringLength","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-entryidstringlength"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#mapping-entry-entryidstringlength"},
 "mapping-entry-featurecount": {"dfnID":"mapping-entry-featurecount","dfnText":"featureCount","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-featurecount"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#mapping-entry-featurecount"},
 "mapping-entry-featuretags": {"dfnID":"mapping-entry-featuretags","dfnText":"featureTags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-featuretags"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#mapping-entry-featuretags"},
-"mapping-entry-formatflags": {"dfnID":"mapping-entry-formatflags","dfnText":"formatFlags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-formatflags"},{"id":"ref-for-mapping-entry-formatflags\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2467"},{"id":"ref-for-mapping-entry-formatflags\u2468"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u24ea"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2467"}],"title":"5.3.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u2468"}],"title":"5.3.2.2. Remove Entries from Format 2"}],"url":"#mapping-entry-formatflags"},
+"mapping-entry-formatflags": {"dfnID":"mapping-entry-formatflags","dfnText":"formatFlags","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-formatflags"},{"id":"ref-for-mapping-entry-formatflags\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2467"},{"id":"ref-for-mapping-entry-formatflags\u2468"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2460\u24ea"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2460"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2461"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2462"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2463"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2464"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2465"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2466"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2467"},{"id":"ref-for-mapping-entry-formatflags\u2460\u2468"}],"title":"5.3.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-mapping-entry-formatflags\u2461\u24ea"}],"title":"5.3.2.2. Remove Entries from Format 2"}],"url":"#mapping-entry-formatflags"},
 "mapping-entry-patchformat": {"dfnID":"mapping-entry-patchformat","dfnText":"patchFormat","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry-patchformat"},{"id":"ref-for-mapping-entry-patchformat\u2460"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#mapping-entry-patchformat"},
 "no-invalidation": {"dfnID":"no-invalidation","dfnText":"No Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-no-invalidation"}],"title":"6.1. Formats Summary"},{"refs":[{"id":"ref-for-no-invalidation\u2460"}],"title":"7.1. Encoding Considerations"}],"url":"#no-invalidation"},
 "partial-invalidation": {"dfnID":"partial-invalidation","dfnText":"Partial Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-partial-invalidation"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-partial-invalidation\u2460"}],"title":"6.1. Formats Summary"},{"refs":[{"id":"ref-for-partial-invalidation\u2461"},{"id":"ref-for-partial-invalidation\u2462"},{"id":"ref-for-partial-invalidation\u2463"}],"title":"7.1. Encoding Considerations"}],"url":"#partial-invalidation"},
