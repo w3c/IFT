@@ -500,12 +500,17 @@ The algorithm:
 11. Go to step 2.
 
 
-Note: in step 9 the client may optionally start loads for patches which are not invalidated by the currently selected entry. This is an important
-optimization which significantly improves performance by eliminating network round trips where possible by initiating loads for patches that will
-be needed in later iterations.
+Note: in step 9 the client may optionally start loads for patches which are not invalidated by the currently selected
+entry. This is an important optimization which significantly improves performance by eliminating network round trips
+where possible by initiating loads for patches that will be needed in later iterations.
 
-Note: if the only remaining intersecting entries are no invalidation entries the intersection check in step 5 does not need to be repeated on each
-iteration since no invalidation patches won't change the list of available patches upon application (other then to remove the just applied patch).
+Note: if the only remaining intersecting entries are no-invalidation entries, then the intersection check in step 5 does
+not need to be repeated on subsequent iterations (this is because no-invalidation a patch does not change the list of
+available patches upon application, other than to remove its own entry.)  Additionally, as an optimization clients may
+want to perform patch application of the remaining intersecting non-invalidating entries as a single batch
+operation. Due to the nature of glyph keyed patches it's straightforward to construct the end result of applying
+multiple patches sequentially in a single pass. Doing it this way avoids repeatedly re-synthesizing new
+glyf/loca/CFF/CFF2 tables for each individual patch and can significantly reduce the total amount of computation needed.
 
 <div class="example">
 An example of the execution of the extension algorithm can be found in [[#extension-example]].
