@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="bb993d35a562e7e8d642c54750d8b1ad20aa2b9f" name="revision">
+  <meta content="6e824fa1362d45228e0afe26aea7ef8acfc7b54d" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1265,11 +1265,16 @@ of this algorithm is limited to:</p>
     <li data-md>
      <p>Go to step 2.</p>
    </ol>
-   <p class="note" role="note"><span class="marker">Note:</span> in step 9 the client may optionally start loads for patches which are not invalidated by the currently selected entry. This is an important
-optimization which significantly improves performance by eliminating network round trips where possible by initiating loads for patches that will
-be needed in later iterations.</p>
-   <p class="note" role="note"><span class="marker">Note:</span> if the only remaining intersecting entries are no invalidation entries the intersection check in step 5 does not need to be repeated on each
-iteration since no invalidation patches won’t change the list of available patches upon application (other then to remove the just applied patch).</p>
+   <p class="note" role="note"><span class="marker">Note:</span> in step 9 the client may optionally start loads for patches which are not invalidated by the currently selected
+entry. This is an important optimization which significantly improves performance by eliminating network round trips
+where possible by initiating loads for patches that will be needed in later iterations.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> if the only remaining intersecting entries are no-invalidation entries, then the intersection check in step 5 does
+not need to be repeated on subsequent iterations (this is because no-invalidation a patch does not change the list of
+available patches upon application, other than to remove its own entry.)  Additionally, as an optimization clients may
+want to perform patch application of the remaining intersecting non-invalidating entries as a single batch
+operation. Due to the nature of glyph keyed patches it’s straightforward to construct the end result of applying
+multiple patches sequentially in a single pass. Doing it this way avoids repeatedly re-synthesizing new
+glyf/loca/CFF/CFF2 tables for each individual patch and can significantly reduce the total amount of computation needed.</p>
    <div class="example" id="example-2ebb408c"><a class="self-link" href="#example-2ebb408c"></a> An example of the execution of the extension algorithm can be found in <a href="#extension-example">Appendix B: Extension Algorithm Example Execution</a>. </div>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-check-entry-intersection">Check entry intersection</dfn></p>
    <p>The inputs to this algorithm are:</p>
