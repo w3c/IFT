@@ -495,7 +495,8 @@ The algorithm:
 
 10.  Once the load for <var>patch file</var> is finished, apply it using the appropriate application algorithm (matching the patches format in
      <var>entry</var>) from [[#font-patch-formats]] to apply the <var>patch file</var> using the patch URL string and the compatibility id from
-     <var>entry</var> to <var>extended font subset</var>.
+     <var>entry</var> to <var>extended font subset</var>. If the load for <var>patch file</var> resulted in an error, handle it according
+     to [$Handle errors$].
 
 11. Go to step 2.
 
@@ -710,7 +711,7 @@ The algorithm:
 
 1.  Parse <var>patch URL string</var> into a [[whatwg-url#concept-url|URL Record]] using [[whatwg-url#url-parsing]].
      <var>initial font URL</var> is the [[whatwg-url#concept-base-url|base URL]] and encoding is UTF-8. Store the result
-     in <var>target URL</var>.
+     in <var>target URL</var>. If URL parsing failed, then return an error.
 
 2.  Retrieve the contents of <var>target URL</var> using the fetching capabilities of the implementing user agent. For web browsers,
      [[FETCH]] should be used. When using [[FETCH]] a request for patches should use the same CORS settings as the initial request for
@@ -725,9 +726,12 @@ a result rendering content which relies on the missing data may result in incorr
 the font, but should only use it for the rendering of code points, features, and design space that are fully loaded according to
 [[#ift-font-coverage]]. Rendering of all other content should fallback to a different font following normal client fallback logic.
 
-If the error occurred during [$Load patch file$] then, the client may continue trying to extend the font subset
-if there are remaining patches available other than the one(s) that failed to load. In the case of all other errors the client
-must not attempt to further extend the font subset.
+If the error occurred during [$Load patch file$], then the client may continue trying to extend the font subset. In step 8 of
+[$Extend an Incremental Font Subset$] within each invalidation grouping any patches which failed to load are excluded from selection.
+If an invalidation group is non empty and being selected from, but only contains failed patches then extension has failed and cannot
+continue.
+
+In the case of all other errors the client must not attempt to further extend the font subset.
 
 Selecting Invalidating Patches {#invalidating-patch-selection}
 --------------------------------------------------------------
