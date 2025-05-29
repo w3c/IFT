@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="69c78a897be900524586d4a24244163e60843b57" name="revision">
+  <meta content="55c5e1dd43b5d430b7a9573fde5617a7d845fc67" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1246,9 +1246,8 @@ any entries in <var>entry list</var> which have a patch URL string which was loa
        <p>Otherwise if <var>partial invalidation entry list</var> is not empty then, select exactly one of the contained entries.
 Follow the criteria in <a href="#invalidating-patch-selection">§ 4.4 Selecting Invalidating Patches</a> to select the single entry.</p>
       <li data-md>
-       <p>Otherwise select exactly one of the entries in <var>no invalidation entry list</var>. Select the entry which is
-listed first in the <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map②">patch map</a>. For <a href="#patch-map-format-1">§ 5.3.1 Patch Map Table: Format 1</a> this is the entry with the lowest entry index. For <a href="#patch-map-format-2">§ 5.3.2 Patch Map Table: Format 2</a> this is the entry that appears first in the <a data-link-type="dfn" href="#mapping-entries-entries" id="ref-for-mapping-entries-entries">entries</a> array. If entries from
-both the IFT and IFTX tables are candidates then all entries in IFT are considered to come before those in IFTX.</p>
+       <p>Otherwise select the entry in <var>no invalidation entry list</var> which is listed first in the <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map②">patch map</a>. For <a href="#patch-map-format-1">§ 5.3.1 Patch Map Table: Format 1</a> this is the entry with the lowest entry index. For <a href="#patch-map-format-2">§ 5.3.2 Patch Map Table: Format 2</a> this is the entry that appears first in the <a data-link-type="dfn" href="#mapping-entries-entries" id="ref-for-mapping-entries-entries">entries</a> array. If entries from both the IFT and
+IFTX tables are candidates then all entries in IFT are considered to come before those in IFTX.</p>
      </ul>
     <li data-md>
      <p>Start a load of <var>patch file</var> (if not already previously started) by invoking <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file">Load patch file</a> with the <var>initial font URL</var> as the initial font URL and the first patch URL string in <var>entry</var> as the patch URL string. If there are any other URL strings in <var>entry</var>, then initiate loads for those using the same procedure. These may be used during future iterations of this algorithm.
@@ -1268,9 +1267,9 @@ of this algorithm is limited to:</p>
      <p>Go to step 2.</p>
    </ol>
    <p class="note" role="note"><span class="marker">Note:</span> in step 9 the client may optionally start loads in parallel for patches which are not invalidated by the currently
-selected entry. This is an important optimization which significantly improves performance by eliminating network round
-trips where possible by initiating loads for patches that will be needed in later iterations. When initiating loads this
-way the order of request initiation needs to follow the ordering specified in step 8.</p>
+selected entry. Such patches will nearly always be needed in later iterations (since they won’t be invalidated), and loading
+them in parallel significantly improves performance by eliminating round trips. When initiating loads this way, the order of
+request initiation needs to follow the ordering specified in step 8.</p>
    <p class="note" role="note"><span class="marker">Note:</span> if the only remaining intersecting entries are no-invalidation entries, then the intersection check in step 5 does
 not need to be repeated on subsequent iterations (this is because no-invalidation a patch does not change the list of
 available patches upon application, other than to remove its own entry.)  Additionally, as an optimization clients may

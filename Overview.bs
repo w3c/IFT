@@ -476,10 +476,10 @@ The algorithm:
     *  Otherwise if <var>partial invalidation entry list</var> is not empty then, select exactly one of the contained entries.
         Follow the criteria in [[#invalidating-patch-selection]] to select the single entry.
 
-    * Otherwise select exactly one of the entries in <var>no invalidation entry list</var>. Select the entry which is
-        listed first in the [=patch map=]. For [[#patch-map-format-1]] this is the entry with the lowest entry index. For
-        [[#patch-map-format-2]] this is the entry that appears first in the [=Mapping Entries/entries=] array. If entries from
-        both the IFT and IFTX tables are candidates then all entries in IFT are considered to come before those in IFTX.
+    * Otherwise select the entry in <var>no invalidation entry list</var> which is listed first in the [=patch
+        map=]. For [[#patch-map-format-1]] this is the entry with the lowest entry index. For [[#patch-map-format-2]]
+        this is the entry that appears first in the [=Mapping Entries/entries=] array. If entries from both the IFT and
+        IFTX tables are candidates then all entries in IFT are considered to come before those in IFTX.
 
 
 9.  Start a load of <var>patch file</var> (if not already previously started) by invoking [$Load patch file$] with the <var>initial font URL</var>
@@ -505,9 +505,9 @@ The algorithm:
 
 
 Note: in step 9 the client may optionally start loads in parallel for patches which are not invalidated by the currently
-selected entry. This is an important optimization which significantly improves performance by eliminating network round
-trips where possible by initiating loads for patches that will be needed in later iterations. When initiating loads this
-way the order of request initiation needs to follow the ordering specified in step 8.
+selected entry. Such patches will nearly always be needed in later iterations (since they won't be invalidated), and loading
+them in parallel significantly improves performance by eliminating round trips. When initiating loads this way, the order of
+request initiation needs to follow the ordering specified in step 8.
 
 Note: if the only remaining intersecting entries are no-invalidation entries, then the intersection check in step 5 does
 not need to be repeated on subsequent iterations (this is because no-invalidation a patch does not change the list of
