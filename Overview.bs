@@ -701,7 +701,7 @@ when a set (ie. code points, feature tags, design space, child entries) is not s
 
 The inputs to this algorithm are:
 
-*   <var>patch URL string</var>: A [[whatwg-url|URL]] string ([[!UTF-8]] encoded) identifying the patch file to load. It  may be a
+*  <var>patch URL string</var>: A [[whatwg-url|URL]] string ([[!UTF-8]] encoded) identifying the patch file to load. It  may be a
      [[whatwg-url#relative-url-string|relative]] URL.
 
 *  <var>initial font URL</var>: a [[whatwg-url#concept-url|URL]] which identifies the location of the initial incremental
@@ -718,10 +718,22 @@ The algorithm:
      in <var>target URL</var>. If URL parsing failed, then return an error.
 
 2.  Retrieve the contents of <var>target URL</var> using the fetching capabilities of the implementing user agent. For web browsers,
-     [[FETCH]] should be used. When using [[FETCH]] a request for patches should use the same CORS settings as the initial request for
-     the IFT font. This means that for a font loaded via CSS the patch request would follow: [[css-fonts-4#font-fetching-requirements]].
+     [[FETCH]] should be used. When using [[FETCH]] the request is configured as follows:
 
+     *  Set [=request/method=] to GET.
+     *  Set [=request/url=] to <var>target URL</var>.
+     *  Set [=request/client=] to the client from the request object used to fetch <var>initial font URL</var>.
+     *  Set [=request/initiator type=] to "font".
+     *  Set [=request/destination=] to "font".
+     *  Set [=request/referrer=] to <var>initial font URL</var>.
+     *  Set [=request/mode=] to "cors".
+
+    For non [[FETCH]] implementations, make a request for <var>target URL</var> using the fetching capabilities that are available.
+    Copy the [[FETCH]] based settings specified above where equivalent concepts exist.
+   
 3.  Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.
+
+Note: the fetch settings aim to match those used for CSS font loading [[css-fonts-4#font-fetching-requirements]].
 
 <dfn abstract-op>Handle errors</dfn>
 
