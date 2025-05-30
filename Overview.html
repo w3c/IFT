@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="55c5e1dd43b5d430b7a9573fde5617a7d845fc67" name="revision">
+  <meta content="a2d65fe87681dd797e7f50c9a23d54a141701ff8" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -919,6 +919,7 @@ to complex scripts like Indic or Arabic.</p>
      <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
      <ol class="toc">
       <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+      <li><a href="#index-defined-elsewhere"><span class="secno"></span> <span class="content">Terms defined by reference</span></a>
      </ol>
     <li>
      <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
@@ -1441,11 +1442,29 @@ font that <var>font subset</var> was derived from.</p>
      <p>Parse <var>patch URL string</var> into a <a href="https://url.spec.whatwg.org/#concept-url">URL Record</a> using <a href="https://url.spec.whatwg.org/#url-parsing">URL Standard § url-parsing</a>. <var>initial font URL</var> is the <a href="https://url.spec.whatwg.org/#concept-base-url">base URL</a> and encoding is UTF-8. Store the result
  in <var>target URL</var>. If URL parsing failed, then return an error.</p>
     <li data-md>
-     <p>Retrieve the contents of <var>target URL</var> using the fetching capabilities of the implementing user agent. For web browsers, <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[FETCH]</a> should be used. When using <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[FETCH]</a> a request for patches should use the same CORS settings as the initial request for
- the IFT font. This means that for a font loaded via CSS the patch request would follow: <a href="https://www.w3.org/TR/css-fonts-4/#font-fetching-requirements"><cite>CSS Fonts 4</cite> § 4.8.2 Font fetching requirements</a>.</p>
+     <p>Retrieve the contents of <var>target URL</var> using the fetching capabilities of the implementing user agent. For web browsers, <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[FETCH]</a> should be used. When using <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[FETCH]</a> the request is configured as follows:</p>
+     <ul>
+      <li data-md>
+       <p>Set <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-method" id="ref-for-concept-request-method">method</a> to GET.</p>
+      <li data-md>
+       <p>Set <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-url" id="ref-for-concept-request-url">url</a> to <var>target URL</var>.</p>
+      <li data-md>
+       <p>Set <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-client" id="ref-for-concept-request-client">client</a> to the client from the request object used to fetch <var>initial font URL</var>.</p>
+      <li data-md>
+       <p>Set <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#request-initiator-type" id="ref-for-request-initiator-type">initiator type</a> to "font".</p>
+      <li data-md>
+       <p>Set <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-destination" id="ref-for-concept-request-destination">destination</a> to "font".</p>
+      <li data-md>
+       <p>Set <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-referrer" id="ref-for-concept-request-referrer">referrer</a> to <var>initial font URL</var>.</p>
+      <li data-md>
+       <p>Set <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-mode" id="ref-for-concept-request-mode">mode</a> to "cors".</p>
+     </ul>
+     <p>For non <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[FETCH]</a> implementations, make a request for <var>target URL</var> using the fetching capabilities that are available.
+Copy the <a data-link-type="biblio" href="#biblio-fetch" title="Fetch Standard">[FETCH]</a> based settings specified above where equivalent concepts exist.</p>
     <li data-md>
      <p>Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.</p>
    </ol>
+   <p class="note" role="note"><span class="marker">Note:</span> the fetch settings aim to match those used for CSS font loading <a href="https://www.w3.org/TR/css-fonts-4/#font-fetching-requirements"><cite>CSS Fonts 4</cite> § 4.8.2 Font fetching requirements</a>.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-handle-errors">Handle errors</dfn></p>
    <p>If the extending the font subset process has failed with an error then, some of the data within the font may not be fully loaded and as
 a result rendering content which relies on the missing data may result in incorrect renderings. The client may choose to continue using
@@ -4013,11 +4032,27 @@ content covered by the target subset definition.</p>
      <li><a href="#format-2-patch-map-uritemplate">dfn for Format 2 Patch Map</a><span>, in § 5.3.2</span>
     </ul>
   </ul>
+  <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
+  <ul class="index">
+   <li>
+    <a data-link-type="biblio">[FETCH]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="857d5516">client</span>
+     <li><span class="dfn-paneled" id="3ae34c95">destination</span>
+     <li><span class="dfn-paneled" id="7b0b4fa0">initiator type</span>
+     <li><span class="dfn-paneled" id="50b05fad">method</span>
+     <li><span class="dfn-paneled" id="cb98f71f">mode</span>
+     <li><span class="dfn-paneled" id="358f1dbd">referrer</span>
+     <li><span class="dfn-paneled" id="dc1cd39b">URL</span>
+    </ul>
+  </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
    <dt id="biblio-css-fonts-4">[CSS-FONTS-4]
    <dd>Chris Lilley. <a href="https://www.w3.org/TR/css-fonts-4/"><cite>CSS Fonts Module Level 4</cite></a>. 1 February 2024. WD. URL: <a href="https://www.w3.org/TR/css-fonts-4/">https://www.w3.org/TR/css-fonts-4/</a>
+   <dt id="biblio-fetch">[FETCH]
+   <dd>Anne van Kesteren. <a href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
    <dt id="biblio-iso14496-22">[ISO14496-22]
    <dd><a href="https://www.iso.org/standard/87621.html"><cite>Information technology — Coding of audio-visual objects — Part 22: Open Font Format</cite></a>. Under development. URL: <a href="https://www.iso.org/standard/87621.html">https://www.iso.org/standard/87621.html</a>
    <dt id="biblio-open-type">[OPEN-TYPE]
@@ -4049,8 +4084,6 @@ content covered by the target subset definition.</p>
    <dd>Chris Lilley; et al. <a href="https://www.w3.org/TR/css-conditional-5/"><cite>CSS Conditional Rules Module Level 5</cite></a>. 5 November 2024. WD. URL: <a href="https://www.w3.org/TR/css-conditional-5/">https://www.w3.org/TR/css-conditional-5/</a>
    <dt id="biblio-enabling-typography">[ENABLING-TYPOGRAPHY]
    <dd>John Hudson. <a href="https://www.tiro.com/articles/enabling-typography"><cite>Enabling Typography: towards a general model of OpenType Layout</cite></a>. April 15th, 2014. Note. URL: <a href="https://www.tiro.com/articles/enabling-typography">https://www.tiro.com/articles/enabling-typography</a>
-   <dt id="biblio-fetch">[FETCH]
-   <dd>Anne van Kesteren. <a href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
    <dt id="biblio-rfc9113">[RFC9113]
    <dd>M. Thomson, Ed.; C. Benfield, Ed.. <a href="https://httpwg.org/specs/rfc9113.html"><cite>HTTP/2</cite></a>. June 2022. Proposed Standard. URL: <a href="https://httpwg.org/specs/rfc9113.html">https://httpwg.org/specs/rfc9113.html</a>
    <dt id="biblio-rfc9114">[RFC9114]
@@ -4258,6 +4291,11 @@ function parseHTML(markup) {
 "use strict";
 {
 let dfnPanelData = {
+"358f1dbd": {"dfnID":"358f1dbd","dfnText":"referrer","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request-referrer"}],"title":"4.3. Incremental Font Extension Algorithm"}],"url":"https://fetch.spec.whatwg.org/#concept-request-referrer"},
+"3ae34c95": {"dfnID":"3ae34c95","dfnText":"destination","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request-destination"}],"title":"4.3. Incremental Font Extension Algorithm"}],"url":"https://fetch.spec.whatwg.org/#concept-request-destination"},
+"50b05fad": {"dfnID":"50b05fad","dfnText":"method","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request-method"}],"title":"4.3. Incremental Font Extension Algorithm"}],"url":"https://fetch.spec.whatwg.org/#concept-request-method"},
+"7b0b4fa0": {"dfnID":"7b0b4fa0","dfnText":"initiator type","external":true,"refSections":[{"refs":[{"id":"ref-for-request-initiator-type"}],"title":"4.3. Incremental Font Extension Algorithm"}],"url":"https://fetch.spec.whatwg.org/#request-initiator-type"},
+"857d5516": {"dfnID":"857d5516","dfnText":"client","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request-client"}],"title":"4.3. Incremental Font Extension Algorithm"}],"url":"https://fetch.spec.whatwg.org/#concept-request-client"},
 "abstract-opdef-apply-glyph-keyed-patch": {"dfnID":"abstract-opdef-apply-glyph-keyed-patch","dfnText":"Apply glyph keyed patch","external":false,"refSections":[],"url":"#abstract-opdef-apply-glyph-keyed-patch"},
 "abstract-opdef-apply-table-keyed-patch": {"dfnID":"abstract-opdef-apply-table-keyed-patch","dfnText":"Apply table keyed patch","external":false,"refSections":[],"url":"#abstract-opdef-apply-table-keyed-patch"},
 "abstract-opdef-check-entry-intersection": {"dfnID":"abstract-opdef-check-entry-intersection","dfnText":"Check entry intersection","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2460"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2461"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2462"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2463"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2464"}],"title":"Example 1: Table and Glyph Keyed Patches"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2465"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2466"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2467"}],"title":"Example 2: Glyph Keyed Patches with Child Entries"}],"url":"#abstract-opdef-check-entry-intersection"},
@@ -4272,6 +4310,8 @@ let dfnPanelData = {
 "abstract-opdef-remove-entries-from-format-1-patch-map": {"dfnID":"abstract-opdef-remove-entries-from-format-1-patch-map","dfnText":"Remove Entries from Format 1 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-remove-entries-from-format-1-patch-map"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#abstract-opdef-remove-entries-from-format-1-patch-map"},
 "abstract-opdef-remove-entries-from-format-2-patch-map": {"dfnID":"abstract-opdef-remove-entries-from-format-2-patch-map","dfnText":"Remove Entries from Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-remove-entries-from-format-2-patch-map"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#abstract-opdef-remove-entries-from-format-2-patch-map"},
 "branch-factor-encoding": {"dfnID":"branch-factor-encoding","dfnText":"Branch Factor Encoding","external":false,"refSections":[{"refs":[{"id":"ref-for-branch-factor-encoding"},{"id":"ref-for-branch-factor-encoding\u2460"}],"title":"5.3.2.3. Sparse Bit Set"}],"url":"#branch-factor-encoding"},
+"cb98f71f": {"dfnID":"cb98f71f","dfnText":"mode","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request-mode"}],"title":"4.3. Incremental Font Extension Algorithm"}],"url":"https://fetch.spec.whatwg.org/#concept-request-mode"},
+"dc1cd39b": {"dfnID":"dc1cd39b","dfnText":"URL","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request-url"}],"title":"4.3. Incremental Font Extension Algorithm"}],"url":"https://fetch.spec.whatwg.org/#concept-request-url"},
 "design-space-segment": {"dfnID":"design-space-segment","dfnText":"Design Space Segment","external":false,"refSections":[{"refs":[{"id":"ref-for-design-space-segment"}],"title":"5.3.2. Patch Map Table: Format 2"}],"url":"#design-space-segment"},
 "design-space-segment-end": {"dfnID":"design-space-segment-end","dfnText":"end","external":false,"refSections":[{"refs":[{"id":"ref-for-design-space-segment-end"},{"id":"ref-for-design-space-segment-end\u2460"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#design-space-segment-end"},
 "design-space-segment-start": {"dfnID":"design-space-segment-start","dfnText":"start","external":false,"refSections":[{"refs":[{"id":"ref-for-design-space-segment-start"},{"id":"ref-for-design-space-segment-start\u2460"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#design-space-segment-start"},
@@ -4847,6 +4887,13 @@ let refsData = {
 "#tablepatch-flags": {"displayText":"flags","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#tablepatch-flags"},
 "#tablepatch-maxuncompressedlength": {"displayText":"maxuncompressedlength","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxuncompressedlength","type":"dfn","url":"#tablepatch-maxuncompressedlength"},
 "#tablepatch-tag": {"displayText":"tag","export":true,"for_":["TablePatch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"tag","type":"dfn","url":"#tablepatch-tag"},
+"https://fetch.spec.whatwg.org/#concept-request-client": {"displayText":"client","export":true,"for_":["request"],"level":"1","normative":true,"shortname":"fetch","spec":"fetch","status":"current","text":"client","type":"dfn","url":"https://fetch.spec.whatwg.org/#concept-request-client"},
+"https://fetch.spec.whatwg.org/#concept-request-destination": {"displayText":"destination","export":true,"for_":["request"],"level":"1","normative":true,"shortname":"fetch","spec":"fetch","status":"current","text":"destination","type":"dfn","url":"https://fetch.spec.whatwg.org/#concept-request-destination"},
+"https://fetch.spec.whatwg.org/#concept-request-method": {"displayText":"method","export":true,"for_":["request"],"level":"1","normative":true,"shortname":"fetch","spec":"fetch","status":"current","text":"method","type":"dfn","url":"https://fetch.spec.whatwg.org/#concept-request-method"},
+"https://fetch.spec.whatwg.org/#concept-request-mode": {"displayText":"mode","export":true,"for_":["request"],"level":"1","normative":true,"shortname":"fetch","spec":"fetch","status":"current","text":"mode","type":"dfn","url":"https://fetch.spec.whatwg.org/#concept-request-mode"},
+"https://fetch.spec.whatwg.org/#concept-request-referrer": {"displayText":"referrer","export":true,"for_":["request"],"level":"1","normative":true,"shortname":"fetch","spec":"fetch","status":"current","text":"referrer","type":"dfn","url":"https://fetch.spec.whatwg.org/#concept-request-referrer"},
+"https://fetch.spec.whatwg.org/#concept-request-url": {"displayText":"URL","export":true,"for_":["request"],"level":"1","normative":true,"shortname":"fetch","spec":"fetch","status":"current","text":"url","type":"dfn","url":"https://fetch.spec.whatwg.org/#concept-request-url"},
+"https://fetch.spec.whatwg.org/#request-initiator-type": {"displayText":"initiator type","export":true,"for_":["request"],"level":"1","normative":true,"shortname":"fetch","spec":"fetch","status":"current","text":"initiator type","type":"dfn","url":"https://fetch.spec.whatwg.org/#request-initiator-type"},
 };
 
 function mkRefHint(link, ref) {
