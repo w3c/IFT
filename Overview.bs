@@ -728,12 +728,19 @@ The algorithm:
      *  Set [=request/referrer=] to <var>initial font URL</var>.
      *  Set [=request/mode=] to "cors".
 
-    For non [[FETCH]] implementations, make a request for <var>target URL</var> using the fetching capabilities that are available.
-    Copy the [[FETCH]] based settings specified above where equivalent concepts exist.
-   
-3.  Return the retrieved contents as <var>patch file</var>, or an error if the fetch resulted in an error.
 
-Note: the fetch settings aim to match those used for CSS font loading [[css-fonts-4#font-fetching-requirements]].
+    [=fetch|Fetch=] the [=/request=] where [=processResponseConsumeBody=] is step 3 of this algorithm.
+
+    For non [[FETCH]] implementations, make a request for <var>target URL</var> using the fetching capabilities that are available.
+    Copy the [[FETCH]] based settings specified above where equivalent concepts exist. Proceed to step 3 with the results of that
+    fetch.
+   
+3.  [=processResponseConsumeBody=] is passed the response and null, failure, or a byte sequence. If a byte sequence is received,
+    then return the bytes as <var>patch file</var>. If null is received, then return an empty byte array as <var>patch file</var>.
+    Otherwise return an error.
+
+Note: the fetch settings aim to match those used for CSS font loading [[css-fonts-4#font-fetching-requirements]], but with a couple of differences:
+first referrer is set to the initial font's URL, second URL resolution uses the initial font as the base instead of the stylesheet.
 
 <dfn abstract-op>Handle errors</dfn>
 
