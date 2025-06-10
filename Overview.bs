@@ -1087,24 +1087,23 @@ the encoded bytes at the start of every iteration to pick up any changes made in
   </tr>
   <tr>
     <td>uint16</td>
-    <td>uriTemplateLength</td>
+    <td>urlTemplateLength</td>
     <td>
-      Length of the uriTemplate string.
+      Length of the urlTemplate byte array.
     </td>
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Format 1 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
+    <td><dfn for="Format 1 Patch Map">urlTemplate</dfn>[urlTemplateLength]</td>
     <td>
-      A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URL strings associated with each entry.
-      Must be a valid [[!UTF-8]] sequence.
+      A byte array containing a [[#url-templates|URL Template]] which is used to produce URL strings associated with each entry.
     </td>
   </tr>
   <tr>
     <td>uint8</td>
     <td><dfn for="Format 1 Patch Map">patchFormat</dfn></td>
     <td>
-      Specifies the format of the patches linked to by uriTemplate.
+      Specifies the format of the patches linked to by urlTemplate.
       Must be set to one of the format numbers from  the [[#font-patch-formats-summary]] table.
     </td>
   </tr>
@@ -1285,8 +1284,9 @@ The algorithm:
         [[open-type/cmap|cmap]] table of <var>font subset</var>. Ignore any glyph indices that are not mapped by [[open-type/cmap|cmap]].
         Multiple code points may map to the same glyph id. All code points associated with a glyph should be included.
 
-    *  Convert <var>entry index</var> into a URL string by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]]. If
-        the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
+    *  Convert <var>entry index</var> into a URL string by invoking [$Expand URL Template$] with [=Format 1 Patch Map/urlTemplate=]
+        and <var>entry index</var> as inputs. If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return
+        an error.
 
     *  If the Unicode code point set is empty then, skip this <var>entry index</var>.
 
@@ -1312,8 +1312,9 @@ The algorithm:
     *  If [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=] is greater than
         [=EntryMapRecord/lastEntryIndex|EntryMapRecord::lastEntryIndex=] this [=EntryMapRecord=] is invalid, skip it.
 
-    *  Convert <var>mapped entry index</var> into a URL string by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
-        If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
+    *  Convert <var>mapped entry index</var> into a URL string by invoking [$Expand URL Template$] with [=Format 1 Patch Map/urlTemplate=]
+        and <var>mapped entry index</var> as inputs. If the template expansion results in an error (see: [[rfc6570#section-3]]) then,
+        return an error.
 
     *  If the bit for <var>mapped entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this entry.
 
@@ -1364,8 +1365,9 @@ The algorithm:
     *  If the bit for <var>entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
         <var>entry index</var>.
 
-    *  Convert <var>entry index</var> into a URL string by applying [=Format 1 Patch Map/uriTemplate=] following [[#uri-templates]].
-        If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
+    *  Convert <var>entry index</var> into a URL string by invoking [$Expand URL Template$] with [=Format 1 Patch Map/urlTemplate=]
+        and <var>entry index</var> as inputs. If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return
+        an error.
 
     *  If the generated URL string is equal to <var>patch URL string</var> then set the bit for <var>entry index</var> in
         [=Format 1 Patch Map/appliedEntriesBitMap=] to 1.
@@ -1408,7 +1410,7 @@ The algorithm:
     <td>uint8</td>
     <td><dfn for="Format 2 Patch Map">defaultPatchFormat</dfn></td>
     <td>
-      Specifies the format of the patches linked to by uriTemplate (unless overridden by an entry).
+      Specifies the format of the patches linked to by urlTemplate (unless overridden by an entry).
       Must be set to one of the format numbers from the [[#font-patch-formats-summary]] table.
     </td>
   </tr>
@@ -1432,17 +1434,16 @@ The algorithm:
   </tr>
   <tr>
     <td>uint16</td>
-    <td>uriTemplateLength</td>
+    <td>urlTemplateLength</td>
     <td>
-      Length of the uriTemplate string.
+      Length of the urlTemplate byte array.
     </td>
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Format 2 Patch Map">uriTemplate</dfn>[uriTemplateLength]</td>
+    <td><dfn for="Format 2 Patch Map">urlTemplate</dfn>[urlTemplateLength]</td>
     <td>
-      A [[!UTF-8]] encoded string. Contains a [[#uri-templates]] which is used to produce URL strings associated with each entry.
-      Must be a valid [[!UTF-8]] sequence.
+      A byte array containing a [[#url-templates|URL Template]] which is used to produce URL strings associated with each entry.
     </td>
   </tr>
   <tr>
@@ -1672,7 +1673,7 @@ The algorithm:
          to the end of <var>patch map</var> if [=Format 2 Patch Map/entryIdStringData=] is non zero,
          <var>last entry id</var>,
          [=Format 2 Patch Map/defaultPatchFormat=], and
-         [=Format 2 Patch Map/uriTemplate=].
+         [=Format 2 Patch Map/urlTemplate=].
 
      *  Set <var>last entry id</var> to the returned entry id.
 
@@ -1701,7 +1702,7 @@ The inputs to this algorithm are:
 
 * <var>default patch format</var>: the default patch format if one isn't specified.
 
-* <var>uri template</var>: the URI template used to locate patches.
+* <var>url template</var>: the URL template used to locate patches.
 
 The algorithm outputs:
 
@@ -1761,8 +1762,9 @@ The algorithm:
          *  Set <var>entry id</var> to <code><var>entry id</var> + 1 + floor(delta value / 2)</code>.
              If <var>entry id</var> is negative or greater than 4,294,967,295 then, this encoding is invalid return an error.
 
-         *  Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following [[#uri-templates]].
-             If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
+         *  Convert <var>entry id</var> into a URL string by invoking [$Expand URL Template$] with <var>url template</var>
+             and <var>entry id</var> as inputs. If the template expansion results in an error (see: [[rfc6570#section-3]])
+             then, return an error.
 
          *  Add the generated patch URL string to <var>entry</var>.
 
@@ -1775,8 +1777,9 @@ The algorithm:
          *  Interpret the least significant 23 bits as an unsigned integer and read that many bytes from <var>id string bytes</var>.
              Set <var>entry id</var> to the result. Increment <var>consumed id string bytes</var> by the number of bytes read.
 
-         *  Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following [[#uri-templates]].
-             If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
+         *  Convert <var>entry id</var> into a URL string by invoking [$Expand URL Template$] with <var>url template</var>
+             and <var>entry id</var> as inputs. If the template expansion results in an error (see: [[rfc6570#section-3]])
+             then, return an error.
 
          *  Add the generated patch URL string to <var>entry</var>.
 
@@ -1788,15 +1791,17 @@ The algorithm:
 
          *  Set <var>entry id</var> to <var>entry id</var> + 1.
 
-         *  Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following [[#uri-templates]].
-             If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
+         *  Convert <var>entry id</var> into a URL string by invoking [$Expand URL Template$] with <var>url template</var>
+             and <var>entry id</var> as inputs. If the template expansion results in an error (see: [[rfc6570#section-3]])
+             then, return an error.
 
          *  Add the generated patch URL string to <var>entry</var>.
 
     *  Otherwise if <var>id string bytes</var> is present, then:
 
-         *  Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following [[#uri-templates]].
-             If the template expansion results in an error (see: [[rfc6570#section-3]]) then, return an error.
+         *  Convert <var>entry id</var> into a URL string by invoking [$Expand URL Template$] with <var>url template</var>
+             and <var>entry id</var> as inputs. If the template expansion results in an error (see: [[rfc6570#section-3]])
+             then, return an error.
 
          *  Add the generated patch URL string to <var>entry</var>.
 
@@ -2016,145 +2021,222 @@ to give the smallest encodings for most unicode code point sets typically encoun
   ```
 </div>
 
-### URI Templates ### {#uri-templates}
+### URL Templates ### {#url-templates}
 
-URI templates [[!rfc6570]] are used to convert numeric or string IDs into URL strings where patch files are located.
-A string ID is a sequence of bytes. The output of template expansion is a [[!UTF-8]] encoded string.
+URL templates are used to compress the URL strings associated with each patch map entry. Each patch mapping table
+provides a URL template and then the URL string for each entry is produced by expanding the common template using
+each entry's ID as an input. The output of template expansion is a [[!UTF-8]] encoded string.
 
-To limit the complexity of the template expansion implementation, URI templates in IFT are restricted to only
-[[rfc6570#section-1.2|Level 1]] substitution expressions. If a URI template contains expression(s) which do not match the level
-1 grammar ([[rfc6570#section-2.2]]) or have variable names other than those defined below, then template expansion must result
-in an error. Additionally, for consistency when producing percent encodings as part of template expansion
-([[rfc6570#section-3.1]]) IFT implementations must only use uppercase letters.
+URL templates are encoded as a series of one byte op codes that either insert literal values, or insert values
+based on the input entry ID.
 
-Several variables are defined which are used to produce the expansion of the template:
+The algorithm for decoding and expanding a URL template follows.
 
+<dfn abstract-op>Expand URL Template</dfn>
+
+The inputs to this algorithm are:
+
+* <var>url template bytes</var>: an array of bytes the contains the URL template.
+* <var>entry ID</var>: the ID of an entry. May be either an unsigned integer or an array of bytes.
+
+The algorithm outputs:
+
+* <var>URL string</var>: an array of bytes representing the URL string. Encoded as [[!UTF-8]].
+
+The algorithm:
+
+1. Initialize <var>URL string</var> to an empty byte array.
+
+2. Read the next byte of <var>url template bytes</var> into <var>op code</var>. If there are no remaining bytes, then
+    expansion is finished, return <var>URL string</var>.
+
+3. If the most significant bit of <var>op code</var> is not set, then:
+
+     *  Interpret the 7 least significant bits of <var>op code</var> as an unsigned integer, <var>number of literal bytes</var>.
+   
+     *  Read <var>number of literal bytes</var> from <var>url template bytes</var> into <var>literal bytes</var>.
+   
+     *  Check that <var>literal bytes</var> is a valid UTF-8 encoded string according to [[UTF-8#section-4]].
+         If it is not, return an error.
+
+     *  Append <var>literal bytes</var> to the end of <var>URL string</var>.
+
+     *  Go to step 2.
+
+4. If the most significant bit of <var>op code</var> is set, then:
+
+     *  Look up <var>op code</var> in the proceeding <b>Op Code Reference Table</b>. Perform the operation specified
+         in the "Insertion Operation" column. If <var>op code</var> is not found in the table, then return an error.
+
+     *  Go to step 2.
+
+
+<b>Op Code Reference Table</b>
 <table>
-  <tr><th>Variable</th><th>Value</th></tr>
   <tr>
-    <td><code>id</code></td>
+    <th>Name</th><th>Op Code Value</th><th>Insertion Operation</th>
+  </tr>
+  <tr>
+    <td>Insert id32</td><td>128 (0b10000000)</td>
     <td>
-      The input id encoded as a [[rfc4648#section-7|base32hex]] string (using the digits 0-9, A-V) with padding
-      omitted.  When the id is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
-      but then all leading bytes that are equal to 0 are removed before encoding.  (For example, when the
-      integer is less than 256 only one byte is encoded.) If the input id is 0 then one zero byte is encoded. When the input
-      id is a string the raw bytes are encoded as base32hex.
+      Append the value of the <var>id32</var> variable from the proceeding <b>Expansion Variables</b> table to <var>URL string</var>.
     </td>
   </tr>
   <tr>
-    <td><code>d1</code></td>
+    <td>Insert d1</td><td>129 (0b10000001)</td>
     <td>
-      The last character of the string in the <code>id</code> variable.
-      If <code>id</code> variable is empty then, the value is the character _ (U+005F).
+      Append the value of the <var>d1</var> variable from the proceeding <b>Expansion Variables</b> table to <var>URL string</var>.
     </td>
   </tr>
   <tr>
-    <td><code>d2</code></td>
+    <td>Insert d2</td><td>130 (0b10000010)</td>
     <td>
-      The second last character of the string in the <code>id</code> variable.
-      If the <code>id</code> variable has less than 2 characters then, the value is the character _ (U+005F).
+      Append the value of the <var>d2</var> variable from the proceeding <b>Expansion Variables</b> table to <var>URL string</var>.
     </td>
   </tr>
   <tr>
-    <td><code>d3</code></td>
+    <td>Insert d3</td><td>131 (0b10000011)</td>
     <td>
-      The third last character of the string in the <code>id</code> variable.
-      If the <code>id</code> variable has less than 3 characters then, the value is the character _ (U+005F).
+      Append the value of the <var>d3</var> variable from the proceeding <b>Expansion Variables</b> table to <var>URL string</var>.
     </td>
   </tr>
   <tr>
-    <td><code>d4</code></td>
+    <td>Insert d4</td><td>132 (0b10000100)</td>
     <td>
-      The fourth last character of the string in the <code>id</code> variable.
-      If the <code>id</code> variable has less than 4 characters then, the value is the character _ (U+005F).
+      Append the value of the <var>d4</var> variable from the proceeding <b>Expansion Variables</b> table to <var>URL string</var>.
     </td>
   </tr>
   <tr>
-    <td><code>id64</code></td>
+    <td>Insert id64</td><td>133 (0b10000101)</td>
     <td>
-      The input id encoded as a [[rfc4648#section-5|base64url]] string (using the digits A-Z, a-z, 0-9, -
-      (minus) and _ (underline)) with padding included. Because the padding character is '=', it must
-      be URL-encoded as "%3D'.  When the id is an unsigned integer it must first be converted to a big
-      endian 32 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding. 
-      (For example, when the integer is less than 256 only one byte is encoded.) If the input id is 0 then one
-      zero byte is encoded. When the input id is a string its raw bytes are encoded as
-      [[rfc4648#section-5|base64url]].
+      Append the value of the <var>id64</var> variable from the proceeding <b>Expansion Variables</b> table to <var>URL string</var>.
     </td>
   </tr>
 </table>
 
-Note: since there is a small fixed set of variables and only level one expression are supported for expansion, implementations
-may want to consider a custom optimized template expansion implementation instead of relying on a general purpose implementation
-of [[!rfc6570]].
+<b>Expansion Variables</b>
+<table>
+  <tr><th>Variable</th><th>Value</th></tr>
+  <tr>
+    <td><var>id32</var></td>
+    <td>
+      The input <var>entry ID</var> encoded as a [[rfc4648#section-7|base32hex]] string (using the digits 0-9, A-V) with padding
+      omitted.  When <var>entry ID</var> is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
+      but then all leading bytes that are equal to 0 are removed before encoding.  (For example, when the
+      integer is less than 256 only one byte is encoded.) If <var>entry ID</var> is 0 then one zero byte is encoded. When
+      <var>entry ID</var> is a string the raw bytes are encoded as base32hex.
+    </td>
+  </tr>
+  <tr>
+    <td><var>d1</var></td>
+    <td>
+      The last character of the string in the <var>id32</var> variable.
+      If <var>id32</var> variable is empty then, the value is the character _ (U+005F).
+    </td>
+  </tr>
+  <tr>
+    <td><var>d2</var></td>
+    <td>
+      The second last character of the string in the <var>id32</var> variable.
+      If the <var>id32</var> variable has less than 2 characters then, the value is the character _ (U+005F).
+    </td>
+  </tr>
+  <tr>
+    <td><var>d3</var></td>
+    <td>
+      The third last character of the string in the <var>id32</var> variable.
+      If the <var>id32</var> variable has less than 3 characters then, the value is the character _ (U+005F).
+    </td>
+  </tr>
+  <tr>
+    <td><var>d4</var></td>
+    <td>
+      The fourth last character of the string in the <var>id32</var> variable.
+      If the <var>id32</var> variable has less than 4 characters then, the value is the character _ (U+005F).
+    </td>
+  </tr>
+  <tr>
+    <td><var>id64</var></td>
+    <td>
+      The input <var>entry ID</var> encoded as a [[rfc4648#section-5|base64url]] string (using the digits A-Z, a-z, 0-9, -
+      (minus) and _ (underline)) with padding included. Because the padding character is '=', it must
+      be URL-encoded as '%3D'.  When <var>entry ID</var> is an unsigned integer it must first be converted to a big
+      endian 32 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding. 
+      (For example, when the integer is less than 256 only one byte is encoded.) If the <var>entry ID</var> is 0 then one
+      zero byte is encoded. When the <var>entry ID</var> is a string its raw bytes are encoded as
+      [[rfc4648#section-5|base64url]].
+    </td>
+  </tr>
+</table>
 
 <div class="example">
 
 Some example inputs and the corresponding expansions:
 
 <table>
-  <tr><th>Template</th><th>Input ID</th><th>ID Type</th><th>Expansion</th></tr>
+  <tr><th>Template Bytes</th><th>Input ID</th><th>ID Type</th><th>Expansion</th></tr>
   <tr>
-    <td>//foo.bar/{id}</td>
+    <td>[10, /, /, f, o, o, ., b, a, r, /, 128]</td>
     <td>123</td>
     <td>Integer</td>
     <td>//foo.bar/FC</td>
   </tr>
   <tr>
-    <td>//foo.bar/{id}</td>
+    <td>[10, /, /, f, o, o, ., b, a, r, /, 128]</td>
     <td>0</td>
     <td>Integer</td>
     <td>//foo.bar/00</td>
   </tr>
   <tr>
-    <td>//foo.bar/{d1}/{d2}/{id}</td>
+    <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 128]</td>
     <td>478</td>
     <td>Integer</td>
     <td>//foo.bar/0/F/07F0</td>
   </tr>
   <tr>
-    <td>//foo.bar/{d1}/{d2}/{d3}/{id}</td>
+    <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]</td>
     <td>123</td>
     <td>Integer</td>
     <td>//foo.bar/C/F/_/FC</td>
   </tr>
   <tr>
-    <td>//foo.bar/{d1}/{d2}/{d3}/{id}</td>
+    <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]</td>
     <td>baz</td>
     <td>String</td>
     <td>//foo.bar/K/N/G/C9GNK</td>
   </tr>
   <tr>
-    <td>//foo.bar/{d1}/{d2}/{d3}/{id}</td>
+    <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]</td>
     <td>z</td>
     <td>String</td>
     <td>//foo.bar/8/F/_/F8</td>
   </tr>
   <tr>
-    <td>//foo.bar/{d1}/{d2}/{d3}/{id}</td>
+    <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]</td>
     <td>àbc</td>
     <td>String</td>
     <td>//foo.bar/O/O/4/OEG64OO</td>
   </tr>
   <tr>
-    <td>//foo.bar/{id64}</td>
+    <td>[10, /, /, f, o, o, ., b, a, r, /, 133]</td>
     <td>14,000,000</td>
     <td>Integer</td>
     <td>//foo.bar/1Z-A</td>
   </tr>
   <tr>
-    <td>//foo.bar/{id64}</td>
+    <td>[10, /, /, f, o, o, ., b, a, r, /, 133]</td>
     <td>0</td>
     <td>Integer</td>
     <td>//foo.bar/AA%3D%3D</td>
   </tr>
   <tr>
-    <td>//foo.bar/{id64}</td>
+    <td>[10, /, /, f, o, o, ., b, a, r, /, 133]</td>
     <td>17,000,000</td>
     <td>Integer</td>
     <td>//foo.bar/AQNmQA%3D%3D</td>
   </tr>
   <tr>
-    <td>//foo.bar/{id64}</td>
+    <td>[10, /, /, f, o, o, ., b, a, r, /, 133]</td>
     <td>àbc</td>
     <td>String</td>
     <td>//foo.bar/w6BiYw%3D%3D</td>
@@ -2849,7 +2931,7 @@ additional tables needed to decode the mapping tables as early as possible in th
 
 <b>Choosing the input ID encoding</b>
 
-The specification supports two encodings for embedding patch IDs in the URI template. The first is [[rfc4648#section-7|base32hex]],
+The specification supports two encodings for embedding patch IDs in the URL template. The first is [[rfc4648#section-7|base32hex]],
 which is a good match for pre-generated patches that will typically be stored in a filesystem. Base32hex encoding only uses the
 letters 0-9 and A-V, which are safe letters for a file name in every commonly used filesystem, with no risk of collisions due to
 case-insensitivity. Because the string is embedded without padding this format cannot be reliably decoded, so it may be a poor
