@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="69f4a4dc1446319ac1a932bf17dafae8cc4d1911" name="revision">
+  <meta content="0c71595032d18cfdf3bac0ccd4f5e4ab242c910f" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -871,7 +871,7 @@ to complex scripts like Indic or Arabic.</p>
           <li><a href="#remove-entries-format-2"><span class="secno">5.3.2.2</span> <span class="content">Remove Entries from Format 2</span></a>
           <li><a href="#sparse-bit-set-decoding"><span class="secno">5.3.2.3</span> <span class="content">Sparse Bit Set</span></a>
          </ol>
-        <li><a href="#uri-templates"><span class="secno">5.3.3</span> <span class="content">URI Templates</span></a>
+        <li><a href="#url-templates"><span class="secno">5.3.3</span> <span class="content">URL Templates</span></a>
        </ol>
      </ol>
     <li>
@@ -1754,17 +1754,16 @@ the encoded bytes at the start of every iteration to pick up any changes made in
       the most significant bit. Bit 8 is the least significant bit of appliedEntriesBitMap[1] and so on. 
      <tr>
       <td>uint16
-      <td>uriTemplateLength
-      <td> Length of the uriTemplate string. 
+      <td>urlTemplateLength
+      <td> Length of the urlTemplate byte array. 
      <tr>
       <td>uint8
-      <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-uritemplate">uriTemplate</dfn>[uriTemplateLength]
-      <td> A <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string. Contains a <a href="#uri-templates">§ 5.3.3 URI Templates</a> which is used to produce URL strings associated with each entry.
-      Must be a valid <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> sequence. 
+      <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-urltemplate">urlTemplate</dfn>[urlTemplateLength]
+      <td> A byte array containing a <a href="#url-templates">URL Template</a> which is used to produce URL strings associated with each entry. 
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-patchformat">patchFormat</dfn>
-      <td> Specifies the format of the patches linked to by uriTemplate.
+      <td> Specifies the format of the patches linked to by urlTemplate.
       Must be set to one of the format numbers from  the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table. 
      <tr>
       <td>uint32
@@ -1900,8 +1899,8 @@ index and do not build an entry for it.</p>
        <p>Convert the set of glyph indices to a set of Unicode code points using the code point to glyph mapping in the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a> table of <var>font subset</var>. Ignore any glyph indices that are not mapped by <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#">cmap</a>.
 Multiple code points may map to the same glyph id. All code points associated with a glyph should be included.</p>
       <li data-md>
-       <p>Convert <var>entry index</var> into a URL string by applying <a data-link-type="dfn" href="#format-1-patch-map-uritemplate" id="ref-for-format-1-patch-map-uritemplate">uriTemplate</a> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>. If
-the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
+       <p>Convert <var>entry index</var> into a URL string by invoking <a data-link-type="abstract-op" href="#abstract-opdef-expand-url-template" id="ref-for-abstract-opdef-expand-url-template">Expand URL Template</a> with <a data-link-type="dfn" href="#format-1-patch-map-urltemplate" id="ref-for-format-1-patch-map-urltemplate">urlTemplate</a> and <var>entry index</var> as inputs. If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return
+an error.</p>
       <li data-md>
        <p>If the Unicode code point set is empty then, skip this <var>entry index</var>.</p>
       <li data-md>
@@ -1921,8 +1920,8 @@ skipped. For ordering, tag values are interpreted as a 4 byte big endian unsigne
       <li data-md>
        <p>If <a data-link-type="dfn" href="#entrymaprecord-firstentryindex" id="ref-for-entrymaprecord-firstentryindex">EntryMapRecord::firstEntryIndex</a> is greater than <a data-link-type="dfn" href="#entrymaprecord-lastentryindex" id="ref-for-entrymaprecord-lastentryindex">EntryMapRecord::lastEntryIndex</a> this <a data-link-type="dfn" href="#entrymaprecord" id="ref-for-entrymaprecord⑥">EntryMapRecord</a> is invalid, skip it.</p>
       <li data-md>
-       <p>Convert <var>mapped entry index</var> into a URL string by applying <a data-link-type="dfn" href="#format-1-patch-map-uritemplate" id="ref-for-format-1-patch-map-uritemplate①">uriTemplate</a> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
-If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
+       <p>Convert <var>mapped entry index</var> into a URL string by invoking <a data-link-type="abstract-op" href="#abstract-opdef-expand-url-template" id="ref-for-abstract-opdef-expand-url-template①">Expand URL Template</a> with <a data-link-type="dfn" href="#format-1-patch-map-urltemplate" id="ref-for-format-1-patch-map-urltemplate①">urlTemplate</a> and <var>mapped entry index</var> as inputs. If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then,
+return an error.</p>
       <li data-md>
        <p>If the bit for <var>mapped entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap①">appliedEntriesBitMap</a> is set to 1, skip this entry.</p>
       <li data-md>
@@ -1969,8 +1968,8 @@ change the number of bytes.</p>
       <li data-md>
        <p>If the bit for <var>entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap③">appliedEntriesBitMap</a> is set to 1, skip this <var>entry index</var>.</p>
       <li data-md>
-       <p>Convert <var>entry index</var> into a URL string by applying <a data-link-type="dfn" href="#format-1-patch-map-uritemplate" id="ref-for-format-1-patch-map-uritemplate②">uriTemplate</a> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
-If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
+       <p>Convert <var>entry index</var> into a URL string by invoking <a data-link-type="abstract-op" href="#abstract-opdef-expand-url-template" id="ref-for-abstract-opdef-expand-url-template②">Expand URL Template</a> with <a data-link-type="dfn" href="#format-1-patch-map-urltemplate" id="ref-for-format-1-patch-map-urltemplate②">urlTemplate</a> and <var>entry index</var> as inputs. If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return
+an error.</p>
       <li data-md>
        <p>If the generated URL string is equal to <var>patch URL string</var> then set the bit for <var>entry index</var> in <a data-link-type="dfn" href="#format-1-patch-map-appliedentriesbitmap" id="ref-for-format-1-patch-map-appliedentriesbitmap④">appliedEntriesBitMap</a> to 1.</p>
      </ul>
@@ -2005,7 +2004,7 @@ If the template expansion results in an error (see: <a href="https://www.rfc-edi
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-defaultpatchformat">defaultPatchFormat</dfn>
-      <td> Specifies the format of the patches linked to by uriTemplate (unless overridden by an entry).
+      <td> Specifies the format of the patches linked to by urlTemplate (unless overridden by an entry).
       Must be set to one of the format numbers from the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table. 
      <tr>
       <td>uint24
@@ -2022,13 +2021,12 @@ If the template expansion results in an error (see: <a href="https://www.rfc-edi
       May be null (0). Offset is from the start of this table. 
      <tr>
       <td>uint16
-      <td>uriTemplateLength
-      <td> Length of the uriTemplate string. 
+      <td>urlTemplateLength
+      <td> Length of the urlTemplate byte array. 
      <tr>
       <td>uint8
-      <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-uritemplate">uriTemplate</dfn>[uriTemplateLength]
-      <td> A <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string. Contains a <a href="#uri-templates">§ 5.3.3 URI Templates</a> which is used to produce URL strings associated with each entry.
-      Must be a valid <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> sequence. 
+      <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-urltemplate">urlTemplate</dfn>[urlTemplateLength]
+      <td> A byte array containing a <a href="#url-templates">URL Template</a> which is used to produce URL strings associated with each entry. 
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-cffcharstringsoffset">cffCharStringsOffset</dfn>
@@ -2182,7 +2180,7 @@ being requested.</p>
        <p>pass in <var>prior entry list</var>, the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entries" id="ref-for-format-2-patch-map-entries">entries</a>[<var>current byte</var>] to
  the end of <var>patch map</var>,
  the bytes from <var>patch map</var> starting from <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata⑥">entryIdStringData</a>[<var>current id string byte</var>]
- to the end of <var>patch map</var> if <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata⑦">entryIdStringData</a> is non zero, <var>last entry id</var>, <a data-link-type="dfn" href="#format-2-patch-map-defaultpatchformat" id="ref-for-format-2-patch-map-defaultpatchformat①">defaultPatchFormat</a>, and <a data-link-type="dfn" href="#format-2-patch-map-uritemplate" id="ref-for-format-2-patch-map-uritemplate">uriTemplate</a>.</p>
+ to the end of <var>patch map</var> if <a data-link-type="dfn" href="#format-2-patch-map-entryidstringdata" id="ref-for-format-2-patch-map-entryidstringdata⑦">entryIdStringData</a> is non zero, <var>last entry id</var>, <a data-link-type="dfn" href="#format-2-patch-map-defaultpatchformat" id="ref-for-format-2-patch-map-defaultpatchformat①">defaultPatchFormat</a>, and <a data-link-type="dfn" href="#format-2-patch-map-urltemplate" id="ref-for-format-2-patch-map-urltemplate">urlTemplate</a>.</p>
       <li data-md>
        <p>Set <var>last entry id</var> to the returned entry id.</p>
       <li data-md>
@@ -2211,7 +2209,7 @@ being requested.</p>
     <li data-md>
      <p><var>default patch format</var>: the default patch format if one isn’t specified.</p>
     <li data-md>
-     <p><var>uri template</var>: the URI template used to locate patches.</p>
+     <p><var>url template</var>: the URL template used to locate patches.</p>
    </ul>
    <p>The algorithm outputs:</p>
    <ul>
@@ -2275,8 +2273,8 @@ by <a data-link-type="dfn" href="#design-space-segment-tag" id="ref-for-design-s
          <p>Set <var>entry id</var> to <code><var>entry id</var> + 1 + floor(delta value / 2)</code>.
  If <var>entry id</var> is negative or greater than 4,294,967,295 then, this encoding is invalid return an error.</p>
         <li data-md>
-         <p>Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
- If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
+         <p>Convert <var>entry id</var> into a URL string by invoking <a data-link-type="abstract-op" href="#abstract-opdef-expand-url-template" id="ref-for-abstract-opdef-expand-url-template③">Expand URL Template</a> with <var>url template</var> and <var>entry id</var> as inputs. If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>)
+ then, return an error.</p>
         <li data-md>
          <p>Add the generated patch URL string to <var>entry</var>.</p>
         <li data-md>
@@ -2291,8 +2289,8 @@ by <a data-link-type="dfn" href="#design-space-segment-tag" id="ref-for-design-s
          <p>Interpret the least significant 23 bits as an unsigned integer and read that many bytes from <var>id string bytes</var>.
  Set <var>entry id</var> to the result. Increment <var>consumed id string bytes</var> by the number of bytes read.</p>
         <li data-md>
-         <p>Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
- If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
+         <p>Convert <var>entry id</var> into a URL string by invoking <a data-link-type="abstract-op" href="#abstract-opdef-expand-url-template" id="ref-for-abstract-opdef-expand-url-template④">Expand URL Template</a> with <var>url template</var> and <var>entry id</var> as inputs. If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>)
+ then, return an error.</p>
         <li data-md>
          <p>Add the generated patch URL string to <var>entry</var>.</p>
         <li data-md>
@@ -2308,8 +2306,8 @@ by <a data-link-type="dfn" href="#design-space-segment-tag" id="ref-for-design-s
         <li data-md>
          <p>Set <var>entry id</var> to <var>entry id</var> + 1.</p>
         <li data-md>
-         <p>Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
- If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
+         <p>Convert <var>entry id</var> into a URL string by invoking <a data-link-type="abstract-op" href="#abstract-opdef-expand-url-template" id="ref-for-abstract-opdef-expand-url-template⑤">Expand URL Template</a> with <var>url template</var> and <var>entry id</var> as inputs. If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>)
+ then, return an error.</p>
         <li data-md>
          <p>Add the generated patch URL string to <var>entry</var>.</p>
        </ul>
@@ -2317,8 +2315,8 @@ by <a data-link-type="dfn" href="#design-space-segment-tag" id="ref-for-design-s
        <p>Otherwise if <var>id string bytes</var> is present, then:</p>
        <ul>
         <li data-md>
-         <p>Convert <var>entry id</var> into a URL string by applying <var>uri template</var> following <a href="#uri-templates">§ 5.3.3 URI Templates</a>.
- If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>) then, return an error.</p>
+         <p>Convert <var>entry id</var> into a URL string by invoking <a data-link-type="abstract-op" href="#abstract-opdef-expand-url-template" id="ref-for-abstract-opdef-expand-url-template⑥">Expand URL Template</a> with <var>url template</var> and <var>entry id</var> as inputs. If the template expansion results in an error (see: <a href="https://www.rfc-editor.org/rfc/rfc6570#section-3">URI Template § section-3</a>)
+ then, return an error.</p>
         <li data-md>
          <p>Add the generated patch URL string to <var>entry</var>.</p>
        </ul>
@@ -2529,116 +2527,189 @@ byte string:
 ]
 </pre>
    </div>
-   <h4 class="heading settled" data-level="5.3.3" id="uri-templates"><span class="secno">5.3.3. </span><span class="content">URI Templates</span><a class="self-link" href="#uri-templates"></a></h4>
-   <p>URI templates <a data-link-type="biblio" href="#biblio-rfc6570" title="URI Template">[rfc6570]</a> are used to convert numeric or string IDs into URL strings where patch files are located.
-A string ID is a sequence of bytes. The output of template expansion is a <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string.</p>
-   <p>To limit the complexity of the template expansion implementation, URI templates in IFT are restricted to only <a href="https://www.rfc-editor.org/rfc/rfc6570#section-1.2">Level 1</a> substitution expressions. If a URI template contains expression(s) which do not match the level
-1 grammar (<a href="https://www.rfc-editor.org/rfc/rfc6570#section-2.2">URI Template § section-2.2</a>) or have variable names other than those defined below, then template expansion must result
-in an error. Additionally, for consistency when producing percent encodings as part of template expansion
-(<a href="https://www.rfc-editor.org/rfc/rfc6570#section-3.1">URI Template § section-3.1</a>) IFT implementations must only use uppercase letters.</p>
-   <p>Several variables are defined which are used to produce the expansion of the template:</p>
+   <h4 class="heading settled" data-level="5.3.3" id="url-templates"><span class="secno">5.3.3. </span><span class="content">URL Templates</span><a class="self-link" href="#url-templates"></a></h4>
+   <p>URL templates are used to compress the URL strings associated with each patch map entry. Each patch mapping table
+provides a URL template and then the URL string for each entry is produced by expanding the common template using
+each entry’s ID as an input. The output of template expansion is a <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string.</p>
+   <p>URL templates are encoded as a series of one byte op codes that either insert literal values, or insert values
+based on the input entry ID.</p>
+   <p>The algorithm for decoding and expanding a URL template follows.</p>
+   <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-expand-url-template">Expand URL Template</dfn></p>
+   <p>The inputs to this algorithm are:</p>
+   <ul>
+    <li data-md>
+     <p><var>url template bytes</var>: an array of bytes the contains the URL template.</p>
+    <li data-md>
+     <p><var>entry ID</var>: the ID of an entry. May be either an unsigned integer or an array of bytes.</p>
+   </ul>
+   <p>The algorithm outputs:</p>
+   <ul>
+    <li data-md>
+     <p><var>URL string</var>: an array of bytes representing the URL string. Encoded as <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a>.</p>
+   </ul>
+   <p>The algorithm:</p>
+   <ol>
+    <li data-md>
+     <p>Initialize <var>URL string</var> to an empty byte array.</p>
+    <li data-md>
+     <p>Read the next byte of <var>url template bytes</var> into <var>op code</var>. If there are no remaining bytes, then
+expansion is finished, return <var>URL string</var>.</p>
+    <li data-md>
+     <p>If the most significant bit of <var>op code</var> is not set, then:</p>
+     <ul>
+      <li data-md>
+       <p>Interpret the 7 least significant bits of <var>op code</var> as an unsigned integer, <var>number of literal bytes</var>.</p>
+      <li data-md>
+       <p>Read <var>number of literal bytes</var> from <var>url template bytes</var> into <var>literal bytes</var>.</p>
+      <li data-md>
+       <p>Check that <var>literal bytes</var> is a valid UTF-8 encoded string according to <a href="https://www.rfc-editor.org/rfc/rfc3629#section-4">UTF-8, a transformation format of ISO 10646 § section-4</a>.
+ If it is not, return an error.</p>
+      <li data-md>
+       <p>Append <var>literal bytes</var> to the end of <var>URL string</var>.</p>
+      <li data-md>
+       <p>Go to step 2.</p>
+     </ul>
+    <li data-md>
+     <p>If the most significant bit of <var>op code</var> is set, then:</p>
+     <ul>
+      <li data-md>
+       <p>Look up <var>op code</var> in the proceeding <b>Op Code Reference Table</b>. Perform the operation specified
+ in the "Insertion Operation" column. If <var>op code</var> is not found in the table, then return an error.</p>
+      <li data-md>
+       <p>Go to step 2.</p>
+     </ul>
+   </ol>
+   <p><b>Op Code Reference Table</b></p>
+   <table>
+    <tbody>
+     <tr>
+      <th>Name
+      <th>Op Code Value
+      <th>Insertion Operation
+     <tr>
+      <td>Insert id32
+      <td>128 (0b10000000)
+      <td> Append the value of the <var>id32</var> variable from the proceeding <b>Expansion Variables</b> table to <var>URL string</var>. 
+     <tr>
+      <td>Insert d1
+      <td>129 (0b10000001)
+      <td> Append the value of the <var>d1</var> variable from the proceeding <b>Expansion Variables</b> table to <var>URL string</var>. 
+     <tr>
+      <td>Insert d2
+      <td>130 (0b10000010)
+      <td> Append the value of the <var>d2</var> variable from the proceeding <b>Expansion Variables</b> table to <var>URL string</var>. 
+     <tr>
+      <td>Insert d3
+      <td>131 (0b10000011)
+      <td> Append the value of the <var>d3</var> variable from the proceeding <b>Expansion Variables</b> table to <var>URL string</var>. 
+     <tr>
+      <td>Insert d4
+      <td>132 (0b10000100)
+      <td> Append the value of the <var>d4</var> variable from the proceeding <b>Expansion Variables</b> table to <var>URL string</var>. 
+     <tr>
+      <td>Insert id64
+      <td>133 (0b10000101)
+      <td> Append the value of the <var>id64</var> variable from the proceeding <b>Expansion Variables</b> table to <var>URL string</var>. 
+   </table>
+   <p><b>Expansion Variables</b></p>
    <table>
     <tbody>
      <tr>
       <th>Variable
       <th>Value
      <tr>
-      <td><code>id</code>
-      <td> The input id encoded as a <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a> string (using the digits 0-9, A-V) with padding
-      omitted.  When the id is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
+      <td><var>id32</var>
+      <td> The input <var>entry ID</var> encoded as a <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a> string (using the digits 0-9, A-V) with padding
+      omitted.  When <var>entry ID</var> is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
       but then all leading bytes that are equal to 0 are removed before encoding.  (For example, when the
-      integer is less than 256 only one byte is encoded.) If the input id is 0 then one zero byte is encoded. When the input
-      id is a string the raw bytes are encoded as base32hex. 
+      integer is less than 256 only one byte is encoded.) If <var>entry ID</var> is 0 then one zero byte is encoded. When <var>entry ID</var> is a string the raw bytes are encoded as base32hex. 
      <tr>
-      <td><code>d1</code>
-      <td> The last character of the string in the <code>id</code> variable.
-      If <code>id</code> variable is empty then, the value is the character _ (U+005F). 
+      <td><var>d1</var>
+      <td> The last character of the string in the <var>id32</var> variable.
+      If <var>id32</var> variable is empty then, the value is the character _ (U+005F). 
      <tr>
-      <td><code>d2</code>
-      <td> The second last character of the string in the <code>id</code> variable.
-      If the <code>id</code> variable has less than 2 characters then, the value is the character _ (U+005F). 
+      <td><var>d2</var>
+      <td> The second last character of the string in the <var>id32</var> variable.
+      If the <var>id32</var> variable has less than 2 characters then, the value is the character _ (U+005F). 
      <tr>
-      <td><code>d3</code>
-      <td> The third last character of the string in the <code>id</code> variable.
-      If the <code>id</code> variable has less than 3 characters then, the value is the character _ (U+005F). 
+      <td><var>d3</var>
+      <td> The third last character of the string in the <var>id32</var> variable.
+      If the <var>id32</var> variable has less than 3 characters then, the value is the character _ (U+005F). 
      <tr>
-      <td><code>d4</code>
-      <td> The fourth last character of the string in the <code>id</code> variable.
-      If the <code>id</code> variable has less than 4 characters then, the value is the character _ (U+005F). 
+      <td><var>d4</var>
+      <td> The fourth last character of the string in the <var>id32</var> variable.
+      If the <var>id32</var> variable has less than 4 characters then, the value is the character _ (U+005F). 
      <tr>
-      <td><code>id64</code>
-      <td> The input id encoded as a <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a> string (using the digits A-Z, a-z, 0-9, -
+      <td><var>id64</var>
+      <td> The input <var>entry ID</var> encoded as a <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a> string (using the digits A-Z, a-z, 0-9, -
       (minus) and _ (underline)) with padding included. Because the padding character is '=', it must
-      be URL-encoded as "%3D'.  When the id is an unsigned integer it must first be converted to a big
+      be URL-encoded as '%3D'.  When <var>entry ID</var> is an unsigned integer it must first be converted to a big
       endian 32 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding. 
-      (For example, when the integer is less than 256 only one byte is encoded.) If the input id is 0 then one
-      zero byte is encoded. When the input id is a string its raw bytes are encoded as <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a>. 
+      (For example, when the integer is less than 256 only one byte is encoded.) If the <var>entry ID</var> is 0 then one
+      zero byte is encoded. When the <var>entry ID</var> is a string its raw bytes are encoded as <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a>. 
    </table>
-   <p class="note" role="note"><span class="marker">Note:</span> since there is a small fixed set of variables and only level one expression are supported for expansion, implementations
-may want to consider a custom optimized template expansion implementation instead of relying on a general purpose implementation
-of <a data-link-type="biblio" href="#biblio-rfc6570" title="URI Template">[rfc6570]</a>.</p>
-   <div class="example" id="example-21a3582d">
-    <a class="self-link" href="#example-21a3582d"></a> 
+   <div class="example" id="example-7e8ab422">
+    <a class="self-link" href="#example-7e8ab422"></a> 
     <p>Some example inputs and the corresponding expansions:</p>
     <table>
      <tbody>
       <tr>
-       <th>Template
+       <th>Template Bytes
        <th>Input ID
        <th>ID Type
        <th>Expansion
       <tr>
-       <td>//foo.bar/{id}
+       <td>[10, /, /, f, o, o, ., b, a, r, /, 128]
        <td>123
        <td>Integer
        <td>//foo.bar/FC
       <tr>
-       <td>//foo.bar/{id}
+       <td>[10, /, /, f, o, o, ., b, a, r, /, 128]
        <td>0
        <td>Integer
        <td>//foo.bar/00
       <tr>
-       <td>//foo.bar/{d1}/{d2}/{id}
+       <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 128]
        <td>478
        <td>Integer
        <td>//foo.bar/0/F/07F0
       <tr>
-       <td>//foo.bar/{d1}/{d2}/{d3}/{id}
+       <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]
        <td>123
        <td>Integer
        <td>//foo.bar/C/F/_/FC
       <tr>
-       <td>//foo.bar/{d1}/{d2}/{d3}/{id}
+       <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]
        <td>baz
        <td>String
        <td>//foo.bar/K/N/G/C9GNK
       <tr>
-       <td>//foo.bar/{d1}/{d2}/{d3}/{id}
+       <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]
        <td>z
        <td>String
        <td>//foo.bar/8/F/_/F8
       <tr>
-       <td>//foo.bar/{d1}/{d2}/{d3}/{id}
+       <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]
        <td>àbc
        <td>String
        <td>//foo.bar/O/O/4/OEG64OO
       <tr>
-       <td>//foo.bar/{id64}
+       <td>[10, /, /, f, o, o, ., b, a, r, /, 133]
        <td>14,000,000
        <td>Integer
        <td>//foo.bar/1Z-A
       <tr>
-       <td>//foo.bar/{id64}
+       <td>[10, /, /, f, o, o, ., b, a, r, /, 133]
        <td>0
        <td>Integer
        <td>//foo.bar/AA%3D%3D
       <tr>
-       <td>//foo.bar/{id64}
+       <td>[10, /, /, f, o, o, ., b, a, r, /, 133]
        <td>17,000,000
        <td>Integer
        <td>//foo.bar/AQNmQA%3D%3D
       <tr>
-       <td>//foo.bar/{id64}
+       <td>[10, /, /, f, o, o, ., b, a, r, /, 133]
        <td>àbc
        <td>String
        <td>//foo.bar/w6BiYw%3D%3D
@@ -3207,7 +3278,7 @@ patch mapping prior to receiving all of the font data and potentially initiate r
 in any order in the patch file. So for the same reasons encoders should consider placing updates to the mapping tables plus any
 additional tables needed to decode the mapping tables as early as possible in the patch file.</p>
    <p><b>Choosing the input ID encoding</b></p>
-   <p>The specification supports two encodings for embedding patch IDs in the URI template. The first is <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a>,
+   <p>The specification supports two encodings for embedding patch IDs in the URL template. The first is <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a>,
 which is a good match for pre-generated patches that will typically be stored in a filesystem. Base32hex encoding only uses the
 letters 0-9 and A-V, which are safe letters for a file name in every commonly used filesystem, with no risk of collisions due to
 case-insensitivity. Because the string is embedded without padding this format cannot be reliably decoded, so it may be a poor
@@ -3941,6 +4012,7 @@ content covered by the target subset definition.</p>
    <li><a href="#featurerecord-entrymapcount">entryMapCount</a><span>, in § 5.3.1</span>
    <li><a href="#entrymaprecord">EntryMapRecord</a><span>, in § 5.3.1</span>
    <li><a href="#feature-map-entrymaprecords">entryMapRecords</a><span>, in § 5.3.1</span>
+   <li><a href="#abstract-opdef-expand-url-template">Expand URL Template</a><span>, in § 5.3.3</span>
    <li><a href="#abstract-opdef-extend-an-incremental-font-subset">Extend an Incremental Font Subset</a><span>, in § 4.3</span>
    <li><a href="#mapping-entry-featurecount">featureCount</a><span>, in § 5.3.2</span>
    <li><a href="#feature-map">Feature Map</a><span>, in § 5.3.1</span>
@@ -4031,10 +4103,10 @@ content covered by the target subset definition.</p>
      <li><a href="#tablepatch-tag">dfn for TablePatch</a><span>, in § 6.2</span>
     </ul>
    <li>
-    uriTemplate
+    urlTemplate
     <ul>
-     <li><a href="#format-1-patch-map-uritemplate">dfn for Format 1 Patch Map</a><span>, in § 5.3.1</span>
-     <li><a href="#format-2-patch-map-uritemplate">dfn for Format 2 Patch Map</a><span>, in § 5.3.2</span>
+     <li><a href="#format-1-patch-map-urltemplate">dfn for Format 1 Patch Map</a><span>, in § 5.3.1</span>
+     <li><a href="#format-2-patch-map-urltemplate">dfn for Format 2 Patch Map</a><span>, in § 5.3.2</span>
     </ul>
   </ul>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
@@ -4311,6 +4383,7 @@ let dfnPanelData = {
 "abstract-opdef-apply-table-keyed-patch": {"dfnID":"abstract-opdef-apply-table-keyed-patch","dfnText":"Apply table keyed patch","external":false,"refSections":[],"url":"#abstract-opdef-apply-table-keyed-patch"},
 "abstract-opdef-check-entry-intersection": {"dfnID":"abstract-opdef-check-entry-intersection","dfnText":"Check entry intersection","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2460"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2461"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2462"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2463"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2464"}],"title":"Example 1: Table and Glyph Keyed Patches"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2465"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2466"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2467"}],"title":"Example 2: Glyph Keyed Patches with Child Entries"}],"url":"#abstract-opdef-check-entry-intersection"},
 "abstract-opdef-decoding-sparse-bit-set-treedata": {"dfnID":"abstract-opdef-decoding-sparse-bit-set-treedata","dfnText":"Decoding sparse bit set treeData","external":false,"refSections":[],"url":"#abstract-opdef-decoding-sparse-bit-set-treedata"},
+"abstract-opdef-expand-url-template": {"dfnID":"abstract-opdef-expand-url-template","dfnText":"Expand URL Template","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-expand-url-template"},{"id":"ref-for-abstract-opdef-expand-url-template\u2460"}],"title":"5.3.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-abstract-opdef-expand-url-template\u2461"}],"title":"5.3.1.2. Remove Entries from Format 1"},{"refs":[{"id":"ref-for-abstract-opdef-expand-url-template\u2462"},{"id":"ref-for-abstract-opdef-expand-url-template\u2463"},{"id":"ref-for-abstract-opdef-expand-url-template\u2464"},{"id":"ref-for-abstract-opdef-expand-url-template\u2465"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#abstract-opdef-expand-url-template"},
 "abstract-opdef-extend-an-incremental-font-subset": {"dfnID":"abstract-opdef-extend-an-incremental-font-subset","dfnText":"Extend an Incremental Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2461"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2462"}],"title":"4.4. Selecting Invalidating Patches"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2463"}],"title":"4.5. Target Subset Definition"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2464"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2465"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2466"}],"title":"4.6. Determining what Content a Font can Render"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2467"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2468"}],"title":"5.3. Patch Map Table"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460\u24ea"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460\u2460"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460\u2461"}],"title":"7. Encoding"}],"url":"#abstract-opdef-extend-an-incremental-font-subset"},
 "abstract-opdef-fully-expand-a-font-subset": {"dfnID":"abstract-opdef-fully-expand-a-font-subset","dfnText":"Fully Expand a Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset"}],"title":"2.1. Offline Usage"},{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2460"},{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2461"}],"title":"7. Encoding"}],"url":"#abstract-opdef-fully-expand-a-font-subset"},
 "abstract-opdef-handle-errors": {"dfnID":"abstract-opdef-handle-errors","dfnText":"Handle errors","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-handle-errors"},{"id":"ref-for-abstract-opdef-handle-errors\u2460"},{"id":"ref-for-abstract-opdef-handle-errors\u2461"},{"id":"ref-for-abstract-opdef-handle-errors\u2462"}],"title":"4.3. Incremental Font Extension Algorithm"}],"url":"#abstract-opdef-handle-errors"},
@@ -4352,7 +4425,7 @@ let dfnPanelData = {
 "format-1-patch-map-maxentryindex": {"dfnID":"format-1-patch-map-maxentryindex","dfnText":"maxEntryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-maxentryindex"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2460"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2461"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2462"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2463"}],"title":"5.3.1. Patch Map Table: Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-maxentryindex\u2464"},{"id":"ref-for-format-1-patch-map-maxentryindex\u2465"}],"title":"5.3.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-maxentryindex"},
 "format-1-patch-map-maxglyphmapentryindex": {"dfnID":"format-1-patch-map-maxglyphmapentryindex","dfnText":"maxGlyphMapEntryIndex","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-maxglyphmapentryindex"},{"id":"ref-for-format-1-patch-map-maxglyphmapentryindex\u2460"},{"id":"ref-for-format-1-patch-map-maxglyphmapentryindex\u2461"}],"title":"5.3.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-maxglyphmapentryindex"},
 "format-1-patch-map-patchformat": {"dfnID":"format-1-patch-map-patchformat","dfnText":"patchFormat","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-patchformat"},{"id":"ref-for-format-1-patch-map-patchformat\u2460"}],"title":"5.3.1.1. Interpreting Format 1"}],"url":"#format-1-patch-map-patchformat"},
-"format-1-patch-map-uritemplate": {"dfnID":"format-1-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate"},{"id":"ref-for-format-1-patch-map-uritemplate\u2460"}],"title":"5.3.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-uritemplate\u2461"}],"title":"5.3.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-uritemplate"},
+"format-1-patch-map-urltemplate": {"dfnID":"format-1-patch-map-urltemplate","dfnText":"urlTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-1-patch-map-urltemplate"},{"id":"ref-for-format-1-patch-map-urltemplate\u2460"}],"title":"5.3.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-format-1-patch-map-urltemplate\u2461"}],"title":"5.3.1.2. Remove Entries from Format 1"}],"url":"#format-1-patch-map-urltemplate"},
 "format-2-patch-map": {"dfnID":"format-2-patch-map","dfnText":"Format 2 Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map"}],"title":"5.3.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map\u2460"}],"title":"5.3.2.2. Remove Entries from Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map\u2461"}],"title":"5.3.2.3. Sparse Bit Set"}],"url":"#format-2-patch-map"},
 "format-2-patch-map-cff2charstringsoffset": {"dfnID":"format-2-patch-map-cff2charstringsoffset","dfnText":"cff2CharStringsOffset","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-cff2charstringsoffset"}],"title":"5.2. CFF and CFF2 Incremental Fonts"},{"refs":[{"id":"ref-for-format-2-patch-map-cff2charstringsoffset\u2460"}],"title":"5.3.2. Patch Map Table: Format 2"}],"url":"#format-2-patch-map-cff2charstringsoffset"},
 "format-2-patch-map-cffcharstringsoffset": {"dfnID":"format-2-patch-map-cffcharstringsoffset","dfnText":"cffCharStringsOffset","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-cffcharstringsoffset"}],"title":"5.2. CFF and CFF2 Incremental Fonts"},{"refs":[{"id":"ref-for-format-2-patch-map-cffcharstringsoffset\u2460"}],"title":"5.3.2. Patch Map Table: Format 2"}],"url":"#format-2-patch-map-cffcharstringsoffset"},
@@ -4363,7 +4436,7 @@ let dfnPanelData = {
 "format-2-patch-map-entryidstringdata": {"dfnID":"format-2-patch-map-entryidstringdata","dfnText":"entryIdStringData","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2460"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2461"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2462"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2463"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-format-2-patch-map-entryidstringdata\u2464"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2465"},{"id":"ref-for-format-2-patch-map-entryidstringdata\u2466"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-entryidstringdata"},
 "format-2-patch-map-flags": {"dfnID":"format-2-patch-map-flags","dfnText":"flags","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-flags"},{"id":"ref-for-format-2-patch-map-flags\u2460"}],"title":"5.3.2. Patch Map Table: Format 2"}],"url":"#format-2-patch-map-flags"},
 "format-2-patch-map-format": {"dfnID":"format-2-patch-map-format","dfnText":"format","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-format"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-format"},
-"format-2-patch-map-uritemplate": {"dfnID":"format-2-patch-map-uritemplate","dfnText":"uriTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-uritemplate"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-uritemplate"},
+"format-2-patch-map-urltemplate": {"dfnID":"format-2-patch-map-urltemplate","dfnText":"urlTemplate","external":false,"refSections":[{"refs":[{"id":"ref-for-format-2-patch-map-urltemplate"}],"title":"5.3.2.1. Interpreting Format 2"}],"url":"#format-2-patch-map-urltemplate"},
 "full-invalidation": {"dfnID":"full-invalidation","dfnText":"Full Invalidation","external":false,"refSections":[{"refs":[{"id":"ref-for-full-invalidation"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-full-invalidation\u2460"}],"title":"6.1. Formats Summary"}],"url":"#full-invalidation"},
 "glyph-closure": {"dfnID":"glyph-closure","dfnText":"glyph closure","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-closure"}],"title":"7.1. Encoding Considerations"}],"url":"#glyph-closure"},
 "glyph-keyed-patch": {"dfnID":"glyph-keyed-patch","dfnText":"Glyph keyed patch","external":false,"refSections":[{"refs":[{"id":"ref-for-glyph-keyed-patch"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#glyph-keyed-patch"},
@@ -4800,6 +4873,7 @@ function genLinkingSyntaxes(dfn) {
 {
 let refsData = {
 "#abstract-opdef-check-entry-intersection": {"displayText":"Check entry intersection","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Check entry intersection","type":"abstract-op","url":"#abstract-opdef-check-entry-intersection"},
+"#abstract-opdef-expand-url-template": {"displayText":"Expand URL Template","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Expand URL Template","type":"abstract-op","url":"#abstract-opdef-expand-url-template"},
 "#abstract-opdef-extend-an-incremental-font-subset": {"displayText":"Extend an Incremental Font Subset","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Extend an Incremental Font Subset","type":"abstract-op","url":"#abstract-opdef-extend-an-incremental-font-subset"},
 "#abstract-opdef-fully-expand-a-font-subset": {"displayText":"Fully Expand a Font Subset","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Fully Expand a Font Subset","type":"abstract-op","url":"#abstract-opdef-fully-expand-a-font-subset"},
 "#abstract-opdef-handle-errors": {"displayText":"Handle errors","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"Handle errors","type":"abstract-op","url":"#abstract-opdef-handle-errors"},
@@ -4839,7 +4913,7 @@ let refsData = {
 "#format-1-patch-map-maxentryindex": {"displayText":"maxentryindex","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxentryindex","type":"dfn","url":"#format-1-patch-map-maxentryindex"},
 "#format-1-patch-map-maxglyphmapentryindex": {"displayText":"maxglyphmapentryindex","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"maxglyphmapentryindex","type":"dfn","url":"#format-1-patch-map-maxglyphmapentryindex"},
 "#format-1-patch-map-patchformat": {"displayText":"patchformat","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patchformat","type":"dfn","url":"#format-1-patch-map-patchformat"},
-"#format-1-patch-map-uritemplate": {"displayText":"uritemplate","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-1-patch-map-uritemplate"},
+"#format-1-patch-map-urltemplate": {"displayText":"urltemplate","export":true,"for_":["Format 1 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"urltemplate","type":"dfn","url":"#format-1-patch-map-urltemplate"},
 "#format-2-patch-map": {"displayText":"format 2 patch map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format 2 patch map","type":"dfn","url":"#format-2-patch-map"},
 "#format-2-patch-map-cff2charstringsoffset": {"displayText":"cff2charstringsoffset","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"cff2charstringsoffset","type":"dfn","url":"#format-2-patch-map-cff2charstringsoffset"},
 "#format-2-patch-map-cffcharstringsoffset": {"displayText":"cffcharstringsoffset","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"cffcharstringsoffset","type":"dfn","url":"#format-2-patch-map-cffcharstringsoffset"},
@@ -4850,7 +4924,7 @@ let refsData = {
 "#format-2-patch-map-entryidstringdata": {"displayText":"entryidstringdata","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"entryidstringdata","type":"dfn","url":"#format-2-patch-map-entryidstringdata"},
 "#format-2-patch-map-flags": {"displayText":"flags","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"flags","type":"dfn","url":"#format-2-patch-map-flags"},
 "#format-2-patch-map-format": {"displayText":"format","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"format","type":"dfn","url":"#format-2-patch-map-format"},
-"#format-2-patch-map-uritemplate": {"displayText":"uritemplate","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"uritemplate","type":"dfn","url":"#format-2-patch-map-uritemplate"},
+"#format-2-patch-map-urltemplate": {"displayText":"urltemplate","export":true,"for_":["Format 2 Patch Map"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"urltemplate","type":"dfn","url":"#format-2-patch-map-urltemplate"},
 "#full-invalidation": {"displayText":"full invalidation","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"full invalidation","type":"dfn","url":"#full-invalidation"},
 "#glyph-closure": {"displayText":"glyph closure","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph closure","type":"dfn","url":"#glyph-closure"},
 "#glyph-keyed-patch": {"displayText":"glyph keyed patch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"glyph keyed patch","type":"dfn","url":"#glyph-keyed-patch"},
