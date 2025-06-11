@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="0c71595032d18cfdf3bac0ccd4f5e4ab242c910f" name="revision">
+  <meta content="0dbd615b617cb6076b9df6c152514450188eb4af" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -2629,15 +2629,15 @@ expansion is finished, return <var>URL string</var>.</p>
       If <var>id32</var> variable is empty then, the value is the character _ (U+005F). 
      <tr>
       <td><var>d2</var>
-      <td> The second last character of the string in the <var>id32</var> variable.
+      <td> The second to last character of the string in the <var>id32</var> variable.
       If the <var>id32</var> variable has less than 2 characters then, the value is the character _ (U+005F). 
      <tr>
       <td><var>d3</var>
-      <td> The third last character of the string in the <var>id32</var> variable.
+      <td> The third to last character of the string in the <var>id32</var> variable.
       If the <var>id32</var> variable has less than 3 characters then, the value is the character _ (U+005F). 
      <tr>
       <td><var>d4</var>
-      <td> The fourth last character of the string in the <var>id32</var> variable.
+      <td> The fourth to last character of the string in the <var>id32</var> variable.
       If the <var>id32</var> variable has less than 4 characters then, the value is the character _ (U+005F). 
      <tr>
       <td><var>id64</var>
@@ -2648,9 +2648,9 @@ expansion is finished, return <var>URL string</var>.</p>
       (For example, when the integer is less than 256 only one byte is encoded.) If the <var>entry ID</var> is 0 then one
       zero byte is encoded. When the <var>entry ID</var> is a string its raw bytes are encoded as <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a>. 
    </table>
-   <div class="example" id="example-7e8ab422">
-    <a class="self-link" href="#example-7e8ab422"></a> 
-    <p>Some example inputs and the corresponding expansions:</p>
+   <div class="example" id="example-ed261c7f">
+    <a class="self-link" href="#example-ed261c7f"></a> 
+    <p>Some example inputs and the corresponding expansions. Values in "Template Bytes" column are provided as C style byte arrays.</p>
     <table>
      <tbody>
       <tr>
@@ -2659,57 +2659,62 @@ expansion is finished, return <var>URL string</var>.</p>
        <th>ID Type
        <th>Expansion
       <tr>
-       <td>[10, /, /, f, o, o, ., b, a, r, /, 128]
+       <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 128]
        <td>123
        <td>Integer
        <td>//foo.bar/FC
       <tr>
-       <td>[10, /, /, f, o, o, ., b, a, r, /, 128]
+       <td>[8, 'f', 'o', 'o', '?', 'b', 'a', 'r', '=', 128]
+       <td>123
+       <td>Integer
+       <td>foo?bar=FC
+      <tr>
+       <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 128]
        <td>0
        <td>Integer
        <td>//foo.bar/00
       <tr>
-       <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 128]
+       <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 128]
        <td>478
        <td>Integer
-       <td>//foo.bar/0/F/07F0
+       <td>foo/0/F/07F0
       <tr>
-       <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]
+       <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]
        <td>123
        <td>Integer
-       <td>//foo.bar/C/F/_/FC
+       <td>foo/C/F/_/FC
       <tr>
-       <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]
+       <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]
        <td>baz
        <td>String
-       <td>//foo.bar/K/N/G/C9GNK
+       <td>foo/K/N/G/C9GNK
       <tr>
-       <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]
+       <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]
        <td>z
        <td>String
-       <td>//foo.bar/8/F/_/F8
+       <td>foo/8/F/_/F8
       <tr>
-       <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]
+       <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]
        <td>àbc
        <td>String
-       <td>//foo.bar/O/O/4/OEG64OO
+       <td>foo/O/O/4/OEG64OO
       <tr>
-       <td>[10, /, /, f, o, o, ., b, a, r, /, 133]
+       <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 133]
        <td>14,000,000
        <td>Integer
        <td>//foo.bar/1Z-A
       <tr>
-       <td>[10, /, /, f, o, o, ., b, a, r, /, 133]
+       <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 133]
        <td>0
        <td>Integer
        <td>//foo.bar/AA%3D%3D
       <tr>
-       <td>[10, /, /, f, o, o, ., b, a, r, /, 133]
+       <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 133]
        <td>17,000,000
        <td>Integer
        <td>//foo.bar/AQNmQA%3D%3D
       <tr>
-       <td>[10, /, /, f, o, o, ., b, a, r, /, 133]
+       <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 133]
        <td>àbc
        <td>String
        <td>//foo.bar/w6BiYw%3D%3D
