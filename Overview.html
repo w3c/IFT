@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="d980726397bb6bbea8bde06bedf3a8d2f64a1a5b" name="revision">
+  <meta content="c94b7d54b9336616f25a4c0c08dc68642635a6bd" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -2652,8 +2652,8 @@ expansion is finished, return <var>URL string</var>.</p>
       (For example, when the integer is less than 256 only one byte is encoded.) If the <var>entry ID</var> is 0 then one
       zero byte is encoded. When the <var>entry ID</var> is a string its raw bytes are encoded as <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a>. 
    </table>
-   <div class="example" id="example-13e51108">
-    <a class="self-link" href="#example-13e51108"></a> 
+   <div class="example" id="example-305f10ca">
+    <a class="self-link" href="#example-305f10ca"></a> 
     <p>Some example inputs and the corresponding expansions. Values in "Template Bytes" column are provided as C style byte arrays.</p>
     <table>
      <tbody>
@@ -2663,10 +2663,10 @@ expansion is finished, return <var>URL string</var>.</p>
        <th>ID Type
        <th>Expansion
       <tr>
-       <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 128]
+       <td>[16, 'h', 't', 't', 'p', 's', ':', '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 128]
        <td>123
        <td>Integer
-       <td>//foo.bar/FC
+       <td>https://foo.bar/FC
       <tr>
        <td>[8, 'f', 'o', 'o', '?', 'b', 'a', 'r', '=', 128]
        <td>123
@@ -2678,15 +2678,15 @@ expansion is finished, return <var>URL string</var>.</p>
        <td>Integer
        <td>//foo.bar/00
       <tr>
-       <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 128]
+       <td>[5, '/', 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 128]
        <td>478
        <td>Integer
-       <td>foo/0/F/07F0
+       <td>/foo/0/F/07F0
       <tr>
-       <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]
+       <td>[5, '/', 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]
        <td>123
        <td>Integer
-       <td>foo/C/F/_/FC
+       <td>/foo/C/F/_/FC
       <tr>
        <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]
        <td>['b', 'a', 'z']
