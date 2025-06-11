@@ -2045,19 +2045,20 @@ The algorithm outputs:
 
 The algorithm:
 
-1. Initialize <var>URL string</var> to an empty byte array.
+1. Initialize <var>URL string</var> to an empty byte array. <var>url template bytes</var> is used as a queue in the remaining steps.
+    Read operations remove bytes from the front of the queue (starting with the byte at index 0).
 
 2. Read the next byte of <var>url template bytes</var> into <var>op code</var>. If there are no remaining bytes, then
     expansion is finished, return <var>URL string</var>.
 
 3. If the most significant bit of <var>op code</var> is not set, then:
 
-     *  Interpret the 7 least significant bits of <var>op code</var> as an unsigned integer, <var>number of literal bytes</var>.
+     *  Interpret the 7 least significant bits of <var>op code</var> as an unsigned integer, <var>number of literals</var>.
 
-     *  If <var>number of literal bytes</var> is 0, then return an error.
+     *  If <var>number of literals</var> is 0, then return an error.
    
-     *  Read <var>number of literal bytes</var> from <var>url template bytes</var> into <var>literal bytes</var>. If there are not
-         enough remaining bytes in <var>url template bytes</var>, then return an error.
+     *  Read the next <var>number of literals</var> bytes from <var>url template bytes</var> into <var>literal bytes</var>.
+         If there are not enough remaining bytes in <var>url template bytes</var>, then return an error.
    
      *  Check that <var>literal bytes</var> is a valid UTF-8 encoded string according to [[UTF-8#section-4]].
          If it is not, then return an error.

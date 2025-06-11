@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="252865307057fa6f4c1a05727fba880d5d3301bf" name="revision">
+  <meta content="d980726397bb6bbea8bde06bedf3a8d2f64a1a5b" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -2550,7 +2550,8 @@ based on the input entry ID.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Initialize <var>URL string</var> to an empty byte array.</p>
+     <p>Initialize <var>URL string</var> to an empty byte array. <var>url template bytes</var> is used as a queue in the remaining steps.
+Read operations remove bytes from the front of the queue (starting with the byte at index 0).</p>
     <li data-md>
      <p>Read the next byte of <var>url template bytes</var> into <var>op code</var>. If there are no remaining bytes, then
 expansion is finished, return <var>URL string</var>.</p>
@@ -2558,12 +2559,12 @@ expansion is finished, return <var>URL string</var>.</p>
      <p>If the most significant bit of <var>op code</var> is not set, then:</p>
      <ul>
       <li data-md>
-       <p>Interpret the 7 least significant bits of <var>op code</var> as an unsigned integer, <var>number of literal bytes</var>.</p>
+       <p>Interpret the 7 least significant bits of <var>op code</var> as an unsigned integer, <var>number of literals</var>.</p>
       <li data-md>
-       <p>If <var>number of literal bytes</var> is 0, then return an error.</p>
+       <p>If <var>number of literals</var> is 0, then return an error.</p>
       <li data-md>
-       <p>Read <var>number of literal bytes</var> from <var>url template bytes</var> into <var>literal bytes</var>. If there are not
- enough remaining bytes in <var>url template bytes</var>, then return an error.</p>
+       <p>Read the next <var>number of literals</var> bytes from <var>url template bytes</var> into <var>literal bytes</var>.
+ If there are not enough remaining bytes in <var>url template bytes</var>, then return an error.</p>
       <li data-md>
        <p>Check that <var>literal bytes</var> is a valid UTF-8 encoded string according to <a href="https://www.rfc-editor.org/rfc/rfc3629#section-4">UTF-8, a transformation format of ISO 10646 § section-4</a>.
  If it is not, then return an error.</p>
