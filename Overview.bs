@@ -2137,21 +2137,21 @@ The algorithm:
   <tr>
     <td><var>d2</var></td>
     <td>
-      The second last character of the string in the <var>id32</var> variable.
+      The second to last character of the string in the <var>id32</var> variable.
       If the <var>id32</var> variable has less than 2 characters then, the value is the character _ (U+005F).
     </td>
   </tr>
   <tr>
     <td><var>d3</var></td>
     <td>
-      The third last character of the string in the <var>id32</var> variable.
+      The third to last character of the string in the <var>id32</var> variable.
       If the <var>id32</var> variable has less than 3 characters then, the value is the character _ (U+005F).
     </td>
   </tr>
   <tr>
     <td><var>d4</var></td>
     <td>
-      The fourth last character of the string in the <var>id32</var> variable.
+      The fourth to last character of the string in the <var>id32</var> variable.
       If the <var>id32</var> variable has less than 4 characters then, the value is the character _ (U+005F).
     </td>
   </tr>
@@ -2171,72 +2171,78 @@ The algorithm:
 
 <div class="example">
 
-Some example inputs and the corresponding expansions:
+Some example inputs and the corresponding expansions. Values in "Template Bytes" column are provided as C style byte arrays.
 
 <table>
   <tr><th>Template Bytes</th><th>Input ID</th><th>ID Type</th><th>Expansion</th></tr>
   <tr>
-    <td>[10, /, /, f, o, o, ., b, a, r, /, 128]</td>
+    <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 128]</td>
     <td>123</td>
     <td>Integer</td>
     <td>//foo.bar/FC</td>
   </tr>
   <tr>
-    <td>[10, /, /, f, o, o, ., b, a, r, /, 128]</td>
+    <td>[8, 'f', 'o', 'o', '?', 'b', 'a', 'r', '=', 128]</td>
+    <td>123</td>
+    <td>Integer</td>
+    <td>foo?bar=FC</td>
+  </tr>
+  <tr>
+    <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 128]</td>
     <td>0</td>
     <td>Integer</td>
     <td>//foo.bar/00</td>
   </tr>
   <tr>
-    <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 128]</td>
+    <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 128]</td>
     <td>478</td>
     <td>Integer</td>
-    <td>//foo.bar/0/F/07F0</td>
+    <td>foo/0/F/07F0</td>
   </tr>
   <tr>
-    <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]</td>
+    <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]</td>
     <td>123</td>
     <td>Integer</td>
-    <td>//foo.bar/C/F/_/FC</td>
+    <td>foo/C/F/_/FC</td>
   </tr>
   <tr>
-    <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]</td>
+    <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]</td>
     <td>baz</td>
     <td>String</td>
-    <td>//foo.bar/K/N/G/C9GNK</td>
+    <td>foo/K/N/G/C9GNK</td>
   </tr>
   <tr>
-    <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]</td>
-    <td>z</td>
+    <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]</td>
+     <td>z</td>
     <td>String</td>
-    <td>//foo.bar/8/F/_/F8</td>
+    <td>foo/8/F/_/F8</td>
   </tr>
   <tr>
-    <td>[10, /, /, f, o, o, ., b, a, r, /, 129, 1, /, 130, 1, /, 131, 1, /, 128]</td>
-    <td>àbc</td>
+    <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]</td>
+     <td>àbc</td>
     <td>String</td>
-    <td>//foo.bar/O/O/4/OEG64OO</td>
+    <td>foo/O/O/4/OEG64OO</td>
   </tr>
   <tr>
-    <td>[10, /, /, f, o, o, ., b, a, r, /, 133]</td>
+    <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 133]</td>
     <td>14,000,000</td>
     <td>Integer</td>
     <td>//foo.bar/1Z-A</td>
   </tr>
   <tr>
-    <td>[10, /, /, f, o, o, ., b, a, r, /, 133]</td>
+    <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 133]</td>
     <td>0</td>
     <td>Integer</td>
     <td>//foo.bar/AA%3D%3D</td>
   </tr>
   <tr>
-    <td>[10, /, /, f, o, o, ., b, a, r, /, 133]</td>
+    <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 133]</td>
     <td>17,000,000</td>
     <td>Integer</td>
     <td>//foo.bar/AQNmQA%3D%3D</td>
   </tr>
   <tr>
-    <td>[10, /, /, f, o, o, ., b, a, r, /, 133]</td>
+    <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 133]</td>
     <td>àbc</td>
     <td>String</td>
     <td>//foo.bar/w6BiYw%3D%3D</td>
