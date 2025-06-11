@@ -2053,11 +2053,14 @@ The algorithm:
 3. If the most significant bit of <var>op code</var> is not set, then:
 
      *  Interpret the 7 least significant bits of <var>op code</var> as an unsigned integer, <var>number of literal bytes</var>.
+
+     *  If <var>number of literal bytes</var> is 0, then return an error.
    
-     *  Read <var>number of literal bytes</var> from <var>url template bytes</var> into <var>literal bytes</var>.
+     *  Read <var>number of literal bytes</var> from <var>url template bytes</var> into <var>literal bytes</var>. If there are not
+         enough remaining bytes in <var>url template bytes</var>, then return an error.
    
      *  Check that <var>literal bytes</var> is a valid UTF-8 encoded string according to [[UTF-8#section-4]].
-         If it is not, return an error.
+         If it is not, then return an error.
 
      *  Append <var>literal bytes</var> to the end of <var>URL string</var>.
 
@@ -2207,21 +2210,15 @@ Some example inputs and the corresponding expansions. Values in "Template Bytes"
   </tr>
   <tr>
     <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]</td>
-    <td>baz</td>
+    <td>['b', 'a', 'z']</td>
     <td>String</td>
     <td>foo/K/N/G/C9GNK</td>
   </tr>
   <tr>
     <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]</td>
-     <td>z</td>
+     <td>['z']</td>
     <td>String</td>
     <td>foo/8/F/_/F8</td>
-  </tr>
-  <tr>
-    <td>[4, 'f', 'o', 'o', '/', 129, 1, '/', 130, 1, '/', 131, 1, '/', 128]</td>
-     <td>àbc</td>
-    <td>String</td>
-    <td>foo/O/O/4/OEG64OO</td>
   </tr>
   <tr>
     <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 133]</td>
@@ -2243,9 +2240,39 @@ Some example inputs and the corresponding expansions. Values in "Template Bytes"
   </tr>
   <tr>
     <td>[10, '/', '/', 'f', 'o', 'o', '.', 'b', 'a', 'r', '/', 133]</td>
-    <td>àbc</td>
+    <td>[0xc3, 0xa0, 0x62, 0x63]</td>
     <td>String</td>
     <td>//foo.bar/w6BiYw%3D%3D</td>
+  </tr>
+</table>
+
+In the following examples expansion is expected to fail and return an error:
+
+<table>
+  <tr><th>Template Bytes</th><th>Input ID</th><th>ID Type</th><th>Failure Reason</th></tr>
+  <tr>
+    <td>[4, 'f', 'o', 'o', '/', 150]</td>
+    <td>123</td>
+    <td>Integer</td>
+    <td>Op code 150 is not valid</td>
+  </tr>
+  <tr>
+    <td>[4, 'f', 'o', 'o', '/', 0, 128]</td>
+    <td>123</td>
+    <td>Integer</td>
+    <td>Op code 0 is not valid</td>
+  </tr>
+  <tr>
+    <td>[10, 'f', 'o', 'o', '/', 128]</td>
+    <td>123</td>
+    <td>Integer</td>
+    <td>Not enough bytes in template for literal copy op code 10.</td>
+  </tr>
+  <tr>
+    <td>[4, 'f', 'o', 'o', 0x85, 128]</td>
+    <td>123</td>
+    <td>Integer</td>
+    <td>Literal bytes are not valid UTF-8.</td>
   </tr>
 </table>
 
