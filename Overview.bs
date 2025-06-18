@@ -3007,45 +3007,47 @@ found in the CSS Fonts 4 specification:
 
 *  [[css-fonts-4#sp208]]
 
-When content and/or site authors choose to use IFT fonts they are putting trust in the providers of those IFT fonts,
-since some amount of information about the content will be transmitted during extension of the IFT fonts as explained
-above. Therefore for privacy sensitive cases, self-hosting of the IFT fonts is recommended. It will prevent information
-from being transmitted to third parties.  Additionally, in such cases it's recommended that content security policy
-settings are configured to disallow loading fonts from different origins.
+When a content and/or site author chooses to use an IFT font, they necessarily place some trust in both whoever encoded
+that font and also the service it was loaded from, since some amount of information about the content being rendered
+will be transmitted during extension of the IFT font, as explained above. (There is a balance between the two because,
+as discussed below, when more care has been taken with the encoding, less trust is placed in the service.) Therefore,
+for privacy sensitive cases, self-hosting of the IFT fonts is recommended because that prevents any information about
+the content from being transmitted to third parties.  Additionally, in such cases it is recommended that content
+security policy settings are configured to disallow loading fonts from different origins.
 
 <h3 id="encoding-privacy">Encoding IFT Fonts and Privacy</h3>
 
-The way that IFT fonts are encoded has a significant impact on the how much information about the content using those
-fonts is transmitted.  Some general guidelines for how to assess the privacy implications of encoding choices is
-presented here.
+The way that IFT fonts are encoded has a significant impact on the how much information about the content can be
+deduced from the transmission of patch files.  This section provides some general guidelines for how to assess
+the privacy implications of choices made when encoding an IFT font.
 
-An IFT font is made up of a collection of patches with associated activation conditions. When a request for a patch is
+An IFT font is broken down into a collection of patches with associated activation conditions. When a request for a patch is
 made, it communicates that the content contains something which intersects the activation condition for that patch. As a
-result the structure of the activation conditions in the font are the most important aspect of assessing the privacy
+result, the structure of the activation conditions in the font are the most important aspect of assessing the privacy
 characteristics of an encoding.
 
 Each unique code point, feature, and design space configuration supported by the font provide a potential signal:
-whether it's present or not. Activation conditions can be either disjunctive or conjunctive. Disjunctive conditions
+whether it is present or not. Activation conditions can be either disjunctive or conjunctive. Disjunctive conditions
 introduce uncertainty as activation only communicates that at least one of the individual items in the condition was
 present. Conjunctive patches on the other hand do not add uncertainty since they require the simultaneous presence of
 each individual item.
 
 The typical frequency of occurrence of a code point or feature affects how much information it's presence
 communicates. Items that have a high frequency of occurrence communicate less information than those with low
-frequencies. The presence of a low frequency code point will narrow down the possible set of content much further. At a
-high level this means larger, less granular, conditions should be used for conditions that contain lower frequency
+frequencies. The presence of a low frequency code point will narrow down the possible set of contents much further. At a
+high level, this means that larger, less granular conditions should be used for conditions that contain lower frequency
 items.
 
 <a href="https://github.com/w3c/PFE-analysis/blob/main/results/noise_simulations.md#conclusions">Simulations</a>
-conducted during the development of IFT found that minimum group sizes (for disjunctive conditions) of 4 to 7 items
-produced good levels of ambiguity. Using minimum group sizes in encodings also a good idea from a performance
-perspective. Patches that are too granular will introduce excessive amounts of overhead resulting in poor
-performance. Since low frequency items are infrequently needed, using larger group sizes for patches containing them
-has minimal impact on overall performance. Performance will typically be driven primarily by the high frequency items.
+conducted during the development of this specification found that minimum group sizes (for disjunctive conditions)
+of 4 to 7 items produced good levels of ambiguity. Using minimum group sizes in encodings also a good idea from a
+performance perspective, as patches that are too granular will introduce excessive amounts of overhead resulting in poor
+performance. Since low frequency items are infrequently needed, using a minimum group size for patches that contain them
+has small impact on overall performance. Overall performance tends to be driven by the high frequency items.
 
 Encoders should assess each condition in produced encodings and determine its effective group size. The effective group
 size is the smallest disjunctive subcondition across individual items (code points, layout tags, design space) that
-contributes to triggering that condition. For encodings that are intended for privacy sensitive use cases the encoder
+contributes to triggering that condition. For encodings that are intended for privacy sensitive use cases, the encoder
 should ensure that all conditions have a minimum group size of at least 4 to 7. For example, consider the following
 cases:
 
@@ -3059,6 +3061,11 @@ will need different levels. For example fonts being encoded for self hosting ove
 concerns, versus IFT fonts intended to be hosted on a common third party font service. When encoding for non privacy
 sensitive cases the encoder could choose to make optimizations that violate the recommended minimum group sizes. For
 example: having a condition to add data for an optional layout feature, which would have an effective group size of 1.
+
+When an encoder provides such flexibility in the degree to which a given encoding can protect privacy, it is recommended
+that its documentation and/or user interface communicate enough of the information in this section to allow
+the user making an encoding to make appropriate choices. Similarly, it is recommended that sites that host IFT fonts
+take privacy into account when encoding their own fonts or obtaining already-encoded fonts from third parties.
 
 <h3 id="per-origin">Per-origin restriction avoids fingerprinting</h3>
 
