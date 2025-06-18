@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="c94b7d54b9336616f25a4c0c08dc68642635a6bd" name="revision">
+  <meta content="5547f0409f638bcee4c8d47e6a51f3f37362efea" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -798,7 +798,7 @@ to complex scripts like Indic or Arabic.</p>
    <p> This document was produced by the <a href="https://www.w3.org/groups/wg/webfonts">Web Fonts Working Group</a> as a Working Draft using the <a href="https://www.w3.org/policies/process/20231103/#recs-and-notes">Recommendation
       track</a>. This document is intended to become a W3C Recommendation. </p>
    <p> If you wish to make comments regarding this document, please <a href="https://github.com/w3c/PFE/issues/new">file an issue on the specification repository</a>. </p>
-   <p> Publication as a Working Draft does not imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. This is a draft document and may be updated, replaced or
+   <p> Publication as a Working Draft does not imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. This is a draft document and may be updated, replaced, or
   obsoleted by other documents at any time. It is inappropriate to cite this
   document as other than work in progress. </p>
    <p> This document was produced by a group operating under
@@ -898,7 +898,8 @@ to complex scripts like Indic or Arabic.</p>
      <a href="#priv"><span class="secno">8</span> <span class="content">Privacy Considerations</span></a>
      <ol class="toc">
       <li><a href="#content-inference-from-character-set"><span class="secno">8.1</span> <span class="content">Content inference from character set</span></a>
-      <li><a href="#per-origin"><span class="secno">8.2</span> <span class="content">Per-origin restriction avoids fingerprinting</span></a>
+      <li><a href="#encoding-privacy"><span class="secno">8.2</span> <span class="content">Encoding IFT Fonts and Privacy</span></a>
+      <li><a href="#per-origin"><span class="secno">8.3</span> <span class="content">Per-origin restriction avoids fingerprinting</span></a>
      </ol>
     <li><a href="#sec"><span class="secno">9</span> <span class="content">Security Considerations</span></a>
     <li><a href="#changes"><span class="secno">10</span> <span class="content">Changes</span></a>
@@ -3346,7 +3347,54 @@ that are not required by the current content to provide obfuscation of what patc
     <li data-md>
      <p><a href="https://www.w3.org/TR/css-fonts-4/#sp208"><cite>CSS Fonts 4</cite> § 15.8 What data does this specification expose to an origin? Please also document what data is identical to data exposed by other features, in the same or different contexts.</a></p>
    </ul>
-   <h3 class="heading settled" data-level="8.2" id="per-origin"><span class="secno">8.2. </span><span class="content">Per-origin restriction avoids fingerprinting</span><a class="self-link" href="#per-origin"></a></h3>
+   <p>When content and/or site authors choose to use IFT fonts they are putting trust in the providers of those IFT fonts,
+since some amount of information about the content will be transmitted during extension of the IFT fonts as explained
+above. Therefore for privacy sensitive cases, self-hosting of the IFT fonts is recommended. It will prevent information
+from being transmitted to third parties.  Additionally, in such cases it’s recommended that content security policy
+settings are configured to disallow loading fonts from different origins.</p>
+   <h3 class="heading settled" data-level="8.2" id="encoding-privacy"><span class="secno">8.2. </span><span class="content">Encoding IFT Fonts and Privacy</span><a class="self-link" href="#encoding-privacy"></a></h3>
+   <p>The way that IFT fonts are encoded has a significant impact on the how much information about the content using those
+fonts is transmitted.  Some general guidelines for how to assess the privacy implications of encoding choices is
+presented here.</p>
+   <p>An IFT font is made up of a collection of patches with associated activation conditions. When a request for a patch is
+made, it communicates that the content contains something which intersects the activation condition for that patch. As a
+result the structure of the activation conditions in the font are the most important aspect of assessing the privacy
+characteristics of an encoding.</p>
+   <p>Each unique code point, feature, and design space configuration supported by the font provide a potential signal:
+whether it’s present or not. Activation conditions can be either disjunctive or conjunctive. Disjunctive conditions
+introduce uncertainty as activation only communicates that at least one of the individual items in the condition was
+present. Conjunctive patches on the other hand do not add uncertainty since they require the simultaneous presence of
+each individual item.</p>
+   <p>The typical frequency of occurrence of a code point or feature affects how much information it’s presence
+communicates. Items that have a high frequency of occurrence communicate less information than those with low
+frequencies. The presence of a low frequency code point will narrow down the possible set of content much further. At a
+high level this means larger, less granular, conditions should be used for conditions that contain lower frequency
+items.</p>
+   <p><a href="https://github.com/w3c/PFE-analysis/blob/main/results/noise_simulations.md#conclusions">Simulations</a> conducted during the development of IFT found that minimum group sizes (for disjunctive conditions) of 4 to 7 items
+produced good levels of ambiguity. Using minimum group sizes in encodings also a good idea from a performance
+perspective. Patches that are too granular will introduce excessive amounts of overhead resulting in poor
+performance. Since low frequency items are infrequently needed, using larger group sizes for patches containing them
+has minimal impact on overall performance. Performance will typically be driven primarily by the high frequency items.</p>
+   <p>Encoders should assess each condition in produced encodings and determine its effective group size. The effective group
+size is the smallest disjunctive subcondition across individual items (code points, layout tags, design space) that
+contributes to triggering that condition. For encodings that are intended for privacy sensitive use cases the encoder
+should ensure that all conditions have a minimum group size of at least 4 to 7. For example, consider the following
+cases:</p>
+   <ul>
+    <li data-md>
+     <p><code>A or B or C or D</code>: has an effective group size of 4 and meets the minimum requirements.</p>
+    <li data-md>
+     <p><code>A and B and C AND D</code>: has an effective group size of 1 and does not meet the minimum requirements.</p>
+    <li data-md>
+     <p><code>(A or B or C or D) AND (E or F)</code>: has an effective group size of 2 due to the (D or E) subcondition. It does
+not meet the minimum requirements.</p>
+   </ul>
+   <p>Encoders should provide configuration controls for the level of privacy in produced encodings, since different use cases
+will need different levels. For example fonts being encoded for self hosting over https would not introduce privacy
+concerns, versus IFT fonts intended to be hosted on a common third party font service. When encoding for non privacy
+sensitive cases the encoder could choose to make optimizations that violate the recommended minimum group sizes. For
+example: having a condition to add data for an optional layout feature, which would have an effective group size of 1.</p>
+   <h3 class="heading settled" data-level="8.3" id="per-origin"><span class="secno">8.3. </span><span class="content">Per-origin restriction avoids fingerprinting</span><a class="self-link" href="#per-origin"></a></h3>
    <p>As required by <a data-link-type="biblio" href="#biblio-css-fonts-4" title="CSS Fonts Module Level 4">[css-fonts-4]</a>:</p>
    <p>"A Web Font must not be accessible in any other Document from the one which either is associated with
   the @font-face rule or owns the FontFaceSet. Other applications on the device must not be able to access
