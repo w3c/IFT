@@ -4,9 +4,9 @@
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <title>Incremental Font Transfer</title>
   <meta content="WD" name="w3c-status">
-  <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
+  <meta content="Bikeshed version b25686b9f, updated Fri Mar 14 14:15:20 2025 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="123f54bc10d6c17cd8d546614de9e73dc10d2add" name="revision">
+  <meta content="30417f3e83c4451924b0a97220325bf8aae369b9" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -750,13 +750,13 @@ var[data-var-color="6"] { --var-vg: #FFBCF2; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types/#WD">W3C Working Draft</a>, <time class="dt-updated" datetime="2025-02-20">20 February 2025</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types/#WD">W3C Working Draft</a>, <time class="dt-updated" datetime="2025-07-15">15 July 2025</time></p>
    <details open>
     <summary>More details about this document</summary>
     <div data-fill-with="spec-metadata">
      <dl>
       <dt>This version:
-      <dd><a class="u-url" href="https://www.w3.org/TR/2025/WD-IFT-20250220/">https://www.w3.org/TR/2025/WD-IFT-20250220/</a>
+      <dd><a class="u-url" href="https://www.w3.org/TR/2025/WD-IFT-20250715/">https://www.w3.org/TR/2025/WD-IFT-20250715/</a>
       <dt>Latest published version:
       <dd><a href="https://www.w3.org/TR/IFT/">https://www.w3.org/TR/IFT/</a>
       <dt>Editor's Draft:
@@ -794,18 +794,18 @@ to complex scripts like Indic or Arabic.</p>
   its publication. A list of
   current W3C publications and the latest revision of this technical report
   can be found in the <a href="https://www.w3.org/TR/">W3C technical reports
-  index at https://www.w3.org/TR/.</a></em> </p>
+  index.</a></em> </p>
    <p> This document was produced by the <a href="https://www.w3.org/groups/wg/webfonts">Web Fonts Working Group</a> as a Working Draft using the <a href="https://www.w3.org/policies/process/20231103/#recs-and-notes">Recommendation
       track</a>. This document is intended to become a W3C Recommendation. </p>
    <p> If you wish to make comments regarding this document, please <a href="https://github.com/w3c/PFE/issues/new">file an issue on the specification repository</a>. </p>
    <p> Publication as a Working Draft does not imply endorsement by <abbr title="World Wide Web Consortium">W3C</abbr> and its Members. This is a draft document and may be updated, replaced, or
   obsoleted by other documents at any time. It is inappropriate to cite this
-  document as other than work in progress. </p>
+  document as other than a work in progress. </p>
    <p> This document was produced by a group operating under
   the <a href="https://www.w3.org/policies/patent-policy/20200915/">W3C Patent Policy</a>.
   W3C maintains a <a href="https://www.w3.org/groups/wg/webfonts/ipr" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group;
   that page also includes instructions for disclosing a patent.
-  An individual who has actual knowledge of a patent which the individual believes contains <a href="https://www.w3.org/policies/patent-policy/20200915/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/policies/patent-policy/20200915/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>. </p>
+  An individual who has actual knowledge of a patent that the individual believes contains <a href="https://www.w3.org/policies/patent-policy/20200915/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/policies/patent-policy/20200915/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>. </p>
    <p> This document is governed by the <a href="https://www.w3.org/policies/process/20231103/" id="w3c_process_revision">03 November 2023 W3C Process Document</a>. </p>
    <p></p>
   </div>
@@ -3425,7 +3425,42 @@ number of requests:</p>
  access control headers.</p>
    </ol>
    <h2 class="heading settled" data-level="10" id="changes"><span class="secno">10. </span><span class="content">Changes</span><a class="self-link" href="#changes"></a></h2>
-   <p>Since the <a href="https://www.w3.org/TR/2024/WD-IFT-20240709/">Working
+   <p id="changes-20250220">Since the <a href="https://www.w3.org/TR/2025/WD-IFT-20250220/">Working 
+  Draft of 20 February 2025</a> (see <a href="https://github.com/w3c/IFT/commits/main/Overview.bs">commit history</a>):</p>
+   <ul>
+    <li>Expanded privacy section to provide guidance for encoders.
+    <li>Added examples of full absolute and host name relative URL expansion.
+    <li>Clarify how bytes are read from 'url template bytes'.
+    <li>Added additional error conditions: Op code 0 (insert 0 literals) is made invalid.  Fail if not enough bytes remain for the insert literal operation. Added examples that result in failures.
+    <li>Updated URL expansion examples to use C syntax for the byte arrays. Added more varied examples that include relative URLs and URLs with query parameters.
+    <li>Following TAG review, dropped rfc6570 uri templates, replaced with opcode encoded template.
+    <li>Added invocation of fetch and use the processResponseConsumeBody callback.
+    <li>Added more specific information on configuring the fetch request.
+    <li>Re-worded entry selection in response to review feedback, to be clearer.
+    <li>Specified a selection/fetch ordering for non-invalidating patches.
+    <li>Specified what to do if URL parsing fails.
+    <li>Added a note about optimizing glyph keyed patch application when multiple patches are present.
+    <li>In format 2 interpretation, handling of an unspecified entry delta/length was missing. Added an additional step to generate the URL for that case.
+    <li>Clarified wording related to WOFF2
+    <li>Added a note to the font compression section recommending WOFF2.
+    <li>Updated to (current) shared brotli 15 specification
+    <li>Added flag bits to signal the presence of optional charstring offsets.
+    <li>Added a note about patches adding a CFF table and the charstrings offset.
+    <li>For fonts with CFF or CFF2 tables, added a field to the patch map with offsets to CharStrings.
+    <li>Disallowed undefined variable names in uri template expansion.
+    <li>Reworded statement on erroring for unsupported expression levels.
+    <li>Restricted URL templates to only level one substitutions.
+    <li>Switched from rfc3986 URI to whatwg/url
+    <li>Avoided using 'preload', that term is already used to refer to adding extra data to the initial font.
+    <li>In invalidating patch selection, prioritize entries which have been preloaded thus minimizing round trips.
+    <li>Updated font extension algorithm to use url preload lists.
+    <li>Updated format 2 interpretation and entry removal algorithms to handle multiple URLs per entry.
+    <li>Reworked format 2 encoding to optionally support multiple URLs per entry.
+    <li>Added some guidance on offset sizes for glyph keyed patch application.
+    <li>Added a section with requirements specific to CFF and CFF2 incremental fonts.
+    <li>Updated feature registry appendix to current version
+   </ul>
+   <p id="changes-20240709">Since the <a href="https://www.w3.org/TR/2024/WD-IFT-20240709/">Working 
   Draft of 09 July 2024</a> (see <a href="https://github.com/w3c/IFT/commits/main/Overview.bs">commit history</a>):</p>
    <ul>
     <li>Added an extension example to appendix B that utilizes child entries
@@ -3457,202 +3492,379 @@ to be used by default in most shaper implementations. This list was assembled fr
     <tbody>
      <tr>
       <th>Tag
-      <th>Name
+      <th>Encoded As
+     <tr>
+      <td>aalt
+      <td>1
      <tr>
       <td>abvf
-      <td>Above-base Forms
+      <td>default
      <tr>
       <td>abvm
-      <td>Above-base Mark Positioning
+      <td>default
      <tr>
       <td>abvs
-      <td>Above-base Substitutions
+      <td>default
+     <tr>
+      <td>afrc
+      <td>2
      <tr>
       <td>akhn
-      <td>Akhand
+      <td>default
      <tr>
       <td>blwf
-      <td>Below-base Forms
+      <td>default
      <tr>
       <td>blwm
-      <td>Below-base Mark Positioning
+      <td>default
      <tr>
       <td>blws
-      <td>Below-base Substitutions
+      <td>default
      <tr>
       <td>calt
-      <td>Contextual Alternates
+      <td>default
+     <tr>
+      <td>case
+      <td>3
      <tr>
       <td>ccmp
-      <td>Glyph Composition / Decomposition
+      <td>default
      <tr>
       <td>cfar
-      <td>Conjunct Form After Ro
+      <td>default
      <tr>
       <td>chws
-      <td>Contextual Half-width Spacing
+      <td>default
      <tr>
       <td>cjct
-      <td>Conjunct Forms
+      <td>default
      <tr>
       <td>clig
-      <td>Contextual Ligatures
+      <td>default
+     <tr>
+      <td>cpct
+      <td>4
+     <tr>
+      <td>cpsp
+      <td>5
      <tr>
       <td>cswh
-      <td>Contextual Swash
+      <td>default
      <tr>
       <td>curs
-      <td>Cursive Positioning
+      <td>default
+     <tr>
+      <td>cv01-cv99
+      <td>6-104
+     <tr>
+      <td>c2pc
+      <td>105
+     <tr>
+      <td>c2sc
+      <td>106
      <tr>
       <td>dist
-      <td>Distances
+      <td>default
+     <tr>
+      <td>dlig
+      <td>107
      <tr>
       <td>dnom
-      <td>Denominators
+      <td>default
      <tr>
       <td>dtls
-      <td>Dotless Forms
+      <td>default
+     <tr>
+      <td>expt
+      <td>108
+     <tr>
+      <td>falt
+      <td>109
      <tr>
       <td>fin2
-      <td>Terminal Forms #2
+      <td>default
      <tr>
       <td>fin3
-      <td>Terminal Forms #3
+      <td>default
      <tr>
       <td>fina
-      <td>Terminal Forms
+      <td>default
      <tr>
       <td>flac
-      <td>Flattened accent forms
+      <td>default
      <tr>
       <td>frac
-      <td>Fractions
+      <td>default
+     <tr>
+      <td>fwid
+      <td>110
      <tr>
       <td>half
-      <td>Half Forms
+      <td>default
      <tr>
       <td>haln
-      <td>Halant Forms
+      <td>default
+     <tr>
+      <td>halt
+      <td>111
+     <tr>
+      <td>hist
+      <td>112
+     <tr>
+      <td>hkna
+      <td>113
+     <tr>
+      <td>hlig
+      <td>114
+     <tr>
+      <td>hngl
+      <td>115
+     <tr>
+      <td>hojo
+      <td>116
+     <tr>
+      <td>hwid
+      <td>117
      <tr>
       <td>init
-      <td>Initial Forms
+      <td>default
      <tr>
       <td>isol
-      <td>Isolated Forms
+      <td>default
+     <tr>
+      <td>ital
+      <td>118
      <tr>
       <td>jalt
-      <td>Justification Alternates
+      <td>default
+     <tr>
+      <td>jp78
+      <td>119
+     <tr>
+      <td>jp83
+      <td>120
+     <tr>
+      <td>jp90
+      <td>121
+     <tr>
+      <td>jp04
+      <td>122
      <tr>
       <td>kern
-      <td>Kerning
+      <td>default
+     <tr>
+      <td>lfbd
+      <td>123
      <tr>
       <td>liga
-      <td>Standard Ligatures
+      <td>default
      <tr>
       <td>ljmo
-      <td>Leading Jamo Forms
+      <td>default
+     <tr>
+      <td>lnum
+      <td>124
      <tr>
       <td>locl
-      <td>Localized Forms
+      <td>default
      <tr>
       <td>ltra
-      <td>Left-to-right alternates
+      <td>default
      <tr>
       <td>ltrm
-      <td>Left-to-right mirrored forms
+      <td>default
      <tr>
       <td>mark
-      <td>Mark Positioning
+      <td>default
      <tr>
       <td>med2
-      <td>Medial Forms #2
+      <td>default
      <tr>
       <td>medi
-      <td>Medial Forms
+      <td>default
+     <tr>
+      <td>mgrk
+      <td>125
      <tr>
       <td>mkmk
-      <td>Mark to Mark Positioning
+      <td>default
      <tr>
       <td>mset
-      <td>Mark Positioning via Substitution
+      <td>default
+     <tr>
+      <td>nalt
+      <td>126
+     <tr>
+      <td>nlck
+      <td>127
      <tr>
       <td>nukt
-      <td>Nukta Forms
+      <td>default
      <tr>
       <td>numr
-      <td>Numerators
+      <td>default
+     <tr>
+      <td>onum
+      <td>128
+     <tr>
+      <td>opbd
+      <td>129
+     <tr>
+      <td>ordn
+      <td>130
+     <tr>
+      <td>ornm
+      <td>131
+     <tr>
+      <td>palt
+      <td>132
+     <tr>
+      <td>pcap
+      <td>133
+     <tr>
+      <td>pkna
+      <td>134
+     <tr>
+      <td>pnum
+      <td>135
      <tr>
       <td>pref
-      <td>Pre-Base Forms
+      <td>default
      <tr>
       <td>pres
-      <td>Pre-base Substitutions
+      <td>default
      <tr>
       <td>pstf
-      <td>Post-base Forms
+      <td>default
      <tr>
       <td>psts
-      <td>Post-base Substitutions
+      <td>default
+     <tr>
+      <td>pwid
+      <td>136
+     <tr>
+      <td>qwid
+      <td>137
      <tr>
       <td>rand
-      <td>Randomize
+      <td>default
      <tr>
       <td>rclt
-      <td>Required Contextual Alternates
+      <td>default
      <tr>
       <td>rkrf
-      <td>Rakar Forms
+      <td>default
      <tr>
       <td>rlig
-      <td>Required Ligatures
+      <td>default
      <tr>
       <td>rphf
-      <td>Reph Forms
+      <td>default
+     <tr>
+      <td>rtbd
+      <td>138
      <tr>
       <td>rtla
-      <td>Right-to-left alternates
+      <td>default
      <tr>
       <td>rtlm
-      <td>Right-to-left mirrored forms
+      <td>default
+     <tr>
+      <td>ruby
+      <td>139
      <tr>
       <td>rvrn
-      <td>Required Variation Alternates
+      <td>default
+     <tr>
+      <td>salt
+      <td>140
+     <tr>
+      <td>sinf
+      <td>141
+     <tr>
+      <td>size
+      <td>142
+     <tr>
+      <td>smcp
+      <td>143
+     <tr>
+      <td>smpl
+      <td>144
+     <tr>
+      <td>ss01-ss20
+      <td>145-164
      <tr>
       <td>ssty
-      <td>Math script style alternates
+      <td>default
      <tr>
       <td>stch
-      <td>Stretching Glyph Decomposition
+      <td>default
+     <tr>
+      <td>subs
+      <td>165
+     <tr>
+      <td>sups
+      <td>166
+     <tr>
+      <td>swsh
+      <td>167
+     <tr>
+      <td>titl
+      <td>168
      <tr>
       <td>tjmo
-      <td>Trailing Jamo Forms
+      <td>default
+     <tr>
+      <td>tnam
+      <td>169
+     <tr>
+      <td>tnum
+      <td>170
+     <tr>
+      <td>trad
+      <td>171
+     <tr>
+      <td>twid
+      <td>172
+     <tr>
+      <td>unic
+      <td>173
      <tr>
       <td>valt
-      <td>Alternate Vertical Metrics
+      <td>default
      <tr>
       <td>vatu
-      <td>Vattu Variants
+      <td>default
      <tr>
       <td>vchw
-      <td>Vertical Contextual Half-width Spacing
+      <td>default
      <tr>
       <td>vert
-      <td>Vertical Writing
+      <td>default
+     <tr>
+      <td>vhal
+      <td>174
      <tr>
       <td>vjmo
-      <td>Vowel Jamo Forms
+      <td>default
+     <tr>
+      <td>vkna
+      <td>175
      <tr>
       <td>vkrn
-      <td>Vertical Kerning
+      <td>default
      <tr>
       <td>vpal
-      <td>Proportional Alternate Vertical Metrics
+      <td>default
      <tr>
       <td>vrt2
-      <td>Vertical Alternates and Rotation
+      <td>default
      <tr>
       <td>vrtr
-      <td>Vertical Alternates for Rotation
+      <td>default
+     <tr>
+      <td>zero
+      <td>176
    </table>
    <h2 class="heading settled" id="extension-example"><span class="content"> Appendix B: Extension Algorithm Example Execution</span><a class="self-link" href="#extension-example"></a></h2>
    <p>This appendix provides examples of how a typical IFT font would be processed by the <a href="#extend-font-subset">§ 4.3 Incremental Font Extension Algorithm</a> algorithm.</p>
