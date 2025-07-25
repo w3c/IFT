@@ -30,6 +30,7 @@ Abstract: This specification defines a method to incrementally transfer a font
 <pre class=link-defaults>
 spec:fetch; type:dfn; for:/; text:status
 spec:fetch; type:dfn; for:/; text:response
+spec: i18n-glossary; urlPrefix: https://www.w3.org/TR/i18n-glossary/; type: dfn; text: shaping
 </pre>
 
 <pre class=biblio>
@@ -796,10 +797,11 @@ once. Alternatively, the client may instead break the content up into smaller sp
 the extension algorithm on each of the smaller subset definitions. Either approach will ultimately produce a font which equivalently
 renders the overall content as long as:
 
-*  Each span of text which generates a subset definition is built from only one or more complete shaping units.
+*  Each span of text which generates a subset definition is built from only one or more complete [=shaping=] units.
 
-*  Where a shaping unit is a span of text which the client will process together as a single unit during
-    <a href="https://harfbuzz.github.io/what-is-harfbuzz.html#what-is-text-shaping">text shaping</a>.
+*  Where a shaping unit is a span of text which the client will process together as a single unit 
+    during [=shaping=].
+    <!-- <a href="https://harfbuzz.github.io/what-is-harfbuzz.html#what-is-text-shaping">text shaping</a>. -->
 
 
 Determining what Content a Font can Render {#ift-font-coverage}
@@ -815,7 +817,7 @@ for code points which do not yet have the corresponding glyph data loaded. As a 
 [[open-type/cmap|cmap]] table to determine code point presence. Instead the following procedure can be used by a client to check what
 parts of some content an incremental font can render:
 
-* Split the content up into the shaping units (see [[#target-subset-definitions]]) on which the content will be processed during text
+* Split the content up into the <dfn export>shaping units</dfn> (see [[#target-subset-definitions]]) on which the content will be processed during text
     shaping.
 
 * For each shaping unit there are two checks:
@@ -826,7 +828,7 @@ parts of some content an incremental font can render:
     * Second, compute the corresponding [=font subset definition=] and execute the [$Extend an Incremental Font Subset$] algorithm,
         stopping at step 6. If the entry list is not empty then the incremental font does not fully support rendering the shaping unit.
 
-* Any shaping units that passed both checks can be rendered in their entirety with the font.
+* Any [=shaping units=] that passed both checks can be rendered in their entirety with the font.
 
 The client may also wish to know what the font can render at a more granular level than a shaping unit. The following pseudo code
 demonstrates a possible method for splitting a shaping unit which failed the above check up into spans which can be rendered using the
@@ -877,7 +879,7 @@ def supports_subset_def(ift_font, subset_def):
   #   entry list is empty.
 </pre>
 
-Any text from the shaping unit which is not covered by one of the returned spans is not supported by the incremental font and should
+Any text from the [=shaping unit=] which is not covered by one of the returned spans is not supported by the incremental font and should
 be rendered with a fallback font. Each span should be shaped in isolation (ie. each span becomes a new shaping unit).
 Because this method splits a shaping unit up, not all features of the original font, such as multi code point substitutions, may be
 present. If the client is correctly following the [$Extend an Incremental Font Subset$] algorithm with a subset definition formed
