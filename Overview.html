@@ -6,7 +6,7 @@
   <meta content="WD" name="w3c-status">
   <meta content="Bikeshed version b25686b9f, updated Fri Mar 14 14:15:20 2025 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="163f1dea0f1e0c4b69bd29decea2be476d400c55" name="revision">
+  <meta content="e31b26eef10774a5e7ffec695bf0c9a3c38154a3" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1517,7 +1517,7 @@ renders the overall content as long as:</p>
     <li data-md>
      <p>Each span of text which generates a subset definition is built from only one or more complete <a data-link-type="dfn" href="https://www.w3.org/TR/i18n-glossary/#dfn-shaping" id="ref-for-dfn-shaping">shaping</a> units.</p>
     <li data-md>
-     <p>Where a shaping unit is a span of text which the client will process together as a single unit
+     <p>Where a <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="shaping-unit">shaping unit</dfn> is a span of text which the client will process together as a single unit
 during <a data-link-type="dfn" href="https://www.w3.org/TR/i18n-glossary/#dfn-shaping" id="ref-for-dfn-shaping①">shaping</a>.</p>
    </ul>
    <h3 class="heading settled" data-level="4.6" id="ift-font-coverage"><span class="secno">4.6. </span><span class="content">Determining what Content a Font can Render</span><a class="self-link" href="#ift-font-coverage"></a></h3>
@@ -1530,7 +1530,7 @@ for code points which do not yet have the corresponding glyph data loaded. As a 
 parts of some content an incremental font can render:</p>
    <ul>
     <li data-md>
-     <p>Split the content up into the <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="shaping-units">shaping units</dfn> (see <a href="#target-subset-definitions">§ 4.5 Target Subset Definition</a>) on which the content will be processed during text
+     <p>Split the content up into the <a data-link-type="dfn" href="#shaping-unit" id="ref-for-shaping-unit">shaping units</a> (see <a href="#target-subset-definitions">§ 4.5 Target Subset Definition</a>) on which the content will be processed during text
 shaping.</p>
     <li data-md>
      <p>For each shaping unit there are two checks:</p>
@@ -1543,7 +1543,7 @@ shaping.</p>
 stopping at step 6. If the entry list is not empty then the incremental font does not fully support rendering the shaping unit.</p>
      </ul>
     <li data-md>
-     <p>Any <a data-link-type="dfn" href="#shaping-units" id="ref-for-shaping-units">shaping units</a> that passed both checks can be rendered in their entirety with the font.</p>
+     <p>Any <a data-link-type="dfn" href="#shaping-unit" id="ref-for-shaping-unit①">shaping units</a> that passed both checks can be rendered in their entirety with the font.</p>
    </ul>
    <p>The client may also wish to know what the font can render at a more granular level than a shaping unit. The following pseudo code
 demonstrates a possible method for splitting a shaping unit which failed the above check up into spans which can be rendered using the
@@ -1591,7 +1591,7 @@ incremental font:</p>
   <c- c1># - After executing the "Extend an Incremental Font Subset" algorithm on ift_font with subset_def and stopping at step 6 the</c->
   <c- c1>#   entry list is empty.</c->
 </pre>
-   <p>Any text from the <a data-link-type="dfn" href="#shaping-units" id="ref-for-shaping-units①">shaping unit</a> which is not covered by one of the returned spans is not supported by the incremental font and should
+   <p>Any text from the <a data-link-type="dfn" href="#shaping-unit" id="ref-for-shaping-unit②">shaping unit</a> which is not covered by one of the returned spans is not supported by the incremental font and should
 be rendered with a fallback font. Each span should be shaped in isolation (ie. each span becomes a new shaping unit).
 Because this method splits a shaping unit up, not all features of the original font, such as multi code point substitutions, may be
 present. If the client is correctly following the <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset⑥">Extend an Incremental Font Subset</a> algorithm with a subset definition formed
@@ -4209,7 +4209,7 @@ content covered by the target subset definition.</p>
    <li><a href="#patch-map-entries">patch map entries</a><span>, in § 3.3</span>
    <li><a href="#abstract-opdef-remove-entries-from-format-1-patch-map">Remove Entries from Format 1 Patch Map</a><span>, in § 5.3.1.2</span>
    <li><a href="#abstract-opdef-remove-entries-from-format-2-patch-map">Remove Entries from Format 2 Patch Map</a><span>, in § 5.3.2.2</span>
-   <li><a href="#shaping-units">shaping units</a><span>, in § 4.6</span>
+   <li><a href="#shaping-unit">shaping unit</a><span>, in § 4.5</span>
    <li><a href="#sparse-bit-set">Sparse Bit Set</a><span>, in § 5.3.2.3</span>
    <li><a href="#design-space-segment-start">start</a><span>, in § 5.3.2</span>
    <li><a href="#table-keyed-patch">Table keyed patch</a><span>, in § 6.2</span>
@@ -4600,7 +4600,7 @@ let dfnPanelData = {
 "patch-format": {"dfnID":"patch-format","dfnText":"patch format","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-format"},{"id":"ref-for-patch-format\u2460"}],"title":"3.2. Font Patch"}],"url":"#patch-format"},
 "patch-map": {"dfnID":"patch-map","dfnText":"patch map","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-map"}],"title":"3.3. Patch Map"},{"refs":[{"id":"ref-for-patch-map\u2460"},{"id":"ref-for-patch-map\u2461"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-patch-map\u2462"},{"id":"ref-for-patch-map\u2463"}],"title":"4.4. Selecting Invalidating Patches"},{"refs":[{"id":"ref-for-patch-map\u2464"}],"title":"5. Extensions to the Font Format"},{"refs":[{"id":"ref-for-patch-map\u2465"}],"title":"5.2. CFF and CFF2 Incremental Fonts"},{"refs":[{"id":"ref-for-patch-map\u2466"}],"title":"5.3. Patch Map Table"},{"refs":[{"id":"ref-for-patch-map\u2467"},{"id":"ref-for-patch-map\u2468"}],"title":"5.3.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-patch-map\u2460\u24ea"}],"title":"7. Encoding"}],"url":"#patch-map"},
 "patch-map-entries": {"dfnID":"patch-map-entries","dfnText":"patch map entries","external":false,"refSections":[{"refs":[{"id":"ref-for-patch-map-entries"},{"id":"ref-for-patch-map-entries\u2460"}],"title":"3.3. Patch Map"},{"refs":[{"id":"ref-for-patch-map-entries\u2461"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-patch-map-entries\u2462"},{"id":"ref-for-patch-map-entries\u2463"},{"id":"ref-for-patch-map-entries\u2464"},{"id":"ref-for-patch-map-entries\u2465"},{"id":"ref-for-patch-map-entries\u2466"}],"title":"5.3.1.1. Interpreting Format 1"},{"refs":[{"id":"ref-for-patch-map-entries\u2467"},{"id":"ref-for-patch-map-entries\u2468"},{"id":"ref-for-patch-map-entries\u2460\u24ea"}],"title":"5.3.2.1. Interpreting Format 2"},{"refs":[{"id":"ref-for-patch-map-entries\u2460\u2460"}],"title":"7. Encoding"}],"url":"#patch-map-entries"},
-"shaping-units": {"dfnID":"shaping-units","dfnText":"shaping units","external":false,"refSections":[{"refs":[{"id":"ref-for-shaping-units"},{"id":"ref-for-shaping-units\u2460"}],"title":"4.6. Determining what Content a Font can Render"}],"url":"#shaping-units"},
+"shaping-unit": {"dfnID":"shaping-unit","dfnText":"shaping unit","external":false,"refSections":[{"refs":[{"id":"ref-for-shaping-unit"},{"id":"ref-for-shaping-unit\u2460"},{"id":"ref-for-shaping-unit\u2461"}],"title":"4.6. Determining what Content a Font can Render"}],"url":"#shaping-unit"},
 "sparse-bit-set": {"dfnID":"sparse-bit-set","dfnText":"Sparse Bit Set","external":false,"refSections":[{"refs":[{"id":"ref-for-sparse-bit-set"}],"title":"5.3.2. Patch Map Table: Format 2"},{"refs":[{"id":"ref-for-sparse-bit-set\u2460"}],"title":"5.3.2.3. Sparse Bit Set"}],"url":"#sparse-bit-set"},
 "table-keyed-patch": {"dfnID":"table-keyed-patch","dfnText":"Table keyed patch","external":false,"refSections":[{"refs":[{"id":"ref-for-table-keyed-patch"}],"title":"6.2.1. Applying Table Keyed Patches"}],"url":"#table-keyed-patch"},
 "table-keyed-patch-compatibilityid": {"dfnID":"table-keyed-patch-compatibilityid","dfnText":"compatibilityId","external":false,"refSections":[{"refs":[{"id":"ref-for-table-keyed-patch-compatibilityid"}],"title":"6.2.1. Applying Table Keyed Patches"}],"url":"#table-keyed-patch-compatibilityid"},
@@ -5089,7 +5089,7 @@ let refsData = {
 "#patch-format": {"displayText":"patch format","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch format","type":"dfn","url":"#patch-format"},
 "#patch-map": {"displayText":"patch map","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map","type":"dfn","url":"#patch-map"},
 "#patch-map-entries": {"displayText":"patch map entries","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"patch map entries","type":"dfn","url":"#patch-map-entries"},
-"#shaping-units": {"displayText":"shaping units","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"shaping units","type":"dfn","url":"#shaping-units"},
+"#shaping-unit": {"displayText":"shaping unit","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"shaping unit","type":"dfn","url":"#shaping-unit"},
 "#sparse-bit-set": {"displayText":"sparse bit set","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"sparse bit set","type":"dfn","url":"#sparse-bit-set"},
 "#table-keyed-patch": {"displayText":"table keyed patch","export":true,"for_":[],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"table keyed patch","type":"dfn","url":"#table-keyed-patch"},
 "#table-keyed-patch-compatibilityid": {"displayText":"compatibilityid","export":true,"for_":["Table keyed patch"],"level":"","normative":true,"shortname":"ift","spec":"ift","status":"local","text":"compatibilityid","type":"dfn","url":"#table-keyed-patch-compatibilityid"},
