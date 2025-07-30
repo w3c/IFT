@@ -1059,7 +1059,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
   <tr>
     <td>uint16</td>
     <td><dfn for="Format 1 Patch Map">maxGlyphMapEntryIndex</dfn></td>
-    <td>The largest [=Glyph Map=] entry index encoded in this table. Must be less than or equal to maxEntryIndex.</td>
+    <td><span class="conform" id="conform-entry-index-max">The largest [=Glyph Map=] entry index encoded in this table. Must be less than or equal to maxEntryIndex.</span></td>
   </tr>
   <tr>
     <td>uint24</td>
@@ -2125,8 +2125,8 @@ The algorithm:
     <td><var>id32</var></td>
     <td>
       The input <var>entry ID</var> encoded as a [[rfc4648#section-7|base32hex]] string (using the digits 0-9, A-V) with padding
-      omitted.  When <var>entry ID</var> is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
-      but then all leading bytes that are equal to 0 are removed before encoding.  (For example, when the
+      omitted.  <span class="conform" id="conform-entry-id-int">When <var>entry ID</var> is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
+      but then all leading bytes that are equal to 0 are removed before encoding.</span>  (For example, when the
       integer is less than 256 only one byte is encoded.) If <var>entry ID</var> is 0 then one zero byte is encoded. When
       <var>entry ID</var> is a string the raw bytes are encoded as base32hex.
     </td>
@@ -2164,8 +2164,8 @@ The algorithm:
     <td>
       The input <var>entry ID</var> encoded as a [[rfc4648#section-5|base64url]] string (using the digits A-Z, a-z, 0-9, -
       (minus) and _ (underline)) with padding included. Because the padding character is '=', it must
-      be URL-encoded as '%3D'.  When <var>entry ID</var> is an unsigned integer it must first be converted to a big
-      endian 32 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding. 
+      be URL-encoded as '%3D'.  <span class="conform" id="conform-entry-id-big-endian">When <var>entry ID</var> is an unsigned integer it must first be converted to a big
+      endian 32 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding.</span> 
       (For example, when the integer is less than 256 only one byte is encoded.) If the <var>entry ID</var> is 0 then one
       zero byte is encoded. When the <var>entry ID</var> is a string its raw bytes are encoded as
       [[rfc4648#section-5|base64url]].
