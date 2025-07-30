@@ -1059,13 +1059,13 @@ the encoded bytes at the start of every iteration to pick up any changes made in
   <tr>
     <td>uint16</td>
     <td><dfn for="Format 1 Patch Map">maxGlyphMapEntryIndex</dfn></td>
-    <td><span class="conform" id="conform-entry-index-max">The largest [=Glyph Map=] entry index encoded in this table. Must be less than or equal to maxEntryIndex.</span></td>
+    <td>The largest [=Glyph Map=] entry index encoded in this table. <span class="conform" id="conform-">Must be less than or equal to maxEntryIndex.</span></td>
   </tr>
   <tr>
     <td>uint24</td>
     <td><dfn for="Format 1 Patch Map">glyphCount</dfn></td>
     <td>Number of glyphs that mappings are provided for.
-        Must match the number of glyphs in the the font file.
+        <span class="conform" id="conform-">Must match the number of glyphs in the the font file.</span>
 
         Note: the number of glyphs in the font is encoded in the font file. At the time of writing, this value is listed in the
         [[open-type/maxp|maxp]] table; however, future font format extensions may use alternate tables to encode the value for number of
@@ -1109,7 +1109,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <td><dfn for="Format 1 Patch Map">patchFormat</dfn></td>
     <td>
       Specifies the format of the patches linked to by urlTemplate.
-      Must be set to one of the format numbers from  the [[#font-patch-formats-summary]] table.
+      <span class="conform" id="conform-">Must be set to one of the format numbers from  the [[#font-patch-formats-summary]] table.</span>
     </td>
   </tr>
   <tr>
@@ -1415,7 +1415,7 @@ The algorithm:
     <td><dfn for="Format 2 Patch Map">defaultPatchFormat</dfn></td>
     <td>
       Specifies the format of the patches linked to by urlTemplate (unless overridden by an entry).
-      Must be set to one of the format numbers from the [[#font-patch-formats-summary]] table.
+      <span class="conform" id="conform-">Must be set to one of the format numbers from the [[#font-patch-formats-summary]] table.</span>
     </td>
   </tr>
   <tr>
@@ -1639,7 +1639,7 @@ being requested.
     <td>Fixed</td>
     <td><dfn for="Design Space Segment">end</dfn></td>
     <td>
-      End (inclusive) of the segment. Must be greater than or equal to start. This value uses the user axis scale:
+      End (inclusive) of the segment. <span class="conform" id="conform-">Must be greater than or equal to start.</span> This value uses the user axis scale:
       [[open-type/otvaroverview#coordinate-scales-and-normalization]].
     </td>
   </tr>
@@ -2649,15 +2649,15 @@ process of using an encoder, including whatever parameters an encoder requires o
 case.
 The [=incremental font=] and associated patches produced by a compliant encoder:
 
-1.  Must meet all of the requirements in [[#font-format-extensions]] and [[#font-patch-formats]].
+1.  <span class="conform" id="conform-">Must meet all of the requirements in [[#font-format-extensions]] and [[#font-patch-formats]].</span>
 
-2.  Must be consistent, that is: for any possible [=font subset definition=] the result of invoking [$Extend an Incremental Font Subset$] 
+2.  <span class="conform" id="conform-">Must be consistent, that is: for any possible [=font subset definition=] the result of invoking [$Extend an Incremental Font Subset$] 
     with that subset definition and the [=incremental font=] must always be the same regardless of the particular order
-    of patch selection chosen in step 8 of [$Extend an Incremental Font Subset$].
+    of patch selection chosen in step 8 of [$Extend an Incremental Font Subset$].</span>
 
-3.  Must respect patch invalidation criteria. Any patch which is part of an IFT encoding when applied to a compatible [=font subset=]
+3.  <span class="conform" id="conform-">Must respect patch invalidation criteria. Any patch which is part of an IFT encoding when applied to a compatible [=font subset=]
      must only make changes to the [=patch map=] compatibility IDs which are compliant with the [[#font-patch-invalidations]] criteria
-     for the invalidation mode declared by the associated [=patch map entries=].
+     for the invalidation mode declared by the associated [=patch map entries=].</span>
 
 4.  When an encoder is used to transform an existing font into an [=incremental font=] the associated
      [$Fully Expand a Font Subset|fully expanded font$] should be equivalent to the existing font. An equivalent fully expanded font
@@ -2723,15 +2723,15 @@ are typically downloaded and applied in series, which has implications for the p
 
 <b>About [[#glyph-keyed]] patches</b>
 
-[[#glyph-keyed]] patches are quite distinct from the other patch types. First, [[#glyph-keyed]] patches can only modify 
+[[#glyph-keyed]] patches are quite distinct from the other patch types. <span class="conform" id="conform-">First, [[#glyph-keyed]] patches can only modify 
 tables containing glyph outline data, and therefore an [=incremental font=] that only uses [[#glyph-keyed]] must include all
-other font table data in the initial font file. Second, [[#glyph-keyed]] patches are [=No Invalidation|not Invalidating=],
+other font table data in the initial font file.</span> Second, [[#glyph-keyed]] patches are [=No Invalidation|not Invalidating=],
 and can therefore be downloaded and applied independently. This independence means multiple patches can be downloaded in parallel
 which can significantly reduce the number of round trips needed relative to the invalidating patch types.
 
 <b>Choosing patch formats for an encoding</b>
 
-All encodings must chose one or more patch types to use. [[#table-keyed]] patches allow
+<span class="conform" id="conform-">All encodings must chose one or more patch types to use.</span> [[#table-keyed]] patches allow
 all types of data in the font to be patched, but because this type is at least [=Partial Invalidation|Partially Invalidating=],
 the total number of patches needed increases exponentially with the number of segments rather than linearly. [[#glyph-keyed]] patches
 are limited to updating outline and variation delta data but the number needed scales linearly with number of segments.
@@ -2755,8 +2755,8 @@ way:
     variation deltas, and the glyph keyed patch mapping table). These patches should use a small number of large segments to keep
     the patch count reasonable.
 
-3. Because glyph keyed patches reference the specific glyph IDs that are updated, the table keyed patches must not change
-    the glyph to glyph ID assignments used in the original font; otherwise, the glyph IDs listed in the glyph keyed patches may
+3. <span class="conform" id="conform-">Because glyph keyed patches reference the specific glyph IDs that are updated, the table keyed patches must not change
+    the glyph to glyph ID assignments used in the original font;</span> otherwise, the glyph IDs listed in the glyph keyed patches may
     become incorrect. In font subsetters this is often available as an option called "retain glyph IDs".
 
 4. Lastly, use glyph keyed patches to update the remaining tables, here much smaller fine-grained segments can be utilized without
@@ -2801,8 +2801,8 @@ There are some techniques which can be used to reduce the total number of pre-ge
 One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. The discussion
 above focused on the number of segments, but the performance of an [=incremental font=] depends much more on the grouping of data
 within segments. To maximize efficiency an encoder needs to group data (eg. code points) that are commonly used together into the same
-segments. This will reduce the amount of unneeded data load by clients when extending the font. The encoder must also decide the size
-of segments. Smaller segments will produce more patches, and thus incur more overhead by requiring more network requests, but will
+segments. This will reduce the amount of unneeded data load by clients when extending the font. <span class="conform" id="conform-">The encoder must also decide the size
+of segments.</span> Smaller segments will produce more patches, and thus incur more overhead by requiring more network requests, but will
 typically result in less unneeded data in each segment compared to larger segments. When segmenting code points, data on code point usage
 frequency can be helpful to guide segmentation.
 
@@ -2891,8 +2891,8 @@ subsetter has determined is needed to render any combination of the described co
 
 Using that definition, the <b>glyph closure requirement</b> on the full set [[#glyph-keyed]] patches is:
 
-*   The set of glyphs contained in the patches loaded for a [=font subset definition=] through the patch map tables must be a superset
-    of those in the [=glyph closure=] of the [=font subset definition=].
+*   <span class="conform" id="conform-">The set of glyphs contained in the patches loaded for a [=font subset definition=] through the patch map tables must be a superset
+    of those in the [=glyph closure=] of the [=font subset definition=].</span>
 
 Assuming the subsetter does its job accurately, the glyph closure requirement is a consequence of the requirement for equivalent
 behavior: Suppose there is a [=font subset definition=] such that the subsetter includes glyph *i* in its subset, but an encoder that
