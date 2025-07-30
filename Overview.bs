@@ -2896,14 +2896,14 @@ Using that definition, the <b>glyph closure requirement</b> on the full set [[#g
 
 Assuming the subsetter does its job accurately, the glyph closure requirement is a consequence of the requirement for equivalent
 behavior: Suppose there is a [=font subset definition=] such that the subsetter includes glyph *i* in its subset, but an encoder that
-produces [[#glyph-keyed]] patches omits glyph *i* from the set of patches that correspond to that definition. If the subsetter is
+produces [[#glyph-keyed]] patches omits glyph *i* from the set of patches that correspond to that definition. <span class="conform" id="conform-">If the subsetter is
 right, that glyph must be present to retain equivalent behavior when rendering some combination of the code points and features in 
-the definition, which means that the [=incremental font=] will not behave equivalently when rendering that combination.
+the definition, which means that the [=incremental font=] will not behave equivalently when rendering that combination.</span>
 
-Therefore, when generating an encoding utilizing glyph-keyed patches the encoder must determine how to distribute glyphs between all
-of the patches in a way that meets the glyph closure requirement. This is primarily a matter of looking at the code points assigned
+<span class="conform" id="conform-">Therefore, when generating an encoding utilizing glyph-keyed patches the encoder must determine how to distribute glyphs between all
+of the patches in a way that meets the glyph closure requirement.</span> <span class="conform" id="conform-">This is primarily a matter of looking at the code points assigned
 to a segment and determining what other glyphs must be included in the patch that corresponds to it, as when a glyph variant can
-be substituted for a glyph included in the segment by code point.  In some cases a glyph might only be needed when multiple segments
+be substituted for a glyph included in the segment by code point.</span>  In some cases a glyph might only be needed when multiple segments
 have been loaded, in which case that glyph can be added to the patch corresponding to any of those segments. (This can be true of 
 a ligature or a pre-composed accented character.) Finally, after the initial analysis of segments the same glyph might be needed 
 when loading the patches for two or more segments.  There are five main strategies for dealing with that situation:
