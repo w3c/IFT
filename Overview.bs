@@ -2538,8 +2538,8 @@ A glyph keyed patch contains a collection of data chunks that are each associate
   <tr>
     <td>Tag</td>
     <td><dfn for="GlyphPatches">tables</dfn>[tableCount]</td>
-    <td>An array of [[open-type/otff#table-directory|tables]] (by tag) included in the patch. Must be in ascending sorted
-      order and must not contain any duplicate values. For sorting tag values are interpreted as a 4 byte big endian
+    <td>An array of [[open-type/otff#table-directory|tables]] (by tag) included in the patch. <span class="conform" id="conform-">Must be in ascending sorted
+      order and must not contain any duplicate values.</span> For sorting tag values are interpreted as a 4 byte big endian
       unsigned integer and sorted by the integer value.</td>
   </tr>
   <tr>
@@ -2549,7 +2549,7 @@ A glyph keyed patch contains a collection of data chunks that are each associate
       An array of offsets of to glyph data for each table. The first [=GlyphPatches/glyphCount=] offsets corresponding to
       [=GlyphPatches/tables|tables[0]=], the next [=GlyphPatches/glyphCount=] offsets (if present) corresponding to
       [=GlyphPatches/tables|tables[1]=], and so on. All offsets are from the start of the [=GlyphPatches=] table.
-      Offsets must be sorted in ascending order.
+      <span class="conform" id="conform-">Offsets must be sorted in ascending order.</span>
     </td>
   </tr>
   <tr>
@@ -2614,9 +2614,9 @@ The algorithm:
     *  The specific process for synthesizing the new table, depends on the specified format of the
         [[open-type/otff#table-directory|table]]. Any non-glyph associated data should be copied from the table in
         <var>base font subset</var>. Tables of the type [[open-type/glyf|glyf]],
-        [[open-type/gvar|gvar]], [[open-type/cff|CFF]], or [[open-type/cff2|CFF2]] are supported. Entries for tables
-        of any other types must be ignored. When updating [[open-type/glyf|glyf]] the [[open-type/loca|loca]] table must be updated as
-        well. No other tables in the font can be modified as a result of this step. Notably this means that a patch cannot add glyphs
+        [[open-type/gvar|gvar]], [[open-type/cff|CFF]], or [[open-type/cff2|CFF2]] are supported. <span class="conform" id="conform-">Entries for tables
+        of any other types must be ignored.</span> <span class="conform" id="conform-">When updating [[open-type/glyf|glyf]] the [[open-type/loca|loca]] table must be updated as
+        well.</span> No other tables in the font can be modified as a result of this step. Notably this means that a patch cannot add glyphs
         with indices beyond the numGlyphs specified in [[open-type/maxp|maxp]].
 
         [[open-type/cff|CFF]], [[open-type/cff2|CFF2]], and [[open-type/gvar|gvar]] have variable sized offsets to per glyph data. If
