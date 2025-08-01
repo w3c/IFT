@@ -758,7 +758,7 @@ If the error occurred during [$Load patch file$], then the client may continue t
 If an invalidation group is non empty and being selected from, but only contains failed patches then extension has failed and cannot
 continue.
 
-<span class="conform" id="conform-">In the case of all other errors the client must not attempt to further extend the font subset.</span>
+<span class="conform" id="conform-stop-extend-after-errors">In the case of all other errors the client must not attempt to further extend the font subset.</span>
 
 Selecting Invalidating Patches {#invalidating-patch-selection}
 --------------------------------------------------------------
@@ -768,7 +768,7 @@ patch entry from a list of candidate entries. The selection criteria used has a 
 perform the extension. Round trips are costly so for maximum performance patches should be selected in a way that minimizes the total number of needed
 round trips.
 
-<span class="conform" id="conform-">The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 8
+<span class="conform" id="conform-required-selection-criteria">The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 8
 of [$Extend an Incremental Font Subset$]</span>:
 
 1.  If one or more candidate entries have previously had their associated patch file loaded by step 9 of [$Extend an Incremental Font Subset$],
@@ -935,7 +935,7 @@ Extensions to the Font Format {#font-format-extensions}
 
 An [=incremental font=] follows the existing [[open-type|OpenType]] format, but includes two new
 [[open-type/otff#table-directory|tables]] identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both
-[=patch map|patch maps=]. <span class="conform" id="conform-">All incremental fonts must contain the 'IFT ' table.</span> The 'IFTX' table is optional. When both tables are
+[=patch map|patch maps=]. <span class="conform" id="conform-require-ift-table">All incremental fonts must contain the 'IFT ' table.</span> The 'IFTX' table is optional. When both tables are
 present, the mapping of the font as a whole is the union of the mappings of the two tables. The two new tables are used only in this
 specification and are not being added to the [[open-type|Open-Type]] specification.
 
@@ -975,13 +975,13 @@ CFF and CFF2 Incremental Fonts {#cff}
 For incremental fonts that contain glyph outlines stored in a [[open-type/cff|CFF]] or [[open-type/cff2|CFF2]] table there are some
 additional restrictions:
 
-* <span class="conform" id="conform-">CFF and CFF2 tables in an incremental font must have the CharStrings INDEX data structure be last element of the
+* <span class="conform" id="conform-charstrings-location">CFF and CFF2 tables in an incremental font must have the CharStrings INDEX data structure be last element of the
     table (followed only by 0 padding to a four-byte word boundary).</span>
 
-* <span class="conform" id="conform-">CFF and CFF2 tables in an incremental font must not have any other data elements that overlap the CharStrings INDEX data
+* <span class="conform" id="conform-cff-tables-no-overlap">CFF and CFF2 tables in an incremental font must not have any other data elements that overlap the CharStrings INDEX data
     structure.</span>
 
-* <span class="conform" id="conform-">The 'IFT ' [=patch map=] table must contain an offset
+* <span class="conform" id="conform-ift-table-contians-offset">The 'IFT ' [=patch map=] table must contain an offset
     ([=Format 1 Patch Map/cffCharStringsOffset=], [=Format 1 Patch Map/cff2CharStringsOffset=]
     [=Format 2 Patch Map/cffCharStringsOffset=], or [=Format 2 Patch Map/cff2CharStringsOffset=])
     to the start of the CharStrings INDEX data for the CFF and/or CFF2 table.</span>
@@ -1059,12 +1059,12 @@ the encoded bytes at the start of every iteration to pick up any changes made in
   <tr>
     <td>uint16</td>
     <td><dfn for="Format 1 Patch Map">maxGlyphMapEntryIndex</dfn></td>
-    <td><span class="conform" id="conform-">The largest [=Glyph Map=] entry index encoded in this table. Must be less than or equal to maxEntryIndex.</span></td>
+    <td><span class="conform" id="conform-entry-index-maximum">The largest [=Glyph Map=] entry index encoded in this table. Must be less than or equal to maxEntryIndex.</span></td>
   </tr>
   <tr>
     <td>uint24</td>
     <td><dfn for="Format 1 Patch Map">glyphCount</dfn></td>
-    <td><span class="conform" id="conform-">Number of glyphs that mappings are provided for.
+    <td><span class="conform" id="conform-glyph-count-matches">Number of glyphs that mappings are provided for.
         Must match the number of glyphs in the the font file.</span>
 
         Note: the number of glyphs in the font is encoded in the font file. At the time of writing, this value is listed in the
@@ -1109,7 +1109,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     <td><dfn for="Format 1 Patch Map">patchFormat</dfn></td>
     <td>
       Specifies the format of the patches linked to by urlTemplate.
-      <span class="conform" id="conform-">Must be set to one of the format numbers from  the [[#font-patch-formats-summary]] table.</span>
+      <span class="conform" id="conform-format1-valid-format-number">Must be set to one of the format numbers from  the [[#font-patch-formats-summary]] table.</span>
     </td>
   </tr>
   <tr>
@@ -1415,7 +1415,7 @@ The algorithm:
     <td><dfn for="Format 2 Patch Map">defaultPatchFormat</dfn></td>
     <td>
       Specifies the format of the patches linked to by urlTemplate (unless overridden by an entry).
-      <span class="conform" id="conform-">Must be set to one of the format numbers from the [[#font-patch-formats-summary]] table.</span>
+      <span class="conform" id="conform-format2-valid-format-number">Must be set to one of the format numbers from the [[#font-patch-formats-summary]] table.</span>
     </td>
   </tr>
   <tr>
@@ -1639,7 +1639,7 @@ being requested.
     <td>Fixed</td>
     <td><dfn for="Design Space Segment">end</dfn></td>
     <td>
-      End (inclusive) of the segment. <span class="conform" id="conform-">Must be greater than or equal to start.</span> This value uses the user axis scale:
+      End (inclusive) of the segment. <span class="conform" id="conform-design-space-segment-end-valid-value">Must be greater than or equal to start.</span> This value uses the user axis scale:
       [[open-type/otvaroverview#coordinate-scales-and-normalization]].
     </td>
   </tr>
@@ -2125,7 +2125,7 @@ The algorithm:
     <td><var>id32</var></td>
     <td>
       The input <var>entry ID</var> encoded as a [[rfc4648#section-7|base32hex]] string (using the digits 0-9, A-V) with padding
-      omitted.  <span class="conform" id="conform-">When <var>entry ID</var> is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
+      omitted.  <span class="conform" id="conform-entry-id-must-be-converted">When <var>entry ID</var> is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
       but then all leading bytes that are equal to 0 are removed before encoding.</span>  (For example, when the
       integer is less than 256 only one byte is encoded.) If <var>entry ID</var> is 0 then one zero byte is encoded. When
       <var>entry ID</var> is a string the raw bytes are encoded as base32hex.
@@ -2163,8 +2163,8 @@ The algorithm:
     <td><var>id64</var></td>
     <td>
       The input <var>entry ID</var> encoded as a [[rfc4648#section-5|base64url]] string (using the digits A-Z, a-z, 0-9, -
-      (minus) and _ (underline)) with padding included. <span class="conform" id="conform-">Because the padding character is '=', it must
-      be URL-encoded as '%3D'.</span>  <span class="conform" id="conform-">When <var>entry ID</var> is an unsigned integer it must first be converted to a big
+      (minus) and _ (underline)) with padding included. <span class="conform" id="conform-equal-sign-encoded">Because the padding character is '=', it must
+      be URL-encoded as '%3D'.</span>  <span class="conform" id="conform-entry-id-converted">When <var>entry ID</var> is an unsigned integer it must first be converted to a big
       endian 32 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding.</span>
       (For example, when the integer is less than 256 only one byte is encoded.) If the <var>entry ID</var> is 0 then one
       zero byte is encoded. When the <var>entry ID</var> is a string its raw bytes are encoded as
@@ -2343,7 +2343,7 @@ or remove tables in a [=font subset=].
   <tr>
     <td>Tag</td>
     <td>format</td>
-    <td><span class="conform" id="conform-">Identifies the format as table keyed, must be set to 'iftk'</span></td>
+    <td><span class="conform" id="conform-table-keyed-format-equals-iftk">Identifies the format as table keyed, must be set to 'iftk'</span></td>
   </tr>
   <tr>
     <td>uint32</td>
@@ -2363,7 +2363,7 @@ or remove tables in a [=font subset=].
   <tr>
     <td>Offset32</td>
     <td><dfn for="Table keyed patch">patches</dfn>[patchesCount+1]</td>
-    <td>Each entry is an offset from the start of this table to a [=TablePatch=]. <span class="conform" id="conform-">Offsets must be sorted in ascending order.</span></td>
+    <td>Each entry is an offset from the start of this table to a [=TablePatch=]. <span class="conform" id="conform-offsets-sort-ascending">Offsets must be sorted in ascending order.</span></td>
   </tr>
 </table>
 
@@ -2480,7 +2480,7 @@ A glyph keyed patch contains a collection of data chunks that are each associate
   <tr>
     <td>Tag</td>
     <td>format</td>
-    <td><span class="conform" id="conform-">Identifies the format as glyph keyed, must be set to 'ifgk'</span></td>
+    <td><span class="conform" id="conform-conform-glyph-keyed-format-equals-ifgk"">Identifies the format as glyph keyed, must be set to 'ifgk'</span></td>
   </tr>
   <tr>
     <td>uint32</td>
@@ -2531,14 +2531,14 @@ A glyph keyed patch contains a collection of data chunks that are each associate
     <td><dfn for="GlyphPatches">glyphIds</dfn>[glyphCount]</td>
     <td>
       An array of glyph indices included in the patch. Elements are uint24's if bit 0 (least significant bit) of
-      [=Glyph keyed patch/flags=] is set, otherwise elements are uint16's. <span class="conform" id="conform-">Must be in ascending sorted order and must not
+      [=Glyph keyed patch/flags=] is set, otherwise elements are uint16's. <span class="conform" id="conform-glyph-ids-sort-ascending-unique">Must be in ascending sorted order and must not
       contain any duplicate values.</span>
     </td>
   </tr>
   <tr>
     <td>Tag</td>
     <td><dfn for="GlyphPatches">tables</dfn>[tableCount]</td>
-    <td>An array of [[open-type/otff#table-directory|tables]] (by tag) included in the patch. <span class="conform" id="conform-">Must be in ascending sorted
+    <td>An array of [[open-type/otff#table-directory|tables]] (by tag) included in the patch. <span class="conform" id="conform-tables-sort-ascending-unique">Must be in ascending sorted
       order and must not contain any duplicate values.</span> For sorting tag values are interpreted as a 4 byte big endian
       unsigned integer and sorted by the integer value.</td>
   </tr>
@@ -2549,7 +2549,7 @@ A glyph keyed patch contains a collection of data chunks that are each associate
       An array of offsets of to glyph data for each table. The first [=GlyphPatches/glyphCount=] offsets corresponding to
       [=GlyphPatches/tables|tables[0]=], the next [=GlyphPatches/glyphCount=] offsets (if present) corresponding to
       [=GlyphPatches/tables|tables[1]=], and so on. All offsets are from the start of the [=GlyphPatches=] table.
-      <span class="conform" id="conform-">Offsets must be sorted in ascending order.</span>
+      <span class="conform" id="conform-offsets-sort-ascending">Offsets must be sorted in ascending order.</span>
     </td>
   </tr>
   <tr>
