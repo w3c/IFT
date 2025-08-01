@@ -2614,8 +2614,8 @@ The algorithm:
     *  The specific process for synthesizing the new table, depends on the specified format of the
         [[open-type/otff#table-directory|table]]. Any non-glyph associated data should be copied from the table in
         <var>base font subset</var>. Tables of the type [[open-type/glyf|glyf]],
-        [[open-type/gvar|gvar]], [[open-type/cff|CFF]], or [[open-type/cff2|CFF2]] are supported. <span class="conform" id="conform-">Entries for tables
-        of any other types must be ignored.</span> <span class="conform" id="conform-">When updating [[open-type/glyf|glyf]] the [[open-type/loca|loca]] table must be updated as
+        [[open-type/gvar|gvar]], [[open-type/cff|CFF]], or [[open-type/cff2|CFF2]] are supported. <span class="conform" id="conform-table-entries-ignore-others">Entries for tables
+        of any other types must be ignored.</span> <span class="conform" id="conform-updating-glyf-updates-loca">When updating [[open-type/glyf|glyf]] the [[open-type/loca|loca]] table must be updated as
         well.</span> No other tables in the font can be modified as a result of this step. Notably this means that a patch cannot add glyphs
         with indices beyond the numGlyphs specified in [[open-type/maxp|maxp]].
 
@@ -2649,13 +2649,13 @@ process of using an encoder, including whatever parameters an encoder requires o
 case.
 The [=incremental font=] and associated patches produced by a compliant encoder:
 
-1.  <span class="conform" id="conform-">Must meet all of the requirements in [[#font-format-extensions]] and [[#font-patch-formats]].</span>
+1.  <span class="conform" id="conform-encoding-must-meet-extensions-format">Must meet all of the requirements in [[#font-format-extensions]] and [[#font-patch-formats]].</span>
 
-2.  <span class="conform" id="conform-">Must be consistent, that is: for any possible [=font subset definition=] the result of invoking [$Extend an Incremental Font Subset$] 
+2.  <span class="conform" id="conform-encoding-must-be-consistent">Must be consistent, that is: for any possible [=font subset definition=] the result of invoking [$Extend an Incremental Font Subset$] 
     with that subset definition and the [=incremental font=] must always be the same regardless of the particular order
     of patch selection chosen in step 8 of [$Extend an Incremental Font Subset$].</span>
 
-3.  <span class="conform" id="conform-">Must respect patch invalidation criteria.</span> <span class="conform" id="conform-">Any patch which is part of an IFT encoding when applied to a compatible [=font subset=]
+3.  <span class="conform" id="conform-encoding-must-respect-patch-invalidation-criteria">Must respect patch invalidation criteria.</span> <span class="conform" id="conform-encoding-only-alter-compatibility-ids">Any patch which is part of an IFT encoding when applied to a compatible [=font subset=]
      must only make changes to the [=patch map=] compatibility IDs which are compliant with the [[#font-patch-invalidations]] criteria
      for the invalidation mode declared by the associated [=patch map entries=].</span>
 
@@ -3071,8 +3071,8 @@ take privacy into account when encoding their own fonts or obtaining already-enc
 
   As required by [[!css-fonts-4]]:
 
-  "<span class="conform" id="conform-">A Web Font must not be accessible in any other Document from the one which either is associated with
-  the @font-face rule or owns the FontFaceSet.</span> <span class="conform" id="conform-">Other applications on the device must not be able to access
+  "<span class="conform" id="conform-web-font-not-accessible-from-different-document">A Web Font must not be accessible in any other Document from the one which either is associated with
+  the @font-face rule or owns the FontFaceSet.</span> <span class="conform" id="conform-web-font-not-accessible-from-other-apps">Other applications on the device must not be able to access
   Web Fonts.</span>" - [[css-fonts-4#web-fonts]]
 
   Since IFT fonts are treated the same as regular fonts in CSS ([[#opt-in]]) these requirements apply and avoid information leaking across
