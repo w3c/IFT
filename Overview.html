@@ -6,7 +6,7 @@
   <meta content="CR" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="6284675c93dae7c996bea7ab4b7c2edd6901082e" name="revision">
+  <meta content="61388c1de55df94a100e64b4fdb2b90a7458c988" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -1483,14 +1483,14 @@ the font, but should only use it for the rendering of code points, features, and
    <p>If the error occurred during <a data-link-type="abstract-op" href="#abstract-opdef-load-patch-file" id="ref-for-abstract-opdef-load-patch-file①">Load patch file</a>, then the client may continue trying to extend the font subset. In step 8 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset">Extend an Incremental Font Subset</a> within each invalidation grouping any patches which failed to load are excluded from selection.
 If an invalidation group is non empty and being selected from, but only contains failed patches then extension has failed and cannot
 continue.</p>
-   <p>In the case of all other errors the client must not attempt to further extend the font subset.</p>
+   <p><span class="conform" id="conform-stop-extend-after-errors">In the case of all other errors the client must not attempt to further extend the font subset.</span></p>
    <h3 class="heading settled" data-level="4.4" id="invalidating-patch-selection"><span class="secno">4.4. </span><span class="content">Selecting Invalidating Patches</span><a class="self-link" href="#invalidating-patch-selection"></a></h3>
    <p>During execution of the <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①">Extend an Incremental Font Subset</a> algorithm in some cases it’s necessary to select a single invalidating (full or partial)
 patch entry from a list of candidate entries. The selection criteria used has a direct impact on the total number of round trips that will be needed to
 perform the extension. Round trips are costly so for maximum performance patches should be selected in a way that minimizes the total number of needed
 round trips.</p>
-   <p>The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 8
-of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset②">Extend an Incremental Font Subset</a>:</p>
+   <p><span class="conform" id="conform-required-selection-criteria">The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 8
+of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset②">Extend an Incremental Font Subset</a></span>:</p>
    <ol>
     <li data-md>
      <p>If one or more candidate entries have previously had their associated patch file loaded by step 9 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset③">Extend an Incremental Font Subset</a>,
@@ -1633,7 +1633,7 @@ to the procedures in this section. So if an incremental font needs to be stored 
 store only the font binary produced by the most recent application of the extension algorithm. It is not necessary to retain the initial
 font or any versions produced by prior extensions.</p>
    <h2 class="heading settled" data-level="5" id="font-format-extensions"><span class="secno">5. </span><span class="content">Extensions to the Font Format</span><a class="self-link" href="#font-format-extensions"></a></h2>
-   <p>An <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑧">incremental font</a> follows the existing <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> format, but includes two new <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑤">patch maps</a>. All incremental fonts must contain the 'IFT ' table. The 'IFTX' table is optional. When both tables are
+   <p>An <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑧">incremental font</a> follows the existing <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">OpenType</a> format, but includes two new <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> identified by the 4-byte tags 'IFT ' and 'IFTX'. These new tables are both <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑤">patch maps</a>. <span class="conform" id="conform-require-ift-table">All incremental fonts must contain the 'IFT ' table.</span> The 'IFTX' table is optional. When both tables are
 present, the mapping of the font as a whole is the union of the mappings of the two tables. The two new tables are used only in this
 specification and are not being added to the <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">Open-Type</a> specification.</p>
    <p class="note" role="note"><span class="marker">Note:</span> allowing the mapping to be split between two distinct tables allows an incremental font to more easily make use of multiple
@@ -1668,15 +1668,15 @@ table-keyed patches.</p>
 additional restrictions:</p>
    <ul>
     <li data-md>
-     <p>CFF and CFF2 tables in an incremental font must have the CharStrings INDEX data structure be last element of the
-table (followed only by 0 padding to a four-byte word boundary).</p>
+     <p><span class="conform" id="conform-charstrings-location">CFF and CFF2 tables in an incremental font must have the CharStrings INDEX data structure be last element of the
+table (followed only by 0 padding to a four-byte word boundary).</span></p>
     <li data-md>
-     <p>CFF and CFF2 tables in an incremental font must not have any other data elements that overlap the CharStrings INDEX data
-structure.</p>
+     <p><span class="conform" id="conform-cff-tables-no-overlap">CFF and CFF2 tables in an incremental font must not have any other data elements that overlap the CharStrings INDEX data
+structure.</span></p>
     <li data-md>
-     <p>The 'IFT ' <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑥">patch map</a> table must contain an offset
+     <p><span class="conform" id="conform-ift-table-contians-offset">The 'IFT ' <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑥">patch map</a> table must contain an offset
 (<a data-link-type="dfn" href="#format-1-patch-map-cffcharstringsoffset" id="ref-for-format-1-patch-map-cffcharstringsoffset">cffCharStringsOffset</a>, <a data-link-type="dfn" href="#format-1-patch-map-cff2charstringsoffset" id="ref-for-format-1-patch-map-cff2charstringsoffset">cff2CharStringsOffset</a> <a data-link-type="dfn" href="#format-2-patch-map-cffcharstringsoffset" id="ref-for-format-2-patch-map-cffcharstringsoffset">cffCharStringsOffset</a>, or <a data-link-type="dfn" href="#format-2-patch-map-cff2charstringsoffset" id="ref-for-format-2-patch-map-cff2charstringsoffset">cff2CharStringsOffset</a>)
-to the start of the CharStrings INDEX data for the CFF and/or CFF2 table.</p>
+to the start of the CharStrings INDEX data for the CFF and/or CFF2 table.</span></p>
    </ul>
    <p>These three requirements allow for the glyph keyed patch application implementation on CFF and CFF2 tables to be significantly
 simplified. They allow glyph data to be inserted into CFF/CFF2 tables without changing the offsets to any other data elements
@@ -1737,13 +1737,13 @@ the encoded bytes at the start of every iteration to pick up any changes made in
      <tr>
       <td>uint16
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-maxglyphmapentryindex">maxGlyphMapEntryIndex</dfn>
-      <td>The largest <a data-link-type="dfn" href="#glyph-map" id="ref-for-glyph-map">Glyph Map</a> entry index encoded in this table. Must be less than or equal to maxEntryIndex.
+      <td><span class="conform" id="conform-format1-entry-index-maximum">The largest <a data-link-type="dfn" href="#glyph-map" id="ref-for-glyph-map">Glyph Map</a> entry index encoded in this table. Must be less than or equal to maxEntryIndex.</span>
      <tr>
       <td>uint24
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-glyphcount">glyphCount</dfn>
       <td>
-       Number of glyphs that mappings are provided for.
-        Must match the number of glyphs in the the font file. 
+       <span class="conform" id="conform-format1-glyph-count-matches">Number of glyphs that mappings are provided for.
+        Must match the number of glyphs in the the font file.</span> 
        <p class="note" role="note"><span class="marker">Note:</span> the number of glyphs in the font is encoded in the font file. At the time of writing, this value is listed in the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a> table; however, future font format extensions may use alternate tables to encode the value for number of
         glyphs.</p>
      <tr>
@@ -1770,8 +1770,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-patchformat">patchFormat</dfn>
-      <td> Specifies the format of the patches linked to by urlTemplate.
-      Must be set to one of the format numbers from  the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table. 
+      <td> Specifies the format of the patches linked to by urlTemplate. <span class="conform" id="conform-format1-valid-format-number">Must be set to one of the format numbers from  the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table.</span> 
      <tr>
       <td>uint32
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-cffcharstringsoffset">cffCharStringsOffset</dfn>
@@ -2010,8 +2009,7 @@ an error.</p>
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-defaultpatchformat">defaultPatchFormat</dfn>
-      <td> Specifies the format of the patches linked to by urlTemplate (unless overridden by an entry).
-      Must be set to one of the format numbers from the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table. 
+      <td> Specifies the format of the patches linked to by urlTemplate (unless overridden by an entry). <span class="conform" id="conform-format2-valid-format-number">Must be set to one of the format numbers from the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table.</span> 
      <tr>
       <td>uint24
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-entrycount">entryCount</dfn>
@@ -2155,7 +2153,7 @@ being requested.</p>
      <tr>
       <td>Fixed
       <td><dfn class="dfn-paneled" data-dfn-for="Design Space Segment" data-dfn-type="dfn" data-noexport id="design-space-segment-end">end</dfn>
-      <td> End (inclusive) of the segment. Must be greater than or equal to start. This value uses the user axis scale: <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otvaroverview#coordinate-scales-and-normalization">OpenType Specification § otvaroverview#coordinate-scales-and-normalization</a>. 
+      <td> End (inclusive) of the segment. <span class="conform" id="conform-design-space-segment-end-valid-value">Must be greater than or equal to start.</span> This value uses the user axis scale: <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otvaroverview#coordinate-scales-and-normalization">OpenType Specification § otvaroverview#coordinate-scales-and-normalization</a>. 
    </table>
    <h5 class="heading settled algorithm" data-algorithm="Interpreting Format 2" data-level="5.3.2.1" id="interpreting-patch-map-format-2"><span class="secno">5.3.2.1. </span><span class="content">Interpreting Format 2</span><a class="self-link" href="#interpreting-patch-map-format-2"></a></h5>
    <p>This algorithm is used to convert a format 2 <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑧">patch map</a> into a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑧">patch map entries</a>.</p>
@@ -2626,8 +2624,8 @@ expansion is finished, return <var>URL string</var>.</p>
      <tr>
       <td><var>id32</var>
       <td> The input <var>entry ID</var> encoded as a <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a> string (using the digits 0-9, A-V) with padding
-      omitted.  When <var>entry ID</var> is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
-      but then all leading bytes that are equal to 0 are removed before encoding.  (For example, when the
+      omitted. <span class="conform" id="conform-entry-id-must-be-converted">When <var>entry ID</var> is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
+      but then all leading bytes that are equal to 0 are removed before encoding.</span> (For example, when the
       integer is less than 256 only one byte is encoded.) If <var>entry ID</var> is 0 then one zero byte is encoded. When <var>entry ID</var> is a string the raw bytes are encoded as base32hex. 
      <tr>
       <td><var>d1</var>
@@ -2648,10 +2646,9 @@ expansion is finished, return <var>URL string</var>.</p>
      <tr>
       <td><var>id64</var>
       <td> The input <var>entry ID</var> encoded as a <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a> string (using the digits A-Z, a-z, 0-9, -
-      (minus) and _ (underline)) with padding included. Because the padding character is '=', it must
-      be URL-encoded as '%3D'.  When <var>entry ID</var> is an unsigned integer it must first be converted to a big
-      endian 32 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding. 
-      (For example, when the integer is less than 256 only one byte is encoded.) If the <var>entry ID</var> is 0 then one
+      (minus) and _ (underline)) with padding included. <span class="conform" id="conform-equal-sign-encoded">Because the padding character is '=', it must
+      be URL-encoded as '%3D'.</span> <span class="conform" id="conform-entry-id-converted">When <var>entry ID</var> is an unsigned integer it must first be converted to a big
+      endian 32 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding.</span> (For example, when the integer is less than 256 only one byte is encoded.) If the <var>entry ID</var> is 0 then one
       zero byte is encoded. When the <var>entry ID</var> is a string its raw bytes are encoded as <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a>. 
    </table>
    <div class="example" id="example-305f10ca">
@@ -2797,7 +2794,7 @@ or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-fo
      <tr>
       <td>Tag
       <td>format
-      <td>Identifies the format as table keyed, must be set to 'iftk'
+      <td><span class="conform" id="conform-table-keyed-format-equals-iftk">Identifies the format as table keyed, must be set to 'iftk'</span>
      <tr>
       <td>uint32
       <td>reserved
@@ -2813,7 +2810,7 @@ or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-fo
      <tr>
       <td>Offset32
       <td><dfn class="dfn-paneled" data-dfn-for="Table keyed patch" data-dfn-type="dfn" data-noexport id="table-keyed-patch-patches">patches</dfn>[patchesCount+1]
-      <td>Each entry is an offset from the start of this table to a <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch">TablePatch</a>. Offsets must be sorted in ascending order.
+      <td>Each entry is an offset from the start of this table to a <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch">TablePatch</a>. <span class="conform" id="conform-table-keyed-patches-sort-ascending">Offsets must be sorted in ascending order.</span>
    </table>
    <p>The difference between two consecutive offsets in the <a data-link-type="dfn" href="#table-keyed-patch-patches" id="ref-for-table-keyed-patch-patches">patches</a> array gives the size
 of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">TablePatch</a>.</p>
@@ -2911,7 +2908,7 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
      <tr>
       <td>Tag
       <td>format
-      <td>Identifies the format as glyph keyed, must be set to 'ifgk'
+      <td><span class="conform" id="conform-conform-glyph-keyed-format-equals-ifgk">Identifies the format as glyph keyed, must be set to 'ifgk'</span>
      <tr>
       <td>uint32
       <td>reserved
@@ -2951,19 +2948,18 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
      <tr>
       <td>uint16/uint24
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphids">glyphIds</dfn>[glyphCount]
-      <td> An array of glyph indices included in the patch. Elements are uint24’s if bit 0 (least significant bit) of <a data-link-type="dfn" href="#glyph-keyed-patch-flags" id="ref-for-glyph-keyed-patch-flags">flags</a> is set, otherwise elements are uint16’s. Must be in ascending sorted order and must not
-      contain any duplicate values. 
+      <td> An array of glyph indices included in the patch. Elements are uint24’s if bit 0 (least significant bit) of <a data-link-type="dfn" href="#glyph-keyed-patch-flags" id="ref-for-glyph-keyed-patch-flags">flags</a> is set, otherwise elements are uint16’s. <span class="conform" id="conform-glyph-keyed-glyph-ids-sort-ascending-unique">Must be in ascending sorted order and must not
+      contain any duplicate values.</span> 
      <tr>
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-tables">tables</dfn>[tableCount]
-      <td>An array of <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> (by tag) included in the patch. Must be in ascending sorted
-      order and must not contain any duplicate values. For sorting tag values are interpreted as a 4 byte big endian
+      <td>An array of <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> (by tag) included in the patch. <span class="conform" id="conform-glyph-keyed-tables-sort-ascending-unique">Must be in ascending sorted
+      order and must not contain any duplicate values.</span> For sorting tag values are interpreted as a 4 byte big endian
       unsigned integer and sorted by the integer value.
      <tr>
       <td>Offset32
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphdataoffsets">glyphDataOffsets</dfn>[glyphCount * tableCount + 1]
-      <td> An array of offsets of to glyph data for each table. The first <a data-link-type="dfn" href="#glyphpatches-glyphcount" id="ref-for-glyphpatches-glyphcount">glyphCount</a> offsets corresponding to <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables">tables[0]</a>, the next <a data-link-type="dfn" href="#glyphpatches-glyphcount" id="ref-for-glyphpatches-glyphcount①">glyphCount</a> offsets (if present) corresponding to <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables①">tables[1]</a>, and so on. All offsets are from the start of the <a data-link-type="dfn" href="#glyphpatches" id="ref-for-glyphpatches①">GlyphPatches</a> table.
-      Offsets must be sorted in ascending order. 
+      <td> An array of offsets of to glyph data for each table. The first <a data-link-type="dfn" href="#glyphpatches-glyphcount" id="ref-for-glyphpatches-glyphcount">glyphCount</a> offsets corresponding to <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables">tables[0]</a>, the next <a data-link-type="dfn" href="#glyphpatches-glyphcount" id="ref-for-glyphpatches-glyphcount①">glyphCount</a> offsets (if present) corresponding to <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables①">tables[1]</a>, and so on. All offsets are from the start of the <a data-link-type="dfn" href="#glyphpatches" id="ref-for-glyphpatches①">GlyphPatches</a> table. <span class="conform" id="conform-glyph-keyed-glyph-data-offsets-sort-ascending">Offsets must be sorted in ascending order.</span> 
      <tr>
       <td>uint8
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphdata">glyphData</dfn>[variable]
@@ -3017,9 +3013,9 @@ that glyph index.</p>
 offset to the associated glyph data is <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets①">glyphDataOffsets[i * glyphCount + j]</a>. The length
 of the associated glyph data is <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets②">glyphDataOffsets[i * glyphCount + j + 1]</a> minus <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets③">glyphDataOffsets[i * glyphCount + j]</a>.</p>
       <li data-md>
-       <p>The specific process for synthesizing the new table, depends on the specified format of the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Any non-glyph associated data should be copied from the table in <var>base font subset</var>. Tables of the type <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, or <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> are supported. Entries for tables
-of any other types must be ignored. When updating <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a> the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a> table must be updated as
-well. No other tables in the font can be modified as a result of this step. Notably this means that a patch cannot add glyphs
+       <p>The specific process for synthesizing the new table, depends on the specified format of the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Any non-glyph associated data should be copied from the table in <var>base font subset</var>. Tables of the type <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, or <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> are supported. <span class="conform" id="conform-table-entries-ignore-others">Entries for tables
+of any other types must be ignored.</span> <span class="conform" id="conform-updating-glyf-updates-loca">When updating <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a> the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a> table must be updated as
+well.</span> No other tables in the font can be modified as a result of this step. Notably this means that a patch cannot add glyphs
 with indices beyond the numGlyphs specified in <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a>.</p>
        <p><a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a>, and <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a> have variable sized offsets to per glyph data. If
 necessary when synthesizing a new table the offset sizes can be increased as needed. For <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>/<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a> offset sizes cannot be changed because the offset size is specified in the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/head#">head</a> table. If during synthesis an offset
@@ -3049,13 +3045,13 @@ case.
 The <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⓪">incremental font</a> and associated patches produced by a compliant encoder:</p>
    <ol>
     <li data-md>
-     <p>Must meet all of the requirements in <a href="#font-format-extensions">§ 5 Extensions to the Font Format</a> and <a href="#font-patch-formats">§ 6 Font Patch Formats</a>.</p>
+     <p><span class="conform" id="conform-encoding-must-meet-extensions-format">Must meet all of the requirements in <a href="#font-format-extensions">§ 5 Extensions to the Font Format</a> and <a href="#font-patch-formats">§ 6 Font Patch Formats</a>.</span></p>
     <li data-md>
-     <p>Must be consistent, that is: for any possible <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①③">font subset definition</a> the result of invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①⓪">Extend an Incremental Font Subset</a> with that subset definition and the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①①">incremental font</a> must always be the same regardless of the particular order
-of patch selection chosen in step 8 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①①">Extend an Incremental Font Subset</a>.</p>
+     <p><span class="conform" id="conform-encoding-must-be-consistent">Must be consistent, that is: for any possible <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①③">font subset definition</a> the result of invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①⓪">Extend an Incremental Font Subset</a> with that subset definition and the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①①">incremental font</a> must always be the same regardless of the particular order
+of patch selection chosen in step 8 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①①">Extend an Incremental Font Subset</a>.</span></p>
     <li data-md>
-     <p>Must respect patch invalidation criteria. Any patch which is part of an IFT encoding when applied to a compatible <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a> must only make changes to the <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map①⓪">patch map</a> compatibility IDs which are compliant with the <a href="#font-patch-invalidations">§ 4.1 Patch Invalidations</a> criteria
- for the invalidation mode declared by the associated <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①①">patch map entries</a>.</p>
+     <p><span class="conform" id="conform-encoding-must-respect-patch-invalidation-criteria">Must respect patch invalidation criteria.</span> <span class="conform" id="conform-encoding-only-alter-compatibility-ids">Any patch which is part of an IFT encoding when applied to a compatible <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a> must only make changes to the <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map①⓪">patch map</a> compatibility IDs which are compliant with the <a href="#font-patch-invalidations">§ 4.1 Patch Invalidations</a> criteria
+ for the invalidation mode declared by the associated <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries①①">patch map entries</a>.</span></p>
     <li data-md>
      <p>When an encoder is used to transform an existing font into an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①②">incremental font</a> the associated <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset①">fully expanded font</a> should be equivalent to the existing font. An equivalent fully expanded font
  should have all of the same <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> as the existing font (excluding the incremental IFT/IFTX
@@ -3403,13 +3399,13 @@ the user making an encoding to make appropriate choices. Similarly, it is recomm
 take privacy into account when encoding their own fonts or obtaining already-encoded fonts from third parties.</p>
    <h3 class="heading settled" data-level="8.3" id="per-origin"><span class="secno">8.3. </span><span class="content">Per-origin restriction avoids fingerprinting</span><a class="self-link" href="#per-origin"></a></h3>
    <p>As required by <a data-link-type="biblio" href="#biblio-css-fonts-4" title="CSS Fonts Module Level 4">[css-fonts-4]</a>:</p>
-   <p>"A Web Font must not be accessible in any other Document from the one which either is associated with
-  the @font-face rule or owns the FontFaceSet. Other applications on the device must not be able to access
-  Web Fonts." - <a href="https://www.w3.org/TR/css-fonts-4/#web-fonts"><cite>CSS Fonts 4</cite> § 10.2 Web Fonts</a></p>
+   <p>"<span class="conform" id="conform-web-font-not-accessible-from-different-document">A Web Font must not be accessible in any other Document from the one which either is associated with
+  the @font-face rule or owns the FontFaceSet.</span> <span class="conform" id="conform-web-font-not-accessible-from-other-apps">Other applications on the device must not be able to access
+  Web Fonts.</span>" - <a href="https://www.w3.org/TR/css-fonts-4/#web-fonts"><cite>CSS Fonts 4</cite> § 10.2 Web Fonts</a></p>
    <p>Since IFT fonts are treated the same as regular fonts in CSS (<a href="#opt-in">§ 2 Opt-In Mechanism</a>) these requirements apply and avoid information leaking across
   origins.</p>
    <p>Similar requirements apply to font palette values:</p>
-   <p>"An author-defined font color palette must only be available to the documents that reference it. Using an author-defined color palette
+   <p>"<span class="conform" id="conform-palette-not-accesible-from-different-documents">An author-defined font color palette must only be available to the documents that reference it.</span> Using an author-defined color palette
   outside of the documents that reference it would constitute a security leak since the contents of one page would be able to
   affect other pages, something an attacker could use as an attack vector." - <a href="https://www.w3.org/TR/css-fonts-4/#font-palette-values"><cite>CSS Fonts 4</cite> § 9.2 User-defined font color palettes: The @font-palette-values rule</a></p>
    <h2 class="heading settled" data-level="9" id="sec"><span class="secno">9. </span><span class="content">Security Considerations</span><a class="self-link" href="#sec"></a></h2>
