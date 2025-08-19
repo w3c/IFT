@@ -6,7 +6,7 @@
   <meta content="CR" name="w3c-status">
   <meta content="Bikeshed version 4b8aed3f7, updated Thu Mar 6 12:35:01 2025 -0800" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="61388c1de55df94a100e64b4fdb2b90a7458c988" name="revision">
+  <meta content="dfb01f9380b9e9612243d8c65e03f290b4741848" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>
 .conform:hover {background: #31668f; color: white}
@@ -961,8 +961,8 @@ partly in virtue of two additional <a href="https://learn.microsoft.com/en-us/ty
     <li data-md>
      <p><a href="#font-format-extensions">§ 5 Extensions to the Font Format</a>: defines the new tables which contain a list of patches that are available to be applied to a font.</p>
     <li data-md>
-     <p><a href="#font-patch-formats">§ 6 Font Patch Formats</a>: defines three different types of patches that can be used. Two are "generic" binary patches, one is
- specific to the font’s format for storing glyph data.</p>
+     <p><a href="#font-patch-formats">§ 6 Font Patch Formats</a>: defines two different types of patches that can be used. One is a "generic" binary patch and the other
+ is specific to the font’s format for storing glyph data.</p>
     <li data-md>
      <p><a href="#encoding">§ 7 Encoding</a>: creates the font and associated patches that form an incremental font.</p>
    </ul>
@@ -1104,12 +1104,12 @@ needed to render a subset of:</p>
     <li data-md>
      <p>and <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a>.</p>
    </ul>
-   <p>supported by the original font. When a subsetted font is used to render text using any combination of the subset
-code points, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a>, or <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a> it should render identically to the original font. This includes rendering with the use of any optional typographic
+   <p>supported by the original font. When a properly constructed font subset is used to render text using any combination of the
+subset code points, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags#">layout features</a>, or <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otvaroverview#terminology">design-variation space</a> it renders identically to the original font. This includes rendering with the use of any optional typographic
 features that a renderer may choose to use from the original font, such as hinting instructions. Design variation spaces
 are specified using the user-axis scales (<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otvaroverview#coordinate-scales-and-normalization">OpenType Specification § otvaroverview#coordinate-scales-and-normalization</a>).</p>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-subset-definition">font subset definition</dfn> describes the minimum data (code points, layout features,
-variation axis space) that a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset">font subset</a> should support.</p>
+variation axis space) that a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset">font subset</a> supports.</p>
    <p class="note" role="note"><span class="marker">Note:</span> For convenience the remainder of this document links to the <a data-link-type="biblio" href="#biblio-open-type" title="OpenType Specification">[open-type]</a> specification which is a copy of <a data-link-type="biblio" href="#biblio-iso14496-22" title="Information technology — Coding of audio-visual objects — Part 22: Open Font Format">[iso14496-22]</a>.</p>
    <h3 class="heading settled" data-level="3.2" id="font-patch-definitions"><span class="secno">3.2. </span><span class="content">Font Patch</span><a class="self-link" href="#font-patch-definitions"></a></h3>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="font-patch">font patch</dfn> is a file which encodes changes to be made to an IFT-encoded font. Patches are used to extend
@@ -1603,8 +1603,8 @@ present. If the client is correctly following the <a data-link-type="abstract-op
 according to <a href="#target-subset-definitions">§ 4.5 Target Subset Definition</a> then the missing data will be loaded and this case will only occur temporarily while the
 relevant patch is loading. Once the missing patch arrives and has been applied the rendering of the affected
 code points may change as a result of the substitution.</p>
-   <p class="note" role="note"><span class="marker">Note:</span> The "supported_spans(...)" check above should not be used to drive incremental font extension. Target subset definitions for full
-executions of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset⑦">Extend an Incremental Font Subset</a> should follow the guidelines in <a href="#target-subset-definitions">§ 4.5 Target Subset Definition</a>.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> The "supported_spans(...)" check above is not intended to be used to drive incremental font extension. Guidelines for
+forming target subset definitions for executions of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset⑦">Extend an Incremental Font Subset</a> are given in <a href="#target-subset-definitions">§ 4.5 Target Subset Definition</a>.</p>
    <h3 class="heading settled algorithm" data-algorithm="Fully Expanding a Font" data-level="4.7" id="fully-expanding-a-font"><span class="secno">4.7. </span><span class="content">Fully Expanding a Font</span><a class="self-link" href="#fully-expanding-a-font"></a></h3>
    <p>This sections defines an algorithm that can be used to transform an incremental font into a fully expanded non-incremental font. This
 process loads all available data provided by the incremental font and produces a single static font file that contains no further
