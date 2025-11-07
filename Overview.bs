@@ -955,7 +955,7 @@ these can be used to compress the initial font file used in an incremental font 
 2. Since the incremental font transfer extension algorithm ([[#extending-font-subset]]) operates specifically on the uncompressed font
     file, the compressed font needs to be decoded before attempting to extend it.
 
-For [[WOFF2]] special care must be taken. If an incremental font will be encoded by WOFF2 for transfer:
+For [[WOFF2]] special care needs to be taken. If an incremental font will be encoded by WOFF2 for transfer:
 
 1.  If the WOFF2 encoding will include a transformed glyf and loca table ([[WOFF2#glyf_table_format]]) then, the incremental
      font should not contain [[#table-keyed]] patches which modify either the glyf or loca table. The WOFF2 format does not
@@ -2724,7 +2724,7 @@ are typically downloaded and applied in series, which has implications for the p
 <b>About [[#glyph-keyed]] patches</b>
 
 [[#glyph-keyed]] patches are quite distinct from the other patch types. First, [[#glyph-keyed]] patches can only modify 
-tables containing glyph outline data, and therefore an [=incremental font=] that only uses [[#glyph-keyed]] must include all
+tables containing glyph outline data, and therefore an [=incremental font=] that only uses [[#glyph-keyed]] will have to include all
 other font table data in the initial font file. Second, [[#glyph-keyed]] patches are [=No Invalidation|not Invalidating=],
 and can therefore be downloaded and applied independently. This independence means multiple patches can be downloaded in parallel
 which can significantly reduce the number of round trips needed relative to the invalidating patch types.
