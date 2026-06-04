@@ -5,9 +5,9 @@
   <title>Incremental Font Transfer</title>
   <meta content="ED" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
-  <meta content="Bikeshed version 3f621ba99, updated Mon Jul 28 15:38:36 2025 -0700" name="generator">
+  <meta content="Bikeshed version cfb78d9c0, updated Tue Jun 2 16:21:00 2026 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="31f6fd27846741f002912b299f20a03f5d75e966" name="revision">
+  <meta content="01fe3666daea4c35e0f015dcb11d9c4b4e202ee8" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -322,7 +322,7 @@ pre .property::before, pre .property::after {
 </style>
 <style>/* Boilerplate: style-counters */
 body {
-    counter-reset: example figure issue;
+    counter-reset: example figure issue table;
 }
 .issue {
     counter-increment: issue;
@@ -339,7 +339,7 @@ body {
 }
 .invalid.example:not(.no-marker)::before,
 .illegal.example:not(.no-marker)::before {
-    content: "Invalid Example" counter(example);
+    content: "Invalid Example " counter(example);
 }
 
 figcaption {
@@ -347,6 +347,13 @@ figcaption {
 }
 figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
+}
+
+figure.table figcaption {
+    counter-increment: table;
+}
+figure.table figcaption:not(.no-marker)::before {
+    content: "Table " counter(table) " ";
 }
 </style>
 <style>/* Boilerplate: style-dfn-panel */
@@ -704,6 +711,30 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     c-[vm] { color: #cb4b16 } /* Name.Variable.Magic */
     c-[il] { color: #657b83 } /* Literal.Number.Integer.Long */
 }
+
+@media print {
+    /* Darken colors for print that would otherwise print too faintly */
+    c-[c]  { color: #555555 } /* Comment */
+    c-[d]  { color: #555555 } /* Comment.Multiline */
+    c-[cp] { color: #555555 } /* Comment.Preproc */
+    c-[c1] { color: #555555 } /* Comment.Single */
+    c-[cs] { color: #555555 } /* Comment.Special */
+    c-[o]  { color: #222222 } /* Operator */
+    c-[p]  { color: #222222 } /* Punctuation */
+    c-[ow] { color: #222222 } /* Operator.Word */
+    c-[s]  { color: #664400 } /* Literal.String */
+    c-[t]  { color: #664400 } /* Literal.String.Single */
+    c-[u]  { color: #664400 } /* Literal.String.Double */
+    c-[sb] { color: #664400 } /* Literal.String.Backtick */
+    c-[sc] { color: #664400 } /* Literal.String.Char */
+    c-[sd] { color: #664400 } /* Literal.String.Doc */
+    c-[se] { color: #664400 } /* Literal.String.Escape */
+    c-[sh] { color: #664400 } /* Literal.String.Heredoc */
+    c-[si] { color: #664400 } /* Literal.String.Interpol */
+    c-[sx] { color: #664400 } /* Literal.String.Other */
+    c-[sr] { color: #664400 } /* Literal.String.Regex */
+    c-[ss] { color: #664400 } /* Literal.String.Symbol */
+}
 </style>
 <style>/* Boilerplate: style-var-click-highlighting */
 /*
@@ -754,9 +785,9 @@ var[data-var-color="6"] { --var-vg: #FFBCF2; }
     <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
 </a>
 </p>
-   <h1 class="p-name no-ref" id="title">Incremental Font Transfer</h1>
+   <h1 class="no-ref p-name" id="title">Incremental Font Transfer</h1>
    <p id="w3c-state"><a href="https://www.w3.org/standards/types/#ED">Editor’s Draft</a>,
-    <time class="dt-updated" datetime="2026-05-14">14 May 2026</time></p>
+    <time class="dt-updated" datetime="2026-06-01">1 June 2026</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -769,9 +800,9 @@ var[data-var-color="6"] { --var-vg: #FFBCF2; }
      <dt>Implementation Report:
      <dd><a href="https://wpt.fyi/results/IFT">https://wpt.fyi/results/IFT</a>
      <dt class="editor">Editors:
-     <dd class="editor p-author h-card vcard" data-editor-id="1438"><a class="p-name fn u-url url" href="https://svgees.us/">Chris Lilley</a> (<span class="p-org org">W3C</span>)
-     <dd class="editor p-author h-card vcard" data-editor-id="73905"><a class="p-name fn u-email email" href="mailto:grieger@google.com">Garret Rieger</a> (<span class="p-org org">Google Inc.</span>)
-     <dd class="editor p-author h-card vcard" data-editor-id="137857"><a class="p-name fn u-email email" href="mailto:siterum@adobe.com">Skef Iterum</a> (<span class="p-org org">Adobe Inc.</span>)
+     <dd class="editor h-card p-author vcard" data-editor-id="1438"><a class="fn p-name u-url url" href="https://svgees.us/">Chris Lilley</a> (<span class="org p-org">W3C</span>)
+     <dd class="editor h-card p-author vcard" data-editor-id="73905"><a class="email fn p-name u-email" href="mailto:grieger@google.com">Garret Rieger</a> (<span class="org p-org">Google Inc.</span>)
+     <dd class="editor h-card p-author vcard" data-editor-id="137857"><a class="email fn p-name u-email" href="mailto:siterum@adobe.com">Skef Iterum</a> (<span class="org p-org">Adobe Inc.</span>)
     </dl>
    </div>
    <div data-fill-with="warning"></div>
@@ -780,7 +811,7 @@ var[data-var-color="6"] { --var-vg: #FFBCF2; }
    <hr title="Separator for header">
   </div>
   <div class="p-summary" data-fill-with="abstract">
-   <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
+   <h2 class="heading no-num no-ref no-toc settled" id="abstract"><span class="content">Abstract</span></h2>
    <p>This specification defines a method to incrementally transfer a font
 from server to client. The client loads only the portion(s) of the font that
 they actually need, significantly reducing data transfer. Multiple incremental
@@ -790,7 +821,7 @@ unicode-range by avoiding damage to layout (kerning, ligatures, etc) rules,
 meaning it can efficiently support fine grained increments to latin and
 to complex scripts like Indic or Arabic.</p>
   </div>
-  <h2 class="no-num no-toc no-ref heading settled" id="sotd"><span class="content">Status of this document</span></h2>
+  <h2 class="heading no-num no-ref no-toc settled" id="sotd"><span class="content">Status of this document</span></h2>
   <div data-fill-with="status">
    <p>
 	This is a public copy of the editors’ draft.
@@ -821,8 +852,8 @@ to complex scripts like Indic or Arabic.</p>
   </div>
   <div data-fill-with="at-risk"></div>
   <nav data-fill-with="table-of-contents" id="toc">
-   <h2 class="no-num no-toc no-ref" id="contents">Table of Contents</h2>
-   <ol class="toc" role="directory">
+   <h2 class="no-num no-ref no-toc" id="contents">Table of Contents</h2>
+   <ol class="toc">
     <li>
      <a href="#intro"><span class="secno">1</span> <span class="content">Introduction</span></a>
      <ol class="toc">
@@ -938,7 +969,7 @@ Appendix B: Extension Algorithm Example Execution</span></a>
      <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
      <ol class="toc">
       <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
-      <li><a href="#informative"><span class="secno"></span> <span class="content">Informative References</span></a>
+      <li><a href="#informative"><span class="secno"></span> <span class="content">Non-Normative References</span></a>
      </ol>
    </ol>
   </nav>
@@ -1215,7 +1246,7 @@ by default in common shaper implementations. When forming a <a data-link-type="d
 should typically include all features found in <a href="#feature-tag-list">Appendix A: Default Feature Tags</a> in the subset definition. However, in some cases the client might
 know that the specific shaper which will be used may not make use of some features in <a href="#feature-tag-list">Appendix A: Default Feature Tags</a> and may
 opt to exclude those unused features from the subset definition.</p>
-   <h3 class="conform client heading settled algorithm" data-algorithm="Incremental Font Extension Algorithm" data-level="4.3" id="extend-font-subset"><span class="secno">4.3. </span><span class="content">Incremental Font Extension Algorithm</span><a class="self-link" href="#extend-font-subset"></a></h3>
+   <h3 class="algorithm client conform heading settled" data-algorithm="Incremental Font Extension Algorithm" data-level="4.3" id="extend-font-subset"><span class="secno">4.3. </span><span class="content">Incremental Font Extension Algorithm</span><a class="self-link" href="#extend-font-subset"></a></h3>
    <p>The following algorithm is used by a client to extend an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font③">incremental</a> <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset⑦">font subset</a> to cover additional
 code points, layout features and/or design space. This algorithm incrementally selects and applies patches to the font one at a time, loading
 them as needed. As an important optimization to minimize network round trips it permits loads to be started for all patches that will eventually
@@ -1526,13 +1557,13 @@ the font, but should only use it for the rendering of code points, features, and
 <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset">Extend an Incremental Font Subset</a> within each invalidation grouping any patches which failed to load are excluded from selection.
 If an invalidation group is non empty and being selected from, but only contains failed patches then extension has failed and cannot
 continue.</p>
-   <p><span class="conform client" id="conform-stop-extend-after-errors">In the case of all other errors the client must not attempt to further extend the font subset.</span></p>
+   <p><span class="client conform" id="conform-stop-extend-after-errors">In the case of all other errors the client must not attempt to further extend the font subset.</span></p>
    <h3 class="heading settled" data-level="4.4" id="invalidating-patch-selection"><span class="secno">4.4. </span><span class="content">Selecting Invalidating Patches</span><a class="self-link" href="#invalidating-patch-selection"></a></h3>
    <p>During execution of the <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①">Extend an Incremental Font Subset</a> algorithm in some cases it’s necessary to select a single invalidating (full or partial)
 patch entry from a list of candidate entries. The selection criteria used has a direct impact on the total number of round trips that will be needed to
 perform the extension. Round trips are costly so for maximum performance patches should be selected in a way that minimizes the total number of needed
 round trips.</p>
-   <p><span class="conform client" id="conform-required-selection-criteria">The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 8
+   <p><span class="client conform" id="conform-required-selection-criteria">The following selection criteria minimizes round trips and must be used by the client when selecting a single partial or full invalidation patch in step 8
 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset②">Extend an Incremental Font Subset</a></span>:</p>
    <ol>
     <li data-md>
@@ -1623,7 +1654,7 @@ incremental font:</p>
 
     <c- k>if</c-> <c- n>current_end</c-> <c- o>></c-> <c- n>current_start</c-><c- p>:</c->
       <c- n>supported_spans</c-><c- o>.</c-><c- n>append</c-><c- p>(</c-><c- n>Span</c-><c- p>(</c-><c- n>current_start</c-><c- p>,</c-> <c- n>current_end</c-> <c- o>-</c-> <c- mi>1</c-><c- p>))</c->
-      <c- c1># i isn’t incremented so the current code point can be checked on it’s own</c->
+      <c- c1># i isn't incremented so the current code point can be checked on it's own</c->
       <c- c1># in the next iteration.</c->
     <c- k>else</c-><c- p>:</c->
       <c- n>i</c-> <c- o>+=</c-> <c- mi>1</c->
@@ -1636,7 +1667,7 @@ incremental font:</p>
 <c- c1># Returns true if ift_font has support for rendering content covered by subset_def.</c->
 <c- k>def</c-> <c- nf>supports_subset_def</c-><c- p>(</c-><c- n>ift_font</c-><c- p>,</c-> <c- n>subset_def</c-><c- p>):</c->
   <c- c1># Return true only if both of the following two checks are true:</c->
-  <c- c1># - Each code point in subset_def is mapped to a glyph id other than '0' by ift_font’s cmap table.</c->
+  <c- c1># - Each code point in subset_def is mapped to a glyph id other than '0' by ift_font's cmap table.</c->
   <c- c1># - After executing the "Extend an Incremental Font Subset" algorithm on ift_font with subset_def and stopping at step 6 the</c->
   <c- c1>#   entry list is empty.</c->
 </pre>
@@ -1649,7 +1680,7 @@ relevant patch is loading. Once the missing patch arrives and has been applied t
 code points may change as a result of the substitution.</p>
    <p class="note" role="note"><span class="marker">Note:</span> The "supported_spans(...)" check above is not intended to be used to drive incremental font extension. Guidelines for
 forming target subset definitions for executions of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset⑦">Extend an Incremental Font Subset</a> are given in <a href="#target-subset-definitions">§ 4.5 Target Subset Definition</a>.</p>
-   <h3 class="conform client heading settled algorithm" data-algorithm="Fully Expanding a Font" data-level="4.7" id="fully-expanding-a-font"><span class="secno">4.7. </span><span class="content">Fully Expanding a Font</span><a class="self-link" href="#fully-expanding-a-font"></a></h3>
+   <h3 class="algorithm client conform heading settled" data-algorithm="Fully Expanding a Font" data-level="4.7" id="fully-expanding-a-font"><span class="secno">4.7. </span><span class="content">Fully Expanding a Font</span><a class="self-link" href="#fully-expanding-a-font"></a></h3>
    <p>This sections defines an algorithm that can be used to transform an incremental font into a fully expanded non-incremental font. This
 process loads all available data provided by the incremental font and produces a single static font file that contains no further
 patches to be applied.</p>
@@ -1789,12 +1820,12 @@ the encoded bytes at the start of every iteration to pick up any changes made in
      <tr>
       <td>uint16
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-maxglyphmapentryindex">maxGlyphMapEntryIndex</dfn>
-      <td><span class="conform client encoder" id="conform-format1-entry-index-maximum">The largest <a data-link-type="dfn" href="#glyph-map" id="ref-for-glyph-map">Glyph Map</a> entry index encoded in this table. Must be less than or equal to maxEntryIndex.</span>
+      <td><span class="client conform encoder" id="conform-format1-entry-index-maximum">The largest <a data-link-type="dfn" href="#glyph-map" id="ref-for-glyph-map">Glyph Map</a> entry index encoded in this table. Must be less than or equal to maxEntryIndex.</span>
      <tr>
       <td>uint24
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-glyphcount">glyphCount</dfn>
       <td>
-       <span class="conform client encoder" id="conform-format1-glyph-count-matches">Number of glyphs that mappings are provided for.
+       <span class="client conform encoder" id="conform-format1-glyph-count-matches">Number of glyphs that mappings are provided for.
         Must match the number of glyphs in the font file.</span>
 
 
@@ -1834,7 +1865,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
       <td><dfn class="dfn-paneled" data-dfn-for="Format 1 Patch Map" data-dfn-type="dfn" data-noexport id="format-1-patch-map-patchformat">patchFormat</dfn>
       <td>
       Specifies the format of the patches linked to by urlTemplate.
-      <span class="conform client encoder" id="conform-format1-valid-format-number">Must be set to one of the format numbers from  the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table.</span>
+      <span class="client conform encoder" id="conform-format1-valid-format-number">Must be set to one of the format numbers from  the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table.</span>
     
      <tr>
       <td>uint32
@@ -1955,7 +1986,7 @@ the encoded bytes at the start of every iteration to pick up any changes made in
     
    </table>
    <p>An entry map record matches any entry indices that are greater than or equal to firstEntryIndex and less than or equal to  lastEntryIndex.</p>
-   <h5 class="conform client heading settled algorithm" data-algorithm="Interpreting Format 1" data-level="5.3.1.1" id="interpreting-patch-map-format-1"><span class="secno">5.3.1.1. </span><span class="content">Interpreting Format 1</span><a class="self-link" href="#interpreting-patch-map-format-1"></a></h5>
+   <h5 class="algorithm client conform heading settled" data-algorithm="Interpreting Format 1" data-level="5.3.1.1" id="interpreting-patch-map-format-1"><span class="secno">5.3.1.1. </span><span class="content">Interpreting Format 1</span><a class="self-link" href="#interpreting-patch-map-format-1"></a></h5>
    <p>This algorithm is used to convert a format 1 patch map into a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries③">patch map entries</a>.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-interpret-format-1-patch-map">Interpret Format 1 Patch Map</dfn></p>
    <p>The inputs to this algorithm are:</p>
@@ -2055,7 +2086,7 @@ existing entry’s subset definition.</p>
    </ol>
    <p class="note" role="note"><span class="marker">Note:</span> while an encoding is not required to include entries for all entry indices in [0, <a data-link-type="dfn" href="#format-1-patch-map-maxentryindex" id="ref-for-format-1-patch-map-maxentryindex⑥">maxEntryIndex</a>], it is
 recommended that it do so for maximum compactness.</p>
-   <h5 class="conform client heading settled algorithm" data-algorithm="Remove Entries from Format 1" data-level="5.3.1.2" id="remove-entries-format-1"><span class="secno">5.3.1.2. </span><span class="content">Remove Entries from Format 1</span><a class="self-link" href="#remove-entries-format-1"></a></h5>
+   <h5 class="algorithm client conform heading settled" data-algorithm="Remove Entries from Format 1" data-level="5.3.1.2" id="remove-entries-format-1"><span class="secno">5.3.1.2. </span><span class="content">Remove Entries from Format 1</span><a class="self-link" href="#remove-entries-format-1"></a></h5>
    <p>This algorithm is used to remove entries from a format 1 patch map. This removal modifies the bytes of the patch map but does not
 change the number of bytes.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-remove-entries-from-format-1-patch-map">Remove Entries from Format 1 Patch Map</dfn></p>
@@ -2121,7 +2152,7 @@ an error.</p>
       <td><dfn class="dfn-paneled" data-dfn-for="Format 2 Patch Map" data-dfn-type="dfn" data-noexport id="format-2-patch-map-defaultpatchformat">defaultPatchFormat</dfn>
       <td>
       Specifies the format of the patches linked to by urlTemplate (unless overridden by an entry).
-      <span class="conform client encoder" id="conform-format2-valid-format-number">Must be set to one of the format numbers from the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table.</span>
+      <span class="client conform encoder" id="conform-format2-valid-format-number">Must be set to one of the format numbers from the <a href="#font-patch-formats-summary">§ 6.1 Formats Summary</a> table.</span>
     
      <tr>
       <td>uint24
@@ -2313,11 +2344,11 @@ being requested.</p>
       <td>Fixed
       <td><dfn class="dfn-paneled" data-dfn-for="Design Space Segment" data-dfn-type="dfn" data-noexport id="design-space-segment-end">end</dfn>
       <td>
-      End (inclusive) of the segment. <span class="conform client encoder" id="conform-design-space-segment-end-valid-value">Must be greater than or equal to start.</span> This value uses the user axis scale:
+      End (inclusive) of the segment. <span class="client conform encoder" id="conform-design-space-segment-end-valid-value">Must be greater than or equal to start.</span> This value uses the user axis scale:
       <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otvaroverview#coordinate-scales-and-normalization">OpenType Specification § otvaroverview#coordinate-scales-and-normalization</a>.
     
    </table>
-   <h5 class="conform client heading settled algorithm" data-algorithm="Interpreting Format 2" data-level="5.3.2.1" id="interpreting-patch-map-format-2"><span class="secno">5.3.2.1. </span><span class="content">Interpreting Format 2</span><a class="self-link" href="#interpreting-patch-map-format-2"></a></h5>
+   <h5 class="algorithm client conform heading settled" data-algorithm="Interpreting Format 2" data-level="5.3.2.1" id="interpreting-patch-map-format-2"><span class="secno">5.3.2.1. </span><span class="content">Interpreting Format 2</span><a class="self-link" href="#interpreting-patch-map-format-2"></a></h5>
    <p>This algorithm is used to convert a format 2 <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑧">patch map</a> into a list of <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑧">patch map entries</a>.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-interpret-format-2-patch-map">Interpret Format 2 Patch Map</dfn></p>
    <p>The inputs to this algorithm are:</p>
@@ -2523,7 +2554,7 @@ failed then, this encoding is invalid return an error.</p>
      <p>Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>,
  <var>consumed id string bytes</var>, and <var>ignored</var>.</p>
    </ol>
-   <h5 class="conform client heading settled algorithm" data-algorithm="Remove Entries from Format 2" data-level="5.3.2.2" id="remove-entries-format-2"><span class="secno">5.3.2.2. </span><span class="content">Remove Entries from Format 2</span><a class="self-link" href="#remove-entries-format-2"></a></h5>
+   <h5 class="algorithm client conform heading settled" data-algorithm="Remove Entries from Format 2" data-level="5.3.2.2" id="remove-entries-format-2"><span class="secno">5.3.2.2. </span><span class="content">Remove Entries from Format 2</span><a class="self-link" href="#remove-entries-format-2"></a></h5>
    <p>This algorithm is used to remove entries from a format 2 patch map. This removal modifies the bytes of the patch map but does not
 change the number of bytes.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-remove-entries-from-format-2-patch-map">Remove Entries from Format 2 Patch Map</dfn></p>
@@ -2544,7 +2575,7 @@ at this point.</p>
     <li data-md>
      <p>The return value of <a data-link-type="abstract-op" href="#abstract-opdef-interpret-format-2-patch-map" id="ref-for-abstract-opdef-interpret-format-2-patch-map③">Interpret Format 2 Patch Map</a> is not used.</p>
    </ul>
-   <h5 class="conform client heading settled algorithm" data-algorithm="Sparse Bit Set" data-level="5.3.2.3" id="sparse-bit-set-decoding"><span class="secno">5.3.2.3. </span><span class="content">Sparse Bit Set</span><a class="self-link" href="#sparse-bit-set-decoding"></a></h5>
+   <h5 class="algorithm client conform heading settled" data-algorithm="Sparse Bit Set" data-level="5.3.2.3" id="sparse-bit-set-decoding"><span class="secno">5.3.2.3. </span><span class="content">Sparse Bit Set</span><a class="self-link" href="#sparse-bit-set-decoding"></a></h5>
    <p>A sparse bit set is a data structure which compactly stores a set of distinct unsigned integers. The set is represented as a tree where
 each node has a fixed number of children that recursively sub-divides an interval into equal partitions. A tree of height <i>H</i> with
 branching factor <i>B</i> can store set membership for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree
@@ -2717,7 +2748,7 @@ byte string:
 ]
 </pre>
    </div>
-   <h4 class="conform client heading settled algorithm" data-algorithm="URL Templates" data-level="5.3.3" id="url-templates"><span class="secno">5.3.3. </span><span class="content">URL Templates</span><a class="self-link" href="#url-templates"></a></h4>
+   <h4 class="algorithm client conform heading settled" data-algorithm="URL Templates" data-level="5.3.3" id="url-templates"><span class="secno">5.3.3. </span><span class="content">URL Templates</span><a class="self-link" href="#url-templates"></a></h4>
    <p>URL templates are used to compress the URL strings associated with each patch map entry. Each patch mapping table
 provides a URL template and then the URL string for each entry is produced by expanding the common template using
 each entry’s ID as an input. The output of template expansion is a <a data-link-type="biblio" href="#biblio-utf-8" title="UTF-8, a transformation format of ISO 10646">[UTF-8]</a> encoded string.</p>
@@ -2827,7 +2858,7 @@ expansion is finished, return <var>URL string</var>.</p>
       <td><var>id32</var>
       <td>
       The input <var>entry ID</var> encoded as a <a href="https://www.rfc-editor.org/rfc/rfc4648#section-7">base32hex</a> string (using the digits 0-9, A-V) with padding
-      omitted.  <span class="conform client" id="conform-entry-id-must-be-converted">When <var>entry ID</var> is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
+      omitted.  <span class="client conform" id="conform-entry-id-must-be-converted">When <var>entry ID</var> is an unsigned integer it must first be converted to a big endian 32 bit unsigned integer,
       but then all leading bytes that are equal to 0 are removed before encoding.</span>  (For example, when the
       integer is less than 256 only one byte is encoded.) If <var>entry ID</var> is 0 then one zero byte is encoded. When
       <var>entry ID</var> is a string the raw bytes are encoded as base32hex.
@@ -2860,8 +2891,8 @@ expansion is finished, return <var>URL string</var>.</p>
       <td><var>id64</var>
       <td>
       The input <var>entry ID</var> encoded as a <a href="https://www.rfc-editor.org/rfc/rfc4648#section-5">base64url</a> string (using the digits A-Z, a-z, 0-9, -
-      (minus) and _ (underline)) with padding included. <span class="conform client" id="conform-equal-sign-encoded">Because the padding character is '=', it must
-      be URL-encoded as '%3D'.</span>  <span class="conform client" id="conform-entry-id-converted">When <var>entry ID</var> is an unsigned integer it must first be converted to a big
+      (minus) and _ (underline)) with padding included. <span class="client conform" id="conform-equal-sign-encoded">Because the padding character is '=', it must
+      be URL-encoded as '%3D'.</span>  <span class="client conform" id="conform-entry-id-converted">When <var>entry ID</var> is an unsigned integer it must first be converted to a big
       endian 32 bit unsigned integer, but then all leading bytes that are equal to 0 are removed before encoding.</span>
       (For example, when the integer is less than 256 only one byte is encoded.) If the <var>entry ID</var> is 0 then one
       zero byte is encoded. When the <var>entry ID</var> is a string its raw bytes are encoded as
@@ -3016,7 +3047,7 @@ or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-fo
      <tr>
       <td>Tag
       <td>format
-      <td><span class="conform client encoder" id="conform-table-keyed-format-equals-iftk">Identifies the format as table keyed, must be set to 'iftk'</span>
+      <td><span class="client conform encoder" id="conform-table-keyed-format-equals-iftk">Identifies the format as table keyed, must be set to 'iftk'</span>
      <tr>
       <td>uint32
       <td>reserved
@@ -3032,7 +3063,7 @@ or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-fo
      <tr>
       <td>Offset32
       <td><dfn class="dfn-paneled" data-dfn-for="Table keyed patch" data-dfn-type="dfn" data-noexport id="table-keyed-patch-patches">patches</dfn>[patchesCount+1]
-      <td>Each entry is an offset from the start of this table to a <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch">TablePatch</a>. <span class="conform client encoder" id="conform-table-keyed-patches-sort-ascending">Offsets must be sorted in ascending order.</span>
+      <td>Each entry is an offset from the start of this table to a <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch">TablePatch</a>. <span class="client conform encoder" id="conform-table-keyed-patches-sort-ascending">Offsets must be sorted in ascending order.</span>
    </table>
    <p>The difference between two consecutive offsets in the <a data-link-type="dfn" href="#table-keyed-patch-patches" id="ref-for-table-keyed-patch-patches">patches</a> array gives the size
 of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">TablePatch</a>.</p>
@@ -3060,7 +3091,7 @@ of that <a data-link-type="dfn" href="#tablepatch" id="ref-for-tablepatch①">Ta
       <td><dfn class="dfn-paneled" data-dfn-for="TablePatch" data-dfn-type="dfn" data-noexport id="tablepatch-brotlistream">brotliStream</dfn>[variable]
       <td>Brotli encoded byte stream.
    </table>
-   <h4 class="conform client heading settled algorithm" data-algorithm="Applying Table Keyed Patches" data-level="6.2.1" id="apply-table-keyed"><span class="secno">6.2.1. </span><span class="content">Applying Table Keyed Patches</span><a class="self-link" href="#apply-table-keyed"></a></h4>
+   <h4 class="algorithm client conform heading settled" data-algorithm="Applying Table Keyed Patches" data-level="6.2.1" id="apply-table-keyed"><span class="secno">6.2.1. </span><span class="content">Applying Table Keyed Patches</span><a class="self-link" href="#apply-table-keyed"></a></h4>
    <p>This <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm">patch application algorithm</a> is used to apply a table keyed patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑤">font subset</a> to cover additional code points,
 features, and/or design-variation space.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-table-keyed-patch">Apply table keyed patch</dfn></p>
@@ -3111,12 +3142,12 @@ are listed in the <a data-link-type="dfn" href="#table-keyed-patch-patches" id="
 <var>extended font subset</var> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag①">tag</a>. Continue to the next entry.</p>
       <li data-md>
        <p>If bit 0 (least significant bit) of <a data-link-type="dfn" href="#tablepatch-flags" id="ref-for-tablepatch-flags①">flags</a> is set, then decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream①">brotliStream</a> following
-<a href="https://www.rfc-editor.org/rfc/rfc7932#section-10"><cite>Brotli Compressed Data Format</cite> § 10 Decoding Algorithm</a>. No shared dictionary is used. If the decoded data is larger than <a data-link-type="dfn" href="#tablepatch-maxuncompressedlength" id="ref-for-tablepatch-maxuncompressedlength">maxUncompressedLength</a>
+<a href="https://www.rfc-editor.org/info/rfc7932/#section-10"><cite>Brotli Compressed Data Format</cite> § 10 Decoding Algorithm</a>. No shared dictionary is used. If the decoded data is larger than <a data-link-type="dfn" href="#tablepatch-maxuncompressedlength" id="ref-for-tablepatch-maxuncompressedlength">maxUncompressedLength</a>
 return an error. If there is any data in <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream②">brotliStream</a> which was not used by the decoding process return an error.
 Add a <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> to <var>extended font subset</var> identified by
 <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag②">tag</a> with it’s contents set to the decoded <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream③">brotliStream</a>. Continue to the next entry.</p>
       <li data-md>
-       <p>Otherwise, decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream④">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10"><cite>Brotli Compressed Data Format</cite> § 10 Decoding Algorithm</a> and using the
+       <p>Otherwise, decode <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream④">brotliStream</a> following <a href="https://www.rfc-editor.org/info/rfc7932/#section-10"><cite>Brotli Compressed Data Format</cite> § 10 Decoding Algorithm</a> and using the
 <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a> identified by <a data-link-type="dfn" href="#tablepatch-tag" id="ref-for-tablepatch-tag③">tag</a> in <var>base font subset</var>
 as a <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-15#section-3.2">shared LZ77 dictionary</a>. If no such table exists return an error. If the decoded data is
 larger than <a data-link-type="dfn" href="#tablepatch-maxuncompressedlength" id="ref-for-tablepatch-maxuncompressedlength①">maxUncompressedLength</a> return an error. If there is any data in <a data-link-type="dfn" href="#tablepatch-brotlistream" id="ref-for-tablepatch-brotlistream⑤">brotliStream</a> which was
@@ -3143,7 +3174,7 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
      <tr>
       <td>Tag
       <td>format
-      <td><span class="conform client encoder" id="conform-conform-glyph-keyed-format-equals-ifgk">Identifies the format as glyph keyed, must be set to 'ifgk'</span>
+      <td><span class="client conform encoder" id="conform-conform-glyph-keyed-format-equals-ifgk">Identifies the format as glyph keyed, must be set to 'ifgk'</span>
      <tr>
       <td>uint32
       <td>reserved
@@ -3187,13 +3218,13 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-glyphids">glyphIds</dfn>[glyphCount]
       <td>
       An array of glyph indices included in the patch. Elements are uint24’s if bit 0 (least significant bit) of
-      <a data-link-type="dfn" href="#glyph-keyed-patch-flags" id="ref-for-glyph-keyed-patch-flags">flags</a> is set, otherwise elements are uint16’s. <span class="conform client" id="conform-glyph-keyed-glyph-ids-sort-ascending-unique">Must be in ascending sorted order and must not
+      <a data-link-type="dfn" href="#glyph-keyed-patch-flags" id="ref-for-glyph-keyed-patch-flags">flags</a> is set, otherwise elements are uint16’s. <span class="client conform" id="conform-glyph-keyed-glyph-ids-sort-ascending-unique">Must be in ascending sorted order and must not
       contain any duplicate values.</span>
     
      <tr>
       <td>Tag
       <td><dfn class="dfn-paneled" data-dfn-for="GlyphPatches" data-dfn-type="dfn" data-noexport id="glyphpatches-tables">tables</dfn>[tableCount]
-      <td>An array of <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> (by tag) included in the patch. <span class="conform client encoder" id="conform-glyph-keyed-tables-sort-ascending-unique">Must be in ascending sorted
+      <td>An array of <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> (by tag) included in the patch. <span class="client conform encoder" id="conform-glyph-keyed-tables-sort-ascending-unique">Must be in ascending sorted
       order and must not contain any duplicate values.</span> For sorting tag values are interpreted as a 4 byte big endian
       unsigned integer and sorted by the integer value.
      <tr>
@@ -3203,7 +3234,7 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
       An array of offsets of to glyph data for each table. The first <a data-link-type="dfn" href="#glyphpatches-glyphcount" id="ref-for-glyphpatches-glyphcount">glyphCount</a> offsets corresponding to
       <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables">tables[0]</a>, the next <a data-link-type="dfn" href="#glyphpatches-glyphcount" id="ref-for-glyphpatches-glyphcount①">glyphCount</a> offsets (if present) corresponding to
       <a data-link-type="dfn" href="#glyphpatches-tables" id="ref-for-glyphpatches-tables①">tables[1]</a>, and so on. All offsets are from the start of the <a data-link-type="dfn" href="#glyphpatches" id="ref-for-glyphpatches①">GlyphPatches</a> table.
-      <span class="conform client encoder" id="conform-glyph-keyed-glyph-data-offsets-sort-ascending">Offsets must be sorted in ascending order.</span>
+      <span class="client conform encoder" id="conform-glyph-keyed-glyph-data-offsets-sort-ascending">Offsets must be sorted in ascending order.</span>
     
      <tr>
       <td>uint8
@@ -3214,7 +3245,7 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
    </table>
    <p>The difference between two consecutive offsets in the <a data-link-type="dfn" href="#glyphpatches-glyphdataoffsets" id="ref-for-glyphpatches-glyphdataoffsets">glyphDataOffsets</a> array gives the size
 of that glyph data.</p>
-   <h4 class="conform client heading settled algorithm" data-algorithm="Applying Glyph Keyed Patches" data-level="6.3.1" id="apply-glyph-keyed"><span class="secno">6.3.1. </span><span class="content">Applying Glyph Keyed Patches</span><a class="self-link" href="#apply-glyph-keyed"></a></h4>
+   <h4 class="algorithm client conform heading settled" data-algorithm="Applying Glyph Keyed Patches" data-level="6.3.1" id="apply-glyph-keyed"><span class="secno">6.3.1. </span><span class="content">Applying Glyph Keyed Patches</span><a class="self-link" href="#apply-glyph-keyed"></a></h4>
    <p>This <a data-link-type="dfn" href="#patch-application-algorithm" id="ref-for-patch-application-algorithm①">patch application algorithm</a> is used to apply a glyph keyed patch to extend a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①⑨">font subset</a> to cover additional code points,
 features, and/or design-variation space.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-apply-glyph-keyed-patch">Apply glyph keyed patch</dfn></p>
@@ -3244,7 +3275,7 @@ features, and/or design-variation space.</p>
 If there is no match, or <var>base font subset</var> does not have either an 'IFT ' or 'IFTX' table, then patch application has
 failed, return an error.</p>
     <li data-md>
-     <p>Decode the brotli encoded data in <a data-link-type="dfn" href="#glyph-keyed-patch-brotlistream" id="ref-for-glyph-keyed-patch-brotlistream①">brotliStream</a> following <a href="https://www.rfc-editor.org/rfc/rfc7932#section-10"><cite>Brotli Compressed Data Format</cite> § 10 Decoding Algorithm</a>. The
+     <p>Decode the brotli encoded data in <a data-link-type="dfn" href="#glyph-keyed-patch-brotlistream" id="ref-for-glyph-keyed-patch-brotlistream①">brotliStream</a> following <a href="https://www.rfc-editor.org/info/rfc7932/#section-10"><cite>Brotli Compressed Data Format</cite> § 10 Decoding Algorithm</a>. The
 decoded data is a <a data-link-type="dfn" href="#glyphpatches" id="ref-for-glyphpatches②">GlyphPatches</a> table. If the decoded data is larger than <a data-link-type="dfn" href="#glyph-keyed-patch-maxuncompressedlength" id="ref-for-glyph-keyed-patch-maxuncompressedlength">maxUncompressedLength</a> return an
 error</p>
     <li data-md>
@@ -3264,8 +3295,8 @@ of the associated glyph data is <a data-link-type="dfn" href="#glyphpatches-glyp
        <p>The specific process for synthesizing the new table, depends on the specified format of the
 <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Any non-glyph associated data should be copied from the table in
 <var>base font subset</var>. Tables of the type <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>,
-<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, or <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> are supported. <span class="conform client" id="conform-table-entries-ignore-others">Entries for tables
-of any other types must be ignored.</span> <span class="conform client" id="conform-updating-glyf-updates-loca">When updating <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a> the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a> table must be updated as
+<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, or <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> are supported. <span class="client conform" id="conform-table-entries-ignore-others">Entries for tables
+of any other types must be ignored.</span> <span class="client conform" id="conform-updating-glyf-updates-loca">When updating <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a> the <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a> table must be updated as
 well.</span> No other tables in the font can be modified as a result of this step. Notably this means that a patch cannot add glyphs
 with indices beyond the numGlyphs specified in <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/maxp#">maxp</a>.</p>
        <p><a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a>, and <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a> have variable sized offsets to per glyph data. If
@@ -3471,7 +3502,7 @@ Any reachable data is retained in the generated font subset, while any unreachab
 <c- n>encode_node</c-><c- p>(</c-><c- n>full_font</c-><c- p>,</c-> <c- n>base_font</c-><c- p>,</c-> <c- n>cur_def</c-><c- p>,</c-> <c- n>subset_definitions</c-><c- p>):</c->
   <c- n>patches</c-> <c- o>=</c-> <c- p>[]</c->
   <c- n>next_fonts</c-> <c- o>=</c-> <c- p>[]</c->
-  
+
   <c- k>for</c-> <c- n>each</c-> <c- n>subset_def</c-> <c- ow>in</c-> <c- n>subset_definitions</c-> <c- ow>not</c-> <c- n>fully</c-> <c- n>covered</c-> <c- n>by</c-> <c- n>cur_def</c-><c- p>:</c->
     <c- n>next_def</c-> <c- o>=</c-> <c- n>subset_def</c-> <c- n>union</c-> <c- n>cur_def</c->
     <c- n>next_font</c-> <c- o>=</c-> <c- n>subset</c-><c- p>(</c-><c- n>full_font</c-><c- p>,</c-> <c- n>next_def</c-><c- p>)</c->
@@ -3485,7 +3516,7 @@ Any reachable data is retained in the generated font subset, while any unreachab
   <c- k>for</c-> <c- n>each</c-> <c- p>(</c-><c- n>next_font</c-><c- p>,</c-> <c- n>next_def</c-><c- p>,</c-> <c- n>patch_url</c-><c- p>)</c-> <c- ow>in</c-> <c- n>next_fonts</c-><c- p>:</c->
     <c- n>patch</c-> <c- o>=</c-> <c- n>table_keyed_patch_diff</c-><c- p>(</c-><c- n>base_font</c-><c- p>,</c-> <c- n>next_font</c-><c- p>)</c->
     <c- n>patches</c-> <c- o>+=</c-> <c- p>(</c-><c- n>patch</c-><c- p>,</c-> <c- n>patch_url</c-><c- p>)</c->
-  
+
   <c- k>return</c-> <c- n>base_font</c-><c- p>,</c-> <c- n>patches</c->
 </pre>
    <p>In this example implementation, if the union of the input base subset definition and the list of subset definitions fully covers the input
@@ -3666,13 +3697,13 @@ the user making an encoding to make appropriate choices. Similarly, it is recomm
 take privacy into account when encoding their own fonts or obtaining already-encoded fonts from third parties.</p>
    <h3 class="heading settled" data-level="8.3" id="per-origin"><span class="secno">8.3. </span><span class="content">Per-origin restriction avoids fingerprinting</span><a class="self-link" href="#per-origin"></a></h3>
    <p>As required by <a data-link-type="biblio" href="#biblio-css-fonts-4" title="CSS Fonts Module Level 4">[css-fonts-4]</a>:</p>
-   <p>"<span class="conform client" id="conform-web-font-not-accessible-from-different-document">A Web Font must not be accessible in any other Document from the one which either is associated with
-  the @font-face rule or owns the FontFaceSet.</span> <span class="conform client" id="conform-web-font-not-accessible-from-other-apps">Other applications on the device must not be able to access
+   <p>"<span class="client conform" id="conform-web-font-not-accessible-from-different-document">A Web Font must not be accessible in any other Document from the one which either is associated with
+  the @font-face rule or owns the FontFaceSet.</span> <span class="client conform" id="conform-web-font-not-accessible-from-other-apps">Other applications on the device must not be able to access
   Web Fonts.</span>" - <a href="https://drafts.csswg.org/css-fonts-4/#web-fonts"><cite>CSS Fonts 4</cite> § 10.2 Web Fonts</a></p>
    <p>Since IFT fonts are treated the same as regular fonts in CSS (<a href="#opt-in">§ 2 Opt-In Mechanism</a>) these requirements apply and avoid information leaking across
   origins.</p>
    <p>Similar requirements apply to font palette values:</p>
-   <p>"<span class="conform client" id="conform-palette-not-accesible-from-different-documents">An author-defined font color palette must only be available to the documents that reference it.</span> Using an author-defined color palette
+   <p>"<span class="client conform" id="conform-palette-not-accesible-from-different-documents">An author-defined font color palette must only be available to the documents that reference it.</span> Using an author-defined color palette
   outside of the documents that reference it would constitute a security leak since the contents of one page would be able to
   affect other pages, something an attacker could use as an attack vector." - <a href="https://drafts.csswg.org/css-fonts-4/#font-palette-values"><cite>CSS Fonts 4</cite> § 9.2 User-defined font color palettes: The @font-palette-values rule</a></p>
    <h2 class="heading settled" data-level="9" id="sec"><span class="secno">9. </span><span class="content">Security Considerations</span><a class="self-link" href="#sec"></a></h2>
@@ -3773,211 +3804,213 @@ to be used by default in most shaper implementations. This list was assembled fr
    </ul>
    <p><b>Layout Features used by Default in Shapers</b></p>
    <table>
-    <tbody>
-     <tr>
-      <th>Tag
-      <th>Name
-     <tr>
-      <td>abvf
-      <td>Above-base Forms
-     <tr>
-      <td>abvm
-      <td>Above-base Mark Positioning
-     <tr>
-      <td>abvs
-      <td>Above-base Substitutions
-     <tr>
-      <td>akhn
-      <td>Akhand
-     <tr>
-      <td>blwf
-      <td>Below-base Forms
-     <tr>
-      <td>blwm
-      <td>Below-base Mark Positioning
-     <tr>
-      <td>blws
-      <td>Below-base Substitutions
-     <tr>
-      <td>calt
-      <td>Contextual Alternates
-     <tr>
-      <td>ccmp
-      <td>Glyph Composition / Decomposition
-     <tr>
-      <td>cfar
-      <td>Conjunct Form After Ro
-     <tr>
-      <td>chws
-      <td>Contextual Half-width Spacing
-     <tr>
-      <td>cjct
-      <td>Conjunct Forms
-     <tr>
-      <td>clig
-      <td>Contextual Ligatures
-     <tr>
-      <td>cswh
-      <td>Contextual Swash
-     <tr>
-      <td>curs
-      <td>Cursive Positioning
-     <tr>
-      <td>dist
-      <td>Distances
-     <tr>
-      <td>dnom
-      <td>Denominators
-     <tr>
-      <td>dtls
-      <td>Dotless Forms
-     <tr>
-      <td>fin2
-      <td>Terminal Forms #2
-     <tr>
-      <td>fin3
-      <td>Terminal Forms #3
-     <tr>
-      <td>fina
-      <td>Terminal Forms
-     <tr>
-      <td>flac
-      <td>Flattened accent forms
-     <tr>
-      <td>frac
-      <td>Fractions
-     <tr>
-      <td>half
-      <td>Half Forms
-     <tr>
-      <td>haln
-      <td>Halant Forms
-     <tr>
-      <td>halt
-      <td>Alternate Half Widths
-     <tr>
-      <td>init
-      <td>Initial Forms
-     <tr>
-      <td>isol
-      <td>Isolated Forms
-     <tr>
-      <td>jalt
-      <td>Justification Alternates
-     <tr>
-      <td>kern
-      <td>Kerning
-     <tr>
-      <td>liga
-      <td>Standard Ligatures
-     <tr>
-      <td>ljmo
-      <td>Leading Jamo Forms
-     <tr>
-      <td>locl
-      <td>Localized Forms
-     <tr>
-      <td>ltra
-      <td>Left-to-right alternates
-     <tr>
-      <td>ltrm
-      <td>Left-to-right mirrored forms
-     <tr>
-      <td>mark
-      <td>Mark Positioning
-     <tr>
-      <td>med2
-      <td>Medial Forms #2
-     <tr>
-      <td>medi
-      <td>Medial Forms
-     <tr>
-      <td>mkmk
-      <td>Mark to Mark Positioning
-     <tr>
-      <td>mset
-      <td>Mark Positioning via Substitution
-     <tr>
-      <td>nukt
-      <td>Nukta Forms
-     <tr>
-      <td>numr
-      <td>Numerators
-     <tr>
-      <td>pref
-      <td>Pre-Base Forms
-     <tr>
-      <td>pres
-      <td>Pre-base Substitutions
-     <tr>
-      <td>pstf
-      <td>Post-base Forms
-     <tr>
-      <td>psts
-      <td>Post-base Substitutions
-     <tr>
-      <td>rand
-      <td>Randomize
-     <tr>
-      <td>rclt
-      <td>Required Contextual Alternates
-     <tr>
-      <td>rkrf
-      <td>Rakar Forms
-     <tr>
-      <td>rlig
-      <td>Required Ligatures
-     <tr>
-      <td>rphf
-      <td>Reph Forms
-     <tr>
-      <td>rtla
-      <td>Right-to-left alternates
-     <tr>
-      <td>rtlm
-      <td>Right-to-left mirrored forms
-     <tr>
-      <td>rvrn
-      <td>Required Variation Alternates
-     <tr>
-      <td>ssty
-      <td>Math script style alternates
-     <tr>
-      <td>stch
-      <td>Stretching Glyph Decomposition
-     <tr>
-      <td>tjmo
-      <td>Trailing Jamo Forms
-     <tr>
-      <td>valt
-      <td>Alternate Vertical Metrics
-     <tr>
-      <td>vatu
-      <td>Vattu Variants
-     <tr>
-      <td>vchw
-      <td>Vertical Contextual Half-width Spacing
-     <tr>
-      <td>vert
-      <td>Vertical Writing
-     <tr>
-      <td>vhal
-      <td>Alternate Vertical Half Metrics
-     <tr>
-      <td>vjmo
-      <td>Vowel Jamo Forms
-     <tr>
-      <td>vkrn
-      <td>Vertical Kerning
-     <tr>
-      <td>vpal
-      <td>Proportional Alternate Vertical Metrics
-     <tr>
-      <td>vrt2
-      <td>Vertical Alternates and Rotation
-     <tr>
-      <td>vrtr
-      <td>Vertical Alternates for Rotation
+    <tr>
+     <th>Tag
+     <th>Name
+    <tr>
+     <td>abvf
+     <td>Above-base Forms
+    <tr>
+     <td>abvm
+     <td>Above-base Mark Positioning
+    <tr>
+     <td>abvs
+     <td>Above-base Substitutions
+    <tr>
+     <td>akhn
+     <td>Akhand
+    <tr>
+     <td>blwf
+     <td>Below-base Forms
+    <tr>
+     <td>blwm
+     <td>Below-base Mark Positioning
+    <tr>
+     <td>blws
+     <td>Below-base Substitutions
+    <tr>
+     <td>calt
+     <td>Contextual Alternates
+    <tr>
+     <td>ccmp
+     <td>Glyph Composition / Decomposition
+    <tr>
+     <td>cfar
+     <td>Conjunct Form After Ro
+    <tr>
+     <td>chws
+     <td>Contextual Half-width Spacing
+    <tr>
+     <td>cjct
+     <td>Conjunct Forms
+    <tr>
+     <td>clig
+     <td>Contextual Ligatures
+    <tr>
+     <td>cswh
+     <td>Contextual Swash
+    <tr>
+     <td>curs
+     <td>Cursive Positioning
+    <tr>
+     <td>dist
+     <td>Distances
+    <tr>
+     <td>dnom
+     <td>Denominators
+    <tr>
+     <td>dtls
+     <td>Dotless Forms
+    <tr>
+     <td>fin2
+     <td>Terminal Forms #2
+    <tr>
+     <td>fin3
+     <td>Terminal Forms #3
+    <tr>
+     <td>fina
+     <td>Terminal Forms
+    <tr>
+     <td>flac
+     <td>Flattened accent forms
+    <tr>
+     <td>frac
+     <td>Fractions
+    <tr>
+     <td>half
+     <td>Half Forms
+    <tr>
+     <td>haln
+     <td>Halant Forms
+    <tr>
+     <td>halt
+     <td>Alternate Half Widths
+    <tr>
+     <td>init
+     <td>Initial Forms
+    <tr>
+     <td>isol
+     <td>Isolated Forms
+    <tr>
+     <td>jalt
+     <td>Justification Alternates
+    <tr>
+     <td>kern
+     <td>Kerning
+    <tr>
+     <td>liga
+     <td>Standard Ligatures
+    <tr>
+     <td>ljmo
+     <td>Leading Jamo Forms
+    <tr>
+     <td>locl
+     <td>Localized Forms
+    <tr>
+     <td>ltra
+     <td>Left-to-right alternates
+    <tr>
+     <td>ltrm
+     <td>Left-to-right mirrored forms
+    <tr>
+     <td>mark
+     <td>Mark Positioning
+    <tr>
+     <td>med2
+     <td>Medial Forms #2
+    <tr>
+     <td>medi
+     <td>Medial Forms
+    <tr>
+     <td>mkmk
+     <td>Mark to Mark Positioning
+    <tr>
+     <td>mset
+     <td>Mark Positioning via Substitution
+    <tr>
+     <td>nukt
+     <td>Nukta Forms
+    <tr>
+     <td>numr
+     <td>Numerators
+    <tr>
+     <td>palt
+     <td>Proportional Alternate Widths
+    <tr>
+     <td>pref
+     <td>Pre-Base Forms
+    <tr>
+     <td>pres
+     <td>Pre-base Substitutions
+    <tr>
+     <td>pstf
+     <td>Post-base Forms
+    <tr>
+     <td>psts
+     <td>Post-base Substitutions
+    <tr>
+     <td>rand
+     <td>Randomize
+    <tr>
+     <td>rclt
+     <td>Required Contextual Alternates
+    <tr>
+     <td>rkrf
+     <td>Rakar Forms
+    <tr>
+     <td>rlig
+     <td>Required Ligatures
+    <tr>
+     <td>rphf
+     <td>Reph Forms
+    <tr>
+     <td>rtla
+     <td>Right-to-left alternates
+    <tr>
+     <td>rtlm
+     <td>Right-to-left mirrored forms
+    <tr>
+     <td>rvrn
+     <td>Required Variation Alternates
+    <tr>
+     <td>ssty
+     <td>Math script style alternates
+    <tr>
+     <td>stch
+     <td>Stretching Glyph Decomposition
+    <tr>
+     <td>tjmo
+     <td>Trailing Jamo Forms
+    <tr>
+     <td>valt
+     <td>Alternate Vertical Metrics
+    <tr>
+     <td>vatu
+     <td>Vattu Variants
+    <tr>
+     <td>vchw
+     <td>Vertical Contextual Half-width Spacing
+    <tr>
+     <td>vert
+     <td>Vertical Writing
+    <tr>
+     <td>vhal
+     <td>Alternate Vertical Half Metrics
+    <tr>
+     <td>vjmo
+     <td>Vowel Jamo Forms
+    <tr>
+     <td>vkrn
+     <td>Vertical Kerning
+    <tr>
+     <td>vpal
+     <td>Proportional Alternate Vertical Metrics
+    <tr>
+     <td>vrt2
+     <td>Vertical Alternates and Rotation
+    <tr>
+     <td>vrtr
+     <td>Vertical Alternates for Rotation
    </table>
    <h2 class="heading settled" id="extension-example"><span class="content">
 Appendix B: Extension Algorithm Example Execution</span><a class="self-link" href="#extension-example"></a></h2>
@@ -4358,8 +4391,8 @@ content covered by the target subset definition.</p>
    </ul>
   </main>
   <div data-fill-with="conformance">
-   <h2 class="no-ref no-num heading settled" id="w3c-conformance"><span class="content">Conformance</span><a class="self-link" href="#w3c-conformance"></a></h2>
-   <h3 class="no-ref no-num heading settled" id="w3c-conventions"><span class="content">Document conventions</span><a class="self-link" href="#w3c-conventions"></a></h3>
+   <h2 class="heading no-num no-ref settled" id="w3c-conformance"><span class="content">Conformance</span><a class="self-link" href="#w3c-conformance"></a></h2>
+   <h3 class="heading no-num no-ref settled" id="w3c-conventions"><span class="content">Document conventions</span><a class="self-link" href="#w3c-conventions"></a></h3>
    <p>Conformance requirements are expressed
     with a combination of descriptive assertions
     and RFC 2119 terminology.
@@ -4394,7 +4427,7 @@ content covered by the target subset definition.</p>
     </p>
    <p class="note" role="note">Note, this is an informative note.</p>
    <section>
-    <h3 class="no-ref no-num heading settled" id="w3c-conformant-algorithms"><span class="content">Conformant Algorithms</span><a class="self-link" href="#w3c-conformant-algorithms"></a></h3>
+    <h3 class="heading no-num no-ref settled" id="w3c-conformant-algorithms"><span class="content">Conformant Algorithms</span><a class="self-link" href="#w3c-conformant-algorithms"></a></h3>
     <p>Requirements phrased in the imperative as part of algorithms
     (such as "strip any leading space characters"
     or "return false and abort these steps")
@@ -4414,8 +4447,8 @@ content covered by the target subset definition.</p>
    </section>
   </div>
   <script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
-  <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
-  <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
+  <h2 class="heading no-num no-ref settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+  <h3 class="heading no-num no-ref settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
    <li><a href="#format-1-patch-map-appliedentriesbitmap">appliedEntriesBitMap</a><span>, in § 5.3.1</span>
    <li><a href="#abstract-opdef-apply-glyph-keyed-patch">Apply glyph keyed patch</a><span>, in § 6.3.1</span>
@@ -4570,7 +4603,7 @@ content covered by the target subset definition.</p>
      <li><a href="#format-2-patch-map-urltemplate">dfn for Format 2 Patch Map</a><span>, in § 5.3.2</span>
     </ul>
   </ul>
-  <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
+  <h3 class="heading no-num no-ref settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="index">
    <li>
     <a data-link-type="biblio">[FETCH]</a> defines the following terms:
@@ -4592,8 +4625,8 @@ content covered by the target subset definition.</p>
      <li><span class="dfn-paneled" id="1a67d341">shaping</span>
     </ul>
   </ul>
-  <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
-  <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+  <h2 class="heading no-num no-ref settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
+  <h3 class="heading no-num no-ref settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
    <dt id="biblio-css-fonts-4">[CSS-FONTS-4]
    <dd>Chris Lilley. <a href="https://drafts.csswg.org/css-fonts-4/"><cite>CSS Fonts Module Level 4</cite></a>. URL: <a href="https://drafts.csswg.org/css-fonts-4/">https://drafts.csswg.org/css-fonts-4/</a>
@@ -4624,7 +4657,7 @@ content covered by the target subset definition.</p>
    <dt id="biblio-woff2">[WOFF2]
    <dd>Vladimir Levantovsky. <a href="https://w3c.github.io/woff/woff2/"><cite>WOFF File Format 2.0</cite></a>. URL: <a href="https://w3c.github.io/woff/woff2/">https://w3c.github.io/woff/woff2/</a>
   </dl>
-  <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
+  <h3 class="heading no-num no-ref settled" id="informative"><span class="content">Non-Normative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
    <dt id="biblio-css-conditional-5">[CSS-CONDITIONAL-5]
    <dd>Chris Lilley; et al. <a href="https://drafts.csswg.org/css-conditional-5/"><cite>CSS Conditional Rules Module Level 5</cite></a>. URL: <a href="https://drafts.csswg.org/css-conditional-5/">https://drafts.csswg.org/css-conditional-5/</a>
