@@ -460,7 +460,7 @@ The algorithm:
 3.  If the compatibility ID in 'IFT ' is equal to the compatibility ID in 'IFTX' this is an error, invoke [$Handle errors$].
 
 4.  For each of [[open-type/otff#table-directory|tables]] 'IFT ' and 'IFTX' (if present): convert the table into a list of entries by
-    invoking [$Interpret Format 1 Patch Map$] or [$Interpret Format 2 Patch Map$]. Concatenate the returned entry lists into a single list,
+    invoking [$Interpret Patch Map$]. Concatenate the returned entry lists into a single list,
     <var>entry list</var>.
     
 5.  For each <var>entry</var> in <var>entry list</var> invoke [$Check entry intersection$] with <var>entry</var> and
@@ -481,8 +481,7 @@ The algorithm:
         Follow the criteria in [[#invalidating-patch-selection]] to select the single entry.
 
     * Otherwise select the entry in <var>no invalidation entry list</var> which is listed first in the [=patch
-        map=]. For [[#patch-map-format-1]] this is the entry with the lowest entry index. For [[#patch-map-format-2]]
-        this is the entry that appears first in the [=Mapping Entries/entries=] array. If entries from both the IFT and
+        map=] (the entry that appears first in the [=Mapping Entries/entries=] array). If entries from both the IFT and
         IFTX tables are candidates then all entries in IFT are considered to come before those in IFTX.
 
 
@@ -783,8 +782,7 @@ of [$Extend an Incremental Font Subset$]</span>:
 4.  Find an entry whose intersection from step 2 is not a strict subset of any other intersection.
 
 5.  Locate any additional entries that are in the same [=patch map=] and have the same intersection as the entry found in step 3. From the this set of
-     entries (including the step 3 pick) the final selection is the entry which is listed first in the [=patch map=]. For [[#patch-map-format-1]] this is the
-     entry with the lowest entry index. For [[#patch-map-format-2]] this is the entry that appears first in the [=Mapping Entries/entries=] array.
+     entries (including the step 3 pick) the final selection is the entry which is listed first in the [=patch map=] (the entry that appears first in the [=Mapping Entries/entries=] array).
 
 Note: a fast and efficient way to find an entry which satisfies the criteria for step 3 is to sort the entries (descending) by the size of the code point
 set intersection, then the size of feature tag set intersection, and finally the size of the design space intersection. The first entry in this sorting is
@@ -982,8 +980,7 @@ additional restrictions:
     structure.</span>
 
 * <span class="conform encoder" id="conform-ift-table-contians-offset">The 'IFT ' [=patch map=] table must contain an offset
-    ([=Format 1 Patch Map/cffCharStringsOffset=], [=Format 1 Patch Map/cff2CharStringsOffset=]
-    [=Format 2 Patch Map/cffCharStringsOffset=], or [=Format 2 Patch Map/cff2CharStringsOffset=])
+    ([=Patch Map Table/cffCharStringsOffset=] or [=Patch Map Table/cff2CharStringsOffset=])
     to the start of the CharStrings INDEX data for the CFF and/or CFF2 table.</span>
 
 These three requirements allow for the glyph keyed patch application implementation on CFF and CFF2 tables to be significantly
@@ -1003,31 +1000,23 @@ to the specific needs of IFT.
 Patch Map Table {#patch-map-table}
 ----------------------------------
 
-A [=patch map=] is encoded in one of two formats:
+This section describes the encoding of the [=patch map=] and defines an algorithm for interpreting bytes encoded in this
+format to produce the list of entries it represents. The [$Extend an Incremental Font Subset$] algorithm invokes the
+interpretation algorithm and operates on the resulting entry list. The encoded bytes are the source of truth at all
+times for the patch map. Patch application during subset extension will alter the encoded bytes of the patch map and as
+a result the entry list derived from the encoded bytes will change. The extension algorithm reinterprets the encoded
+bytes at the start of every iteration to pick up any changes made in the previous iteration.
 
-*  Format 1: a limited, but more compact encoding. It encodes a one-to-one mapping from glyph id to patch URL strings. It does
-    not support [=font subset definitions=] with design space or entries with overlapping subset definitions.
+<dfn export id="patch-map-table-encoding">Patch Map Table</dfn> encoding:
 
-*  Format 2: can encode arbitrary mappings including ones with design space or overlapping subset definitions. However, it
-    is typically less compact than format 1.
-
-Each format defines an algorithm for interpreting bytes encoded with that format to produce the list of entries it represents. The
-[$Extend an Incremental Font Subset$] algorithm invokes the interpretation algorithms and operates on the resulting entry list. The
-encoded bytes are the source of truth at all times for the patch map. Patch application during subset extension will alter the encoded
-bytes of the patch map and as a result the entry list derived from the encoded bytes will change. The extension algorithm reinterprets
-the encoded bytes at the start of every iteration to pick up any changes made in the previous iteration.
-
-### Patch Map Table: Format 1 ### {#patch-map-format-1}
-
-<dfn>Format 1 Patch Map</dfn> encoding:
 <table>
   <tr>
     <th>Type</th><th>Name</th><th>Description</th>
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Format 1 Patch Map">format</dfn></td>
-    <td>Set to 1, identifies this as format 1.</td>
+    <td><dfn for="Patch Map Table">format</dfn></td>
+    <td>Set to 2, identifies the format of this table.</td>
   </tr>
   <tr>
     <td>uint24</td>
@@ -1036,375 +1025,15 @@ the encoded bytes at the start of every iteration to pick up any changes made in
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Format 1 Patch Map">flags</dfn></td>
+    <td><dfn for="Patch Map Table">flags</dfn></td>
     <td>Flags to signal the presence of optional fields.
-        If bit 0 (least significant bit) is set, then [=Format 1 Patch Map/cffCharStringsOffset=] will be present.
-        If bit 1 (least significant bit) is set, then [=Format 1 Patch Map/cff2CharStringsOffset=] will be present.
-    </td>
-  </tr>
-
-  <tr>
-    <td>uint32</td>
-    <td><dfn for="Format 1 Patch Map">compatibilityId</dfn>[4]</td>
-    <td>
-      Unique ID used to identify patches that are compatible with this font (see [[#font-patch-invalidations]]). The encoder chooses this
-      value. The encoder should set it to a random value which has not previously been used while encoding the IFT font.
-    </td>
-  </tr>
-  <tr>
-    <td>uint16</td>
-    <td><dfn for="Format 1 Patch Map">maxEntryIndex</dfn></td>
-    <td>The largest entry index encoded in this table.</td>
-  </tr>
-  <tr>
-    <td>uint16</td>
-    <td><dfn for="Format 1 Patch Map">maxGlyphMapEntryIndex</dfn></td>
-    <td><span class="conform client encoder" id="conform-format1-entry-index-maximum">The largest [=Glyph Map=] entry index encoded in this table. Must be less than or equal to maxEntryIndex.</span></td>
-  </tr>
-  <tr>
-    <td>uint24</td>
-    <td><dfn for="Format 1 Patch Map">glyphCount</dfn></td>
-    <td><span class="conform client encoder" id="conform-format1-glyph-count-matches">Number of glyphs that mappings are provided for.
-        Must match the number of glyphs in the font file.</span>
-
-        Note: the number of glyphs in the font is encoded in the font file. At the time of writing, this value is listed in the
-        [[open-type/maxp|maxp]] table; however, future font format extensions may use alternate tables to encode the value for number of
-        glyphs.
-  </tr>
-  <tr>
-    <td>Offset32</td>
-    <td>glyphMapOffset</td>
-    <td>Offset to a [=Glyph Map=] sub table. Offset is from the start of this table.</td>
-  </tr>
-  <tr>
-    <td>Offset32</td>
-    <td><dfn for="Format 1 Patch Map">featureMapOffset</dfn></td>
-    <td>Offset to a [=Feature Map=] sub table. Offset is from the start of this table. May be null (0).</td>
-  </tr>
-  <tr>
-    <td>uint8</td>
-    <td><dfn for="Format 1 Patch Map">appliedEntriesBitMap</dfn>[(maxEntryIndex + 8)/8]</td>
-    <td>
-      A bit map which tracks which entries have been applied. If bit <code>i</code> is set that indicates the patch for entry
-      <code>i</code> has been applied to this font. Bit 0 is the least significant bit of appliedEntriesBitMap[0], while bit 7 is
-      the most significant bit. Bit 8 is the least significant bit of appliedEntriesBitMap[1] and so on.
-    </td>
-  </tr>
-  <tr>
-    <td>uint16</td>
-    <td>urlTemplateLength</td>
-    <td>
-      Length of the urlTemplate byte array.
-    </td>
-  </tr>
-  <tr>
-    <td>uint8</td>
-    <td><dfn for="Format 1 Patch Map">urlTemplate</dfn>[urlTemplateLength]</td>
-    <td>
-      A byte array containing a [[#url-templates|URL Template]] which is used to produce URL strings associated with each entry.
-    </td>
-  </tr>
-  <tr>
-    <td>uint8</td>
-    <td><dfn for="Format 1 Patch Map">patchFormat</dfn></td>
-    <td>
-      Specifies the format of the patches linked to by urlTemplate.
-      <span class="conform client encoder" id="conform-format1-valid-format-number">Must be set to one of the format numbers from  the [[#font-patch-formats-summary]] table.</span>
+        If bit 0 (least significant bit) is set, then [=Patch Map Table/cffCharStringsOffset=] will be present.
+        If bit 1 (least significant bit) is set, then [=Patch Map Table/cff2CharStringsOffset=] will be present.
     </td>
   </tr>
   <tr>
     <td>uint32</td>
-    <td><dfn for="Format 1 Patch Map">cffCharStringsOffset</dfn></td>
-    <td>
-      Only present if bit 0 (least significant) of [=Format 1 Patch Map/flags=] is set.
-      Gives the offset from the start of the [[open-type/CFF|CFF]] table to the CharStrings INDEX data structure of the
-      [[open-type/CFF|CFF]] table.
-    </td>
-  </tr>
-  <tr>
-    <td>uint32</td>
-    <td><dfn for="Format 1 Patch Map">cff2CharStringsOffset</dfn></td>
-    <td>
-      Only present if bit 1 of [=Format 1 Patch Map/flags=] is set.
-      Gives the offset from the start of the [[open-type/CFF|CFF2]] table to the CharStrings INDEX data structure of the
-      [[open-type/CFF2|CFF2]] table.
-    </td>
-  </tr>
-</table>
-
-Note: [=Format 1 Patch Map/glyphCount=] is designed to be compatible with the
-      proposed <a href="https://github.com/harfbuzz/boring-expansion-spec/tree/main">future font format extension</a> to allow for more
-      than 65,535 glyphs.
-
-<dfn>Glyph Map</dfn> encoding:
-
-A glyph map table associates each glyph index in the font with an entry index.
-
-<table>
-  <tr>
-    <th>Type</th><th>Name</th><th>Description</th>
-  </tr>
-  <tr>
-    <td>uint16</td>
-    <td><dfn for="Glyph Map">firstMappedGlyph</dfn></td>
-    <td>All glyph indices less than firstMappedGlyph are implicitly mapped to entry index 0.</td>
-  </tr>
-  <tr>
-    <td>uint8/uint16</td>
-    <td><dfn for="Glyph Map">entryIndex</dfn>[[=Format 1 Patch Map/glyphCount=] - firstMappedGlyph]</td>
-    <td>
-      The entry index for glyph <code>i</code> is stored in entryIndex[<code>i</code> - [=Glyph Map/firstMappedGlyph=]]. Array members
-      are uint8 if [=Format 1 Patch Map/maxEntryIndex=] is less than 256, otherwise they are uint16.
-    </td>
-  </tr>
-</table>
-
-
-<dfn>Feature Map</dfn> encoding:
-
-A feature map table associates combinations of [[open-type/featuretags|feature tags]] and glyphs with an entry index.
-
-<table>
-  <tr>
-    <th>Type</th><th>Name</th><th>Description</th>
-  </tr>
-  <tr>
-    <td>uint16</td>
-    <td>featureCount</td>
-    <td>Number of featureRecords.</td>
-  </tr>
-  <tr>
-    <td>[=FeatureRecord=]</td>
-    <td><dfn for="Feature Map">featureRecords</dfn>[featureCount]</td>
-    <td>
-      Provides mappings for a specific  [[open-type/featuretags|feature tag]]. [=Feature Map/featureRecords=] are sorted by
-      [=FeatureRecord/featureTag=] in ascending order with any feature tag occurring at most once. For sorting tag values are interpreted
-      as a 4 byte big endian unsigned integer and sorted by the integer value.
-    </td>
-  </tr>
-  <tr>
-    <td>[=EntryMapRecord=]</td>
-    <td><dfn for="Feature Map">entryMapRecords</dfn>[variable]</td>
-    <td>
-      Provides the key (entry index) for each feature mapping. The entryMapRecords array contains as many entries as the sum of
-      the [=FeatureRecord/entryMapCount=] fields in the [=Feature Map/featureRecords=] array, with entryMapRecords[0] corresponding
-      to the first entry of featureRecords[0], entryMapRecords[featureRecord[0].entryMapCount] corresponding to the first entry of
-      featureRecords[1], entryMapRecords[featureRecords[0].entryMapCount + featureRecord[1].entryMapCount]] corresponding to the
-      first entry of featureRecords[2], and so on.
-    </td>
-  </tr>
-</table>
-
-
-
-<dfn>FeatureRecord</dfn> encoding:
-
-<table>
-  <tr>
-    <th>Type</th><th>Name</th><th>Description</th>
-  </tr>
-  <tr>
-    <td>Tag</td>
-    <td><dfn for="FeatureRecord">featureTag</dfn></td>
-    <td>The [[open-type/featuretags|feature tag]] this mapping is for.</td>
-  </tr>
-  <tr>
-    <td>uint8/uint16</td>
-    <td><dfn for="FeatureRecord">firstNewEntryIndex</dfn></td>
-    <td>
-      uint8 if [=Format 1 Patch Map/maxEntryIndex=] is less than 256, otherwise uint16.
-      The first entry index this record maps too.
-    </td>
-  </tr>
-  <tr>
-    <td>uint8/uint16</td>
-    <td><dfn for="FeatureRecord">entryMapCount</dfn></td>
-    <td>
-      uint8 if [=Format 1 Patch Map/maxEntryIndex=] is less than 256, otherwise uint16.
-      The number of [=EntryMapRecord=]s associated with this feature.
-    </td>
-  </tr>
-</table>
-
-<dfn>EntryMapRecord</dfn> encoding:
-
-<table>
-  <tr>
-    <th>Type</th><th>Name</th><th>Description</th>
-  </tr>
-  <tr>
-    <td>uint8/uint16</td>
-    <td><dfn for="EntryMapRecord">firstEntryIndex</dfn></td>
-    <td>
-      uint8 if [=Format 1 Patch Map/maxEntryIndex=] is less than 256, otherwise uint16. firstEntryIndex and lastEntryIndex specify
-      the set of [=Glyph Map=] entries which form the subset definitions for the entries created by this mapping.
-    </td>
-  </tr>
-    <tr>
-    <td>uint8/uint16</td>
-    <td><dfn for="EntryMapRecord">lastEntryIndex</dfn></td>
-    <td>
-      uint8 if [=Format 1 Patch Map/maxEntryIndex=] is less than 256, otherwise uint16.
-    </td>
-  </tr>
-</table>
-
-An entry map record matches any entry indices that are greater than or equal to firstEntryIndex and less than or equal to  lastEntryIndex.
-
-<h5 algorithm id="interpreting-patch-map-format-1" class="conform client">Interpreting Format 1</h5>
-
-This algorithm is used to convert a format 1 patch map into a list of [=patch map entries=].
-
-<dfn abstract-op>Interpret Format 1 Patch Map</dfn>
-
-The inputs to this algorithm are:
-
-* <var>patch map</var>: a [=Format 1 Patch Map=] encoded patch map.
-
-* <var>font subset</var>: the [=font subset=] which contains <var>patch map</var>.
-
-The algorithm outputs:
-
-* <var>entry list</var>: a list of [=patch map entries=].
-
-The algorithm:
-
-1.  Check that the <var>patch map</var> data is: complete and not truncated, has [=Format 1 Patch Map/format=] equal to 1, and is valid
-     according to the requirements in [[#patch-map-format-1]] (requirements are marked with a "must"). If it is not return an error.
-
-2.  For each unique <var>entry index</var> in [=Glyph Map/entryIndex=]:
-
-    *  If <var>entry index</var> is 0 then, this is a special entry used to mark glyphs which are already in the initial font. Skip this
-        index and do not build an entry for it.
-
-    *  If the <var>entry index</var> is larger than [=Format 1 Patch Map/maxGlyphMapEntryIndex=] this entry is invalid, skip this
-        <var>entry index</var>.
-
-    *  If the bit for <var>entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
-        <var>entry index</var>.
-
-    *  Collect the set of glyph indices that map to the <var>entry index</var>.
-
-    *  Convert the set of glyph indices to a set of Unicode code points using the code point to glyph mapping in the
-        [[open-type/cmap|cmap]] table of <var>font subset</var>. Ignore any glyph indices that are not mapped by [[open-type/cmap|cmap]].
-        Multiple code points may map to the same glyph id. All code points associated with a glyph should be included.
-
-    *  Convert <var>entry index</var> into a URL string by invoking [$Expand URL Template$] with [=Format 1 Patch Map/urlTemplate=]
-        and <var>entry index</var> as inputs. If the template expansion results in an error, then return
-        an error.
-
-    *  If the Unicode code point set is empty then, skip this <var>entry index</var>.
-
-    *  Add an [=patch map entries|entry=] to <var>entry list</var> with a subset definition which contains only the Unicode code point
-        set and maps to the generated URL string, the patch format specified by [=Format 1 Patch Map/patchFormat=], and
-        [=Format 1 Patch Map/compatibilityId=].
-
-3.  If [=Format 1 Patch Map/featureMapOffset=] is not null then, for each [=FeatureRecord=] and associated [=EntryMapRecord=] in
-        [=Feature Map/featureRecords=] and [=Feature Map/entryMapRecords=]:
-
-    *  Any [=FeatureRecord|FeatureRecord's=] whose [=FeatureRecord/featureTag=] is less than or equal to a [=FeatureRecord/featureTag=]
-        of any [=FeatureRecord=]  which occurred earlier in the list are invalid. All associated [=EntryMapRecord|EntryMapRecord's=] are
-        skipped. For ordering, tag values are interpreted as a 4 byte big endian unsigned integer and ordered by the integer value.
-
-    *  Compute <var>mapped entry index</var>, the first [=EntryMapRecord=] associated with a [=FeatureRecord=] is
-        [=FeatureRecord/firstNewEntryIndex|FeatureRecord::firstNewEntryIndex=], the second
-        [=FeatureRecord/firstNewEntryIndex|FeatureRecord::firstNewEntryIndex=] + 1, and so on. The last will be
-        [=FeatureRecord/firstNewEntryIndex|FeatureRecord::firstNewEntryIndex=] + [=FeatureRecord/entryMapCount=] - 1.
-
-    *  If the computed <var>mapped entry index</var> is less than or equal to [=Format 1 Patch Map/maxGlyphMapEntryIndex=] or larger than
-        [=Format 1 Patch Map/maxEntryIndex=] this [=EntryMapRecord=] is invalid, skip it.
-
-    *  If [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=] is greater than
-        [=EntryMapRecord/lastEntryIndex|EntryMapRecord::lastEntryIndex=] this [=EntryMapRecord=] is invalid, skip it.
-
-    *  Convert <var>mapped entry index</var> into a URL string by invoking [$Expand URL Template$] with [=Format 1 Patch Map/urlTemplate=]
-        and <var>mapped entry index</var> as inputs. If the template expansion results in an error, then return an error.
-
-    *  If the bit for <var>mapped entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this entry.
-
-    *  Construct a set of Unicode code points. For each <var>entry index</var> between
-        [=EntryMapRecord/firstEntryIndex|EntryMapRecord::firstEntryIndex=] (inclusive) and
-        [=EntryMapRecord/lastEntryIndex|EntryMapRecord::lastEntryIndex=] (inclusive):
-
-        *  If <var>entry index</var> is greater than [=Format 1 Patch Map/maxGlyphMapEntryIndex=] then, this [=EntryMapRecord=] is invalid
-            skip it.
-
-        *  Add the set of Unicode code points associated with <var>entry index</var> that was computed in step 2 to the set. If the
-            <var>entry index</var> was skipped because it was 0 or [=Format 1 Patch Map/appliedEntriesBitMap=] compute the set of
-            associated code points as if it wasn't skipped.
-
-    *  If the constructed set of Unicode code points is empty then, this [=EntryMapRecord=] is invalid skip it.
-
-    *  Add an [=patch map entries|entry=] to <var>entry list</var> which  maps to the generated URL string, the patch format
-        specified by [=Format 1 Patch Map/patchFormat=], and [=Format 1 Patch Map/compatibilityId=]; or if there is an existing
-        [=patch map entries|entry=] in <var>entry list</var> which has the same patch URL string as the generated URL string then
-        instead modify the existing entry. Add the constructed set of Unicode code points and [=FeatureRecord/featureTag=] to the new or
-        existing entry's subset definition.
-
-4.  Return <var>entry list</var>.
-
-Note: while an encoding is not required to include entries for all entry indices in [0, [=Format 1 Patch Map/maxEntryIndex=]], it is
-recommended that it do so for maximum compactness.
-
-<h5 algorithm id="remove-entries-format-1" class="conform client">Remove Entries from Format 1</h5>
-
-This algorithm is used to remove entries from a format 1 patch map. This removal modifies the bytes of the patch map but does not
-change the number of bytes.
-
-<dfn abstract-op>Remove Entries from Format 1 Patch Map</dfn>
-
-The inputs to this algorithm are:
-
-* <var>patch map</var>: a [=Format 1 Patch Map=] encoded patch map. May be modified by this procedure.
-
-* <var>patch URL string</var>: URL string for a patch which identifies the entries to be removed.
-
-The algorithm:
-
-1.  Check that the <var>patch map</var> has [=Format 1 Patch Map/format=] equal to 1 and is valid according to the requirements in
-     [[#patch-map-format-1]]. If it is not return an error.
-
-2.  For each unique <var>entry index</var> in [=Glyph Map/entryIndex=] of <var>patch map</var>:
-
-    *  If the bit for <var>entry index</var> in [=Format 1 Patch Map/appliedEntriesBitMap=] is set to 1, skip this
-        <var>entry index</var>.
-
-    *  Convert <var>entry index</var> into a URL string by invoking [$Expand URL Template$] with [=Format 1 Patch Map/urlTemplate=]
-        and <var>entry index</var> as inputs. If the template expansion results in an error, then return
-        an error.
-
-    *  If the generated URL string is equal to <var>patch URL string</var> then set the bit for <var>entry index</var> in
-        [=Format 1 Patch Map/appliedEntriesBitMap=] to 1.
-
-### Patch Map Table: Format 2 ### {#patch-map-format-2}
-
-<dfn>Format 2 Patch Map</dfn> encoding:
-
-<table>
-  <tr>
-    <th>Type</th><th>Name</th><th>Description</th>
-  </tr>
-  <tr>
-    <td>uint8</td>
-    <td><dfn for="Format 2 Patch Map">format</dfn></td>
-    <td>Set to 2, identifies this as format 2.</td>
-  </tr>
-  <tr>
-    <td>uint24</td>
-    <td>reserved</td>
-    <td>Not used, set to 0.</td>
-  </tr>
-  <tr>
-    <td>uint8</td>
-    <td><dfn for="Format 2 Patch Map">flags</dfn></td>
-    <td>Flags to signal the presence of optional fields.
-        If bit 0 (least significant bit) is set, then [=Format 2 Patch Map/cffCharStringsOffset=] will be present.
-        If bit 1 (least significant bit) is set, then [=Format 2 Patch Map/cff2CharStringsOffset=] will be present.
-    </td>
-  </tr>
-  <tr>
-    <td>uint32</td>
-    <td><dfn for="Format 2 Patch Map">compatibilityId</dfn>[4]</td>
+    <td><dfn for="Patch Map Table">compatibilityId</dfn>[4]</td>
     <td>
       Unique ID used to identify patches that are compatible with this font (see [[#font-patch-invalidations]]). The encoder chooses this
       value. The encoder should set it to a random value which has not previously been used while encoding the IFT font.
@@ -1412,25 +1041,25 @@ The algorithm:
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Format 2 Patch Map">defaultPatchFormat</dfn></td>
+    <td><dfn for="Patch Map Table">defaultPatchFormat</dfn></td>
     <td>
       Specifies the format of the patches linked to by urlTemplate (unless overridden by an entry).
-      <span class="conform client encoder" id="conform-format2-valid-format-number">Must be set to one of the format numbers from the [[#font-patch-formats-summary]] table.</span>
+      <span class="conform client encoder" id="conform-patchmap-valid-format-number">Must be set to one of the format numbers from the [[#font-patch-formats-summary]] table.</span>
     </td>
   </tr>
   <tr>
     <td>uint24</td>
-    <td><dfn for="Format 2 Patch Map">entryCount</dfn></td>
+    <td><dfn for="Patch Map Table">entryCount</dfn></td>
     <td>Number of entries encoded in this table.</td>
   </tr>
   <tr>
     <td>Offset32</td>
-    <td><dfn for="Format 2 Patch Map">entries</dfn></td>
+    <td><dfn for="Patch Map Table">entries</dfn></td>
     <td>Offset to a [=Mapping Entries=] sub table. Offset is from the start of this table.</td>
   </tr>
   <tr>
     <td>Offset32</td>
-    <td><dfn for="Format 2 Patch Map">entryIdStringData</dfn></td>
+    <td><dfn for="Patch Map Table">entryIdStringData</dfn></td>
     <td>
       Offset to a block of data containing the concatentation of all of the entry ID strings.
       May be null (0). Offset is from the start of this table.
@@ -1445,25 +1074,25 @@ The algorithm:
   </tr>
   <tr>
     <td>uint8</td>
-    <td><dfn for="Format 2 Patch Map">urlTemplate</dfn>[urlTemplateLength]</td>
+    <td><dfn for="Patch Map Table">urlTemplate</dfn>[urlTemplateLength]</td>
     <td>
       A byte array containing a [[#url-templates|URL Template]] which is used to produce URL strings associated with each entry.
     </td>
   </tr>
   <tr>
     <td>uint32</td>
-    <td><dfn for="Format 2 Patch Map">cffCharStringsOffset</dfn></td>
+    <td><dfn for="Patch Map Table">cffCharStringsOffset</dfn></td>
     <td>
-      Only present if bit 0 (least significant) of [=Format 2 Patch Map/flags=] is set.
+      Only present if bit 0 (least significant) of [=Patch Map Table/flags=] is set.
       Gives the offset from the start of the [[open-type/CFF|CFF]] table to the CharStrings INDEX data structure of the
       [[open-type/CFF|CFF]] table.
     </td>
   </tr>
   <tr>
     <td>uint32</td>
-    <td><dfn for="Format 2 Patch Map">cff2CharStringsOffset</dfn></td>
+    <td><dfn for="Patch Map Table">cff2CharStringsOffset</dfn></td>
     <td>
-      Only present if bit 1 of [=Format 2 Patch Map/flags=] is set.
+      Only present if bit 1 of [=Patch Map Table/flags=] is set.
       Gives the offset from the start of the [[open-type/CFF|CFF2]] table to the CharStrings INDEX data structure of the
       [[open-type/CFF2|CFF2]] table.
     </td>
@@ -1479,8 +1108,8 @@ The algorithm:
   <tr>
     <td>uint8</td>
     <td><dfn for="Mapping Entries">entries</dfn>[variable]</td>
-    <td>Byte array containing the encoded bytes of [=Format 2 Patch Map/entryCount=] [=Mapping Entry=]'s. Each entry has a variable
-        length, which is determined following [$Interpret Format 2 Patch Map Entry$].</td>
+    <td>Byte array containing the encoded bytes of [=Patch Map Table/entryCount=] [=Mapping Entry=]'s. Each entry has a variable
+        length, which is determined following [$Interpret Patch Map Entry$].</td>
   </tr>
 </table>
 
@@ -1557,8 +1186,8 @@ The algorithm:
       List of signed deltas which calculate the IDs of the URL strings for this entry. If present, has at least one delta. If the least
       significant bit of a delta is set, then one more delta follows. This repeats until a delta with the least significant bit
       cleared is encountered. The entry id for each delta is the last calculated entry id + 1 + floor(entryIdDelta / 2). Only present if
-      [=Mapping Entry/formatFlags=] bit 2 is set and [=Format 2 Patch Map/entryIdStringData=] is null (0).
-      If not present and [=Format 2 Patch Map/entryIdStringData=] is null (0), then there is one id for this entry and the
+      [=Mapping Entry/formatFlags=] bit 2 is set and [=Patch Map Table/entryIdStringData=] is null (0).
+      If not present and [=Patch Map Table/entryIdStringData=] is null (0), then there is one id for this entry and the
       delta is assumed to be 0.
     </td>
   </tr>
@@ -1566,12 +1195,12 @@ The algorithm:
     <td>uint24</td>
     <td><dfn for="Mapping Entry">entryIdStringLength</dfn>[variable]</td>
     <td>
-      The number of bytes that each id string for this entry occupies in the [=Format 2 Patch Map/entryIdStringData=]
+      The number of bytes that each id string for this entry occupies in the [=Patch Map Table/entryIdStringData=]
       data block.  If the most significant bit of a length value is set, then another length value follows. This repeats
       until a length value with the most significant bit cleared is encountered. The actual length value is stored in
       the least significant 23 bits of each value. Only present if [=Mapping Entry/formatFlags=] bit 2 is set and
-      [=Format 2 Patch Map/entryIdStringData=] is not null (0). If present has at least one length value. If not present
-      and [=Format 2 Patch Map/entryIdStringData=] is not null (0), then there is one id string which is set to the last
+      [=Patch Map Table/entryIdStringData=] is not null (0). If present has at least one length value. If not present
+      and [=Patch Map Table/entryIdStringData=] is not null (0), then there is one id string which is set to the last
       id string from the previous entry or an empty string for the first entry.
     </td>
   </tr>
@@ -1581,7 +1210,7 @@ The algorithm:
     <td><dfn for="Mapping Entry">patchFormat</dfn></td>
     <td>
       Specifies the format of the patch linked to by this entry. Uses the ID numbers from the [[#font-patch-formats-summary]] table.
-      Overrides [=Format 2 Patch Map/defaultPatchFormat=].
+      Overrides [=Patch Map Table/defaultPatchFormat=].
       Only present if [=Mapping Entry/formatFlags=] bit 3 is set.
     </td>
   </tr>
@@ -1608,7 +1237,7 @@ The algorithm:
 </table>
 
 If an encoder is producing patches that will be stored on a file system and then served it's recommended that only numeric entry IDs be
-used (via [=Mapping Entry/entryIdDelta=]) as these will generally produce the smallest encoding of the format 2 patch map. String IDs
+used (via [=Mapping Entry/entryIdDelta=]) as these will generally produce the smallest encoding of the patch map. String IDs
 are useful in cases where patches are not being stored in advance and the ID strings can be then used to encode information about the patch
 being requested.
 
@@ -1645,15 +1274,15 @@ being requested.
   </tr>
 </table>
 
-<h5 algorithm id="interpreting-patch-map-format-2" class="conform client">Interpreting Format 2</h5>
+<h4 algorithm id="interpreting-patch-map" class="conform client">Interpreting a Patch Map</h4>
 
-This algorithm is used to convert a format 2 [=patch map=] into a list of [=patch map entries=].
+This algorithm is used to convert a [=patch map=] into a list of [=patch map entries=].
 
-<dfn abstract-op>Interpret Format 2 Patch Map</dfn>
+<dfn abstract-op>Interpret Patch Map</dfn>
 
 The inputs to this algorithm are:
 
-* <var>patch map</var>: a [=Format 2 Patch Map=] encoded [=patch map=].
+* <var>patch map</var>: a [=Patch Map Table=].
 
 The algorithm outputs:
 
@@ -1661,23 +1290,23 @@ The algorithm outputs:
 
 The algorithm:
 
-1.  Check that the <var>patch map</var> has [=Format 2 Patch Map/format=] equal to 2 and is valid according to the requirements in
-     [[#patch-map-format-2]] (requirements are marked with a "must"). If it is not return an error.
+1.  Check that the <var>patch map</var> has [=Patch Map Table/format=] equal to 2 and is valid according to the requirements in
+     [[#patch-map-table]] (requirements are marked with a "must"). If it is not return an error.
 
-2.  If the [=Format 2 Patch Map/entryIdStringData=] offset is 0 then initialize <var>last entry id</var> to 0. Otherwise initialize
+2.  If the [=Patch Map Table/entryIdStringData=] offset is 0 then initialize <var>last entry id</var> to 0. Otherwise initialize
      it to an empty byte string. Set <var>current byte</var> to 0, and <var>current id string byte</var> to 0.
 
 3.  Initialize <var>entry list</var> and <var>prior entry list</var> to empty lists.
 
-4.  Invoke [$Interpret Format 2 Patch Map Entry$], [=Format 2 Patch Map/entryCount=] times. For each invocation:
+4.  Invoke [$Interpret Patch Map Entry$], [=Patch Map Table/entryCount=] times. For each invocation:
 
-     *  pass in <var>prior entry list</var>, the bytes from <var>patch map</var> starting from [=Format 2 Patch Map/entries=][<var>current byte</var>] to
+     *  pass in <var>prior entry list</var>, the bytes from <var>patch map</var> starting from [=Patch Map Table/entries=][<var>current byte</var>] to
          the end of <var>patch map</var>,
-         the bytes from <var>patch map</var> starting from [=Format 2 Patch Map/entryIdStringData=][<var>current id string byte</var>]
-         to the end of <var>patch map</var> if [=Format 2 Patch Map/entryIdStringData=] is non zero,
+         the bytes from <var>patch map</var> starting from [=Patch Map Table/entryIdStringData=][<var>current id string byte</var>]
+         to the end of <var>patch map</var> if [=Patch Map Table/entryIdStringData=] is non zero,
          <var>last entry id</var>,
-         [=Format 2 Patch Map/defaultPatchFormat=], and
-         [=Format 2 Patch Map/urlTemplate=].
+         [=Patch Map Table/defaultPatchFormat=], and
+         [=Patch Map Table/urlTemplate=].
 
      *  Set <var>last entry id</var> to the returned entry id.
 
@@ -1688,11 +1317,11 @@ The algorithm:
      *  Add the returned entry to <var>prior entry list</var>.
 
      *  If the returned value of ignored is false, then set the compatibility ID of the returned entry to
-         [=Format 2 Patch Map/compatibilityId=] and add the  entry to <var>entry list</var>.
+         [=Patch Map Table/compatibilityId=] and add the  entry to <var>entry list</var>.
 
 5.  Return <var>entry list</var>.
 
-<dfn abstract-op>Interpret Format 2 Patch Map Entry</dfn>
+<dfn abstract-op>Interpret Patch Map Entry</dfn>
 
 The inputs to this algorithm are:
 
@@ -1829,36 +1458,36 @@ The algorithm:
 13. Return <var>entry id</var>, <var>entry</var>, <var>consumed bytes</var>,
      <var>consumed id string bytes</var>, and <var>ignored</var>.
 
-<h5 algorithm id="remove-entries-format-2" class="conform client">Remove Entries from Format 2</h5>
+<h4 algorithm id="remove-entries-patch-map" class="conform client">Remove Entries from a Patch Map</h4>
 
-This algorithm is used to remove entries from a format 2 patch map. This removal modifies the bytes of the patch map but does not
+This algorithm is used to remove entries from a patch map. This removal modifies the bytes of the patch map but does not
 change the number of bytes.
 
-<dfn abstract-op>Remove Entries from Format 2 Patch Map</dfn>
+<dfn abstract-op>Remove Entries from a Patch Map</dfn>
 
 The inputs to this algorithm are:
 
-* <var>patch map</var>: a [=Format 2 Patch Map=] encoded patch map. May be modified by this procedure.
+* <var>patch map</var>: a [=Patch Map Table=]. May be modified by this procedure.
 
 * <var>patch URL string</var>: URL string for a patch which identifies the entries to be removed.
 
-This algorithm is a modified version of [$Interpret Format 2 Patch Map$], invoke [$Interpret Format 2 Patch Map$] with <var>patch map</var>
+This algorithm is a modified version of [$Interpret Patch Map$], invoke [$Interpret Patch Map$] with <var>patch map</var>
 as an input but with the following changes:
 
-*  During step 8 and 9 of [$Interpret Format 2 Patch Map Entry$]: compare the URL string generated for only the first delta/length value to
+*  During step 8 and 9 of [$Interpret Patch Map Entry$]: compare the URL string generated for only the first delta/length value to
     <var>patch URL string</var> if they are equal then, set bit 6 of  [=Mapping Entry/formatFlags=] to 1. Stop the interpretation process
     at this point.
 
-*  The return value of [$Interpret Format 2 Patch Map$] is not used.
+*  The return value of [$Interpret Patch Map$] is not used.
 
-<h5 algorithm id="sparse-bit-set-decoding" class="conform client">Sparse Bit Set</h5>
+<h4 algorithm id="sparse-bit-set-decoding" class="conform client">Sparse Bit Set</h4>
 
 A sparse bit set is a data structure which compactly stores a set of distinct unsigned integers. The set is represented as a tree where
 each node has a fixed number of children that recursively sub-divides an interval into equal partitions. A tree of height <i>H</i> with
 branching factor <i>B</i> can store set membership for integers in the interval [0 to <i>B</i><sup><i>H</i></sup>-1] inclusive. The tree
 is encoded into an array of bytes for transport.
 
-In the context of a [=Format 2 Patch Map=] a sparse bit set is used to store a set of [[!unicode|Unicode]] code points. As such integer
+In the context of a [=Patch Map Table=] a sparse bit set is used to store a set of [[!unicode|Unicode]] code points. As such integer
 values stored in a sparse bit set are restricted to being [[!unicode|Unicode]] code point values in the range 0 to 0x10FFFF.
 
 <dfn>Sparse Bit Set</dfn> encoding:
@@ -2630,10 +2259,8 @@ The algorithm:
 
     *  Insert the synthesized table into <var>extended font subset</var>.
 
-5. Locate the [[#patch-map-table]] which has the same [=Glyph keyed patch/compatibilityId=] as <var>compatibility id</var>. If it is a
-    format 1 patch map then, invoke [$Remove Entries from Format 1 Patch Map$] with the patch map table and <var>patch URL string</var> as an
-    input. Otherwise if it is a format 2 patch map then, invoke [$Remove Entries from Format 2 Patch Map$] with the patch map table and
-    <var>patch URL string</var> as an input. Copy the modified patch map table into <var>extended font subset</var>.
+5. Locate the [[#patch-map-table]] which has the same [=Glyph keyed patch/compatibilityId=] as <var>compatibility id</var>. Invoke
+    [$Remove Entries from a Patch Map$] with the patch map table and <var>patch URL string</var> as an input. Copy the modified patch map table into <var>extended font subset</var>.
 
 6. For each [[open-type/otff#table-directory|table]] in <var>base font subset</var> which has a tag that was not found in any of
     the entries processed in step 4 or 5, add a copy of that table to <var>extended font subset</var>.
@@ -2914,7 +2541,7 @@ when loading the patches for two or more segments.  There are five main strategi
 
 2.  The common glyphs can be placed in their own patch and then mapping entries set up to trigger the load of that common patch along side
      any of the segments that will need it. For example if 'c' is a common segment needed by segments 'a' and 'b' then, you could
-     have the following mapping entries (via a format 2 mapping table):
+     have the following mapping entries:
      *  subset definition a → segment a
      *  subset definition b → segment b
      *  subset definition a union subset definition b → segment c
@@ -2922,7 +2549,7 @@ when loading the patches for two or more segments.  There are five main strategi
 3.  In some cases, such as with [[open-type/cmap#format-14-unicode-variation-sequences|Unicode variation selectors]], there will be a
      modifier code point which triggers a glyph substitution when paired with many other code points. Given the large number of alternate
      glyphs it's desirable to keep them in their own patches which are only loaded when both the modifier code point and appropriate base
-     code point(s) are present. This can be achieved by using a [[#patch-map-format-2|Format 2 Patch Map]] and multiple entry matching
+     code point(s) are present. This can be achieved by using multiple entry matching
      via [=Mapping Entry/childEntryIndices=]. See [[#appendix-b-example-2]] for an example of how this can be set up.
 
 4.  Alternatively, the glyph can be included in more than one of the patches that correspond to those segments at the cost of duplicating
