@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d113b2e81, updated Tue Jun 9 14:57:55 2026 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="5472f611c695df164b2936aa33e0bedf58972434" name="revision">
+  <meta content="7d96a74fffc87844ba8033e276092c73e459e8fe" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -787,7 +787,7 @@ var[data-var-color="6"] { --var-vg: #FFBCF2; }
 </p>
    <h1 class="no-ref p-name" id="title">Incremental Font Transfer</h1>
    <p id="w3c-state"><a href="https://www.w3.org/standards/types/#ED">Editor’s Draft</a>,
-    <time class="dt-updated" datetime="2026-07-31">31 July 2026</time></p>
+    <time class="dt-updated" datetime="2026-10-19">19 October 2026</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1269,7 +1269,9 @@ font that <var>font subset</var> was derived from.</p>
    <p>The algorithm:</p>
    <ol>
     <li data-md>
-     <p>Set <var>extended font subset</var> to <var>font subset</var>.</p>
+     <p>Set <var>extended font subset</var> to <var>font subset</var>. If the <code>sfntVersion</code> field of <var>extended font subset</var>’s
+<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table directory</a> is <code>'IFTT'</code> (0x49465454) or <code>'IFTO'</code> (0x4946544F),
+<span class="client conform" id="conform-convert-ift-sfnt-version">it must be replaced with <code>0x00010000</code> or <code>'OTTO'</code> (0x4F54544F) respectively</span>.</p>
     <li data-md>
      <p>Load the 'IFT ' and 'IFTX' (if present) mapping <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> from <var>extended font subset</var>. Both
 tables are formatted as a <a href="#patch-map-table">§ 5.3 Patch Map Table</a>. Check that they are valid according to the requirements in <a href="#patch-map-table">§ 5.3 Patch Map Table</a>. If
@@ -1725,6 +1727,20 @@ file, the compressed font needs to be decoded before attempting to extend it.</p
     <li data-md>
      <p>The 'IFT ' and 'IFTX' tables can be processed and brotli encoded by a WOFF2 encoder following the standard process defined in
 <a href="https://w3c.github.io/woff/woff2/#table_format"><cite>WOFF 2.0</cite> § 5 Compressed data format</a>.</p>
+    <li data-md>
+     <p>When compressing an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑨">incremental font</a> as WOFF2, the <code>flavor</code> field in the <a href="https://w3c.github.io/woff/woff2/#woff20Header">WOFF2 header</a> (and/or the
+<code>sfntVersion</code> field of the input font’s <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table directory</a> prior to WOFF2 encoding) should be
+set to a special IFT flavor value instead of the standard <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">OpenType</a> <code>sfntVersion</code>:</p>
+     <ul>
+      <li data-md>
+       <p><code>'IFTT'</code> (0x49465454) for TrueType fonts (corresponding to <code>sfntVersion</code> <code>0x00010000</code>).</p>
+      <li data-md>
+       <p><code>'IFTO'</code> (0x4946544F) for OpenType fonts containing CFF or CFF2 data (corresponding to <code>sfntVersion</code> <code>'OTTO'</code>, 0x4F54544F).</p>
+     </ul>
+     <p>Using these flavor values prevents legacy user agents that do not support IFT from loading the unextended initial font file. During
+WOFF2 decoding the flavor value is written to the <code>sfntVersion</code> field of the decoded font’s
+<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table directory</a>, which <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset⑨">Extend an Incremental Font Subset</a> then converts back to the corresponding
+<code>0x00010000</code> or <code>'OTTO'</code> value.</p>
    </ol>
    <p class="note" role="note"><span class="marker">Note:</span> Given that WOFF2 compression outperforms WOFF even with glyf/loca transformations disabled it is generally recommended
 that IFT fonts are compressed using WOFF2, with glyf/loca transformations disabled when the encoding updates those tables using
@@ -1757,7 +1773,7 @@ uncompressed file).  Therefore, it is recommended that subroutinzation either be
 to the specific needs of IFT.</p>
    <h3 class="heading settled" data-level="5.3" id="patch-map-table"><span class="secno">5.3. </span><span class="content">Patch Map Table</span><a class="self-link" href="#patch-map-table"></a></h3>
    <p>This section describes the encoding of the <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑦">patch map</a> and defines an algorithm for interpreting bytes encoded in this
-format to produce the list of entries it represents. The <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset⑨">Extend an Incremental Font Subset</a> algorithm invokes the
+format to produce the list of entries it represents. The <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①⓪">Extend an Incremental Font Subset</a> algorithm invokes the
 interpretation algorithm and operates on the resulting entry list. The encoded bytes are the source of truth at all
 times for the patch map. Patch application during subset extension will alter the encoded bytes of the patch map and as
 a result the entry list derived from the encoded bytes will change. The extension algorithm reinterprets the encoded
@@ -2680,7 +2696,7 @@ encoding can make use of more than one patch format.</p>
 <a data-link-type="biblio" href="#biblio-rfc7932" title="Brotli Compressed Data Format">brotli compression</a> using the corresponding table from the input font file as a
 <a href="https://datatracker.ietf.org/doc/html/draft-vandevenne-shared-brotli-format-15#section-3.2">shared LZ77 dictionary</a>. A table keyed encoded patch consists of a short header followed
 by one or more brotli encoded patches. In addition to patching tables, patches may also replace (existing table data is not used)
-or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①②">font subset</a>.</p>
+or remove tables in a <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset①②">font subset</a>. Table keyed patch files should use the <code>.ift_tk</code> file extension.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="table-keyed-patch">Table keyed patch</dfn> encoding:</p>
    <table>
     <tbody>
@@ -2807,7 +2823,8 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
    <p>A glyph keyed patch contains a collection of data chunks that are each associated with a glyph index and a
 <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">font table</a>. The encoded data replaces any existing data for that glyph index in the referenced
 <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">table</a>. Glyph keyed patches can encode data for <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/glyf#">glyf</a>/<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/loca#">loca</a>,
-<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, and <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> tables.</p>
+<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gvar#">gvar</a>, <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff#">CFF</a>, and <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/cff2#">CFF2</a> tables. Glyph keyed patch files should use the
+<code>.ift_gk</code> file extension.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="glyph-keyed-patch">Glyph keyed patch</dfn> encoding:</p>
    <table>
     <tbody>
@@ -2965,35 +2982,35 @@ for each modified table: update the checksums in the <a href="https://learn.micr
 new contents.</p>
    </ol>
    <h2 class="heading settled" data-level="7" id="encoding"><span class="secno">7. </span><span class="content">Encoding</span><a class="self-link" href="#encoding"></a></h2>
-   <p>An encoder is a tool which produces an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font⑨">incremental font</a> and set of associated <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch②">patches</a>. "Encoding" refers to the
+   <p>An encoder is a tool which produces an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⓪">incremental font</a> and set of associated <a data-link-type="dfn" href="#font-patch" id="ref-for-font-patch②">patches</a>. "Encoding" refers to the
 process of using an encoder, including whatever parameters an encoder requires or allows to influence the result in a particular
 case.
-The <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⓪">incremental font</a> and associated patches produced by a compliant encoder:</p>
+The <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①①">incremental font</a> and associated patches produced by a compliant encoder:</p>
    <ol>
     <li data-md>
      <p><span class="conform encoder" id="conform-encoding-must-meet-extensions-format">Must meet all of the requirements in <a href="#font-format-extensions">§ 5 Extensions to the Font Format</a> and <a href="#font-patch-formats">§ 6 Font Patch Formats</a>.</span></p>
     <li data-md>
-     <p><span class="conform encoder" id="conform-encoding-must-be-consistent">Must be consistent, that is: for any possible <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①②">font subset definition</a> the result of invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①⓪">Extend an Incremental Font Subset</a>
-with that subset definition and the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①①">incremental font</a> must always be the same regardless of the particular order
-of patch selection chosen in step 8 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①①">Extend an Incremental Font Subset</a>.</span></p>
+     <p><span class="conform encoder" id="conform-encoding-must-be-consistent">Must be consistent, that is: for any possible <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①②">font subset definition</a> the result of invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①①">Extend an Incremental Font Subset</a>
+with that subset definition and the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①②">incremental font</a> must always be the same regardless of the particular order
+of patch selection chosen in step 8 of <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①②">Extend an Incremental Font Subset</a>.</span></p>
     <li data-md>
      <p><span class="conform encoder" id="conform-encoding-must-respect-patch-invalidation-criteria">Must respect patch invalidation criteria.</span> <span class="conform encoder" id="conform-encoding-only-alter-compatibility-ids">Any patch which is part of an IFT encoding when applied to a compatible <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②①">font subset</a>
  must only make changes to the <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map⑨">patch map</a> compatibility IDs which are compliant with the <a href="#font-patch-invalidations">§ 4.1 Patch Invalidations</a> criteria
  for the invalidation mode declared by the associated <a data-link-type="dfn" href="#patch-map-entries" id="ref-for-patch-map-entries⑥">patch map entries</a>.</span></p>
     <li data-md>
-     <p>When an encoder is used to transform an existing font into an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①②">incremental font</a> the associated
+     <p>When an encoder is used to transform an existing font into an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①③">incremental font</a> the associated
  <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset①">fully expanded font</a> should be equivalent to the existing font. An equivalent fully expanded font
  should have all of the same <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory">tables</a> as the existing font (excluding the incremental IFT/IFTX
  tables) and each of those tables should be functionally equivalent to the corresponding table in the existing font. Note: the fully
  expanded may not always be an exact binary match with the existing font.</p>
     <li data-md>
      <p>Should preserve the functionality of the fully expanded font throughout the augmentation process, that is:
- given the <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset②">fully expanded font</a> derived from the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①③">incremental font</a>
- and any content, then the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a> produced by invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①②">Extend an Incremental Font Subset</a> with the
- <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①④">incremental font</a> and the minimal subset definition covering that content should
+ given the <a data-link-type="abstract-op" href="#abstract-opdef-fully-expand-a-font-subset" id="ref-for-abstract-opdef-fully-expand-a-font-subset②">fully expanded font</a> derived from the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①④">incremental font</a>
+ and any content, then the <a data-link-type="dfn" href="#font-subset" id="ref-for-font-subset②②">font subset</a> produced by invoking <a data-link-type="abstract-op" href="#abstract-opdef-extend-an-incremental-font-subset" id="ref-for-abstract-opdef-extend-an-incremental-font-subset①③">Extend an Incremental Font Subset</a> with the
+ <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑤">incremental font</a> and the minimal subset definition covering that content should
  render identically to the fully expanded font for that content.</p>
    </ol>
-   <p>When an encoder is used to transform an existing font file into and <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑤">incremental font</a> and a client is implemented according to the
+   <p>When an encoder is used to transform an existing font file into and <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑥">incremental font</a> and a client is implemented according to the
 other sections of this document, the intent of the IFT specification is that appearance and behavior of the font in the client will be the
 same as if the entire file were transferred to the client. A primary goal of the IFT specification is that the IFT format and protocol can
 serve as a neutral medium for font transfer, comparable to WOFF2. If an encoder produces an encoding from a source font which meets all of
@@ -3015,7 +3032,7 @@ it is still strongly encouraged to meet 5, which ensures consistent behavior of 
    <p><em>This section is not normative.</em></p>
    <p>The details of the encoding process may differ by encoder and are beyond the scope of this document. However, this section provides
 guidance that encoder implementations may want to consider, and that can be important to reproducing the appearance and behavior of
-an existing font file when producing an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑥">incremental</a> version of that font. The guidance provided in this section
+an existing font file when producing an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑦">incremental</a> version of that font. The guidance provided in this section
 is based on the experience of building an encoder implementation during development of this specification. It represents the  best
 understanding (at the time of writing) of how to generate a high performance encoding which meets requirements 1 through 4 of
 <a href="#encoding">§ 7 Encoding</a> and thus preserves all functionality/behavior of the original font being encoded.</p>
@@ -3035,7 +3052,7 @@ in which each font subset in the segmentation is a node and each patch is an edg
 are typically downloaded and applied in series, which has implications for the performance of this patch type relative to latency.</p>
    <p><b>About <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches</b></p>
    <p><a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches are quite distinct from the other patch types. First, <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches can only modify
-tables containing glyph outline data, and therefore an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑦">incremental font</a> that only uses <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> will have to include all
+tables containing glyph outline data, and therefore an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑧">incremental font</a> that only uses <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> will have to include all
 other font table data in the initial font file. Second, <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches are <a data-link-type="dfn" href="#no-invalidation" id="ref-for-no-invalidation①">not Invalidating</a>,
 and can therefore be downloaded and applied independently. This independence means multiple patches can be downloaded in parallel
 which can significantly reduce the number of round trips needed relative to the invalidating patch types.</p>
@@ -3099,7 +3116,7 @@ level.</p>
    </ol>
    <p><b>Choosing segmentations</b></p>
    <p>One of the most important and complex decisions an encoder needs to make is how to segment the data in the encoded font. The discussion
-above focused on the number of segments, but the performance of an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑧">incremental font</a> depends much more on the grouping of data
+above focused on the number of segments, but the performance of an <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑨">incremental font</a> depends much more on the grouping of data
 within segments. To maximize efficiency an encoder needs to group data (eg. code points) that are commonly used together into the same
 segments. This will reduce the amount of unneeded data load by clients when extending the font. The encoder must also decide the size
 of segments. Smaller segments will produce more patches, and thus incur more overhead by requiring more network requests, but will
@@ -3184,7 +3201,7 @@ of those in the <a data-link-type="dfn" href="#glyph-closure" id="ref-for-glyph-
 behavior: Suppose there is a <a data-link-type="dfn" href="#font-subset-definition" id="ref-for-font-subset-definition①⑧">font subset definition</a> such that the subsetter includes glyph *i* in its subset, but an encoder that
 produces <a href="#glyph-keyed">§ 6.3 Glyph Keyed</a> patches omits glyph *i* from the set of patches that correspond to that definition. If the subsetter is
 right, that glyph must be present to retain equivalent behavior when rendering some combination of the code points and features in 
-the definition, which means that the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font①⑨">incremental font</a> will not behave equivalently when rendering that combination.</p>
+the definition, which means that the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font②⓪">incremental font</a> will not behave equivalently when rendering that combination.</p>
    <p>Therefore, when generating an encoding utilizing glyph-keyed patches the encoder must determine how to distribute glyphs between all
 of the patches in a way that meets the glyph closure requirement. This is primarily a matter of looking at the code points assigned
 to a segment and determining what other glyphs must be included in the patch that corresponds to it, as when a glyph variant can
@@ -3226,7 +3243,7 @@ when loading the patches for two or more segments.  There are five main strategi
    <p>In some cases it might be desirable to avoid the overhead of applying patches to an initial file. For example, it could
 be desirable that the font loaded on a company home page already be able to render the content on that page. The main benefit
 of such a file is reduced rendering latency: the content can be rendered after a single round-trip.</p>
-   <p>There are two approaches to including data in the downloaded font file. One is to simply encode the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font②⓪">incremental font</a>
+   <p>There are two approaches to including data in the downloaded font file. One is to simply encode the <a data-link-type="dfn" href="#incremental-font" id="ref-for-incremental-font②①">incremental font</a>
 as a whole so that the data is in the initial file. Any such data will always be available in any patched version of the font.
 This can be helpful in cases when the same data would otherwise be needed in many different segments.</p>
    <p>The other approach is to download an already-patched font. That is, one can encode a font with little or no data in the "base"
@@ -3362,6 +3379,19 @@ number of requests:</p>
  access control headers.</p>
    </ol>
    <h2 class="heading settled" data-level="10" id="changes"><span class="secno">10. </span><span class="content">Changes</span><a class="self-link" href="#changes"></a></h2>
+   <p id="changes-20251118">Since the
+  <a href="https://www.w3.org/TR/2025/CRD-IFT-20251118/">W3C Candidate Recommendation Draft of 18 November 2025</a>
+  (see <a href="https://github.com/w3c/IFT/commits/main/Overview.bs">commit history</a>):
+</p>
+   <ul>
+    <li>Added recommendation to use 'IFTT' and 'IFTO' WOFF2 flavors for IFT fonts, and updated the extension algorithm to convert them back to 0x00010000 and 'OTTO'.
+    <li>Added recommendation to use .ift_tk and .ift_gk file extensions for table keyed and glyph keyed patches.
+    <li>Updated the default feature registry to include halt and vhal
+    <li>Added 'conform' markup to the URL template expansion algorithm.
+    <li>Removed Patch Map Format 1 from the specification.
+    <li>Added a note about why patch map uses format = 2.
+    <li>Fixed typos and grammar
+   </ul>
    <p id="changes-20250731">Since the <a href="https://www.w3.org/TR/2025/CR-IFT-20250731/">Candidate Recommendation Snapshot of 31 July 2025</a>
   (see <a href="https://github.com/w3c/IFT/commits/main/Overview.bs">commit history</a>):</p>
    <ul>
@@ -3674,7 +3704,7 @@ they are defaulted to an empty set.</p>
       <td>
 <pre>code points: { 'a', 'b', ..., 'z' }
 </pre>
-      <td>//foo.bar/01.tk
+      <td>//foo.bar/01.ift_tk
       <td>
       2, Table Keyed - Partial Invalidation
     
@@ -3682,7 +3712,7 @@ they are defaulted to an empty set.</p>
       <td>
 <pre>code points: { 'A', 'B', ..., 'Z' }
 </pre>
-      <td>//foo.bar/02.tk
+      <td>//foo.bar/02.ift_tk
       <td>
       2, Table Keyed - Partial Invalidation
     
@@ -3690,7 +3720,7 @@ they are defaulted to an empty set.</p>
       <td>
 <pre>code points: { '0', '1', ..., '9' }
 </pre>
-      <td>//foo.bar/03.tk
+      <td>//foo.bar/03.ift_tk
       <td>
       2, Table Keyed - Partial Invalidation
     
@@ -3699,7 +3729,7 @@ they are defaulted to an empty set.</p>
 <pre>code points: { 'a', 'b', ..., 'z',
                'A', 'B', ..., 'Z' }
 </pre>
-      <td>//foo.bar/04.tk
+      <td>//foo.bar/04.ift_tk
       <td>
       2, Table Keyed - Partial Invalidation
     
@@ -3709,7 +3739,7 @@ they are defaulted to an empty set.</p>
                'A', 'B', ..., 'Z',
                '0', '1', ..., '9' }
 </pre>
-      <td>//foo.bar/05.tk
+      <td>//foo.bar/05.ift_tk
       <td>
       2, Table Keyed - Partial Invalidation
     
@@ -3730,7 +3760,7 @@ they are defaulted to an empty set.</p>
       <td>
 <pre>code points: { 'a', 'b', ..., 'm' }
 </pre>
-      <td>//foo.bar/01.gk
+      <td>//foo.bar/01.ift_gk
       <td>
       3, Glyph Keyed
     
@@ -3738,7 +3768,7 @@ they are defaulted to an empty set.</p>
       <td>
 <pre>code points: { 'n', 'o', ..., 'z' }
 </pre>
-      <td>//foo.bar/02.gk
+      <td>//foo.bar/02.ift_gk
       <td>
       3, Glyph Keyed
     
@@ -3746,7 +3776,7 @@ they are defaulted to an empty set.</p>
       <td>
 <pre>code points: { 'A', 'B', ..., 'M' }
 </pre>
-      <td>//foo.bar/03.gk
+      <td>//foo.bar/03.ift_gk
       <td>
       3, Glyph Keyed
     
@@ -3754,7 +3784,7 @@ they are defaulted to an empty set.</p>
       <td>
 <pre>code points: { 'N', 'O', ..., 'Z' }
 </pre>
-      <td>//foo.bar/04.gk
+      <td>//foo.bar/04.ift_gk
       <td>
       3, Glyph Keyed
     
@@ -3762,7 +3792,7 @@ they are defaulted to an empty set.</p>
       <td>
 <pre>code points: { '0', '1', ..., '9' }
 </pre>
-      <td>//foo.bar/05.gk
+      <td>//foo.bar/05.ift_gk
       <td>
       3, Glyph Keyed
     
@@ -3785,40 +3815,40 @@ they are defaulted to an empty set.</p>
      <p>Steps 1 through 6 - applying the <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection③">Check entry intersection</a> check to all entries in the initial font, the following patch entries intersect:</p>
      <ul>
       <li data-md>
-       <p>//foo.bar/01.tk</p>
+       <p>//foo.bar/01.ift_tk</p>
       <li data-md>
-       <p>//foo.bar/02.tk</p>
+       <p>//foo.bar/02.ift_tk</p>
       <li data-md>
-       <p>//foo.bar/04.tk</p>
+       <p>//foo.bar/04.ift_tk</p>
       <li data-md>
-       <p>//foo.bar/05.tk</p>
+       <p>//foo.bar/05.ift_tk</p>
       <li data-md>
-       <p>//foo.bar/01.gk</p>
+       <p>//foo.bar/01.ift_gk</p>
       <li data-md>
-       <p>//foo.bar/04.gk</p>
+       <p>//foo.bar/04.ift_gk</p>
      </ul>
     <li data-md>
-     <p>Step 8 - one entry from that set must be picked. There a no full invalidation entries, so one partial invalidation entry (//foo.bar/*.tk) must be
+     <p>Step 8 - one entry from that set must be picked. There a no full invalidation entries, so one partial invalidation entry (//foo.bar/*.ift_tk) must be
 selected. Following <a href="#invalidating-patch-selection">§ 4.4 Selecting Invalidating Patches</a> the candidate entries have the following intersections with the target subset definition:</p>
      <ul>
       <li data-md>
-       <p>//foo.bar/01.tk - {'f'}</p>
+       <p>//foo.bar/01.ift_tk - {'f'}</p>
       <li data-md>
-       <p>//foo.bar/02.tk - {'P'}</p>
+       <p>//foo.bar/02.ift_tk - {'P'}</p>
       <li data-md>
-       <p>//foo.bar/04.tk - {'f', 'P'}</p>
+       <p>//foo.bar/04.ift_tk - {'f', 'P'}</p>
       <li data-md>
-       <p>//foo.bar/05.tk - {'f', 'P'}</p>
+       <p>//foo.bar/05.ift_tk - {'f', 'P'}</p>
      </ul>
-     <p>The intersections for //foo.bar/01.tk and //foo.bar/02.tk are both strict subsets of //foo.bar/04.tk and //foo.bar/05.tk, so they don’t meet selection
-criteria. That leaves either //foo.bar/04.tk or //foo.bar/05.tk. Since //foo.bar/04.tk is listed first in the patch map it is selected.</p>
+     <p>The intersections for //foo.bar/01.ift_tk and //foo.bar/02.ift_tk are both strict subsets of //foo.bar/04.ift_tk and //foo.bar/05.ift_tk, so they don’t meet selection
+criteria. That leaves either //foo.bar/04.ift_tk or //foo.bar/05.ift_tk. Since //foo.bar/04.ift_tk is listed first in the patch map it is selected.</p>
     <li data-md>
-     <p>Step 9 - the selected patch, //foo.bar/04.tk, is fetched. Additionally as an optimization fetches are simultaneously started for the two glyph keyed
-patches //foo.bar/01.gk and //foo.bar/04.gk. The table keyed patch //foo.bar/04.tk is partially invalidating which means the two glyph keyed patches
-will be remain valid after the application of //foo.bar/04.tk. Thus the client can expect that the two glyph keyed patches will be required in future
+     <p>Step 9 - the selected patch, //foo.bar/04.ift_tk, is fetched. Additionally as an optimization fetches are simultaneously started for the two glyph keyed
+patches //foo.bar/01.ift_gk and //foo.bar/04.ift_gk. The table keyed patch //foo.bar/04.ift_tk is partially invalidating which means the two glyph keyed patches
+will be remain valid after the application of //foo.bar/04.ift_tk. Thus the client can expect that the two glyph keyed patches will be required in future
 iterations and begin the loads for those two patches at this time.</p>
     <li data-md>
-     <p>Step 10 - The fetched patch //foo.bar/04.tk is applied to the initial font. This patch updates all tables except for glyf and loca
+     <p>Step 10 - The fetched patch //foo.bar/04.ift_tk is applied to the initial font. This patch updates all tables except for glyf and loca
 to add support for code points 'a' through 'Z'. Additionally the mapping in the "IFT " table is updated to the following:</p>
      <table>
       <tbody>
@@ -3833,7 +3863,7 @@ to add support for code points 'a' through 'Z'. Additionally the mapping in the 
         <td>
 <pre>code points: { '0', '1', ..., '9' }
 </pre>
-        <td>//foo.bar/08.tk
+        <td>//foo.bar/08.ift_tk
         <td>
       2, Table Keyed - Partial Invalidation
     
@@ -3844,7 +3874,7 @@ to add support for code points 'a' through 'Z'. Additionally the mapping in the 
        <p>All entries that have data for 'a', ... 'z', and 'A', ..., 'Z' have been removed. Leaving just one entry for the remaining '0', ..., '9' code points.</p>
       <li data-md>
        <p>The font binary has changed and thus the previously listed table keyed patches are no longer valid. As a result the compatibility ID has changed and
-the URL for the remaining '0', ..., '9' entry has changed. The patch at the new URL, //foo.bar/08.tk, is compatible with the updated font.</p>
+the URL for the remaining '0', ..., '9' entry has changed. The patch at the new URL, //foo.bar/08.ift_tk, is compatible with the updated font.</p>
      </ul>
    </ul>
    <p>Iteration 2:</p>
@@ -3854,18 +3884,18 @@ the URL for the remaining '0', ..., '9' entry has changed. The patch at the new 
 entries intersect:</p>
      <ul>
       <li data-md>
-       <p>//foo.bar/01.gk</p>
+       <p>//foo.bar/01.ift_gk</p>
       <li data-md>
-       <p>//foo.bar/04.gk</p>
+       <p>//foo.bar/04.ift_gk</p>
      </ul>
     <li data-md>
      <p>Step 8 - one entry from that set must be picked. Only no invalidation patches remain, the client is free to pick either one. In this case it selects
-the first one //foo.bar/01.gk.</p>
+the first one //foo.bar/01.ift_gk.</p>
     <li data-md>
-     <p>Step 9 - the fetch for //foo.bar/01.gk was previously started during iteration 1.</p>
+     <p>Step 9 - the fetch for //foo.bar/01.ift_gk was previously started during iteration 1.</p>
     <li data-md>
-     <p>Step 10 - The fetched patch //foo.bar/01.gk is applied to the current font subset. This patch adds glyph data for code points 'a' through 'm'
-to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/01.gk. The compatibility ID
+     <p>Step 10 - The fetched patch //foo.bar/01.ift_gk is applied to the current font subset. This patch adds glyph data for code points 'a' through 'm'
+to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/01.ift_gk. The compatibility ID
 and URLs for other entries are unchanged.</p>
    </ul>
    <p>Iteration 3:</p>
@@ -3875,15 +3905,15 @@ and URLs for other entries are unchanged.</p>
 entries intersect:</p>
      <ul>
       <li data-md>
-       <p>//foo.bar/04.gk</p>
+       <p>//foo.bar/04.ift_gk</p>
      </ul>
     <li data-md>
      <p>Step 8 - one entry remains, it is selected.</p>
     <li data-md>
-     <p>Step 9 - the fetch for //foo.bar/04.gk was previously started during iteration 1.</p>
+     <p>Step 9 - the fetch for //foo.bar/04.ift_gk was previously started during iteration 1.</p>
     <li data-md>
-     <p>Step 10 - The fetched patch //foo.bar/04.gk is applied to the current font subset. This patch adds glyph data for code points 'N' through 'Z'
-to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/04.gk. The compatibility ID
+     <p>Step 10 - The fetched patch //foo.bar/04.ift_gk is applied to the current font subset. This patch adds glyph data for code points 'N' through 'Z'
+to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/04.ift_gk. The compatibility ID
 and URLs for other entries are unchanged.</p>
    </ul>
    <p>Iteration 4:</p>
@@ -3915,7 +3945,7 @@ a subset definition they are defaulted to an empty set.</p>
 <pre>code points:
   { 'a', 'b', ..., 'm' }
 </pre>
-      <td>//foo.bar/01.gk
+      <td>//foo.bar/01.ift_gk
       <td>
       3, Glyph Keyed
     
@@ -3926,7 +3956,7 @@ a subset definition they are defaulted to an empty set.</p>
 <pre>code points:
   { 'n', 'o', ..., 'z' }
 </pre>
-      <td>//foo.bar/02.gk
+      <td>//foo.bar/02.ift_gk
       <td>
       3, Glyph Keyed
     
@@ -3946,7 +3976,7 @@ a subset definition they are defaulted to an empty set.</p>
 <pre>child entries: [0, 2],
 match mode: conjunctive
 </pre>
-      <td>//foo.bar/03.gk
+      <td>//foo.bar/03.ift_gk
       <td>
       3, Glyph Keyed
     
@@ -3957,7 +3987,7 @@ match mode: conjunctive
 <pre>child entries: [1, 2],
 match mode: conjunctive
 </pre>
-      <td>//foo.bar/04.gk
+      <td>//foo.bar/04.ift_gk
       <td>
       3, Glyph Keyed
     
@@ -3978,10 +4008,10 @@ match mode: conjunctive
      <p>Steps 1 through 6 - applying the <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection⑥">Check entry intersection</a> check to all entries in the initial font, the following patch entries intersect:</p>
      <ul>
       <li data-md>
-       <p>//foo.bar/01.gk</p>
+       <p>//foo.bar/01.ift_gk</p>
      </ul>
     <li data-md>
-     <p>Step 8 through 10 - there is only one patch, //foo.bar/01.gk, is is selected, loaded, and applied.</p>
+     <p>Step 8 through 10 - there is only one patch, //foo.bar/01.ift_gk, is is selected, loaded, and applied.</p>
    </ul>
    <p>Iteration 2:</p>
    <ul>
@@ -4003,16 +4033,16 @@ content covered by the target subset definition.</p>
      <p>Steps 1 through 6 - applying the <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection⑦">Check entry intersection</a> check to all entries in the initial font, the following patch entries intersect:</p>
      <ul>
       <li data-md>
-       <p>//foo.bar/01.gk</p>
+       <p>//foo.bar/01.ift_gk</p>
       <li data-md>
-       <p>//foo.bar/03.gk</p>
+       <p>//foo.bar/03.ift_gk</p>
      </ul>
     <li data-md>
-     <p>Step 8 - one entry must be selected, in this case the client implementation is free to pick either. //foo.bar/01.gk is selected.</p>
+     <p>Step 8 - one entry must be selected, in this case the client implementation is free to pick either. //foo.bar/01.ift_gk is selected.</p>
     <li data-md>
      <p>Step 9 - since both intersecting entries are no invalidation both can be simultaneously loaded.</p>
     <li data-md>
-     <p>Step 10 - //foo.bar/01.gk is applied to the font. The mapping table is updated to mark the entry for //foo.bar/01.gk as ignored.</p>
+     <p>Step 10 - //foo.bar/01.ift_gk is applied to the font. The mapping table is updated to mark the entry for //foo.bar/01.ift_gk as ignored.</p>
    </ul>
    <p>Iteration 2:</p>
    <ul>
@@ -4020,10 +4050,10 @@ content covered by the target subset definition.</p>
      <p>Steps 1 through 6 - applying the <a data-link-type="abstract-op" href="#abstract-opdef-check-entry-intersection" id="ref-for-abstract-opdef-check-entry-intersection⑧">Check entry intersection</a> check to all entries in the current font, the following patch entries intersect:</p>
      <ul>
       <li data-md>
-       <p>//foo.bar/03.gk</p>
+       <p>//foo.bar/03.ift_gk</p>
      </ul>
     <li data-md>
-     <p>Step 8 through 10 - there is only one patch, //foo.bar/03.gk, is is selected, and applied (it was loaded during the previous iteration).</p>
+     <p>Step 8 through 10 - there is only one patch, //foo.bar/03.ift_gk, is is selected, and applied (it was loaded during the previous iteration).</p>
    </ul>
    <p>Iteration 3:</p>
    <ul>
@@ -4474,7 +4504,7 @@ let dfnPanelData = {
 "abstract-opdef-check-entry-intersection": {"dfnID":"abstract-opdef-check-entry-intersection","dfnText":"Check entry intersection","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2460"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2461"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2462"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2463"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2464"}],"title":"Example 1: Table and Glyph Keyed Patches"},{"refs":[{"id":"ref-for-abstract-opdef-check-entry-intersection\u2465"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2466"},{"id":"ref-for-abstract-opdef-check-entry-intersection\u2467"}],"title":"Example 2: Glyph Keyed Patches with Child Entries"}],"url":"#abstract-opdef-check-entry-intersection"},
 "abstract-opdef-decoding-sparse-bit-set-treedata": {"dfnID":"abstract-opdef-decoding-sparse-bit-set-treedata","dfnText":"Decoding sparse bit set treeData","external":false,"refSections":[],"url":"#abstract-opdef-decoding-sparse-bit-set-treedata"},
 "abstract-opdef-expand-url-template": {"dfnID":"abstract-opdef-expand-url-template","dfnText":"Expand URL Template","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-expand-url-template"},{"id":"ref-for-abstract-opdef-expand-url-template\u2460"},{"id":"ref-for-abstract-opdef-expand-url-template\u2461"},{"id":"ref-for-abstract-opdef-expand-url-template\u2462"}],"title":"5.3.1. Interpreting a Patch Map"}],"url":"#abstract-opdef-expand-url-template"},
-"abstract-opdef-extend-an-incremental-font-subset": {"dfnID":"abstract-opdef-extend-an-incremental-font-subset","dfnText":"Extend an Incremental Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2461"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2462"}],"title":"4.4. Selecting Invalidating Patches"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2463"}],"title":"4.5. Target Subset Definition"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2464"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2465"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2466"}],"title":"4.6. Determining what Content a Font can Render"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2467"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2468"}],"title":"5.3. Patch Map Table"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460\u24ea"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460\u2460"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460\u2461"}],"title":"7. Encoding"}],"url":"#abstract-opdef-extend-an-incremental-font-subset"},
+"abstract-opdef-extend-an-incremental-font-subset": {"dfnID":"abstract-opdef-extend-an-incremental-font-subset","dfnText":"Extend an Incremental Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2461"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2462"}],"title":"4.4. Selecting Invalidating Patches"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2463"}],"title":"4.5. Target Subset Definition"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2464"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2465"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2466"}],"title":"4.6. Determining what Content a Font can Render"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2467"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2468"}],"title":"5.1. Incremental Font Transfer and Font Compression Formats"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460\u24ea"}],"title":"5.3. Patch Map Table"},{"refs":[{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460\u2460"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460\u2461"},{"id":"ref-for-abstract-opdef-extend-an-incremental-font-subset\u2460\u2462"}],"title":"7. Encoding"}],"url":"#abstract-opdef-extend-an-incremental-font-subset"},
 "abstract-opdef-fully-expand-a-font-subset": {"dfnID":"abstract-opdef-fully-expand-a-font-subset","dfnText":"Fully Expand a Font Subset","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset"}],"title":"2.1. Offline Usage"},{"refs":[{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2460"},{"id":"ref-for-abstract-opdef-fully-expand-a-font-subset\u2461"}],"title":"7. Encoding"}],"url":"#abstract-opdef-fully-expand-a-font-subset"},
 "abstract-opdef-handle-errors": {"dfnID":"abstract-opdef-handle-errors","dfnText":"Handle errors","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-handle-errors"},{"id":"ref-for-abstract-opdef-handle-errors\u2460"},{"id":"ref-for-abstract-opdef-handle-errors\u2461"},{"id":"ref-for-abstract-opdef-handle-errors\u2462"}],"title":"4.3. Incremental Font Extension Algorithm"}],"url":"#abstract-opdef-handle-errors"},
 "abstract-opdef-interpret-patch-map": {"dfnID":"abstract-opdef-interpret-patch-map","dfnText":"Interpret Patch Map","external":false,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-interpret-patch-map"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-abstract-opdef-interpret-patch-map\u2460"},{"id":"ref-for-abstract-opdef-interpret-patch-map\u2461"},{"id":"ref-for-abstract-opdef-interpret-patch-map\u2462"}],"title":"5.3.2. Remove Entries from a Patch Map"}],"url":"#abstract-opdef-interpret-patch-map"},
@@ -4504,7 +4534,7 @@ let dfnPanelData = {
 "glyphpatches-glyphdataoffsets": {"dfnID":"glyphpatches-glyphdataoffsets","dfnText":"glyphDataOffsets","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-glyphdataoffsets"}],"title":"6.3. Glyph Keyed"},{"refs":[{"id":"ref-for-glyphpatches-glyphdataoffsets\u2460"},{"id":"ref-for-glyphpatches-glyphdataoffsets\u2461"},{"id":"ref-for-glyphpatches-glyphdataoffsets\u2462"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches-glyphdataoffsets"},
 "glyphpatches-glyphids": {"dfnID":"glyphpatches-glyphids","dfnText":"glyphIds","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-glyphids"}],"title":"6.3. Glyph Keyed"},{"refs":[{"id":"ref-for-glyphpatches-glyphids\u2460"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches-glyphids"},
 "glyphpatches-tables": {"dfnID":"glyphpatches-tables","dfnText":"tables","external":false,"refSections":[{"refs":[{"id":"ref-for-glyphpatches-tables"},{"id":"ref-for-glyphpatches-tables\u2460"}],"title":"6.3. Glyph Keyed"},{"refs":[{"id":"ref-for-glyphpatches-tables\u2461"}],"title":"6.3.1. Applying Glyph Keyed Patches"}],"url":"#glyphpatches-tables"},
-"incremental-font": {"dfnID":"incremental-font","dfnText":"incremental font","external":false,"refSections":[{"refs":[{"id":"ref-for-incremental-font"}],"title":"1.2. Overview"},{"refs":[{"id":"ref-for-incremental-font\u2460"}],"title":"3.3. Patch Map"},{"refs":[{"id":"ref-for-incremental-font\u2461"}],"title":"4. Extending a Font Subset"},{"refs":[{"id":"ref-for-incremental-font\u2462"},{"id":"ref-for-incremental-font\u2463"},{"id":"ref-for-incremental-font\u2464"},{"id":"ref-for-incremental-font\u2465"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-incremental-font\u2466"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-incremental-font\u2467"}],"title":"5. Extensions to the Font Format"},{"refs":[{"id":"ref-for-incremental-font\u2468"},{"id":"ref-for-incremental-font\u2460\u24ea"},{"id":"ref-for-incremental-font\u2460\u2460"},{"id":"ref-for-incremental-font\u2460\u2461"},{"id":"ref-for-incremental-font\u2460\u2462"},{"id":"ref-for-incremental-font\u2460\u2463"},{"id":"ref-for-incremental-font\u2460\u2464"}],"title":"7. Encoding"},{"refs":[{"id":"ref-for-incremental-font\u2460\u2465"},{"id":"ref-for-incremental-font\u2460\u2466"},{"id":"ref-for-incremental-font\u2460\u2467"},{"id":"ref-for-incremental-font\u2460\u2468"},{"id":"ref-for-incremental-font\u2461\u24ea"}],"title":"7.1. Encoding Considerations"}],"url":"#incremental-font"},
+"incremental-font": {"dfnID":"incremental-font","dfnText":"incremental font","external":false,"refSections":[{"refs":[{"id":"ref-for-incremental-font"}],"title":"1.2. Overview"},{"refs":[{"id":"ref-for-incremental-font\u2460"}],"title":"3.3. Patch Map"},{"refs":[{"id":"ref-for-incremental-font\u2461"}],"title":"4. Extending a Font Subset"},{"refs":[{"id":"ref-for-incremental-font\u2462"},{"id":"ref-for-incremental-font\u2463"},{"id":"ref-for-incremental-font\u2464"},{"id":"ref-for-incremental-font\u2465"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-incremental-font\u2466"}],"title":"4.7. Fully Expanding a Font"},{"refs":[{"id":"ref-for-incremental-font\u2467"}],"title":"5. Extensions to the Font Format"},{"refs":[{"id":"ref-for-incremental-font\u2468"}],"title":"5.1. Incremental Font Transfer and Font Compression Formats"},{"refs":[{"id":"ref-for-incremental-font\u2460\u24ea"},{"id":"ref-for-incremental-font\u2460\u2460"},{"id":"ref-for-incremental-font\u2460\u2461"},{"id":"ref-for-incremental-font\u2460\u2462"},{"id":"ref-for-incremental-font\u2460\u2463"},{"id":"ref-for-incremental-font\u2460\u2464"},{"id":"ref-for-incremental-font\u2460\u2465"}],"title":"7. Encoding"},{"refs":[{"id":"ref-for-incremental-font\u2460\u2466"},{"id":"ref-for-incremental-font\u2460\u2467"},{"id":"ref-for-incremental-font\u2460\u2468"},{"id":"ref-for-incremental-font\u2461\u24ea"},{"id":"ref-for-incremental-font\u2461\u2460"}],"title":"7.1. Encoding Considerations"}],"url":"#incremental-font"},
 "mapping-entries": {"dfnID":"mapping-entries","dfnText":"Mapping Entries","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entries"}],"title":"5.3. Patch Map Table"}],"url":"#mapping-entries"},
 "mapping-entries-entries": {"dfnID":"mapping-entries-entries","dfnText":"entries","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entries-entries"}],"title":"4.3. Incremental Font Extension Algorithm"},{"refs":[{"id":"ref-for-mapping-entries-entries\u2460"}],"title":"4.4. Selecting Invalidating Patches"},{"refs":[{"id":"ref-for-mapping-entries-entries\u2461"},{"id":"ref-for-mapping-entries-entries\u2462"}],"title":"5.3. Patch Map Table"}],"url":"#mapping-entries-entries"},
 "mapping-entry": {"dfnID":"mapping-entry","dfnText":"Mapping Entry","external":false,"refSections":[{"refs":[{"id":"ref-for-mapping-entry"},{"id":"ref-for-mapping-entry\u2460"}],"title":"5.3. Patch Map Table"},{"refs":[{"id":"ref-for-mapping-entry\u2461"},{"id":"ref-for-mapping-entry\u2462"}],"title":"5.3.1. Interpreting a Patch Map"}],"url":"#mapping-entry"},
