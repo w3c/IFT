@@ -450,7 +450,9 @@ The algorithm outputs:
 
 The algorithm:
 
-1.  Set <var>extended font subset</var> to <var>font subset</var>.
+1.  Set <var>extended font subset</var> to <var>font subset</var>. If the <code>sfntVersion</code> field of <var>extended font subset</var>'s
+    [[open-type/otff#table-directory|table directory]] is <code>'IFTT'</code> (0x49465454) or <code>'IFTO'</code> (0x4946544F),
+    <span class="conform client" id="conform-convert-ift-sfnt-version">it must be replaced with <code>0x00010000</code> or <code>'OTTO'</code> (0x4F54544F) respectively</span>.
 
 2.  Load the 'IFT ' and 'IFTX' (if present) mapping [[open-type/otff#table-directory|tables]] from <var>extended font subset</var>. Both
     tables are formatted as a [[#patch-map-table]]. Check that they are valid according to the requirements in [[#patch-map-table]]. If
@@ -962,6 +964,19 @@ For [[WOFF2]] special care needs to be taken. If an incremental font will be enc
 
 2. The 'IFT ' and 'IFTX' tables can be processed and brotli encoded by a WOFF2 encoder following the standard process defined in
     [[WOFF2#table_format]].
+
+3. When compressing an [=incremental font=] as WOFF2, the <code>flavor</code> field in the [[WOFF2#woff20Header|WOFF2 header]] (and/or the
+    <code>sfntVersion</code> field of the input font's [[open-type/otff#table-directory|table directory]] prior to WOFF2 encoding) should be
+    set to a special IFT flavor value instead of the standard [[open-type/otff#table-directory|OpenType]] <code>sfntVersion</code>:
+
+    * <code>'IFTT'</code> (0x49465454) for TrueType fonts (corresponding to <code>sfntVersion</code> <code>0x00010000</code>).
+
+    * <code>'IFTO'</code> (0x4946544F) for OpenType fonts containing CFF or CFF2 data (corresponding to <code>sfntVersion</code> <code>'OTTO'</code>, 0x4F54544F).
+
+    Using these flavor values prevents legacy user agents that do not support IFT from loading the unextended initial font file. During
+    WOFF2 decoding the flavor value is written to the <code>sfntVersion</code> field of the decoded font's
+    [[open-type/otff#table-directory|table directory]], which [$Extend an Incremental Font Subset$] then converts back to the corresponding
+    <code>0x00010000</code> or <code>'OTTO'</code> value.
 
 Note: Given that WOFF2 compression outperforms WOFF even with glyf/loca transformations disabled it is generally recommended 
 that IFT fonts are compressed using WOFF2, with glyf/loca transformations disabled when the encoding updates those tables using
@@ -1963,7 +1978,7 @@ A table keyed patch contains a collection of patches which are applied to the in
 [[!RFC7932|brotli compression]] using the corresponding table from the input font file as a
 [[Shared-Brotli#section-3.2|shared LZ77 dictionary]]. A table keyed encoded patch consists of a short header followed
 by one or more brotli encoded patches. In addition to patching tables, patches may also replace (existing table data is not used)
-or remove tables in a [=font subset=].
+or remove tables in a [=font subset=]. Table keyed patch files should use the <code>.ift_tk</code> file extension.
 
 <dfn>Table keyed patch</dfn> encoding:
 <table>
@@ -2100,7 +2115,8 @@ Glyph Keyed {#glyph-keyed}
 A glyph keyed patch contains a collection of data chunks that are each associated with a glyph index and a
 [[open-type/otff#table-directory|font table]]. The encoded data replaces any existing data for that glyph index in the referenced
 [[open-type/otff#table-directory|table]]. Glyph keyed patches can encode data for [[open-type/glyf|glyf]]/[[open-type/loca|loca]],
-[[open-type/gvar|gvar]], [[open-type/cff|CFF]], and [[open-type/cff2|CFF2]] tables.
+[[open-type/gvar|gvar]], [[open-type/cff|CFF]], and [[open-type/cff2|CFF2]] tables. Glyph keyed patch files should use the
+<code>.ift_gk</code> file extension.
 
 <dfn>Glyph keyed patch</dfn> encoding:
 <table>
@@ -2733,7 +2749,9 @@ number of requests:
 </p>
 
 <ul>
-  <!-- to 8 Oct 2026 -->
+  <!-- to 19 Oct 2026 -->
+  <li>Added recommendation to use 'IFTT' and 'IFTO' WOFF2 flavors for IFT fonts, and updated the extension algorithm to convert them back to 0x00010000 and 'OTTO'.</li>
+  <li>Added recommendation to use .ift_tk and .ift_gk file extensions for table keyed and glyph keyed patches.</li>
   <li>Updated the default feature registry to include halt and vhal</li>
   <li>Added 'conform' markup to the URL template expansion algorithm.</li>
   <li>Removed Patch Map Format 1 from the specification.</li>
@@ -2863,7 +2881,7 @@ they are defaulted to an empty set.
       code points: { 'a', 'b', ..., 'z' }
       ```
     </td>
-    <td>//foo.bar/01.tk</td>
+    <td>//foo.bar/01.ift_tk</td>
     <td>
       2, Table Keyed - Partial Invalidation
     </td>
@@ -2874,7 +2892,7 @@ they are defaulted to an empty set.
       code points: { 'A', 'B', ..., 'Z' }
       ```
     </td>
-    <td>//foo.bar/02.tk</td>
+    <td>//foo.bar/02.ift_tk</td>
     <td>
       2, Table Keyed - Partial Invalidation
     </td>
@@ -2885,7 +2903,7 @@ they are defaulted to an empty set.
       code points: { '0', '1', ..., '9' }
       ```
     </td>
-    <td>//foo.bar/03.tk</td>
+    <td>//foo.bar/03.ift_tk</td>
     <td>
       2, Table Keyed - Partial Invalidation
     </td>
@@ -2898,7 +2916,7 @@ they are defaulted to an empty set.
                      'A', 'B', ..., 'Z' }
       ```
     </td>
-    <td>//foo.bar/04.tk</td>
+    <td>//foo.bar/04.ift_tk</td>
     <td>
       2, Table Keyed - Partial Invalidation
     </td>
@@ -2911,7 +2929,7 @@ they are defaulted to an empty set.
                      '0', '1', ..., '9' }
       ```
     </td>
-    <td>//foo.bar/05.tk</td>
+    <td>//foo.bar/05.ift_tk</td>
     <td>
       2, Table Keyed - Partial Invalidation
     </td>
@@ -2927,7 +2945,7 @@ they are defaulted to an empty set.
       code points: { 'a', 'b', ..., 'm' }
       ```
     </td>
-    <td>//foo.bar/01.gk</td>
+    <td>//foo.bar/01.ift_gk</td>
     <td>
       3, Glyph Keyed
     </td>
@@ -2938,7 +2956,7 @@ they are defaulted to an empty set.
       code points: { 'n', 'o', ..., 'z' }
       ```
     </td>
-    <td>//foo.bar/02.gk</td>
+    <td>//foo.bar/02.ift_gk</td>
     <td>
       3, Glyph Keyed
     </td>
@@ -2949,7 +2967,7 @@ they are defaulted to an empty set.
       code points: { 'A', 'B', ..., 'M' }
       ```
     </td>
-    <td>//foo.bar/03.gk</td>
+    <td>//foo.bar/03.ift_gk</td>
     <td>
       3, Glyph Keyed
     </td>
@@ -2960,7 +2978,7 @@ they are defaulted to an empty set.
       code points: { 'N', 'O', ..., 'Z' }
       ```
     </td>
-    <td>//foo.bar/04.gk</td>
+    <td>//foo.bar/04.ift_gk</td>
     <td>
       3, Glyph Keyed
     </td>
@@ -2971,7 +2989,7 @@ they are defaulted to an empty set.
       code points: { '0', '1', ..., '9' }
       ```
     </td>
-    <td>//foo.bar/05.gk</td>
+    <td>//foo.bar/05.ift_gk</td>
     <td>
       3, Glyph Keyed
     </td>
@@ -2992,30 +3010,30 @@ Inputs:
 Iteration 1:
 
 *  Steps 1 through 6 - applying the [$Check entry intersection$] check to all entries in the initial font, the following patch entries intersect:
-    * //foo.bar/01.tk
-    * //foo.bar/02.tk
-    * //foo.bar/04.tk
-    * //foo.bar/05.tk
-    * //foo.bar/01.gk
-    * //foo.bar/04.gk
+    * //foo.bar/01.ift_tk
+    * //foo.bar/02.ift_tk
+    * //foo.bar/04.ift_tk
+    * //foo.bar/05.ift_tk
+    * //foo.bar/01.ift_gk
+    * //foo.bar/04.ift_gk
 
-*  Step 8 - one entry from that set must be picked. There a no full invalidation entries, so one partial invalidation entry (//foo.bar/*.tk) must be
+*  Step 8 - one entry from that set must be picked. There a no full invalidation entries, so one partial invalidation entry (//foo.bar/*.ift_tk) must be
     selected. Following [[#invalidating-patch-selection]] the candidate entries have the following intersections with the target subset definition:
 
-    *  //foo.bar/01.tk - {'f'}
-    *  //foo.bar/02.tk - {'P'}
-    *  //foo.bar/04.tk - {'f', 'P'}
-    *  //foo.bar/05.tk - {'f', 'P'}
+    *  //foo.bar/01.ift_tk - {'f'}
+    *  //foo.bar/02.ift_tk - {'P'}
+    *  //foo.bar/04.ift_tk - {'f', 'P'}
+    *  //foo.bar/05.ift_tk - {'f', 'P'}
 
-    The intersections for //foo.bar/01.tk and //foo.bar/02.tk are both strict subsets of //foo.bar/04.tk and //foo.bar/05.tk, so they don't meet selection
-    criteria. That leaves either //foo.bar/04.tk or //foo.bar/05.tk. Since //foo.bar/04.tk is listed first in the patch map it is selected.
+    The intersections for //foo.bar/01.ift_tk and //foo.bar/02.ift_tk are both strict subsets of //foo.bar/04.ift_tk and //foo.bar/05.ift_tk, so they don't meet selection
+    criteria. That leaves either //foo.bar/04.ift_tk or //foo.bar/05.ift_tk. Since //foo.bar/04.ift_tk is listed first in the patch map it is selected.
 
-*  Step 9 - the selected patch, //foo.bar/04.tk, is fetched. Additionally as an optimization fetches are simultaneously started for the two glyph keyed
-    patches //foo.bar/01.gk and //foo.bar/04.gk. The table keyed patch //foo.bar/04.tk is partially invalidating which means the two glyph keyed patches
-    will be remain valid after the application of //foo.bar/04.tk. Thus the client can expect that the two glyph keyed patches will be required in future
+*  Step 9 - the selected patch, //foo.bar/04.ift_tk, is fetched. Additionally as an optimization fetches are simultaneously started for the two glyph keyed
+    patches //foo.bar/01.ift_gk and //foo.bar/04.ift_gk. The table keyed patch //foo.bar/04.ift_tk is partially invalidating which means the two glyph keyed patches
+    will be remain valid after the application of //foo.bar/04.ift_tk. Thus the client can expect that the two glyph keyed patches will be required in future
     iterations and begin the loads for those two patches at this time.
 
-*  Step 10 - The fetched patch //foo.bar/04.tk is applied to the initial font. This patch updates all tables except for glyf and loca
+*  Step 10 - The fetched patch //foo.bar/04.ift_tk is applied to the initial font. This patch updates all tables except for glyf and loca
     to add support for code points 'a' through 'Z'. Additionally the mapping in the "IFT " table is updated to the following:
 
     <table>
@@ -3027,7 +3045,7 @@ Iteration 1:
           code points: { '0', '1', ..., '9' }
           ```
         </td>
-        <td>//foo.bar/08.tk</td>
+        <td>//foo.bar/08.ift_tk</td>
         <td>
           2, Table Keyed - Partial Invalidation
         </td>
@@ -3037,36 +3055,36 @@ Iteration 1:
     Note the following changes:
     *  All entries that have data for 'a', ... 'z', and 'A', ..., 'Z' have been removed. Leaving just one entry for the remaining '0', ..., '9' code points.
     *  The font binary has changed and thus the previously listed table keyed patches are no longer valid. As a result the compatibility ID has changed and
-        the URL for the remaining '0', ..., '9' entry has changed. The patch at the new URL, //foo.bar/08.tk, is compatible with the updated font.
+        the URL for the remaining '0', ..., '9' entry has changed. The patch at the new URL, //foo.bar/08.ift_tk, is compatible with the updated font.
 
 Iteration 2:
 
 *  Steps 2 through 6 - applying the [$Check entry intersection$] check to all entries in the updated font from the previous iteration, the following patch
     entries intersect:
-    * //foo.bar/01.gk
-    * //foo.bar/04.gk
+    * //foo.bar/01.ift_gk
+    * //foo.bar/04.ift_gk
 
 *  Step 8 - one entry from that set must be picked. Only no invalidation patches remain, the client is free to pick either one. In this case it selects
-    the first one //foo.bar/01.gk.
+    the first one //foo.bar/01.ift_gk.
 
-*  Step 9 - the fetch for //foo.bar/01.gk was previously started during iteration 1.
+*  Step 9 - the fetch for //foo.bar/01.ift_gk was previously started during iteration 1.
 
-*  Step 10 - The fetched patch //foo.bar/01.gk is applied to the current font subset. This patch adds glyph data for code points 'a' through 'm'
-    to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/01.gk. The compatibility ID
+*  Step 10 - The fetched patch //foo.bar/01.ift_gk is applied to the current font subset. This patch adds glyph data for code points 'a' through 'm'
+    to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/01.ift_gk. The compatibility ID
     and URLs for other entries are unchanged.
 
 Iteration 3:
 
 *  Steps 2 through 6 - applying the [$Check entry intersection$] check to all entries in the updated font from the previous iteration, the following patch
     entries intersect:
-    * //foo.bar/04.gk
+    * //foo.bar/04.ift_gk
 
 *  Step 8 - one entry remains, it is selected.
 
-*  Step 9 - the fetch for //foo.bar/04.gk was previously started during iteration 1.
+*  Step 9 - the fetch for //foo.bar/04.ift_gk was previously started during iteration 1.
 
-*  Step 10 - The fetched patch //foo.bar/04.gk is applied to the current font subset. This patch adds glyph data for code points 'N' through 'Z'
-    to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/04.gk. The compatibility ID
+*  Step 10 - The fetched patch //foo.bar/04.ift_gk is applied to the current font subset. This patch adds glyph data for code points 'N' through 'Z'
+    to the glyf and loca tables. Additionally the mapping in the "IFTX" table is updated to removed the entry for //foo.bar/04.ift_gk. The compatibility ID
     and URLs for other entries are unchanged.
 
 
@@ -3097,7 +3115,7 @@ a subset definition they are defaulted to an empty set.
         { 'a', 'b', ..., 'm' }
       ```
     </td>
-    <td>//foo.bar/01.gk</td>
+    <td>//foo.bar/01.ift_gk</td>
     <td>
       3, Glyph Keyed
     </td>
@@ -3111,7 +3129,7 @@ a subset definition they are defaulted to an empty set.
         { 'n', 'o', ..., 'z' }
       ```
     </td>
-    <td>//foo.bar/02.gk</td>
+    <td>//foo.bar/02.ift_gk</td>
     <td>
       3, Glyph Keyed
     </td>
@@ -3138,7 +3156,7 @@ a subset definition they are defaulted to an empty set.
       match mode: conjunctive
       ```
     </td>
-    <td>//foo.bar/03.gk</td>
+    <td>//foo.bar/03.ift_gk</td>
     <td>
       3, Glyph Keyed
     </td>
@@ -3153,7 +3171,7 @@ a subset definition they are defaulted to an empty set.
       match mode: conjunctive
       ```
     </td>
-    <td>//foo.bar/04.gk</td>
+    <td>//foo.bar/04.ift_gk</td>
     <td>
       3, Glyph Keyed
     </td>
@@ -3172,9 +3190,9 @@ Inputs:
 Iteration 1:
 
 *  Steps 1 through 6 - applying the [$Check entry intersection$] check to all entries in the initial font, the following patch entries intersect:
-    * //foo.bar/01.gk
+    * //foo.bar/01.ift_gk
 
-*  Step 8 through 10 - there is only one patch, //foo.bar/01.gk, is is selected, loaded, and applied.
+*  Step 8 through 10 - there is only one patch, //foo.bar/01.ift_gk, is is selected, loaded, and applied.
 
 Iteration 2:
 
@@ -3190,21 +3208,21 @@ Inputs:
 Iteration 1:
 
 *  Steps 1 through 6 - applying the [$Check entry intersection$] check to all entries in the initial font, the following patch entries intersect:
-    * //foo.bar/01.gk
-    * //foo.bar/03.gk
+    * //foo.bar/01.ift_gk
+    * //foo.bar/03.ift_gk
 
-*  Step 8 - one entry must be selected, in this case the client implementation is free to pick either. //foo.bar/01.gk is selected.
+*  Step 8 - one entry must be selected, in this case the client implementation is free to pick either. //foo.bar/01.ift_gk is selected.
 
 *  Step 9 - since both intersecting entries are no invalidation both can be simultaneously loaded.
 
-*  Step 10 - //foo.bar/01.gk is applied to the font. The mapping table is updated to mark the entry for //foo.bar/01.gk as ignored.
+*  Step 10 - //foo.bar/01.ift_gk is applied to the font. The mapping table is updated to mark the entry for //foo.bar/01.ift_gk as ignored.
 
 Iteration 2:
 
 *  Steps 1 through 6 - applying the [$Check entry intersection$] check to all entries in the current font, the following patch entries intersect:
-    * //foo.bar/03.gk
+    * //foo.bar/03.ift_gk
 
-*  Step 8 through 10 - there is only one patch, //foo.bar/03.gk, is is selected, and applied (it was loaded during the previous iteration).
+*  Step 8 through 10 - there is only one patch, //foo.bar/03.ift_gk, is is selected, and applied (it was loaded during the previous iteration).
 
 Iteration 3:
 
