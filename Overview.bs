@@ -781,12 +781,12 @@ of [$Extend an Incremental Font Subset$]</span>:
 
 3.  For each candidate entry: compute the set intersection between the total subset definition and the target subset definition.
    
-4.  Find an entry whose intersection from step 2 is not a strict subset of any other intersection.
+4.  Find an entry whose intersection from step 3 is not a strict subset of any other intersection.
 
-5.  Locate any additional entries that are in the same [=patch map=] and have the same intersection as the entry found in step 3. From the this set of
-     entries (including the step 3 pick) the final selection is the entry which is listed first in the [=patch map=] (the entry that appears first in the [=Mapping Entries/entries=] array).
+5.  Locate any additional entries that are in the same [=patch map=] and have the same intersection as the entry found in step 4. From the this set of
+     entries (including the step 4 pick) the final selection is the entry which is listed first in the [=patch map=] (the entry that appears first in the [=Mapping Entries/entries=] array).
 
-Note: a fast and efficient way to find an entry which satisfies the criteria for step 3 is to sort the entries (descending) by the size of the code point
+Note: a fast and efficient way to find an entry which satisfies the criteria for step 4 is to sort the entries (descending) by the size of the code point
 set intersection, then the size of feature tag set intersection, and finally the size of the design space intersection. The first entry in this sorting is
 guaranteed to not be a strict subset of any other entries, since any strict super sets would have to be at least one item larger. This approach also has
 the added benefit that it selects the patch which will add the most data which the client is currently requesting.
@@ -870,6 +870,9 @@ def supported_spans(shaping_unit, ift_font):
       i += 1
 
     current_start = current_end = current_subset_def = None
+
+  if current_start is not None:
+    supported_spans.append(Span(current_start, current_end))
 
   return supported_spans
 
@@ -1043,7 +1046,7 @@ bytes at the start of every iteration to pick up any changes made in the previou
     <td><dfn for="Patch Map Table">flags</dfn></td>
     <td>Flags to signal the presence of optional fields.
         If bit 0 (least significant bit) is set, then [=Patch Map Table/cffCharStringsOffset=] will be present.
-        If bit 1 (least significant bit) is set, then [=Patch Map Table/cff2CharStringsOffset=] will be present.
+        If bit 1 (second least significant bit) is set, then [=Patch Map Table/cff2CharStringsOffset=] will be present.
     </td>
   </tr>
   <tr>
@@ -1594,7 +1597,7 @@ The algorithm, using a FIFO (first in first out) queue <var>Q</var>:
 
 11.  If all bits <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i> are 0, then insert all integers in the interval
     [<var>start</var> + <var>bias</var>, <var>start</var> + <var>bias</var> + <var>B</var><sup><var>H</var> - <var>depth</var> + 1</sup>)
-    into <var>S</var>. Go to step 5.
+    into <var>S</var>. Go to step 8.
 
 12.  For each <i>v<sub>i</sub></i> which is equal to 1 in <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i>:
      If <var>depth</var> is equal to <var>H</var> add
@@ -2697,7 +2700,7 @@ cases:
 
 *  <code>A or B or C or D</code>: has an effective group size of 4 and meets the minimum requirements.
 *  <code>A and B and C AND D</code>: has an effective group size of 1 and does not meet the minimum requirements.
-*  <code>(A or B or C or D) AND (E or F)</code>: has an effective group size of 2 due to the (D or E) subcondition. It does
+*  <code>(A or B or C or D) AND (E or F)</code>: has an effective group size of 2 due to the (E or F) subcondition. It does
     not meet the minimum requirements.
 
 Encoders should provide configuration controls for the level of privacy in produced encodings, since different use cases
