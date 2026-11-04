@@ -7,7 +7,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-ED" rel="stylesheet">
   <meta content="Bikeshed version d113b2e81, updated Tue Jun 9 14:57:55 2026 -0700" name="generator">
   <link href="https://www.w3.org/TR/IFT/" rel="canonical">
-  <meta content="7d96a74fffc87844ba8033e276092c73e459e8fe" name="revision">
+  <meta content="545a914b49ab09b3a844508c40c094891ec1e3d5" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>
@@ -787,7 +787,7 @@ var[data-var-color="6"] { --var-vg: #FFBCF2; }
 </p>
    <h1 class="no-ref p-name" id="title">Incremental Font Transfer</h1>
    <p id="w3c-state"><a href="https://www.w3.org/standards/types/#ED">Editor’s Draft</a>,
-    <time class="dt-updated" datetime="2026-10-19">19 October 2026</time></p>
+    <time class="dt-updated" datetime="2026-11-04">4 November 2026</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1567,12 +1567,12 @@ candidate entries.</p>
     <li data-md>
      <p>For each candidate entry: compute the set intersection between the total subset definition and the target subset definition.</p>
     <li data-md>
-     <p>Find an entry whose intersection from step 2 is not a strict subset of any other intersection.</p>
+     <p>Find an entry whose intersection from step 3 is not a strict subset of any other intersection.</p>
     <li data-md>
-     <p>Locate any additional entries that are in the same <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map③">patch map</a> and have the same intersection as the entry found in step 3. From the this set of
- entries (including the step 3 pick) the final selection is the entry which is listed first in the <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map④">patch map</a> (the entry that appears first in the <a data-link-type="dfn" href="#mapping-entries-entries" id="ref-for-mapping-entries-entries①">entries</a> array).</p>
+     <p>Locate any additional entries that are in the same <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map③">patch map</a> and have the same intersection as the entry found in step 4. From the this set of
+ entries (including the step 4 pick) the final selection is the entry which is listed first in the <a data-link-type="dfn" href="#patch-map" id="ref-for-patch-map④">patch map</a> (the entry that appears first in the <a data-link-type="dfn" href="#mapping-entries-entries" id="ref-for-mapping-entries-entries①">entries</a> array).</p>
    </ol>
-   <p class="note" role="note"><span class="marker">Note:</span> a fast and efficient way to find an entry which satisfies the criteria for step 3 is to sort the entries (descending) by the size of the code point
+   <p class="note" role="note"><span class="marker">Note:</span> a fast and efficient way to find an entry which satisfies the criteria for step 4 is to sort the entries (descending) by the size of the code point
 set intersection, then the size of feature tag set intersection, and finally the size of the design space intersection. The first entry in this sorting is
 guaranteed to not be a strict subset of any other entries, since any strict super sets would have to be at least one item larger. This approach also has
 the added benefit that it selects the patch which will add the most data which the client is currently requesting.</p>
@@ -1650,6 +1650,9 @@ incremental font:</p>
       <c- n>i</c-> <c- o>+=</c-> <c- mi>1</c->
 
     <c- n>current_start</c-> <c- o>=</c-> <c- n>current_end</c-> <c- o>=</c-> <c- n>current_subset_def</c-> <c- o>=</c-> <c- kc>None</c->
+
+  <c- k>if</c-> <c- n>current_start</c-> <c- ow>is</c-> <c- ow>not</c-> <c- kc>None</c-><c- p>:</c->
+    <c- n>supported_spans</c-><c- o>.</c-><c- n>append</c-><c- p>(</c-><c- n>Span</c-><c- p>(</c-><c- n>current_start</c-><c- p>,</c-> <c- n>current_end</c-><c- p>))</c->
 
   <c- k>return</c-> <c- n>supported_spans</c->
 
@@ -1798,7 +1801,7 @@ bytes at the start of every iteration to pick up any changes made in the previou
       <td><dfn class="dfn-paneled" data-dfn-for="Patch Map Table" data-dfn-type="dfn" data-noexport id="patch-map-table-flags">flags</dfn>
       <td>Flags to signal the presence of optional fields.
         If bit 0 (least significant bit) is set, then <a data-link-type="dfn" href="#patch-map-table-cffcharstringsoffset" id="ref-for-patch-map-table-cffcharstringsoffset①">cffCharStringsOffset</a> will be present.
-        If bit 1 (least significant bit) is set, then <a data-link-type="dfn" href="#patch-map-table-cff2charstringsoffset" id="ref-for-patch-map-table-cff2charstringsoffset①">cff2CharStringsOffset</a> will be present.
+        If bit 1 (second least significant bit) is set, then <a data-link-type="dfn" href="#patch-map-table-cff2charstringsoffset" id="ref-for-patch-map-table-cff2charstringsoffset①">cff2CharStringsOffset</a> will be present.
     
      <tr>
       <td>uint32
@@ -2339,7 +2342,7 @@ are invalid.</p>
     <li data-md>
      <p>If all bits <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i> are 0, then insert all integers in the interval
 [<var>start</var> + <var>bias</var>, <var>start</var> + <var>bias</var> + <var>B</var><sup><var>H</var> - <var>depth</var> + 1</sup>)
-into <var>S</var>. Go to step 5.</p>
+into <var>S</var>. Go to step 8.</p>
     <li data-md>
      <p>For each <i>v<sub>i</sub></i> which is equal to 1 in <i>v<sub>1</sub></i> through <i>v<sub>B</sub></i>:
  If <var>depth</var> is equal to <var>H</var> add
@@ -2835,7 +2838,7 @@ the entries processed in step 5, add a copy of that table to <var>extended font 
      <tr>
       <td>Tag
       <td>format
-      <td><span class="client conform encoder" id="conform-conform-glyph-keyed-format-equals-ifgk">Identifies the format as glyph keyed, must be set to 'ifgk'</span>
+      <td><span class="client conform encoder" id="conform-glyph-keyed-format-equals-ifgk">Identifies the format as glyph keyed, must be set to 'ifgk'</span>
      <tr>
       <td>uint32
       <td>reserved
@@ -3342,7 +3345,7 @@ cases:</p>
     <li data-md>
      <p><code>A and B and C AND D</code>: has an effective group size of 1 and does not meet the minimum requirements.</p>
     <li data-md>
-     <p><code>(A or B or C or D) AND (E or F)</code>: has an effective group size of 2 due to the (D or E) subcondition. It does
+     <p><code>(A or B or C or D) AND (E or F)</code>: has an effective group size of 2 due to the (E or F) subcondition. It does
 not meet the minimum requirements.</p>
    </ul>
    <p>Encoders should provide configuration controls for the level of privacy in produced encodings, since different use cases
